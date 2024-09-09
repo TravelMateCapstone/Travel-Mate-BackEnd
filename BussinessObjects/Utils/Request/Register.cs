@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BussinessObjects.Utils.Reponse
+namespace BussinessObjects.Utils.Request
 {
-    public class RegisterDto
+    public class Register
     {
         public string Username { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
-        public string FullName { get; set; }  // Nếu bạn muốn thu thập thêm thông tin như tên đầy đủ
+        public string ConfirmPassword { get; set; }
     }
 }
