@@ -123,6 +123,11 @@ namespace TravelMateAPI.Controllers
             {
                 return BadRequest("Email is already registered.");
             }
+            //  Kiểm tra mật khẩu xác nhận có khớp không
+            //if (registerDto.Password != registerDto.ConfirmPassword)
+            //{
+            //    return BadRequest("Mật khẩu và xác nhận mật khẩu không khớp.");
+            //}
 
             // Tạo một đối tượng CustomUser mới
             var user = new ApplicationUser

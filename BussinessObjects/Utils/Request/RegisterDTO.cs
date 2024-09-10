@@ -1,5 +1,4 @@
 ﻿
-
 namespace BussinessObjects.Utils.Request
 {
     public class RegisterDTO
