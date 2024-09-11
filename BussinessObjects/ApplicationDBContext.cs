@@ -19,6 +19,10 @@ namespace BussinessObjects
             
         }
         public ApplicationDBContext(DbContextOptions<ApplicationDBContext> options) : base(options) { }
+
+        public DbSet<Profile> Profiles { get; set; }
+        public DbSet<Friend> Friends { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             var builder = new ConfigurationBuilder()

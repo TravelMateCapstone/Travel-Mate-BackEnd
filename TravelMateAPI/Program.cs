@@ -4,9 +4,14 @@ using BussinessObjects.Entities;
 using BussinessObjects.Utils.Request;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.OData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OData.Edm;
+using Microsoft.OData.ModelBuilder;
+using Repositories.Interface;
+using Repositories;
 using System.Text;
 
 namespace TravelMateAPI
@@ -18,9 +23,29 @@ namespace TravelMateAPI
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            builder.Services.AddDbContext<ApplicationDBContext>();
+            //builder.Services.AddDbContext<ApplicationDBContext>();
+            //or 
             //builder.Services.AddDbContext<ApplicationDBContext>(options =>
             // options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            //odata
+
+            ODataConventionModelBuilder modelBuilder = new ODataConventionModelBuilder();
+            modelBuilder.EntitySet<ApplicationUser>("ApplicationUsers");
+            modelBuilder.EntitySet<Profile>("Profiles");
+            modelBuilder.EntitySet<Friend>("Friends");
+
+            builder.Services.AddScoped(typeof(ApplicationDBContext));
+            builder.Services.AddAutoMapper(typeof(Program));
+
+            // Register your repositories
+            builder.Services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
+
+
+            builder.Services.AddControllers().AddOData(opt => opt.Select().Expand().Filter().OrderBy().Count().SetMaxTop(null)
+                            .AddRouteComponents("odata", modelBuilder.GetEdmModel()));
+            
+            
 
             builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
             {
@@ -37,7 +62,7 @@ namespace TravelMateAPI
 
                 // Cấu hình Lockout - khóa user
                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5); // Khóa 5 phút
-                options.Lockout.MaxFailedAccessAttempts = 5; // Thất bại 5 lầ thì khóa
+                options.Lockout.MaxFailedAccessAttempts = 5; // Thất bại 5 lần thì khóa
                 options.Lockout.AllowedForNewUsers = true;
 
                 // Cấu hình về User.
@@ -46,11 +71,12 @@ namespace TravelMateAPI
                 options.User.RequireUniqueEmail = true;  // Email là duy nhất
 
                 // Cấu hình đăng nhập.
-                options.SignIn.RequireConfirmedEmail = false;            // Cấu hình xác thực địa chỉ email (email phải tồn tại)
+                options.SignIn.RequireConfirmedEmail = false;       //đăng tắt xác thực     // Cấu hình xác thực địa chỉ email (email phải tồn tại)
                 options.SignIn.RequireConfirmedPhoneNumber = false;     // Xác thực số điện thoại
             })
                 .AddEntityFrameworkStores<ApplicationDBContext>()
                 .AddDefaultTokenProviders();
+
 
             //Authentication
             builder.Services.AddAuthentication(options =>
@@ -72,6 +98,7 @@ namespace TravelMateAPI
                 };
             });
             builder.Services.AddScoped<TokenService>();
+
 
 
             builder.Services.AddControllers();

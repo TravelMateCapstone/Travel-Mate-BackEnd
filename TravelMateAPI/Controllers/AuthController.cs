@@ -10,7 +10,7 @@ using System.Text;
 
 namespace TravelMateAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("odata/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
     {

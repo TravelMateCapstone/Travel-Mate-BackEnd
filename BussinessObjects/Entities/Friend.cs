@@ -8,22 +8,18 @@ using System.Threading.Tasks;
 
 namespace BussinessObjects.Entities
 {
-    public class Profile
+    public class Friend
     {
         [Key]
         [Required]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int ProfileId { get; set; }
+        public int FriendId { get; set; }
         [Required]
         public int UserId { get; set; }
         [Required]
-        public string FullName { get; set; }
+        public string ContactUserId { get; set; }
         [Required]
-        public string Address { get; set; }
-        [Required]
-        public string Phone { get; set; }
-
-        public string ImageUser { get; set; }
+        public DateTime CreatedAt { get; set; }
 
         public virtual ApplicationUser? ApplicationUser { get; set; }
     }
