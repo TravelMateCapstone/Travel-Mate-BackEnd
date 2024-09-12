@@ -8,7 +8,7 @@ trigger:
 - dev
 pr:
 - feature/*
-- main
+- master
 - dev 
 
 pool:
