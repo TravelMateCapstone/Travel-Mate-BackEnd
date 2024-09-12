@@ -5,13 +5,10 @@ using BussinessObjects.Utils.Request;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.OData;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OData.Edm;
 using Microsoft.OData.ModelBuilder;
-using Repositories.Interface;
 using Repositories;
+using Repositories.Interface;
 using System.Text;
 
 namespace TravelMateAPI
@@ -22,6 +19,15 @@ namespace TravelMateAPI
         {
             var builder = WebApplication.CreateBuilder(args);
 
+
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAllOrigins",
+                    builder => builder
+                        .AllowAnyOrigin()    // Allows all origins
+                        .AllowAnyMethod()    // Allows all HTTP methods
+                        .AllowAnyHeader());  // Allows all headers
+            });
             // Add services to the container.
             //builder.Services.AddDbContext<ApplicationDBContext>();
             //or 
@@ -29,6 +35,7 @@ namespace TravelMateAPI
             // options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             //odata
+
 
             ODataConventionModelBuilder modelBuilder = new ODataConventionModelBuilder();
             modelBuilder.EntitySet<ApplicationUser>("ApplicationUsers");
@@ -44,8 +51,8 @@ namespace TravelMateAPI
 
             builder.Services.AddControllers().AddOData(opt => opt.Select().Expand().Filter().OrderBy().Count().SetMaxTop(null)
                             .AddRouteComponents("odata", modelBuilder.GetEdmModel()));
-            
-            
+
+
 
             builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
             {
@@ -114,8 +121,11 @@ namespace TravelMateAPI
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-            
+
             app.UseHttpsRedirection();
+
+            // Use CORS policy
+            app.UseCors("AllowAllOrigins");
 
             app.UseAuthentication();
 
