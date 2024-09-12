@@ -6,7 +6,10 @@
 trigger:
 - master
 - dev
-
+pr:
+- feature/*
+- main
+- dev 
 
 pool:
   vmImage: ubuntu-latest
