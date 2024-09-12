@@ -1,21 +1,25 @@
 ﻿using BussinessObjects.Entities;
-using BussinessObjects.Utils.Reponse;
 using BussinessObjects.Utils.Request;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace TravelMateAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("odata/[controller]")]
     [ApiController]
-    public class AccountController : ControllerBase
+    public class AuthController : ControllerBase
     {
+        
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly TokenService _tokenService;
 
-        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, TokenService tokenService)
+        public AuthController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, TokenService tokenService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -23,7 +27,7 @@ namespace TravelMateAPI.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
+        public async Task<IActionResult> Login([FromBody] LoginDTO loginDto)
         {
             var user = await _userManager.FindByNameAsync(loginDto.Username);
             if (user == null) return Unauthorized();
@@ -37,7 +41,7 @@ namespace TravelMateAPI.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
+        public async Task<IActionResult> Register([FromBody] RegisterDTO registerDto)
         {
             // Kiểm tra xem username hoặc email đã tồn tại chưa
             if (await _userManager.FindByNameAsync(registerDto.Username) != null)
@@ -49,6 +53,11 @@ namespace TravelMateAPI.Controllers
             {
                 return BadRequest("Email is already registered.");
             }
+            //  Kiểm tra mật khẩu xác nhận có khớp không
+            //if (registerDto.Password != registerDto.ConfirmPassword)
+            //{
+            //    return BadRequest("Mật khẩu và xác nhận mật khẩu không khớp.");
+            //}
 
             // Tạo một đối tượng CustomUser mới
             var user = new ApplicationUser

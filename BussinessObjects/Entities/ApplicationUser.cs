@@ -11,5 +11,7 @@ namespace BussinessObjects.Entities
     {
         public string FullName { get; set; }
 
+        public ICollection<Profile>? Profiles { get; set; }
+        public ICollection<Friend>? Friends { get; set; }
     }
 }
