@@ -12,6 +12,5 @@ namespace TravelMateAPI
 
         public string? Test { get; set; }
 
-        public string? BranchTest { get; set; }
     }
 }
