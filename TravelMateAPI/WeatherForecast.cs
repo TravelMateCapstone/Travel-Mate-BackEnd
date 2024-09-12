@@ -10,8 +10,5 @@ namespace TravelMateAPI
 
         public string? Summary { get; set; }
 
-        public string? test
-        {
-            get; set;
-        }
     }
+}
