@@ -10,6 +10,8 @@ using Microsoft.OData.ModelBuilder;
 using Repositories;
 using Repositories.Interface;
 using System.Text;
+using TravelMateAPI.Services.Email;
+using Microsoft.Extensions.Configuration;
 
 namespace TravelMateAPI
 {
@@ -99,6 +101,9 @@ namespace TravelMateAPI
             });
             builder.Services.AddScoped<TokenService>();
 
+            var mailSettings = builder.Configuration.GetSection("MailSettings");
+            builder.Services.Configure<MailSettings>(mailSettings);
+            builder.Services.AddScoped<IMailServiceSystem, SendMailService>();
 
 
             builder.Services.AddControllers();
