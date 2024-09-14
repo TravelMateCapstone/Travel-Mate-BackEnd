@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using TravelMateAPI.Services.Email;
 
 namespace TravelMateAPI.Controllers
 {
@@ -18,12 +19,14 @@ namespace TravelMateAPI.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly TokenService _tokenService;
+        private readonly IMailServiceSystem _mailService;
 
-        public AuthController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, TokenService tokenService)
+        public AuthController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, TokenService tokenService, IMailServiceSystem mailService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _tokenService = tokenService;
+            _mailService = mailService;
         }
 
         [HttpPost("login")]
@@ -70,11 +73,33 @@ namespace TravelMateAPI.Controllers
             // Tạo người dùng với password
             var result = await _userManager.CreateAsync(user, registerDto.Password);
             if (!result.Succeeded) return BadRequest(result.Errors);
+            //gửi mail 
+            MailContent content = new MailContent
+            {
+                To = user.Email,
+                Subject = "Travel Mate",
+                Body = "<p><strong>Xin chào ❤ Hãy trải nhiệm ở trên Travel Mate </strong></p> <a href='https://travelmateapp.azurewebsites.net/'>Bấm vào đây</a>"
+            };
+
+            await _mailService.SendMail(content);
 
             // Sau khi đăng ký thành công, có thể đăng nhập tự động và trả về token
             var token = _tokenService.GenerateToken(user);
 
             return Ok(new { Token = token });
+        }
+        [HttpPost("sendmail")]
+        public async Task<IActionResult> SendMail([FromBody] MailContent mailContent)
+        {
+
+            if (string.IsNullOrEmpty(mailContent.To) || string.IsNullOrEmpty(mailContent.Subject) || string.IsNullOrEmpty(mailContent.Body))
+            {
+                return BadRequest("Email, subject, and body are required.");
+            }
+
+            await _mailService.SendMail(mailContent);
+            return Ok("Email has been sent.");
+
         }
     }
 }
