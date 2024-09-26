@@ -4,6 +4,7 @@ using BussinessObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BussinessObjects.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20240915095432_add another table v2")]
+    partial class addanothertablev2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,23 +24,6 @@ namespace BussinessObjects.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("BussinessObjects.Entities.Activity", b =>
-                {
-                    b.Property<int>("ActivityId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ActivityId"));
-
-                    b.Property<string>("ActivityName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ActivityId");
-
-                    b.ToTable("Activities");
-                });
 
             modelBuilder.Entity("BussinessObjects.Entities.ApplicationRole", b =>
                 {
@@ -172,23 +158,6 @@ namespace BussinessObjects.Migrations
                     b.ToTable("Friends");
                 });
 
-            modelBuilder.Entity("BussinessObjects.Entities.Location", b =>
-                {
-                    b.Property<int>("LocationId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LocationId"));
-
-                    b.Property<string>("LocationName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("LocationId");
-
-                    b.ToTable("Locations");
-                });
-
             modelBuilder.Entity("BussinessObjects.Entities.Profile", b =>
                 {
                     b.Property<int>("ProfileId")
@@ -224,46 +193,6 @@ namespace BussinessObjects.Migrations
                     b.HasIndex("ApplicationUserId");
 
                     b.ToTable("Profiles");
-                });
-
-            modelBuilder.Entity("BussinessObjects.Entities.UserActivity", b =>
-                {
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ActivityId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ApplicationUserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("UserId", "ActivityId");
-
-                    b.HasIndex("ActivityId");
-
-                    b.HasIndex("ApplicationUserId");
-
-                    b.ToTable("UserActivities");
-                });
-
-            modelBuilder.Entity("BussinessObjects.Entities.UserLocation", b =>
-                {
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("LocationId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ApplicationUserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("UserId", "LocationId");
-
-                    b.HasIndex("ApplicationUserId");
-
-                    b.HasIndex("LocationId");
-
-                    b.ToTable("UserLocations");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -387,40 +316,6 @@ namespace BussinessObjects.Migrations
                     b.Navigation("ApplicationUser");
                 });
 
-            modelBuilder.Entity("BussinessObjects.Entities.UserActivity", b =>
-                {
-                    b.HasOne("BussinessObjects.Entities.Activity", "Activity")
-                        .WithMany()
-                        .HasForeignKey("ActivityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BussinessObjects.Entities.ApplicationUser", "ApplicationUser")
-                        .WithMany("UserActivitys")
-                        .HasForeignKey("ApplicationUserId");
-
-                    b.Navigation("Activity");
-
-                    b.Navigation("ApplicationUser");
-                });
-
-            modelBuilder.Entity("BussinessObjects.Entities.UserLocation", b =>
-                {
-                    b.HasOne("BussinessObjects.Entities.ApplicationUser", "ApplicationUser")
-                        .WithMany("UserLocations")
-                        .HasForeignKey("ApplicationUserId");
-
-                    b.HasOne("BussinessObjects.Entities.Location", "Location")
-                        .WithMany()
-                        .HasForeignKey("LocationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ApplicationUser");
-
-                    b.Navigation("Location");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.HasOne("BussinessObjects.Entities.ApplicationRole", null)
@@ -477,10 +372,6 @@ namespace BussinessObjects.Migrations
                     b.Navigation("Friends");
 
                     b.Navigation("Profiles");
-
-                    b.Navigation("UserActivitys");
-
-                    b.Navigation("UserLocations");
                 });
 #pragma warning restore 612, 618
         }

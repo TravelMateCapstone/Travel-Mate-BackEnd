@@ -22,6 +22,10 @@ namespace BussinessObjects
 
         public DbSet<Profile> Profiles { get; set; }
         public DbSet<Friend> Friends { get; set; }
+        public DbSet<Location> Locations { get; set; }
+        public DbSet<Activity> Activities { get; set; }
+        public DbSet<UserLocation> UserLocations { get; set; }
+        public DbSet<UserActivity> UserActivities { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -51,8 +55,10 @@ namespace BussinessObjects
                 }
             }
 
-
-
+            modelBuilder.Entity<UserLocation>()
+            .HasKey(ul => new { ul.UserId, ul.LocationId });
+            modelBuilder.Entity<UserActivity>()
+                .HasKey(ua => new { ua.UserId, ua.ActivityId });
 
 
 

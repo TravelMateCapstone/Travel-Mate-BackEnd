@@ -15,6 +15,9 @@ using Repositories;
 using System.Text;
 using TravelMateAPI.Services.Email;
 using Microsoft.Extensions.Configuration;
+using TravelMateAPI.Services.Auth;
+using Microsoft.OpenApi.Models;
+using DotNetEnv;
 
 namespace TravelMateAPI
 {
@@ -25,12 +28,8 @@ namespace TravelMateAPI
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            //builder.Services.AddDbContext<ApplicationDBContext>();
-            //or 
-            //builder.Services.AddDbContext<ApplicationDBContext>(options =>
-            // options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-            //odata
+            Env.Load();
+            //odata 
 
             ODataConventionModelBuilder modelBuilder = new ODataConventionModelBuilder();
             modelBuilder.EntitySet<ApplicationUser>("ApplicationUsers");
@@ -40,15 +39,18 @@ namespace TravelMateAPI
             builder.Services.AddScoped(typeof(ApplicationDBContext));
             builder.Services.AddAutoMapper(typeof(Program));
 
-            // Register your repositories
-            builder.Services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
-
-
             builder.Services.AddControllers().AddOData(opt => opt.Select().Expand().Filter().OrderBy().Count().SetMaxTop(null)
                             .AddRouteComponents("odata", modelBuilder.GetEdmModel()));
-            
-            
 
+            var jwtSettings = new JwtSettings
+            {
+                SecretKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY"),
+                Issuer = Environment.GetEnvironmentVariable("JWT_ISSUER"),
+                Audience = Environment.GetEnvironmentVariable("JWT_AUDIENCE"),
+                DurationInMinutes = int.Parse(Environment.GetEnvironmentVariable("JWT_DURATION_IN_MINUTES"))
+            };
+
+            builder.Services.AddSingleton(jwtSettings);
             builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
             {
                 // Cấu hình tùy chỉnh cho Identity nếu cần
@@ -94,23 +96,86 @@ namespace TravelMateAPI
                     ValidateAudience = true,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
-                    ValidAudience = builder.Configuration["JwtSettings:Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:SecretKey"]))
+                    //ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
+                    //ValidAudience = builder.Configuration["JwtSettings:Audience"],
+                    //IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:SecretKey"]))
+                    ValidIssuer = jwtSettings.Issuer,
+                    ValidAudience = jwtSettings.Audience,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecretKey))
                 };
-            });
-            builder.Services.AddScoped<TokenService>();
+            })
+            .AddGoogle(options =>
+            {
+                IConfigurationSection googleAuthSection = builder.Configuration.GetSection("Authentication:Google");
+                //options.ClientId = googleAuthSection["ClientId"];
+                //options.ClientSecret = googleAuthSection["ClientSecret"];
+                options.ClientId = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_ID");
+                options.ClientSecret = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_SECRET");
+                //options.CallbackPath = "/signin-google";
+            }); 
 
-            var mailSettings = builder.Configuration.GetSection("MailSettings");
-            builder.Services.Configure<MailSettings>(mailSettings);
+            builder.Services.AddScoped<TokenService>();
+            //builder.Services.AddHostedService<AccountCleanupService>();
+
+            //var mailSettings = builder.Configuration.GetSection("MailSettings");
+            //builder.Services.Configure<MailSettings>(mailSettings);
+            var mailSettings = new MailSettings
+            {
+                Mail = Environment.GetEnvironmentVariable("MAIL_ADDRESS"),
+                DisplayName = Environment.GetEnvironmentVariable("MAIL_DISPLAY_NAME"),
+                Password = Environment.GetEnvironmentVariable("MAIL_PASSWORD"),
+                Host = Environment.GetEnvironmentVariable("MAIL_HOST"),
+                Port = int.Parse(Environment.GetEnvironmentVariable("MAIL_PORT"))
+            };
+
+            builder.Services.AddSingleton(mailSettings);
             builder.Services.AddScoped<IMailServiceSystem, SendMailService>();
+
+            // Register your repositories
+            builder.Services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
+
+
 
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(
+                c =>
+                {
+                    c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
 
+                    // Thêm scheme mặc định là HTTPS nếu API chạy HTTPS
+                    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                    {
+                        In = ParameterLocation.Header,
+                        Description = "Please insert JWT with Bearer into field",
+                        Name = "Authorization",
+                        Type = SecuritySchemeType.ApiKey,
+                        Scheme = "Bearer"
+                    });
+
+                    c.AddSecurityRequirement(new OpenApiSecurityRequirement {
+                    {
+                        new OpenApiSecurityScheme {
+                            Reference = new OpenApiReference {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        new string[] { }
+                    }});
+                }
+            );
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll",
+                    builder => builder
+                        .AllowAnyOrigin()    // Allows all origins
+                        .AllowAnyMethod()    // Allows all HTTP methods
+                        .AllowAnyHeader());  // Allows all headers
+            });
+            
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -121,6 +186,8 @@ namespace TravelMateAPI
             }
             
             app.UseHttpsRedirection();
+            // Use CORS policy
+            app.UseCors("AllowAll");
 
             app.UseAuthentication();
 
