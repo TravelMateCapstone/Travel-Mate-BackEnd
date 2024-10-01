@@ -4,10 +4,14 @@ using BussinessObjects.Entities;
 using BussinessObjects.Utils.Request;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.OData;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OData.ModelBuilder;
+using Repositories;
+using Repositories.Interface;
 using System.Text;
+using TravelMateAPI.Services.Email;
+using Microsoft.Extensions.Configuration;
 
 namespace TravelMateAPI
 {
@@ -17,9 +21,33 @@ namespace TravelMateAPI
         {
             var builder = WebApplication.CreateBuilder(args);
 
+
+            
             // Add services to the container.
-            builder.Services.AddDbContext<ApplicationDBContext>(options =>
-             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+            //builder.Services.AddDbContext<ApplicationDBContext>();
+            //or 
+            //builder.Services.AddDbContext<ApplicationDBContext>(options =>
+            // options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            //odata
+
+
+            ODataConventionModelBuilder modelBuilder = new ODataConventionModelBuilder();
+            modelBuilder.EntitySet<ApplicationUser>("ApplicationUsers");
+            modelBuilder.EntitySet<Profile>("Profiles");
+            modelBuilder.EntitySet<Friend>("Friends");
+
+            builder.Services.AddScoped(typeof(ApplicationDBContext));
+            builder.Services.AddAutoMapper(typeof(Program));
+
+            // Register your repositories
+            builder.Services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
+
+
+            builder.Services.AddControllers().AddOData(opt => opt.Select().Expand().Filter().OrderBy().Count().SetMaxTop(null)
+                            .AddRouteComponents("odata", modelBuilder.GetEdmModel()));
+
+
 
             builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
             {
@@ -36,7 +64,7 @@ namespace TravelMateAPI
 
                 // Cấu hình Lockout - khóa user
                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5); // Khóa 5 phút
-                options.Lockout.MaxFailedAccessAttempts = 5; // Thất bại 5 lầ thì khóa
+                options.Lockout.MaxFailedAccessAttempts = 5; // Thất bại 5 lần thì khóa
                 options.Lockout.AllowedForNewUsers = true;
 
                 // Cấu hình về User.
@@ -45,11 +73,12 @@ namespace TravelMateAPI
                 options.User.RequireUniqueEmail = true;  // Email là duy nhất
 
                 // Cấu hình đăng nhập.
-                options.SignIn.RequireConfirmedEmail = true;            // Cấu hình xác thực địa chỉ email (email phải tồn tại)
+                options.SignIn.RequireConfirmedEmail = false;       //đăng tắt xác thực     // Cấu hình xác thực địa chỉ email (email phải tồn tại)
                 options.SignIn.RequireConfirmedPhoneNumber = false;     // Xác thực số điện thoại
             })
                 .AddEntityFrameworkStores<ApplicationDBContext>()
                 .AddDefaultTokenProviders();
+
 
             //Authentication
             builder.Services.AddAuthentication(options =>
@@ -72,11 +101,23 @@ namespace TravelMateAPI
             });
             builder.Services.AddScoped<TokenService>();
 
+            var mailSettings = builder.Configuration.GetSection("MailSettings");
+            builder.Services.Configure<MailSettings>(mailSettings);
+            builder.Services.AddScoped<IMailServiceSystem, SendMailService>();
+
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAllOrigins",
+                    builder => builder
+                        .AllowAnyOrigin()    // Allows all origins
+                        .AllowAnyMethod()    // Allows all HTTP methods
+                        .AllowAnyHeader());  // Allows all headers
+            });
 
             var app = builder.Build();
 
@@ -86,9 +127,13 @@ namespace TravelMateAPI
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-            app.UseAuthentication();
-            app.UseAuthorization();
+
             app.UseHttpsRedirection();
+
+            // Use CORS policy
+            app.UseCors("AllowAllOrigins");
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 
