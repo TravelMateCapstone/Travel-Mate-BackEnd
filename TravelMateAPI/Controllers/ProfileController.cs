@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.OData.Routing.Controllers;
 using Repositories.Interface;
 using BussinessObjects.Entities;
 using TravelMateAPI.Services.Firebase;
+using FirebaseAdmin.Messaging;
 
 namespace TravelMateAPI.Controllers
 {
@@ -65,38 +66,6 @@ namespace TravelMateAPI.Controllers
             return NoContent();
         }
 
-        //// POST: odata/Profiles/UploadImage
-        //[HttpPost("UploadImage")]
-        //public async Task<IActionResult> UploadImage([FromForm] IFormFile file, [FromForm] string userId)
-        //{
-        //    if (file == null || file.Length == 0)
-        //        return BadRequest("File cannot be empty");
-
-        //    try
-        //    {
-        //        // Upload file lên Firebase
-        //        var imageUrl = await _firebaseService.UploadFileAsync(file, userId);
-
-        //        // Lấy thông tin Profile của người dùng
-        //        var profile = await _profileRepository.GetProfileByIdAsync(userId);
-        //        if (profile == null)
-        //        {
-        //            return NotFound($"Profile with UserId '{userId}' not found.");
-        //        }
-
-        //        // Cập nhật URL của hình ảnh vào Profile
-        //        profile.ImageUser = imageUrl;
-        //        await _profileRepository.UpdateProfileAsync(profile);
-
-        //        return Ok(new { imageUrl });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode(500, $"Internal server error: {ex.Message}");
-        //    }
-        //}
-        // Giả sử UserId là kiểu string trong Profile
-
         // POST: odata/Profiles/UploadImage
         [HttpPost("UploadImage")]
         public async Task<IActionResult> UploadImage([FromForm] IFormFile file, [FromForm] string userId) // Đảm bảo userId là string
@@ -127,5 +96,27 @@ namespace TravelMateAPI.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
-    }
+
+        // API để lấy imageURL theo UserId
+        [HttpGet("GetImageUrl/{userId}")]
+        public async Task<IActionResult> GetImageUrl(string userId)
+            {
+                // Lấy thông tin Profile dựa trên UserId
+                var profile = await _profileRepository.GetProfileByIdAsync(userId);
+
+                if (profile == null)
+                {
+                    return NotFound($"Profile with UserId '{userId}' not found.");
+                }
+
+                // Kiểm tra nếu imageURL có tồn tại
+                if (string.IsNullOrEmpty(profile.ImageUser))
+                {
+                    return NotFound("No image URL found for this user.");
+                }
+
+                // Trả về URL của hình ảnh
+                return Ok(new { imageUrl = profile.ImageUser });
+            }
+        }
 }
