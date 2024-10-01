@@ -67,6 +67,32 @@ namespace BussinessObjects.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("Roles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "user",
+                            NormalizedName = "USER"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "traveler",
+                            NormalizedName = "TRAVELER"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "local",
+                            NormalizedName = "LOCAL"
+                        });
                 });
 
             modelBuilder.Entity("BussinessObjects.Entities.ApplicationUser", b =>
@@ -144,6 +170,74 @@ namespace BussinessObjects.Migrations
                     b.ToTable("Users", (string)null);
                 });
 
+            modelBuilder.Entity("BussinessObjects.Entities.Event", b =>
+                {
+                    b.Property<int>("EventId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EventId"));
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CreaterUserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("EndAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("EventLocation")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EventName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("StartAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("EventId");
+
+                    b.ToTable("Events");
+                });
+
+            modelBuilder.Entity("BussinessObjects.Entities.EventParticipants", b =>
+                {
+                    b.Property<int>("EventParticipantId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EventParticipantId"));
+
+                    b.Property<int?>("ApplicationUserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("EventId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("JoinedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("Notification")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("EventParticipantId");
+
+                    b.HasIndex("ApplicationUserId");
+
+                    b.HasIndex("EventId");
+
+                    b.ToTable("EventParticipants");
+                });
+
             modelBuilder.Entity("BussinessObjects.Entities.Friend", b =>
                 {
                     b.Property<int>("FriendId")
@@ -162,8 +256,9 @@ namespace BussinessObjects.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("FriendId");
 
@@ -191,11 +286,8 @@ namespace BussinessObjects.Migrations
 
             modelBuilder.Entity("BussinessObjects.Entities.Profile", b =>
                 {
-                    b.Property<int>("ProfileId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProfileId"));
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Address")
                         .IsRequired()
@@ -209,17 +301,13 @@ namespace BussinessObjects.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ImageUser")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Phone")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ProfileId");
+                    b.HasKey("UserId");
 
                     b.HasIndex("ApplicationUserId");
 
@@ -228,8 +316,8 @@ namespace BussinessObjects.Migrations
 
             modelBuilder.Entity("BussinessObjects.Entities.UserActivity", b =>
                 {
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("ActivityId")
                         .HasColumnType("int");
@@ -248,8 +336,8 @@ namespace BussinessObjects.Migrations
 
             modelBuilder.Entity("BussinessObjects.Entities.UserLocation", b =>
                 {
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("LocationId")
                         .HasColumnType("int");
@@ -369,6 +457,23 @@ namespace BussinessObjects.Migrations
                     b.ToTable("UserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("BussinessObjects.Entities.EventParticipants", b =>
+                {
+                    b.HasOne("BussinessObjects.Entities.ApplicationUser", "ApplicationUser")
+                        .WithMany("EventParticipants")
+                        .HasForeignKey("ApplicationUserId");
+
+                    b.HasOne("BussinessObjects.Entities.Event", "Event")
+                        .WithMany("EventParticipants")
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
+
+                    b.Navigation("Event");
+                });
+
             modelBuilder.Entity("BussinessObjects.Entities.Friend", b =>
                 {
                     b.HasOne("BussinessObjects.Entities.ApplicationUser", "ApplicationUser")
@@ -474,6 +579,8 @@ namespace BussinessObjects.Migrations
 
             modelBuilder.Entity("BussinessObjects.Entities.ApplicationUser", b =>
                 {
+                    b.Navigation("EventParticipants");
+
                     b.Navigation("Friends");
 
                     b.Navigation("Profiles");
@@ -481,6 +588,11 @@ namespace BussinessObjects.Migrations
                     b.Navigation("UserActivitys");
 
                     b.Navigation("UserLocations");
+                });
+
+            modelBuilder.Entity("BussinessObjects.Entities.Event", b =>
+                {
+                    b.Navigation("EventParticipants");
                 });
 #pragma warning restore 612, 618
         }

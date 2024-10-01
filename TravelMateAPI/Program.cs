@@ -1,5 +1,4 @@
-﻿
-using BussinessObjects;
+﻿using BussinessObjects;
 using BussinessObjects.Entities;
 using BussinessObjects.Utils.Request;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -18,6 +17,7 @@ using Microsoft.Extensions.Configuration;
 using TravelMateAPI.Services.Auth;
 using Microsoft.OpenApi.Models;
 using DotNetEnv;
+using DataAccess;
 
 namespace TravelMateAPI
 {
@@ -35,6 +35,12 @@ namespace TravelMateAPI
             modelBuilder.EntitySet<ApplicationUser>("ApplicationUsers");
             modelBuilder.EntitySet<Profile>("Profiles");
             modelBuilder.EntitySet<Friend>("Friends");
+            modelBuilder.EntitySet<Event>("Events");
+            modelBuilder.EntitySet<EventParticipants>("EventParticipants");
+            modelBuilder.EntitySet<Location>("Locations");
+            modelBuilder.EntitySet<Activity>("Activities");
+            modelBuilder.EntitySet<UserLocation>("UserLocations");
+            modelBuilder.EntitySet<UserActivity>("UserActivities");
 
             builder.Services.AddScoped(typeof(ApplicationDBContext));
             builder.Services.AddAutoMapper(typeof(Program));
@@ -50,7 +56,10 @@ namespace TravelMateAPI
                 DurationInMinutes = int.Parse(Environment.GetEnvironmentVariable("JWT_DURATION_IN_MINUTES"))
             };
 
+
+
             builder.Services.AddSingleton(jwtSettings);
+            
             builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
             {
                 // Cấu hình tùy chỉnh cho Identity nếu cần
@@ -131,10 +140,30 @@ namespace TravelMateAPI
             builder.Services.AddSingleton(mailSettings);
             builder.Services.AddScoped<IMailServiceSystem, SendMailService>();
 
+            //firebase 
+            var firebaseConfig = new
+            {
+                ApiKey = Env.GetString("FIREBASE_API_KEY"),
+                AuthDomain = Env.GetString("FIREBASE_AUTH_DOMAIN"),
+                ProjectId = Env.GetString("FIREBASE_PROJECT_ID"),
+                StorageBucket = Env.GetString("FIREBASE_STORAGE_BUCKET"),
+                MessagingSenderId = Env.GetString("FIREBASE_MESSAGING_SENDER_ID"),
+                AppId = Env.GetString("FIREBASE_APP_ID"),
+                MeasurementId = Env.GetString("FIREBASE_MEASUREMENT_ID")
+            };
+            builder.Services.AddSingleton(firebaseConfig);
+
             // Register your repositories
+            builder.Services.AddScoped<IProfileRepository, ProfileRepository>();
             builder.Services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
-
-
+            // Đăng ký FindLocalDAO
+            builder.Services.AddScoped<IFindLocalRepository, FindLocalRepository>();
+            builder.Services.AddScoped<IEventRepository, EventRepository>();
+            builder.Services.AddScoped<IEventParticipantsRepository, EventParticipantsRepository>();
+            builder.Services.AddScoped<IActivityRepository, ActivityRepository>();
+            builder.Services.AddScoped<ILocationRepository, LocationRepository>();
+            builder.Services.AddScoped<IUserActivitiesRepository, UserActivitiesRepository>();
+            builder.Services.AddScoped<IUserLocationsRepository, UserLocationsRepository>();
 
 
             builder.Services.AddControllers();

@@ -26,6 +26,9 @@ namespace BussinessObjects
         public DbSet<Activity> Activities { get; set; }
         public DbSet<UserLocation> UserLocations { get; set; }
         public DbSet<UserActivity> UserActivities { get; set; }
+        public DbSet<Event> Events { get; set; }
+        public DbSet<EventParticipants> EventParticipants { get; set; }
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -61,12 +64,13 @@ namespace BussinessObjects
                 .HasKey(ua => new { ua.UserId, ua.ActivityId });
 
 
-
-
-
-
-
-
+            // Seed data cho các role
+            modelBuilder.Entity<ApplicationRole>().HasData(
+                new ApplicationRole { Id = 1, Name = "admin", NormalizedName = "ADMIN" },
+                new ApplicationRole { Id = 2, Name = "user", NormalizedName = "USER" },
+                new ApplicationRole { Id = 3, Name = "traveler", NormalizedName = "TRAVELER" },
+                new ApplicationRole { Id = 4, Name = "local", NormalizedName = "LOCAL" }
+            );
 
 
 

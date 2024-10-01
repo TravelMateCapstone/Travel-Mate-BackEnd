@@ -15,7 +15,7 @@ namespace BussinessObjects.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int FriendId { get; set; }
         [Required]
-        public int UserId { get; set; }
+        public string UserId { get; set; }
         [Required]
         public string ContactUserId { get; set; }
         [Required]

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BussinessObjects.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20240911162816_add another table v1")]
-    partial class addanothertablev1
+    [Migration("20241001143317_Add another table v4")]
+    partial class Addanothertablev4
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,23 @@ namespace BussinessObjects.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("BussinessObjects.Entities.Activity", b =>
+                {
+                    b.Property<int>("ActivityId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ActivityId"));
+
+                    b.Property<string>("ActivityName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ActivityId");
+
+                    b.ToTable("Activities");
+                });
 
             modelBuilder.Entity("BussinessObjects.Entities.ApplicationRole", b =>
                 {
@@ -53,6 +70,32 @@ namespace BussinessObjects.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("Roles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "user",
+                            NormalizedName = "USER"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "traveler",
+                            NormalizedName = "TRAVELER"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "local",
+                            NormalizedName = "LOCAL"
+                        });
                 });
 
             modelBuilder.Entity("BussinessObjects.Entities.ApplicationUser", b =>
@@ -104,6 +147,9 @@ namespace BussinessObjects.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<DateTime>("RegistrationTime")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
@@ -127,6 +173,74 @@ namespace BussinessObjects.Migrations
                     b.ToTable("Users", (string)null);
                 });
 
+            modelBuilder.Entity("BussinessObjects.Entities.Event", b =>
+                {
+                    b.Property<int>("EventId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EventId"));
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CreaterUserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("EndAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("EventLocation")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EventName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("StartAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("EventId");
+
+                    b.ToTable("Events");
+                });
+
+            modelBuilder.Entity("BussinessObjects.Entities.EventParticipants", b =>
+                {
+                    b.Property<int>("EventParticipantId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EventParticipantId"));
+
+                    b.Property<int?>("ApplicationUserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("EventId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("JoinedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("Notification")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("EventParticipantId");
+
+                    b.HasIndex("ApplicationUserId");
+
+                    b.HasIndex("EventId");
+
+                    b.ToTable("EventParticipants");
+                });
+
             modelBuilder.Entity("BussinessObjects.Entities.Friend", b =>
                 {
                     b.Property<int>("FriendId")
@@ -145,8 +259,9 @@ namespace BussinessObjects.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("FriendId");
 
@@ -155,13 +270,27 @@ namespace BussinessObjects.Migrations
                     b.ToTable("Friends");
                 });
 
-            modelBuilder.Entity("BussinessObjects.Entities.Profile", b =>
+            modelBuilder.Entity("BussinessObjects.Entities.Location", b =>
                 {
-                    b.Property<int>("ProfileId")
+                    b.Property<int>("LocationId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProfileId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LocationId"));
+
+                    b.Property<string>("LocationName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("LocationId");
+
+                    b.ToTable("Locations");
+                });
+
+            modelBuilder.Entity("BussinessObjects.Entities.Profile", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Address")
                         .IsRequired()
@@ -175,21 +304,57 @@ namespace BussinessObjects.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ImageUser")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Phone")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ProfileId");
+                    b.HasKey("UserId");
 
                     b.HasIndex("ApplicationUserId");
 
                     b.ToTable("Profiles");
+                });
+
+            modelBuilder.Entity("BussinessObjects.Entities.UserActivity", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("ActivityId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ApplicationUserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserId", "ActivityId");
+
+                    b.HasIndex("ActivityId");
+
+                    b.HasIndex("ApplicationUserId");
+
+                    b.ToTable("UserActivities");
+                });
+
+            modelBuilder.Entity("BussinessObjects.Entities.UserLocation", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("LocationId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ApplicationUserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserId", "LocationId");
+
+                    b.HasIndex("ApplicationUserId");
+
+                    b.HasIndex("LocationId");
+
+                    b.ToTable("UserLocations");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -295,6 +460,23 @@ namespace BussinessObjects.Migrations
                     b.ToTable("UserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("BussinessObjects.Entities.EventParticipants", b =>
+                {
+                    b.HasOne("BussinessObjects.Entities.ApplicationUser", "ApplicationUser")
+                        .WithMany("EventParticipants")
+                        .HasForeignKey("ApplicationUserId");
+
+                    b.HasOne("BussinessObjects.Entities.Event", "Event")
+                        .WithMany("EventParticipants")
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
+
+                    b.Navigation("Event");
+                });
+
             modelBuilder.Entity("BussinessObjects.Entities.Friend", b =>
                 {
                     b.HasOne("BussinessObjects.Entities.ApplicationUser", "ApplicationUser")
@@ -311,6 +493,40 @@ namespace BussinessObjects.Migrations
                         .HasForeignKey("ApplicationUserId");
 
                     b.Navigation("ApplicationUser");
+                });
+
+            modelBuilder.Entity("BussinessObjects.Entities.UserActivity", b =>
+                {
+                    b.HasOne("BussinessObjects.Entities.Activity", "Activity")
+                        .WithMany()
+                        .HasForeignKey("ActivityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BussinessObjects.Entities.ApplicationUser", "ApplicationUser")
+                        .WithMany("UserActivitys")
+                        .HasForeignKey("ApplicationUserId");
+
+                    b.Navigation("Activity");
+
+                    b.Navigation("ApplicationUser");
+                });
+
+            modelBuilder.Entity("BussinessObjects.Entities.UserLocation", b =>
+                {
+                    b.HasOne("BussinessObjects.Entities.ApplicationUser", "ApplicationUser")
+                        .WithMany("UserLocations")
+                        .HasForeignKey("ApplicationUserId");
+
+                    b.HasOne("BussinessObjects.Entities.Location", "Location")
+                        .WithMany()
+                        .HasForeignKey("LocationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
+
+                    b.Navigation("Location");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -366,9 +582,20 @@ namespace BussinessObjects.Migrations
 
             modelBuilder.Entity("BussinessObjects.Entities.ApplicationUser", b =>
                 {
+                    b.Navigation("EventParticipants");
+
                     b.Navigation("Friends");
 
                     b.Navigation("Profiles");
+
+                    b.Navigation("UserActivitys");
+
+                    b.Navigation("UserLocations");
+                });
+
+            modelBuilder.Entity("BussinessObjects.Entities.Event", b =>
+                {
+                    b.Navigation("EventParticipants");
                 });
 #pragma warning restore 612, 618
         }

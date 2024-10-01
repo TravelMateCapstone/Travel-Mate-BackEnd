@@ -15,5 +15,6 @@ namespace BussinessObjects.Entities
         public ICollection<Friend>? Friends { get; set; }
         public ICollection<UserActivity>? UserActivitys { get; set; }
         public ICollection<UserLocation>? UserLocations { get; set; }
+        public ICollection<EventParticipants>?  EventParticipants { get; set; }
     }
 }
