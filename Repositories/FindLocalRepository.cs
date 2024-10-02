@@ -20,13 +20,13 @@ namespace Repositories
             _findLocalDAO = findLocalDAO;
         }
 
-        public Task<ApplicationUser> GetTravelerByIdAsync(string userId) =>
+        public Task<ApplicationUser> GetTravelerByIdAsync(int userId) =>
             _findLocalDAO.GetTravelerByIdAsync(userId);
 
         public Task<List<ApplicationUser>> GetLocalsWithMatchingLocationsAsync(List<int> locationIds) =>
             _findLocalDAO.GetLocalsWithMatchingLocationsAsync(locationIds);
 
-        public Task<List<int>> GetUserActivityIdsAsync(string userId) =>
+        public Task<List<int>> GetUserActivityIdsAsync(int userId) =>
             _findLocalDAO.GetUserActivityIdsAsync(userId);
     }
 }

@@ -9,10 +9,10 @@ namespace Repositories.Interface
 {
     public interface IUserActivitiesRepository
     {
-        Task<IEnumerable<UserActivity>> GetAllUserActivitiesAsync();
-        Task<UserActivity> GetUserActivityByIdAsync(string userId, int activityId);
+        Task<List<UserActivity>> GetAllUserActivitiesAsync();
+        Task<UserActivity> GetUserActivityByIdAsync(int userId, int activityId);
         Task<UserActivity> AddUserActivityAsync(UserActivity newUserActivity);
         Task UpdateUserActivityAsync(UserActivity updatedUserActivity);
-        Task DeleteUserActivityAsync(string userId, int activityId);
+        Task DeleteUserActivityAsync(int userId, int activityId);
     }
 }

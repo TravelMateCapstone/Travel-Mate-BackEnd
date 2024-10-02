@@ -7,24 +7,29 @@ using BussinessObjects.Entities;
 
 namespace TravelMateAPI.Controllers
 {
-    [ApiController]
-    [Route("odata/[controller]")]
-    public class ActivityController : ODataController
+    //[ApiController]
+    //[Route("odata/[controller]")]
+    public class ActivitiesController : ODataController
     {
         private readonly IActivityRepository _activityRepository;
 
-        public ActivityController(IActivityRepository activityRepository)
+        public ActivitiesController(IActivityRepository activityRepository)
         {
             _activityRepository = activityRepository;
         }
 
         // GET: odata/Activities
         [EnableQuery]
-        public IActionResult GetAll()
+        public async Task<IActionResult> Get(ODataQueryOptions<ApplicationUser> queryOptions)
         {
-            var activities = _activityRepository.GetAllActivitiesAsync().Result.AsQueryable();
+            var activities = await _activityRepository.GetAllActivitiesAsync();
             return Ok(activities);
         }
+        //public IActionResult GetAll()
+        //{
+        //    var activities = _activityRepository.GetAllActivitiesAsync().Result.AsQueryable();
+        //    return Ok(activities);
+        //}
 
         // GET: odata/Activities(1)
         [EnableQuery]

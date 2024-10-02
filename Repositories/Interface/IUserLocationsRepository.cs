@@ -9,10 +9,10 @@ namespace Repositories.Interface
 {
     public interface IUserLocationsRepository
     {
-        Task<IEnumerable<UserLocation>> GetAllUserLocationsAsync();
-        Task<UserLocation> GetUserLocationByIdAsync(string userId, int locationId);
+        Task<List<UserLocation>> GetAllUserLocationsAsync();
+        Task<UserLocation> GetUserLocationByIdAsync(int userId, int locationId);
         Task<UserLocation> AddUserLocationAsync(UserLocation newUserLocation);
         Task UpdateUserLocationAsync(UserLocation updatedUserLocation);
-        Task DeleteUserLocationAsync(string userId, int locationId);
+        Task DeleteUserLocationAsync(int userId, int locationId);
     }
 }

@@ -6,16 +6,17 @@ using Repositories.Interface;
 using BussinessObjects.Entities;
 using TravelMateAPI.Services.Firebase;
 using FirebaseAdmin.Messaging;
+using Repositories;
 
 namespace TravelMateAPI.Controllers
 {
-    [ApiController]
-    [Route("odata/[controller]")]
-    public class ProfileController : ODataController
+    //[ApiController]
+    //[Route("odata/[controller]")]
+    public class ProfilesController : ODataController
     {
         private readonly IProfileRepository _profileRepository;
         private readonly FirebaseService _firebaseService;
-        public ProfileController(IProfileRepository profileRepository, FirebaseService firebaseService)
+        public ProfilesController(IProfileRepository profileRepository, FirebaseService firebaseService)
         {
             _profileRepository = profileRepository;
             _firebaseService = firebaseService;
@@ -23,15 +24,21 @@ namespace TravelMateAPI.Controllers
 
         // GET: odata/Profiles
         [EnableQuery] // Cho phép OData query
-        public IActionResult GetAll()
+        public async Task<IActionResult> Get(ODataQueryOptions<ApplicationUser> queryOptions)
         {
-            var profiles = _profileRepository.GetAllProfilesAsync().Result.AsQueryable();
+            var profiles = _profileRepository.GetAllProfilesAsync();
             return Ok(profiles);
         }
 
+        /*public IActionResult GetAll()
+        {
+            var profiles = _profileRepository.GetAllProfilesAsync().Result.AsQueryable();
+            return Ok(profiles);
+        }*/
+
         // GET: odata/Profiles(1)
         [EnableQuery] // Cho phép OData truy vấn theo UserId
-        public async Task<IActionResult> Get([FromODataUri] string key)
+        public async Task<IActionResult> Get([FromODataUri] int key)
         {
             var profile = await _profileRepository.GetProfileByIdAsync(key);
             if (profile == null)
@@ -49,7 +56,7 @@ namespace TravelMateAPI.Controllers
         }
 
         // PUT: odata/Profiles(1)
-        public async Task<IActionResult> Put([FromODataUri] string key, [FromBody] Profile profile)
+        public async Task<IActionResult> Put([FromODataUri] int key, [FromBody] Profile profile)
         {
             if (key != profile.UserId)
             {
@@ -60,7 +67,7 @@ namespace TravelMateAPI.Controllers
         }
 
         // DELETE: odata/Profiles(1)
-        public async Task<IActionResult> Delete([FromODataUri] string key)
+        public async Task<IActionResult> Delete([FromODataUri] int key)
         {
             await _profileRepository.DeleteProfileAsync(key);
             return NoContent();
@@ -68,7 +75,7 @@ namespace TravelMateAPI.Controllers
 
         // POST: odata/Profiles/UploadImage
         [HttpPost("UploadImage")]
-        public async Task<IActionResult> UploadImage([FromForm] IFormFile file, [FromForm] string userId) // Đảm bảo userId là string
+        public async Task<IActionResult> UploadImage([FromForm] IFormFile file, [FromForm] int userId) // Đảm bảo userId là string
         {
             if (file == null || file.Length == 0)
                 return BadRequest("File cannot be empty");
@@ -99,7 +106,7 @@ namespace TravelMateAPI.Controllers
 
         // API để lấy imageURL theo UserId
         [HttpGet("GetImageUrl/{userId}")]
-        public async Task<IActionResult> GetImageUrl(string userId)
+        public async Task<IActionResult> GetImageUrl(int userId)
             {
                 // Lấy thông tin Profile dựa trên UserId
                 var profile = await _profileRepository.GetProfileByIdAsync(userId);

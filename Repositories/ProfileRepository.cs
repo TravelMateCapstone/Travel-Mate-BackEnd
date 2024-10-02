@@ -18,12 +18,12 @@ namespace Repositories
             _profileDAO = ProfileDAO.Instance;
         }
 
-        public async Task<IEnumerable<Profile>> GetAllProfilesAsync()
+        public async Task<List<Profile>> GetAllProfilesAsync()
         {
             return await _profileDAO.GetAllProfilesAsync();
         }
 
-        public async Task<Profile> GetProfileByIdAsync(string userId)
+        public async Task<Profile> GetProfileByIdAsync(int userId)
         {
             return await _profileDAO.GetProfileByIdAsync(userId);
         }
@@ -38,7 +38,7 @@ namespace Repositories
             await _profileDAO.UpdateProfileAsync(updatedProfile);
         }
 
-        public async Task DeleteProfileAsync(string userId)
+        public async Task DeleteProfileAsync(int userId)
         {
             await _profileDAO.DeleteProfileAsync(userId);
         }

@@ -18,7 +18,7 @@ namespace DataAccess
             _dbContext = SingletonBase<LocationsDAO>._context;
         }
 
-        public async Task<IEnumerable<Location>> GetAllLocationsAsync()
+        public async Task<List<Location>> GetAllLocationsAsync()
         {
             return await _dbContext.Locations.ToListAsync();
         }

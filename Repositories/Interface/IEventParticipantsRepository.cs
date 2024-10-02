@@ -9,7 +9,7 @@ namespace Repositories.Interface
 {
     public interface IEventParticipantsRepository
     {
-        Task<IEnumerable<EventParticipants>> GetAllParticipantsAsync();
+        Task<List<EventParticipants>> GetAllParticipantsAsync();
         Task<EventParticipants> GetParticipantByIdAsync(int participantId);
         Task<EventParticipants> AddParticipantAsync(EventParticipants newParticipant);
         Task UpdateParticipantAsync(EventParticipants updatedParticipant);

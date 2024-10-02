@@ -18,7 +18,7 @@ namespace Repositories
             _eventParticipantsDAO = EventParticipantsDAO.Instance;
         }
 
-        public async Task<IEnumerable<EventParticipants>> GetAllParticipantsAsync()
+        public async Task<List<EventParticipants>> GetAllParticipantsAsync()
         {
             return await _eventParticipantsDAO.GetAllParticipantsAsync();
         }

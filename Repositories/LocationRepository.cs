@@ -18,7 +18,7 @@ namespace Repositories
             _locationsDAO = LocationsDAO.Instance;
         }
 
-        public async Task<IEnumerable<Location>> GetAllLocationsAsync()
+        public async Task<List<Location>> GetAllLocationsAsync()
         {
             return await _locationsDAO.GetAllLocationsAsync();
         }

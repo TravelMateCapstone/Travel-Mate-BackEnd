@@ -18,12 +18,12 @@ namespace Repositories
             _userLocationsDAO = UserLocationsDAO.Instance;
         }
 
-        public async Task<IEnumerable<UserLocation>> GetAllUserLocationsAsync()
+        public async Task<List<UserLocation>> GetAllUserLocationsAsync()
         {
             return await _userLocationsDAO.GetAllUserLocationsAsync();
         }
 
-        public async Task<UserLocation> GetUserLocationByIdAsync(string userId, int locationId)
+        public async Task<UserLocation> GetUserLocationByIdAsync(int userId, int locationId)
         {
             return await _userLocationsDAO.GetUserLocationByIdAsync(userId, locationId);
         }
@@ -38,7 +38,7 @@ namespace Repositories
             await _userLocationsDAO.UpdateUserLocationAsync(updatedUserLocation);
         }
 
-        public async Task DeleteUserLocationAsync(string userId, int locationId)
+        public async Task DeleteUserLocationAsync(int userId, int locationId)
         {
             await _userLocationsDAO.DeleteUserLocationAsync(userId, locationId);
         }

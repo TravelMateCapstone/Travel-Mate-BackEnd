@@ -9,7 +9,7 @@ namespace Repositories.Interface
 {
     public interface IActivityRepository
     {
-        Task<IEnumerable<Activity>> GetAllActivitiesAsync();
+        Task<List<Activity>> GetAllActivitiesAsync();
         Task<Activity> GetActivityByIdAsync(int activityId);
         Task<Activity> AddActivityAsync(Activity newActivity);
         Task UpdateActivityAsync(Activity updatedActivity);

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace BussinessObjects.Migrations
 {
     /// <inheritdoc />
-    public partial class Addanothertablev4 : Migration
+    public partial class Addanotherdatatablev4 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -156,8 +156,8 @@ namespace BussinessObjects.Migrations
                 {
                     FriendId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ContactUserId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    ContactUserId = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ApplicationUserId = table.Column<int>(type: "int", nullable: true)
                 },
@@ -175,7 +175,8 @@ namespace BussinessObjects.Migrations
                 name: "Profiles",
                 columns: table => new
                 {
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     FullName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Phone = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -196,7 +197,7 @@ namespace BussinessObjects.Migrations
                 name: "UserActivities",
                 columns: table => new
                 {
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false),
                     ActivityId = table.Column<int>(type: "int", nullable: false),
                     ApplicationUserId = table.Column<int>(type: "int", nullable: true)
                 },
@@ -241,7 +242,7 @@ namespace BussinessObjects.Migrations
                 name: "UserLocations",
                 columns: table => new
                 {
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false),
                     LocationId = table.Column<int>(type: "int", nullable: false),
                     ApplicationUserId = table.Column<int>(type: "int", nullable: true)
                 },
@@ -326,6 +327,36 @@ namespace BussinessObjects.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "Activities",
+                columns: new[] { "ActivityId", "ActivityName" },
+                values: new object[,]
+                {
+                    { 1, "Đi bộ" },
+                    { 2, "Đi phượt" },
+                    { 3, "Chơi golf" },
+                    { 4, "Tắm biển" },
+                    { 5, "Leo núi" },
+                    { 6, "Câu cá" },
+                    { 7, "Đi xe đạp" },
+                    { 8, "Tham quan văn hóa" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Locations",
+                columns: new[] { "LocationId", "LocationName" },
+                values: new object[,]
+                {
+                    { 1, "Hà Nội" },
+                    { 2, "Hồ Chí Minh" },
+                    { 3, "Đà Nẵng" },
+                    { 4, "Huế" },
+                    { 5, "Hội An" },
+                    { 6, "Nha Trang" },
+                    { 7, "Phú Quốc" },
+                    { 8, "Vịnh Hạ Long" }
+                });
+
+            migrationBuilder.InsertData(
                 table: "Roles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
@@ -334,6 +365,42 @@ namespace BussinessObjects.Migrations
                     { 2, null, "user", "USER" },
                     { 3, null, "traveler", "TRAVELER" },
                     { 4, null, "local", "LOCAL" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FullName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "RegistrationTime", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                values: new object[,]
+                {
+                    { 1, 0, "7a2154a1-078f-4822-82bc-0e99cef62925", "user1@example.com", false, "User One", false, null, null, null, null, null, false, new DateTime(2024, 10, 2, 4, 43, 3, 788, DateTimeKind.Utc).AddTicks(173), null, false, "user1" },
+                    { 2, 0, "ae034d15-4404-42bd-a3b0-20e498c35134", "user2@example.com", false, "User Two", false, null, null, null, null, null, false, new DateTime(2024, 10, 2, 4, 43, 3, 788, DateTimeKind.Utc).AddTicks(177), null, false, "user2" },
+                    { 3, 0, "78ff9a88-4fa0-4467-87d9-22e5bef5ac9d", "user3@example.com", false, "User Three", false, null, null, null, null, null, false, new DateTime(2024, 10, 2, 4, 43, 3, 788, DateTimeKind.Utc).AddTicks(188), null, false, "user3" },
+                    { 4, 0, "99a8303e-100c-4ca1-9c7b-298ad6298647", "user4@example.com", false, "User Four", false, null, null, null, null, null, false, new DateTime(2024, 10, 2, 4, 43, 3, 788, DateTimeKind.Utc).AddTicks(190), null, false, "user4" },
+                    { 5, 0, "c65182f0-0121-46ec-8e9e-7bd729738ceb", "user5@example.com", false, "User Five", false, null, null, null, null, null, false, new DateTime(2024, 10, 2, 4, 43, 3, 788, DateTimeKind.Utc).AddTicks(193), null, false, "user5" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "UserActivities",
+                columns: new[] { "ActivityId", "UserId", "ApplicationUserId" },
+                values: new object[,]
+                {
+                    { 1, 1, null },
+                    { 2, 1, null },
+                    { 1, 2, null },
+                    { 2, 3, null },
+                    { 3, 3, null }
+                });
+
+            migrationBuilder.InsertData(
+                table: "UserLocations",
+                columns: new[] { "LocationId", "UserId", "ApplicationUserId" },
+                values: new object[,]
+                {
+                    { 1, 1, null },
+                    { 2, 1, null },
+                    { 1, 2, null },
+                    { 2, 3, null },
+                    { 3, 3, null }
                 });
 
             migrationBuilder.CreateIndex(

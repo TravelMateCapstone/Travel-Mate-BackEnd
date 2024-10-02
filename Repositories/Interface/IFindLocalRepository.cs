@@ -9,8 +9,8 @@ namespace Repositories.Interface
 {
     public interface IFindLocalRepository
     {
-        Task<ApplicationUser> GetTravelerByIdAsync(string userId);
+        Task<ApplicationUser> GetTravelerByIdAsync(int userId);
         Task<List<ApplicationUser>> GetLocalsWithMatchingLocationsAsync(List<int> locationIds);
-        Task<List<int>> GetUserActivityIdsAsync(string userId);
+        Task<List<int>> GetUserActivityIdsAsync(int userId);
     }
 }

@@ -9,11 +9,11 @@ namespace Repositories.Interface
 {
     public interface IProfileRepository
     {
-        Task<IEnumerable<Profile>> GetAllProfilesAsync();
-        Task<Profile> GetProfileByIdAsync(string userId);
+        Task<List<Profile>> GetAllProfilesAsync();
+        Task<Profile> GetProfileByIdAsync(int userId);
         Task<Profile> AddProfileAsync(Profile newProfile);
         Task UpdateProfileAsync(Profile updatedProfile);
-        Task DeleteProfileAsync(string userId);
+        Task DeleteProfileAsync(int userId);
     }
 
 }

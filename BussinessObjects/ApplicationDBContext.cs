@@ -71,8 +71,94 @@ namespace BussinessObjects
                 new ApplicationRole { Id = 3, Name = "traveler", NormalizedName = "TRAVELER" },
                 new ApplicationRole { Id = 4, Name = "local", NormalizedName = "LOCAL" }
             );
+            modelBuilder.Entity<ApplicationUser>().HasData(
+                new ApplicationUser
+                {
+                    Id = 1,
+                    UserName = "user1",
+                    Email = "user1@example.com",
+                    FullName = "User One",
+                    EmailConfirmed = false,
+                    RegistrationTime = DateTime.UtcNow
+                },
+                new ApplicationUser
+                {
+                    Id = 2,
+                    UserName = "user2",
+                    Email = "user2@example.com",
+                    FullName = "User Two",
+                    EmailConfirmed = false,
+                    RegistrationTime = DateTime.UtcNow
+                },
+                new ApplicationUser
+                {
+                    Id = 3,
+                    UserName = "user3",
+                    Email = "user3@example.com",
+                    FullName = "User Three",
+                    EmailConfirmed = false,
+                    RegistrationTime = DateTime.UtcNow
+                },
+                new ApplicationUser
+                {
+                    Id = 4,
+                    UserName = "user4",
+                    Email = "user4@example.com",
+                    FullName = "User Four",
+                    EmailConfirmed = false,
+                    RegistrationTime = DateTime.UtcNow
+                },
+                new ApplicationUser
+                {
+                    Id = 5,
+                    UserName = "user5",
+                    Email = "user5@example.com",
+                    FullName = "User Five",
+                    EmailConfirmed = false,
+                    RegistrationTime = DateTime.UtcNow
+                }
+            );
 
+            // Seed data cho Locations (địa điểm trên lãnh thổ Việt Nam)
+            modelBuilder.Entity<Location>().HasData(
+                new Location { LocationId = 1, LocationName = "Hà Nội" },
+                new Location { LocationId = 2, LocationName = "Hồ Chí Minh" },
+                new Location { LocationId = 3, LocationName = "Đà Nẵng" },
+                new Location { LocationId = 4, LocationName = "Huế" },
+                new Location { LocationId = 5, LocationName = "Hội An" },
+                new Location { LocationId = 6, LocationName = "Nha Trang" },
+                new Location { LocationId = 7, LocationName = "Phú Quốc" },
+                new Location { LocationId = 8, LocationName = "Vịnh Hạ Long" }
+            );
 
+            // Seed data cho Activities (các sở thích và hoạt động)
+            modelBuilder.Entity<Activity>().HasData(
+                new Activity { ActivityId = 1, ActivityName = "Đi bộ" },
+                new Activity { ActivityId = 2, ActivityName = "Đi phượt" },
+                new Activity { ActivityId = 3, ActivityName = "Chơi golf" },
+                new Activity { ActivityId = 4, ActivityName = "Tắm biển" },
+                new Activity { ActivityId = 5, ActivityName = "Leo núi" },
+                new Activity { ActivityId = 6, ActivityName = "Câu cá" },
+                new Activity { ActivityId = 7, ActivityName = "Đi xe đạp" },
+                new Activity { ActivityId = 8, ActivityName = "Tham quan văn hóa" }
+            );
+            // Seed data cho bảng UserLocations
+            modelBuilder.Entity<UserLocation>().HasData(
+                new UserLocation { UserId = 1, LocationId = 1 },
+                new UserLocation { UserId = 1, LocationId = 2 },
+                new UserLocation { UserId = 2, LocationId = 1 },
+                new UserLocation { UserId = 3, LocationId = 3 },
+                new UserLocation { UserId = 3, LocationId = 2 }
+            );
+
+            // Seed data cho bảng UserActivities
+            modelBuilder.Entity<UserActivity>().HasData(
+                new UserActivity { UserId = 1, ActivityId = 1 },
+                new UserActivity { UserId = 1, ActivityId = 2 },
+                new UserActivity { UserId = 2, ActivityId = 1 },
+                new UserActivity { UserId = 3, ActivityId = 3 },
+                new UserActivity { UserId = 3, ActivityId = 2 }
+            );
 
 
             //modelBuilder.Entity<Role>().HasData(new List<Role>()

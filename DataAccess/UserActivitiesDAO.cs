@@ -18,12 +18,12 @@ namespace DataAccess
             _dbContext = SingletonBase<UserActivitiesDAO>._context;
         }
 
-        public async Task<IEnumerable<UserActivity>> GetAllUserActivitiesAsync()
+        public async Task<List<UserActivity>> GetAllUserActivitiesAsync()
         {
             return await _dbContext.UserActivities.Include(ua => ua.Activity).ToListAsync();
         }
 
-        public async Task<UserActivity> GetUserActivityByIdAsync(string userId, int activityId)
+        public async Task<UserActivity> GetUserActivityByIdAsync(int userId, int activityId)
         {
             return await _dbContext.UserActivities.FirstOrDefaultAsync(ua => ua.UserId == userId && ua.ActivityId == activityId);
         }
@@ -41,7 +41,7 @@ namespace DataAccess
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task DeleteUserActivityAsync(string userId, int activityId)
+        public async Task DeleteUserActivityAsync(int userId, int activityId)
         {
             var userActivity = await _dbContext.UserActivities.FirstOrDefaultAsync(ua => ua.UserId == userId && ua.ActivityId == activityId);
             if (userActivity != null)

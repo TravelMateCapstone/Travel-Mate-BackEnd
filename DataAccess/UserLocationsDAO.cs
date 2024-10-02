@@ -18,12 +18,12 @@ namespace DataAccess
             _dbContext = SingletonBase<UserLocationsDAO>._context;
         }
 
-        public async Task<IEnumerable<UserLocation>> GetAllUserLocationsAsync()
+        public async Task<List<UserLocation>> GetAllUserLocationsAsync()
         {
             return await _dbContext.UserLocations.Include(ul => ul.Location).ToListAsync();
         }
 
-        public async Task<UserLocation> GetUserLocationByIdAsync(string userId, int locationId)
+        public async Task<UserLocation> GetUserLocationByIdAsync(int userId, int locationId)
         {
             return await _dbContext.UserLocations.FirstOrDefaultAsync(ul => ul.UserId == userId && ul.LocationId == locationId);
         }
@@ -41,7 +41,7 @@ namespace DataAccess
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task DeleteUserLocationAsync(string userId, int locationId)
+        public async Task DeleteUserLocationAsync(int userId, int locationId)
         {
             var userLocation = await _dbContext.UserLocations.FirstOrDefaultAsync(ul => ul.UserId == userId && ul.LocationId == locationId);
             if (userLocation != null)

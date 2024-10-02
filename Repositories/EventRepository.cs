@@ -19,7 +19,7 @@ namespace Repositories
             _eventDAO = EventDAO.Instance;
         }
 
-        public async Task<IEnumerable<Event>> GetAllEventsAsync()
+        public async Task<List<Event>> GetAllEventsAsync()
         {
             return await _eventDAO.GetAllEventsAsync();
         }

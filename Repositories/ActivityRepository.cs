@@ -18,7 +18,7 @@ namespace Repositories
             _activitiesDAO = ActivitiesDAO.Instance;
         }
 
-        public async Task<IEnumerable<Activity>> GetAllActivitiesAsync()
+        public async Task<List<Activity>> GetAllActivitiesAsync()
         {
             return await _activitiesDAO.GetAllActivitiesAsync();
         }

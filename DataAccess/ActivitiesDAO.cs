@@ -18,7 +18,7 @@ namespace DataAccess
             _dbContext = SingletonBase<ActivitiesDAO>._context;
         }
 
-        public async Task<IEnumerable<Activity>> GetAllActivitiesAsync()
+        public async Task<List<Activity>> GetAllActivitiesAsync()
         {
             return await _dbContext.Activities.ToListAsync();
         }

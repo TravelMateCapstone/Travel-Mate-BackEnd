@@ -18,12 +18,12 @@ namespace Repositories
             _userActivitiesDAO = UserActivitiesDAO.Instance;
         }
 
-        public async Task<IEnumerable<UserActivity>> GetAllUserActivitiesAsync()
+        public async Task<List<UserActivity>> GetAllUserActivitiesAsync()
         {
             return await _userActivitiesDAO.GetAllUserActivitiesAsync();
         }
 
-        public async Task<UserActivity> GetUserActivityByIdAsync(string userId, int ActivityId)
+        public async Task<UserActivity> GetUserActivityByIdAsync(int userId, int ActivityId)
         {
             return await _userActivitiesDAO.GetUserActivityByIdAsync(userId, ActivityId);
         }
@@ -38,7 +38,7 @@ namespace Repositories
             await _userActivitiesDAO.UpdateUserActivityAsync(updatedUserActivity);
         }
 
-        public async Task DeleteUserActivityAsync(string userId, int ActivityId)
+        public async Task DeleteUserActivityAsync(int userId, int ActivityId)
         {
             await _userActivitiesDAO.DeleteUserActivityAsync(userId, ActivityId);
         }

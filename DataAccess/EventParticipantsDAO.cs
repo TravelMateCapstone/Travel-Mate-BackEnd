@@ -20,7 +20,7 @@ namespace DataAccess
         }
 
         // Phương thức lấy tất cả những người tham gia sự kiện
-        public async Task<IEnumerable<EventParticipants>> GetAllParticipantsAsync()
+        public async Task<List<EventParticipants>> GetAllParticipantsAsync()
         {
             return await _dbContext.EventParticipants.Include(ep => ep.Event).ToListAsync();
         }

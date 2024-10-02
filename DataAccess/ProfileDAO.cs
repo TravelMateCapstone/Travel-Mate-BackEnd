@@ -18,12 +18,12 @@ namespace DataAccess
             _dbContext = SingletonBase<ProfileDAO>._context;
         }
 
-        public async Task<IEnumerable<Profile>> GetAllProfilesAsync()
+        public async Task<List<Profile>> GetAllProfilesAsync()
         {
             return await _dbContext.Profiles.ToListAsync();
         }
 
-        public async Task<Profile> GetProfileByIdAsync(string userId)
+        public async Task<Profile> GetProfileByIdAsync(int userId)
         {
             return await _dbContext.Profiles.FirstOrDefaultAsync(p => p.UserId == userId);
         }
@@ -41,7 +41,7 @@ namespace DataAccess
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task DeleteProfileAsync(string userId)
+        public async Task DeleteProfileAsync(int userId)
         {
             var profile = await _dbContext.Profiles.FirstOrDefaultAsync(p => p.UserId == userId);
             if (profile != null)

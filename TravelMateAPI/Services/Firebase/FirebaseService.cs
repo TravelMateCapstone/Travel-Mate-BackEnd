@@ -31,7 +31,7 @@ namespace TravelMateAPI.Services.Firebase
         }
 
         // Phương thức để upload hình ảnh lên Firebase Storage
-        public async Task<string> UploadFileAsync(IFormFile file, string userId)
+        public async Task<string> UploadFileAsync(IFormFile file, int userId)
         {
             if (file == null || file.Length == 0)
                 throw new ArgumentException("File cannot be empty");

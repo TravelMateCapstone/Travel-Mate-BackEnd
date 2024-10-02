@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BussinessObjects.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20241001143317_Add another table v4")]
-    partial class Addanothertablev4
+    [Migration("20241002044304_Add another data table v4")]
+    partial class Addanotherdatatablev4
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -40,6 +40,48 @@ namespace BussinessObjects.Migrations
                     b.HasKey("ActivityId");
 
                     b.ToTable("Activities");
+
+                    b.HasData(
+                        new
+                        {
+                            ActivityId = 1,
+                            ActivityName = "Đi bộ"
+                        },
+                        new
+                        {
+                            ActivityId = 2,
+                            ActivityName = "Đi phượt"
+                        },
+                        new
+                        {
+                            ActivityId = 3,
+                            ActivityName = "Chơi golf"
+                        },
+                        new
+                        {
+                            ActivityId = 4,
+                            ActivityName = "Tắm biển"
+                        },
+                        new
+                        {
+                            ActivityId = 5,
+                            ActivityName = "Leo núi"
+                        },
+                        new
+                        {
+                            ActivityId = 6,
+                            ActivityName = "Câu cá"
+                        },
+                        new
+                        {
+                            ActivityId = 7,
+                            ActivityName = "Đi xe đạp"
+                        },
+                        new
+                        {
+                            ActivityId = 8,
+                            ActivityName = "Tham quan văn hóa"
+                        });
                 });
 
             modelBuilder.Entity("BussinessObjects.Entities.ApplicationRole", b =>
@@ -171,6 +213,78 @@ namespace BussinessObjects.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("Users", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "7a2154a1-078f-4822-82bc-0e99cef62925",
+                            Email = "user1@example.com",
+                            EmailConfirmed = false,
+                            FullName = "User One",
+                            LockoutEnabled = false,
+                            PhoneNumberConfirmed = false,
+                            RegistrationTime = new DateTime(2024, 10, 2, 4, 43, 3, 788, DateTimeKind.Utc).AddTicks(173),
+                            TwoFactorEnabled = false,
+                            UserName = "user1"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "ae034d15-4404-42bd-a3b0-20e498c35134",
+                            Email = "user2@example.com",
+                            EmailConfirmed = false,
+                            FullName = "User Two",
+                            LockoutEnabled = false,
+                            PhoneNumberConfirmed = false,
+                            RegistrationTime = new DateTime(2024, 10, 2, 4, 43, 3, 788, DateTimeKind.Utc).AddTicks(177),
+                            TwoFactorEnabled = false,
+                            UserName = "user2"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "78ff9a88-4fa0-4467-87d9-22e5bef5ac9d",
+                            Email = "user3@example.com",
+                            EmailConfirmed = false,
+                            FullName = "User Three",
+                            LockoutEnabled = false,
+                            PhoneNumberConfirmed = false,
+                            RegistrationTime = new DateTime(2024, 10, 2, 4, 43, 3, 788, DateTimeKind.Utc).AddTicks(188),
+                            TwoFactorEnabled = false,
+                            UserName = "user3"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "99a8303e-100c-4ca1-9c7b-298ad6298647",
+                            Email = "user4@example.com",
+                            EmailConfirmed = false,
+                            FullName = "User Four",
+                            LockoutEnabled = false,
+                            PhoneNumberConfirmed = false,
+                            RegistrationTime = new DateTime(2024, 10, 2, 4, 43, 3, 788, DateTimeKind.Utc).AddTicks(190),
+                            TwoFactorEnabled = false,
+                            UserName = "user4"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "c65182f0-0121-46ec-8e9e-7bd729738ceb",
+                            Email = "user5@example.com",
+                            EmailConfirmed = false,
+                            FullName = "User Five",
+                            LockoutEnabled = false,
+                            PhoneNumberConfirmed = false,
+                            RegistrationTime = new DateTime(2024, 10, 2, 4, 43, 3, 788, DateTimeKind.Utc).AddTicks(193),
+                            TwoFactorEnabled = false,
+                            UserName = "user5"
+                        });
                 });
 
             modelBuilder.Entity("BussinessObjects.Entities.Event", b =>
@@ -252,16 +366,14 @@ namespace BussinessObjects.Migrations
                     b.Property<int?>("ApplicationUserId")
                         .HasColumnType("int");
 
-                    b.Property<string>("ContactUserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("ContactUserId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
                     b.HasKey("FriendId");
 
@@ -285,12 +397,57 @@ namespace BussinessObjects.Migrations
                     b.HasKey("LocationId");
 
                     b.ToTable("Locations");
+
+                    b.HasData(
+                        new
+                        {
+                            LocationId = 1,
+                            LocationName = "Hà Nội"
+                        },
+                        new
+                        {
+                            LocationId = 2,
+                            LocationName = "Hồ Chí Minh"
+                        },
+                        new
+                        {
+                            LocationId = 3,
+                            LocationName = "Đà Nẵng"
+                        },
+                        new
+                        {
+                            LocationId = 4,
+                            LocationName = "Huế"
+                        },
+                        new
+                        {
+                            LocationId = 5,
+                            LocationName = "Hội An"
+                        },
+                        new
+                        {
+                            LocationId = 6,
+                            LocationName = "Nha Trang"
+                        },
+                        new
+                        {
+                            LocationId = 7,
+                            LocationName = "Phú Quốc"
+                        },
+                        new
+                        {
+                            LocationId = 8,
+                            LocationName = "Vịnh Hạ Long"
+                        });
                 });
 
             modelBuilder.Entity("BussinessObjects.Entities.Profile", b =>
                 {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("UserId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
 
                     b.Property<string>("Address")
                         .IsRequired()
@@ -319,11 +476,13 @@ namespace BussinessObjects.Migrations
 
             modelBuilder.Entity("BussinessObjects.Entities.UserActivity", b =>
                 {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int")
+                        .HasColumnOrder(0);
 
                     b.Property<int>("ActivityId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
 
                     b.Property<int?>("ApplicationUserId")
                         .HasColumnType("int");
@@ -335,15 +494,44 @@ namespace BussinessObjects.Migrations
                     b.HasIndex("ApplicationUserId");
 
                     b.ToTable("UserActivities");
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = 1,
+                            ActivityId = 1
+                        },
+                        new
+                        {
+                            UserId = 1,
+                            ActivityId = 2
+                        },
+                        new
+                        {
+                            UserId = 2,
+                            ActivityId = 1
+                        },
+                        new
+                        {
+                            UserId = 3,
+                            ActivityId = 3
+                        },
+                        new
+                        {
+                            UserId = 3,
+                            ActivityId = 2
+                        });
                 });
 
             modelBuilder.Entity("BussinessObjects.Entities.UserLocation", b =>
                 {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int")
+                        .HasColumnOrder(0);
 
                     b.Property<int>("LocationId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
 
                     b.Property<int?>("ApplicationUserId")
                         .HasColumnType("int");
@@ -355,6 +543,33 @@ namespace BussinessObjects.Migrations
                     b.HasIndex("LocationId");
 
                     b.ToTable("UserLocations");
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = 1,
+                            LocationId = 1
+                        },
+                        new
+                        {
+                            UserId = 1,
+                            LocationId = 2
+                        },
+                        new
+                        {
+                            UserId = 2,
+                            LocationId = 1
+                        },
+                        new
+                        {
+                            UserId = 3,
+                            LocationId = 3
+                        },
+                        new
+                        {
+                            UserId = 3,
+                            LocationId = 2
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>

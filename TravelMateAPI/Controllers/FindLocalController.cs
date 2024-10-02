@@ -40,8 +40,8 @@ namespace TravelMateAPI.Controllers
     //    }
     //}
 
-    [Route("odata/[controller]")]
-    [ApiController]
+    //[Route("odata/[controller]")]
+    //[ApiController]
     public class FindLocalODataController : ODataController
     {
         private readonly IFindLocalRepository _repository;
@@ -54,7 +54,7 @@ namespace TravelMateAPI.Controllers
         // Lấy traveler dựa trên userId
         [HttpGet("traveler/{userId}")]
         [EnableQuery]
-        public async Task<ActionResult<ApplicationUser>> GetTraveler(string userId)
+        public async Task<ActionResult<ApplicationUser>> GetTraveler(int userId)
         {
             var traveler = await _repository.GetTravelerByIdAsync(userId);
             if (traveler == null) return NotFound();
@@ -73,7 +73,7 @@ namespace TravelMateAPI.Controllers
         // Lấy danh sách hoạt động của user dựa trên userId
         [HttpGet("activities/{userId}")]
         [EnableQuery]
-        public async Task<ActionResult<IEnumerable<int>>> GetUserActivities(string userId)
+        public async Task<ActionResult<IEnumerable<int>>> GetUserActivities(int userId)
         {
             var activities = await _repository.GetUserActivityIdsAsync(userId);
             return Ok(activities);

@@ -9,7 +9,7 @@ namespace Repositories.Interface
 {
     public interface ILocationRepository
     {
-        Task<IEnumerable<Location>> GetAllLocationsAsync();
+        Task<List<Location>> GetAllLocationsAsync();
         Task<Location> GetLocationByIdAsync(int locationId);
         Task<Location> AddLocationAsync(Location newLocation);
         Task UpdateLocationAsync(Location updatedLocation);

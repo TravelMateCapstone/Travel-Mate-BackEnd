@@ -3,12 +3,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Formatter;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
+using Repositories;
 using Repositories.Interface;
 
 namespace TravelMateAPI.Controllers
 {
-    [ApiController]
-    [Route("odata/[controller]")]
+    //[ApiController]
+    //[Route("odata/[controller]")]
     public class EventParticipantsController : ODataController
     {
         private readonly IEventParticipantsRepository _participantsRepository;
@@ -20,11 +21,17 @@ namespace TravelMateAPI.Controllers
 
         // GET: odata/EventParticipants
         [EnableQuery] // Kích hoạt OData cho truy vấn
-        public IActionResult GetAll()
+        public async Task<IActionResult> Get(ODataQueryOptions<ApplicationUser> queryOptions)
+        {
+            var participants = await _participantsRepository.GetAllParticipantsAsync();
+            return Ok(participants);
+        }
+
+        /*public IActionResult GetAll()
         {
             var participants = _participantsRepository.GetAllParticipantsAsync().Result.AsQueryable();
             return Ok(participants);
-        }
+        }*/
 
         // GET: odata/EventParticipants(1)
         [EnableQuery] // Kích hoạt OData cho truy vấn theo ID

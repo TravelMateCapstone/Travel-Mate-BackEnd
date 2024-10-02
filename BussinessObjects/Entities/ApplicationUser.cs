@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace BussinessObjects.Entities
 {
+    /// <summary>
+    /// IdentityUser<int> tức là cấu hình cho userid là int nếu muốn string thì thay bằng string
+    /// </summary>
     public class ApplicationUser : IdentityUser<int>
     {
         public string FullName { get; set; }

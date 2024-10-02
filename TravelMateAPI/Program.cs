@@ -29,24 +29,6 @@ namespace TravelMateAPI
 
             // Add services to the container.
             Env.Load();
-            //odata 
-
-            ODataConventionModelBuilder modelBuilder = new ODataConventionModelBuilder();
-            modelBuilder.EntitySet<ApplicationUser>("ApplicationUsers");
-            modelBuilder.EntitySet<Profile>("Profiles");
-            modelBuilder.EntitySet<Friend>("Friends");
-            modelBuilder.EntitySet<Event>("Events");
-            modelBuilder.EntitySet<EventParticipants>("EventParticipants");
-            modelBuilder.EntitySet<Location>("Locations");
-            modelBuilder.EntitySet<Activity>("Activities");
-            modelBuilder.EntitySet<UserLocation>("UserLocations");
-            modelBuilder.EntitySet<UserActivity>("UserActivities");
-
-            builder.Services.AddScoped(typeof(ApplicationDBContext));
-            builder.Services.AddAutoMapper(typeof(Program));
-
-            builder.Services.AddControllers().AddOData(opt => opt.Select().Expand().Filter().OrderBy().Count().SetMaxTop(null)
-                            .AddRouteComponents("odata", modelBuilder.GetEdmModel()));
 
             var jwtSettings = new JwtSettings
             {
@@ -56,10 +38,8 @@ namespace TravelMateAPI
                 DurationInMinutes = int.Parse(Environment.GetEnvironmentVariable("JWT_DURATION_IN_MINUTES"))
             };
 
-
-
             builder.Services.AddSingleton(jwtSettings);
-            
+
             builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
             {
                 // Cấu hình tùy chỉnh cho Identity nếu cần
@@ -121,9 +101,30 @@ namespace TravelMateAPI
                 options.ClientId = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_ID");
                 options.ClientSecret = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_SECRET");
                 //options.CallbackPath = "/signin-google";
-            }); 
+            });
 
             builder.Services.AddScoped<TokenService>();
+
+
+            //odata 
+
+            ODataConventionModelBuilder modelBuilder = new ODataConventionModelBuilder();
+            modelBuilder.EntitySet<ApplicationUser>("ApplicationUsers");
+            modelBuilder.EntitySet<Profile>("Profiles");
+            modelBuilder.EntitySet<Friend>("Friends");
+            modelBuilder.EntitySet<Event>("Events");
+            modelBuilder.EntitySet<EventParticipants>("EventParticipants");
+            modelBuilder.EntitySet<Location>("Locations");
+            modelBuilder.EntitySet<Activity>("Activities");
+            modelBuilder.EntitySet<UserLocation>("UserLocations");
+            modelBuilder.EntitySet<UserActivity>("UserActivities");
+
+            builder.Services.AddScoped(typeof(ApplicationDBContext));
+            builder.Services.AddAutoMapper(typeof(Program));
+
+            builder.Services.AddControllers().AddOData(opt => opt.Select().Expand().Filter().OrderBy().Count().SetMaxTop(null)
+                            .AddRouteComponents("odata", modelBuilder.GetEdmModel()));
+
             //builder.Services.AddHostedService<AccountCleanupService>();
 
             //var mailSettings = builder.Configuration.GetSection("MailSettings");
@@ -156,6 +157,7 @@ namespace TravelMateAPI
             // Register your repositories
             builder.Services.AddScoped<IProfileRepository, ProfileRepository>();
             builder.Services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
+
             // Đăng ký FindLocalDAO
             builder.Services.AddScoped<FindLocalDAO>();
             builder.Services.AddScoped<IFindLocalRepository, FindLocalRepository>();
@@ -165,6 +167,7 @@ namespace TravelMateAPI
             builder.Services.AddScoped<ILocationRepository, LocationRepository>();
             builder.Services.AddScoped<IUserActivitiesRepository, UserActivitiesRepository>();
             builder.Services.AddScoped<IUserLocationsRepository, UserLocationsRepository>();
+
 
 
             builder.Services.AddControllers();
@@ -212,7 +215,12 @@ namespace TravelMateAPI
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
-                app.UseSwaggerUI();
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+                    // Nếu bạn sử dụng OData
+                   
+                });
             }
             
             app.UseHttpsRedirection();
