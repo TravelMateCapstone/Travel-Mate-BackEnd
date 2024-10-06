@@ -4,13 +4,10 @@ using BussinessObjects.Utils.Request;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.OData;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OData.Edm;
 using Microsoft.OData.ModelBuilder;
-using Repositories.Interface;
 using Repositories;
+using Repositories.Interface;
 using System.Text;
 using TravelMateAPI.Services.Email;
 using TravelMateAPI.Services.FindLocal;
@@ -32,8 +29,12 @@ namespace TravelMateAPI
         {
             var builder = WebApplication.CreateBuilder(args);
 
+
+            
             // Add services to the container.
+
             Env.Load();
+
 
             var jwtSettings = new JwtSettings
             {
@@ -43,7 +44,9 @@ namespace TravelMateAPI
                 DurationInMinutes = int.Parse(Environment.GetEnvironmentVariable("JWT_DURATION_IN_MINUTES"))
             };
 
+
             builder.Services.AddSingleton(jwtSettings);
+
 
             builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
             {
@@ -184,6 +187,7 @@ namespace TravelMateAPI
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
+
             builder.Services.AddSwaggerGen(
                 c =>
                 {
@@ -214,12 +218,13 @@ namespace TravelMateAPI
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowAll",
+
                     builder => builder
                         .AllowAnyOrigin()    // Allows all origins
                         .AllowAnyMethod()    // Allows all HTTP methods
                         .AllowAnyHeader());  // Allows all headers
             });
-            
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -233,10 +238,13 @@ namespace TravelMateAPI
                    
                 });
             }
-            
+
             app.UseHttpsRedirection();
             // Use CORS policy
             app.UseCors("AllowAll");
+
+            // Use CORS policy
+            app.UseCors("AllowAllOrigins");
 
             app.UseAuthentication();
 
