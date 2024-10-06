@@ -8,19 +8,21 @@ using System.Threading.Tasks;
 
 namespace BussinessObjects.Entities
 {
-    public class Friend
+    public class Notification
     {
         [Key]
-        [Required]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int FriendId { get; set; }
-        [Required]
-        public int UserId { get; set; }
-        [Required]
-        public string ContactUserId { get; set; }
-        [Required]
-        public DateTime CreatedAt { get; set; }
+        public int NotificationId { get; set; }
 
+        public int UserId { get; set; }
+       
         public virtual ApplicationUser? ApplicationUser { get; set; }
+
+        public string Message { get; set; }
+
+        public bool IsRead { get; set; }
+
+        public DateTime CreatedAt { get; set; }
     }
+
 }

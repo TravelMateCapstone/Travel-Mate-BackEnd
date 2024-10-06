@@ -398,3 +398,6 @@ FodyWeavers.xsd
 *.sln.iml
 
 .env
+firebase-adminsdk.json
+/TravelMateAPI/firebase-adminsdk.json
+/TravelMateAPI/firebase-adminsdk.json

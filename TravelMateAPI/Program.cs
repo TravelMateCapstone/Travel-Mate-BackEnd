@@ -1,5 +1,4 @@
-﻿
-using BussinessObjects;
+﻿using BussinessObjects;
 using BussinessObjects.Entities;
 using BussinessObjects.Utils.Request;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -14,10 +13,16 @@ using Repositories.Interface;
 using Repositories;
 using System.Text;
 using TravelMateAPI.Services.Email;
+using TravelMateAPI.Services.FindLocal;
 using Microsoft.Extensions.Configuration;
 using TravelMateAPI.Services.Auth;
 using Microsoft.OpenApi.Models;
 using DotNetEnv;
+using DataAccess;
+using TravelMateAPI.Services.Firebase;
+using TravelMateAPI.Models;
+using System.ComponentModel;
+using TravelMateAPI.Services.Notification;
 
 namespace TravelMateAPI
 {
@@ -29,18 +34,6 @@ namespace TravelMateAPI
 
             // Add services to the container.
             Env.Load();
-            //odata 
-
-            ODataConventionModelBuilder modelBuilder = new ODataConventionModelBuilder();
-            modelBuilder.EntitySet<ApplicationUser>("ApplicationUsers");
-            modelBuilder.EntitySet<Profile>("Profiles");
-            modelBuilder.EntitySet<Friend>("Friends");
-
-            builder.Services.AddScoped(typeof(ApplicationDBContext));
-            builder.Services.AddAutoMapper(typeof(Program));
-
-            builder.Services.AddControllers().AddOData(opt => opt.Select().Expand().Filter().OrderBy().Count().SetMaxTop(null)
-                            .AddRouteComponents("odata", modelBuilder.GetEdmModel()));
 
             var jwtSettings = new JwtSettings
             {
@@ -51,6 +44,7 @@ namespace TravelMateAPI
             };
 
             builder.Services.AddSingleton(jwtSettings);
+
             builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
             {
                 // Cấu hình tùy chỉnh cho Identity nếu cần
@@ -112,9 +106,31 @@ namespace TravelMateAPI
                 options.ClientId = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_ID");
                 options.ClientSecret = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_SECRET");
                 //options.CallbackPath = "/signin-google";
-            }); 
+            });
 
             builder.Services.AddScoped<TokenService>();
+
+
+            //odata 
+
+            ODataConventionModelBuilder modelBuilder = new ODataConventionModelBuilder();
+            modelBuilder.EntitySet<ApplicationUser>("ApplicationUsers");
+            modelBuilder.EntitySet<Profile>("Profiles");
+            modelBuilder.EntitySet<Friendship>("Friends");
+            modelBuilder.EntitySet<Event>("Events");
+            modelBuilder.EntitySet<EventParticipants>("EventParticipants");
+            modelBuilder.EntitySet<Location>("Locations");
+            modelBuilder.EntitySet<Activity>("Activities");
+            modelBuilder.EntitySet<UserLocation>("UserLocations");
+            modelBuilder.EntitySet<UserActivity>("UserActivities");
+
+            builder.Services.AddScoped(typeof(ApplicationDBContext));
+            //builder.Services.AddAutoMapper(typeof(Program));
+            builder.Services.AddAutoMapper(typeof(AutoMapperProfile).Assembly);
+
+            builder.Services.AddControllers().AddOData(opt => opt.Select().Expand().Filter().OrderBy().Count().SetMaxTop(null)
+                            .AddRouteComponents("odata", modelBuilder.GetEdmModel()));
+
             //builder.Services.AddHostedService<AccountCleanupService>();
 
             //var mailSettings = builder.Configuration.GetSection("MailSettings");
@@ -131,9 +147,37 @@ namespace TravelMateAPI
             builder.Services.AddSingleton(mailSettings);
             builder.Services.AddScoped<IMailServiceSystem, SendMailService>();
 
+            //firebase 
+            var firebaseConfig = new FirebaseConfig
+            {
+                
+                ApiKey = Environment.GetEnvironmentVariable("FIREBASE_API_KEY"),
+                AuthDomain = Environment.GetEnvironmentVariable("FIREBASE_AUTH_DOMAIN"),
+                ProjectId = Environment.GetEnvironmentVariable("FIREBASE_PROJECT_ID"),
+                StorageBucket = Environment.GetEnvironmentVariable("FIREBASE_STORAGE_BUCKET"),
+                MessagingSenderId = Environment.GetEnvironmentVariable("FIREBASE_MESSAGING_SENDER_ID"),
+                AppId = Environment.GetEnvironmentVariable("FIREBASE_APP_ID"),
+                MeasurementId = Environment.GetEnvironmentVariable("FIREBASE_MEASUREMENT_ID"),
+                FirebaseAdminSdkJsonPath = Environment.GetEnvironmentVariable("FIREBASE_ADMIN_SDK_JSON_PATH")
+            };
+            builder.Services.AddSingleton(firebaseConfig);
+            builder.Services.AddSingleton<FirebaseService>();
+
             // Register your repositories
+            builder.Services.AddScoped<IProfileRepository, ProfileRepository>();
             builder.Services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
 
+            //builder.Services.AddScoped<IFindLocalRepository, FindLocalRepository>();
+            builder.Services.AddScoped<IFindLocalService, FindLocalService>();
+            builder.Services.AddScoped<IFindLocalByFeedbackService, FindLocalByFeedbackService>();
+            builder.Services.AddScoped<INotificationService, NotificationService>();
+            builder.Services.AddScoped<IEventRepository, EventRepository>();
+            builder.Services.AddScoped<IEventParticipantsRepository, EventParticipantsRepository>();
+            builder.Services.AddScoped<ActivitiesDAO>();
+            builder.Services.AddScoped<IActivityRepository, ActivityRepository>();
+            builder.Services.AddScoped<ILocationRepository, LocationRepository>();
+            builder.Services.AddScoped<IUserActivitiesRepository, UserActivitiesRepository>();
+            builder.Services.AddScoped<IUserLocationsRepository, UserLocationsRepository>();
 
 
 
@@ -182,7 +226,12 @@ namespace TravelMateAPI
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
-                app.UseSwaggerUI();
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+                    // Nếu bạn sử dụng OData
+                   
+                });
             }
             
             app.UseHttpsRedirection();

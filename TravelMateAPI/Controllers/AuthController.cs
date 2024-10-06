@@ -21,13 +21,14 @@ namespace TravelMateAPI.Controllers
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly TokenService _tokenService;
         private readonly IMailServiceSystem _mailService;
-
+        
         public AuthController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, TokenService tokenService, IMailServiceSystem mailService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _tokenService = tokenService;
             _mailService = mailService;
+            
         }
 
 
@@ -57,7 +58,10 @@ namespace TravelMateAPI.Controllers
             // Nếu đăng nhập thành công, tạo token và trả về
             var token = _tokenService.GenerateToken(user);
 
-            return Ok(new { Token = token });
+            // Thay thế {userId} bằng giá trị thực tế từ user.Id
+            var avatarUrl = $"https://travelmateapp.azurewebsites.net/odata/Profiles/GetImageUrl/{user.Id}";
+
+            return Ok(new { Token = token, AvataUrl = avatarUrl });
         }
 
 
@@ -97,11 +101,18 @@ namespace TravelMateAPI.Controllers
             var roleResult = await _userManager.AddToRoleAsync(user, "User");
             if (!roleResult.Succeeded) return BadRequest(roleResult.Errors);
 
+
+            //var roleExist = await _roleManager.RoleExistsAsync("User");
+            //if (!roleExist)
+            //{
+            //    await _roleManager.CreateAsync(new IdentityRole("User"));
+            //}
+
             // Tạo token xác thực email
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
 
             // Tạo liên kết xác nhận email
-            var confirmationLink = Url.Action("ConfirmEmail", "Auth", new { userId = user.Id, token = token }, Request.Scheme);
+            var confirmationLink = Url.Action("ConfirmEmail","Auth", new { userId = user.Id, token = token }, Request.Scheme);
 
             // Gửi email xác nhận
             MailContent content = new MailContent

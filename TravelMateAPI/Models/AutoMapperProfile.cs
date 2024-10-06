@@ -1,16 +1,20 @@
 ﻿using BussinessObjects.Entities;
 using DataAccess;
+using BussinessObjects.Utils.Reponse;
+using AutoMapper;
 
 namespace TravelMateAPI.Models
 {
-    public class AutoMapperProfile
+    public class AutoMapperProfile : AutoMapper.Profile
     {
         public AutoMapperProfile()
         {
-            // Ánh xạ giữa ApplicationUser và ApplicationUserDTO
-            //CreateMap<ApplicationUser, ApplicationUserDTO>()
-            //    .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.UserName))
-            //    .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email));
+            CreateMap<UserActivity, UserActivityDTO>()
+             .ForMember(dest => dest.ActivityName, opt => opt.MapFrom(src => src.Activity.ActivityName));
+            //.ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.ApplicationUser.UserName));
+
+            CreateMap<UserLocation, UserLocationDTO>()
+                .ForMember(dest =>dest.LocationName, opt=>opt.MapFrom(src=> src.Location.LocationName));
         }
     }
 }
