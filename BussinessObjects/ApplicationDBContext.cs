@@ -1,4 +1,5 @@
 ﻿using BussinessObjects.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -21,7 +22,17 @@ namespace BussinessObjects
         public ApplicationDBContext(DbContextOptions<ApplicationDBContext> options) : base(options) { }
 
         public DbSet<Profile> Profiles { get; set; }
-        public DbSet<Friend> Friends { get; set; }
+        public DbSet<Friendship> Friendships { get; set; }
+        public DbSet<Location> Locations { get; set; }
+        public DbSet<Activity> Activities { get; set; }
+        public DbSet<UserLocation> UserLocations { get; set; }
+        public DbSet<UserActivity> UserActivities { get; set; }
+        public DbSet<Event> Events { get; set; }
+        public DbSet<EventParticipants> EventParticipants { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
+
+        //public DbSet<Feedback> Feedbacks { get; set; }
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -51,18 +62,210 @@ namespace BussinessObjects
                 }
             }
 
+            //Cấu hình cho UserLocation/Activity
+            modelBuilder.Entity<UserLocation>()
+            .HasKey(ul => new { ul.UserId, ul.LocationId });
+            modelBuilder.Entity<UserActivity>()
+                .HasKey(ua => new { ua.UserId, ua.ActivityId });
 
+            // Thiết lập quan hệ giữa ApplicationUser và Friendship
+            modelBuilder.Entity<ApplicationUser>()
+                .HasMany(u => u.SentFriendRequests)
+                .WithOne(f => f.User1)
+                .HasForeignKey(f => f.UserId1)
+                .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<ApplicationUser>()
+                .HasMany(u => u.ReceivedFriendRequests)
+                .WithOne(f => f.User2)
+                .HasForeignKey(f => f.UserId2)
+                .OnDelete(DeleteBehavior.Restrict);
 
+            // Cấu hình khóa chính và quan hệ cho bảng Friendship
+            // modelBuilder.Entity<Friendship>()
+            //.HasOne(f => f.User1)
+            //.WithMany()
+            //.HasForeignKey(f => f.UserId1)
+            //.OnDelete(DeleteBehavior.Restrict); // Tránh vòng lặp xóa
 
+            // modelBuilder.Entity<Friendship>()
+            //     .HasOne(f => f.User2)
+            //     .WithMany()
+            //     .HasForeignKey(f => f.UserId2)
+            //     .OnDelete(DeleteBehavior.Restrict); // Tránh vòng lặp xóa
 
+            // Seed data cho các role
+            modelBuilder.Entity<ApplicationRole>().HasData(
+                new ApplicationRole { Id = 1, Name = "admin", NormalizedName = "ADMIN" },
+                new ApplicationRole { Id = 2, Name = "user", NormalizedName = "USER" },
+                new ApplicationRole { Id = 3, Name = "traveler", NormalizedName = "TRAVELER" },
+                new ApplicationRole { Id = 4, Name = "local", NormalizedName = "LOCAL" }
+            );
+            modelBuilder.Entity<ApplicationUser>().HasData(
+                new ApplicationUser
+                {
+                    Id = 1,
+                    UserName = "user1",
+                    Email = "user1@example.com",
+                    FullName = "User One",
+                    EmailConfirmed = false,
+                    RegistrationTime = DateTime.UtcNow
+                },
+                new ApplicationUser
+                {
+                    Id = 2,
+                    UserName = "user2",
+                    Email = "user2@example.com",
+                    FullName = "User Two",
+                    EmailConfirmed = false,
+                    RegistrationTime = DateTime.UtcNow
+                },
+                new ApplicationUser
+                {
+                    Id = 3,
+                    UserName = "user3",
+                    Email = "user3@example.com",
+                    FullName = "User Three",
+                    EmailConfirmed = false,
+                    RegistrationTime = DateTime.UtcNow
+                },
+                new ApplicationUser
+                {
+                    Id = 4,
+                    UserName = "user4",
+                    Email = "user4@example.com",
+                    FullName = "User Four",
+                    EmailConfirmed = false,
+                    RegistrationTime = DateTime.UtcNow
+                },
+                new ApplicationUser
+                {
+                    Id = 5,
+                    UserName = "user5",
+                    Email = "user5@example.com",
+                    FullName = "User Five",
+                    EmailConfirmed = false,
+                    RegistrationTime = DateTime.UtcNow
+                },
+                new ApplicationUser
+                {
+                    Id = 6,
+                    UserName = "userSystem1",
+                    Email = "userSystem1@example.com",
+                    FullName = "User System",
+                    EmailConfirmed = false,
+                    RegistrationTime = DateTime.UtcNow
+                },
+                new ApplicationUser
+                {
+                    Id = 7,
+                    UserName = "Admin1",
+                    Email = "Admin1@example.com",
+                    FullName = "Admin 1",
+                    EmailConfirmed = false,
+                    RegistrationTime = DateTime.UtcNow
+                }
+            );
+            // Seed data cho user roles (mỗi user được gán một role)
+            modelBuilder.Entity<IdentityUserRole<int>>().HasData(
+                new IdentityUserRole<int> { UserId = 6, RoleId = 2 },
+                new IdentityUserRole<int> { UserId = 7, RoleId = 1 },
+                new IdentityUserRole<int> { UserId = 1, RoleId = 3 }, // user1 là admin
+                new IdentityUserRole<int> { UserId = 2, RoleId = 4 }, // user2 là user
+                new IdentityUserRole<int> { UserId = 3, RoleId = 4 }, // user3 là user
+                new IdentityUserRole<int> { UserId = 4, RoleId = 4 }, // user4 là user
+                new IdentityUserRole<int> { UserId = 5, RoleId = 4 }  // user5 là user
+            );
+            // Seed data cho profiles
+            modelBuilder.Entity<Profile>().HasData(
+                new Profile
+                {
+                    UserId = 1,
+                    FullName = "User One",
+                    Address = "123 Main St, Hanoi",
+                    Phone = "0123456789",
+                    ImageUser = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png"
+                },
+                new Profile
+                {
+                    UserId = 2,
+                    FullName = "User Two",
+                    Address = "456 Secondary St, Ho Chi Minh",
+                    Phone = "0987654321",
+                    ImageUser = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png"
+                },
+                new Profile
+                {
+                    UserId = 3,
+                    FullName = "User Three",
+                    Address = "789 Tertiary St, Da Nang",
+                    Phone = "0912345678",
+                    ImageUser = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png"
+                },
+                new Profile
+                {
+                    UserId = 4,
+                    FullName = "User Four",
+                    Address = "101 Eleventh St, Hue",
+                    Phone = "0998765432",
+                    ImageUser = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png"
+                },
+                new Profile
+                {
+                    UserId = 5,
+                    FullName = "User Five",
+                    Address = "202 Twelfth St, Phu Quoc",
+                    Phone = "0923456789",
+                    ImageUser = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png"
+                }
+            );
+            // Seed data cho Locations (địa điểm trên lãnh thổ Việt Nam)
+            modelBuilder.Entity<Location>().HasData(
+                new Location { LocationId = 1, LocationName = "Hà Nội" },
+                new Location { LocationId = 2, LocationName = "Hồ Chí Minh" },
+                new Location { LocationId = 3, LocationName = "Đà Nẵng" },
+                new Location { LocationId = 4, LocationName = "Huế" },
+                new Location { LocationId = 5, LocationName = "Hội An" },
+                new Location { LocationId = 6, LocationName = "Nha Trang" },
+                new Location { LocationId = 7, LocationName = "Phú Quốc" },
+                new Location { LocationId = 8, LocationName = "Vịnh Hạ Long" }
+            );
 
+            // Seed data cho Activities (các sở thích và hoạt động)
+            modelBuilder.Entity<Activity>().HasData(
+                new Activity { ActivityId = 1, ActivityName = "Đi bộ" },
+                new Activity { ActivityId = 2, ActivityName = "Đi phượt" },
+                new Activity { ActivityId = 3, ActivityName = "Chơi golf" },
+                new Activity { ActivityId = 4, ActivityName = "Tắm biển" },
+                new Activity { ActivityId = 5, ActivityName = "Leo núi" },
+                new Activity { ActivityId = 6, ActivityName = "Câu cá" },
+                new Activity { ActivityId = 7, ActivityName = "Đi xe đạp" },
+                new Activity { ActivityId = 8, ActivityName = "Tham quan văn hóa" }
+            );
+            // Seed data cho bảng UserLocations
+            modelBuilder.Entity<UserLocation>().HasData(
+                new UserLocation { UserId = 1, LocationId = 1 },
+                new UserLocation { UserId = 2, LocationId = 3 },
+                new UserLocation { UserId = 3, LocationId = 3 },
+                new UserLocation { UserId = 4, LocationId = 3 },
+                new UserLocation { UserId = 5, LocationId = 3 },
+                new UserLocation { UserId = 3, LocationId = 2 },
+                new UserLocation { UserId = 4, LocationId = 2 }
+            );
 
-
-
-
-
-
+            // Seed data cho bảng UserActivities
+            modelBuilder.Entity<UserActivity>().HasData(
+                new UserActivity { UserId = 1, ActivityId = 1 },
+                new UserActivity { UserId = 1, ActivityId = 2 },
+                new UserActivity { UserId = 1, ActivityId = 3 },
+                new UserActivity { UserId = 1, ActivityId = 4 },
+                new UserActivity { UserId = 2, ActivityId = 1 },
+                new UserActivity { UserId = 3, ActivityId = 3 },
+                new UserActivity { UserId = 3, ActivityId = 2 },
+                new UserActivity { UserId = 3, ActivityId = 4 },
+                new UserActivity { UserId = 5, ActivityId = 1 },
+                new UserActivity { UserId = 5, ActivityId = 2 }
+            );
 
 
             //modelBuilder.Entity<Role>().HasData(new List<Role>()

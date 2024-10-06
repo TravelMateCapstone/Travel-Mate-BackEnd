@@ -8,19 +8,16 @@ using System.Threading.Tasks;
 
 namespace BussinessObjects.Entities
 {
-    public class Friend
+    public class UserActivity
     {
-        [Key]
-        [Required]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int FriendId { get; set; }
-        [Required]
+        //[Key]
+        //[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        //public int UserActivityId { get; set; }
+        [Key, Column(Order = 0)]
         public int UserId { get; set; }
-        [Required]
-        public string ContactUserId { get; set; }
-        [Required]
-        public DateTime CreatedAt { get; set; }
-
+        [Key, Column(Order = 1)]
+        public int ActivityId { get; set; }
+        public virtual Activity? Activity { get; set; }
         public virtual ApplicationUser? ApplicationUser { get; set; }
     }
 }
