@@ -43,9 +43,12 @@ namespace TravelMateAPI.Controllers
 
     //[Route("odata/[controller]")]
     //[ApiController]
+    public class FindLocalODataController : ODataController
+    {
+        private readonly IFindLocalRepository _repository;
 
     public class FindLocalController : ODataController
-    {
+        {
         //private readonly IFindLocalService _findLocal;
 
         //public FindLocalController(IFindLocalService findLocal)

@@ -97,7 +97,7 @@ namespace DataAccess
                 var users = await connection.QueryAsync<ApplicationUser, int, ApplicationUser>(
                     sql,
                     (user, matchingActivitiesCount) =>
-                    {
+        {
                         user.MatchingActivitiesCount = matchingActivitiesCount;
                         return user;
                     },
@@ -114,6 +114,13 @@ namespace DataAccess
             }
         }
 
+        public async Task<List<int>> GetUserActivityIdsAsync(int userId)
+        {
+            return await _context.UserActivities
+                .Where(ua => ua.UserId == userId)
+                .Select(ua => ua.ActivityId)
+                .ToListAsync();
+        }
     }
 
 }

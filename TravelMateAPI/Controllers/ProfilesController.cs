@@ -125,5 +125,5 @@ namespace TravelMateAPI.Controllers
         //        // Trả về URL của hình ảnh
         //        return Ok(new { imageUrl = profile.ImageUser });
         //    }
-    }
+        }
 }

@@ -37,7 +37,7 @@ namespace Repositories
         //    _context = context;
         //}
         private readonly FindLocalDAO _findLocalDAO;
-        
+
         public FindLocalRepository(FindLocalDAO findLocalDAO)
         {
             _findLocalDAO = findLocalDAO;

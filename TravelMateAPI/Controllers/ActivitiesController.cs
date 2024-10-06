@@ -86,6 +86,11 @@ namespace TravelMateAPI.Controllers
             var activities = await _activityRepository.GetAllActivitiesAsync();
             return Ok(activities);
         }
+        //public IActionResult GetAll()
+        //{
+        //    var activities = _activityRepository.GetAllActivitiesAsync().Result.AsQueryable();
+        //    return Ok(activities);
+        //}
 
         // GET: api/Activity/1
         [HttpGet("{id}")]
@@ -104,7 +109,7 @@ namespace TravelMateAPI.Controllers
         public async Task<IActionResult> Create([FromBody] Activity newActivity)
         {
             if (newActivity == null)
-            {
+        {
                 return BadRequest("Activity is null.");
             }
 
@@ -117,7 +122,7 @@ namespace TravelMateAPI.Controllers
         public async Task<IActionResult> Update(int id, [FromBody] Activity updatedActivity)
         {
             if (id != updatedActivity.ActivityId)
-            {
+        {
                 return BadRequest("Activity ID mismatch.");
             }
 
@@ -137,7 +142,7 @@ namespace TravelMateAPI.Controllers
         {
             var activity = await _activityRepository.GetActivityByIdAsync(id);
             if (activity == null)
-            {
+        {
                 return NotFound(new { Message = $"Activity with id {id} not found." });
             }
 
