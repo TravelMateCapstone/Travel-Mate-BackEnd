@@ -1,0 +1,55 @@
+# ASP.NET Core
+# Build and test ASP.NET Core projects targeting .NET Core.
+# Add steps that run tests, create a NuGet package, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+
+trigger:
+- master
+- dev
+pr:
+- feature/*
+- master
+- dev 
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  buildConfiguration: 'Release'
+  solution: '**/TravelMateBackEnd.sln'
+  project: '**/TravelMateAPI.csproj'
+  tests: '**/TravelMateAPITest.csproj'
+
+steps:
+- task: NuGetToolInstaller@1 
+  name: 'NugetToolInstaller'
+
+- task: NuGetCommand@2
+  name: 'RestoreNuget'
+  inputs:
+    command: 'restore'
+    restoreSolution: '$(solution)'
+    feedsToUse: 'select'
+
+- task: DotNetCoreCLI@2
+  name: 'UnitTest'
+  inputs:
+    command: 'test'
+    projects: '$(tests)'
+    arguments: '--configuration $(buildConfiguration)'
+
+- task: DotNetCoreCLI@2
+  name: 'buildArtifact'
+  inputs:
+    command: 'publish'
+    publishWebProjects: false
+    projects: '$(project)'
+    arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+    zipAfterPublish: true
+
+- task: PublishBuildArtifacts@1
+  name: 'publishArtifact'
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'travelmateapiartifact'
+    publishLocation: 'Container'
