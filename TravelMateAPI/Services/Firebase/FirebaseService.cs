@@ -19,20 +19,35 @@ namespace TravelMateAPI.Services.Firebase
 
         public FirebaseService(FirebaseConfig firebaseConfig)
         {
-            if (string.IsNullOrEmpty(firebaseConfig.FirebaseAdminSdkJsonPath))
-            {
-                throw new InvalidOperationException("Firebase Admin SDK JSON path is not set.");
-            }
+            //if (string.IsNullOrEmpty(firebaseConfig.FirebaseAdminSdkJsonPath))
+            //{
+            //    throw new InvalidOperationException("Firebase Admin SDK JSON path is not set.");
+            //}
 
-            // Khởi tạo Firebase Admin SDK với tệp JSON credentials từ biến cấu hình
+            //// Khởi tạo Firebase Admin SDK với tệp JSON credentials từ biến cấu hình
+            //FirebaseApp.Create(new AppOptions()
+            //{
+            //    Credential = GoogleCredential.FromFile(firebaseConfig.FirebaseAdminSdkJsonPath),
+            //});
+            // Đường dẫn tương đối tới file firebase-adminsdk.json từ thư mục gốc của dự án
+            var relativePath = Path.Combine(Directory.GetCurrentDirectory(), "firebase-adminsdk.json");
+
+            if (!File.Exists(relativePath))
+            {
+                throw new InvalidOperationException($"Firebase Admin SDK JSON file not found at path: {relativePath}");
+            }
+            // Khởi tạo Firebase Admin SDK với tệp JSON credentials từ đường dẫn tương đối
             FirebaseApp.Create(new AppOptions()
             {
-                Credential = GoogleCredential.FromFile(firebaseConfig.FirebaseAdminSdkJsonPath),
+                Credential = GoogleCredential.FromFile(relativePath),
             });
 
             // Lấy thông tin bucket từ cấu hình
             _bucketName = firebaseConfig.StorageBucket;
-            _storageClient = StorageClient.Create();
+
+            // Sử dụng thông tin xác thực từ file JSON để khởi tạo StorageClient
+            var googleCredential = GoogleCredential.FromFile(relativePath);
+            _storageClient = StorageClient.Create(googleCredential);
         }
 
         // Phương thức để upload hình ảnh lên Firebase Storage
