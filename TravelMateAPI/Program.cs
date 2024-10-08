@@ -1,24 +1,21 @@
 ﻿using BussinessObjects;
 using BussinessObjects.Entities;
 using BussinessObjects.Utils.Request;
+using DataAccess;
+using DotNetEnv;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.OData;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OData.ModelBuilder;
+using Microsoft.OpenApi.Models;
 using Repositories;
 using Repositories.Interface;
 using System.Text;
+using TravelMateAPI.Models;
 using TravelMateAPI.Services.Email;
 using TravelMateAPI.Services.FindLocal;
-using Microsoft.Extensions.Configuration;
-using TravelMateAPI.Services.Auth;
-using Microsoft.OpenApi.Models;
-using DotNetEnv;
-using DataAccess;
 using TravelMateAPI.Services.Firebase;
-using TravelMateAPI.Models;
-using System.ComponentModel;
 using TravelMateAPI.Services.Notification;
 
 namespace TravelMateAPI
@@ -30,7 +27,7 @@ namespace TravelMateAPI
             var builder = WebApplication.CreateBuilder(args);
 
 
-            
+
             // Add services to the container.
 
             Env.Load();
@@ -153,7 +150,7 @@ namespace TravelMateAPI
             //firebase 
             var firebaseConfig = new FirebaseConfig
             {
-                
+
                 ApiKey = Environment.GetEnvironmentVariable("FIREBASE_API_KEY"),
                 AuthDomain = Environment.GetEnvironmentVariable("FIREBASE_AUTH_DOMAIN"),
                 ProjectId = Environment.GetEnvironmentVariable("FIREBASE_PROJECT_ID"),
@@ -235,16 +232,17 @@ namespace TravelMateAPI
                 {
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
                     // Nếu bạn sử dụng OData
-                   
+
                 });
             }
 
             app.UseHttpsRedirection();
+            app.UseRouting();
             // Use CORS policy
             app.UseCors("AllowAll");
 
             // Use CORS policy
-            app.UseCors("AllowAllOrigins");
+            //app.UseCors("AllowAllOrigins");
 
             app.UseAuthentication();
 
