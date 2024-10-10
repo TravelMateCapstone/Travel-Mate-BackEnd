@@ -1,8 +1,9 @@
-﻿using BussinessObjects;
+﻿using Azure.Identity;
+using Azure.Security.KeyVault.Secrets;
+using BussinessObjects;
 using BussinessObjects.Entities;
 using BussinessObjects.Utils.Request;
 using DataAccess;
-using DotNetEnv;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.OData;
@@ -22,25 +23,56 @@ namespace TravelMateAPI
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
 
-
             // Add services to the container.
 
-            Env.Load();
+            //Env.Load();
 
+            var keyVaultUrl = new Uri("https://travelmatekeyvault.vault.azure.net/");
+            var client = new SecretClient(vaultUri: keyVaultUrl, credential: new DefaultAzureCredential());
+
+            KeyVaultSecret jwtSecretKey = (await client.GetSecretAsync("JwtSecretKey"));
+            KeyVaultSecret jwtIssuer = (await client.GetSecretAsync("JwtIssuer"));
+            KeyVaultSecret jwtAudience = (await client.GetSecretAsync("JwtAudience"));
+            KeyVaultSecret jwtDurationInMinutes = (await client.GetSecretAsync("JwtDurationInMinutes"));
+
+            var googleClientId = (await client.GetSecretAsync("GoogleClientID")).Value.Value;
+            var googleClientSecret = (await client.GetSecretAsync("GoogleClientSecret")).Value.Value;
+
+            var mailAddress = (await client.GetSecretAsync("MailAddress")).Value.Value;
+            var mailDisplayName = (await client.GetSecretAsync("MailDisplayName")).Value.Value;
+            var mailPassword = (await client.GetSecretAsync("MailPassword")).Value.Value;
+            var mailHost = (await client.GetSecretAsync("MailHost")).Value.Value;
+            var mailPort = (await client.GetSecretAsync("MailPort")).Value.Value;
+
+            var firebaseApiKey = (await client.GetSecretAsync("FirebaseAPIKey")).Value.Value;
+            var firebaseAuthDomain = (await client.GetSecretAsync("FirebaseAuthDomain")).Value.Value;
+            var firebaseProjectId = (await client.GetSecretAsync("FirebaseProjectID")).Value.Value;
+            var firebaseStorageBucket = (await client.GetSecretAsync("FirebaseStorageBucket")).Value.Value;
+            var firebaseMessagingSenderId = (await client.GetSecretAsync("FirebaseMessagingSenderID")).Value.Value;
+            var firebaseAppId = (await client.GetSecretAsync("FirebaseAppID")).Value.Value;
+            var firebaseMeasurementId = (await client.GetSecretAsync("FirebaseMeasurementID")).Value.Value;
+            var firebaseAdminSdkJsonPath = (await client.GetSecretAsync("FirebaseAdminSdkJsonPath")).Value.Value;
+
+            //var jwtSettings = new JwtSettings
+            //{
+            //    SecretKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY"),
+            //    Issuer = Environment.GetEnvironmentVariable("JWT_ISSUER"),
+            //    Audience = Environment.GetEnvironmentVariable("JWT_AUDIENCE"),
+            //    DurationInMinutes = int.Parse(Environment.GetEnvironmentVariable("JWT_DURATION_IN_MINUTES"))
+            //};
 
             var jwtSettings = new JwtSettings
             {
-                SecretKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY"),
-                Issuer = Environment.GetEnvironmentVariable("JWT_ISSUER"),
-                Audience = Environment.GetEnvironmentVariable("JWT_AUDIENCE"),
-                DurationInMinutes = int.Parse(Environment.GetEnvironmentVariable("JWT_DURATION_IN_MINUTES"))
+                SecretKey = jwtSecretKey.Value,
+                Issuer = jwtIssuer.Value,
+                Audience = jwtAudience.Value,
+                DurationInMinutes = int.Parse(jwtDurationInMinutes.Value)
             };
-
 
             builder.Services.AddSingleton(jwtSettings);
 
@@ -103,8 +135,8 @@ namespace TravelMateAPI
                 IConfigurationSection googleAuthSection = builder.Configuration.GetSection("Authentication:Google");
                 //options.ClientId = googleAuthSection["ClientId"];
                 //options.ClientSecret = googleAuthSection["ClientSecret"];
-                options.ClientId = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_ID");
-                options.ClientSecret = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_SECRET");
+                options.ClientId = googleClientId;
+                options.ClientSecret = googleClientSecret;
                 //options.CallbackPath = "/signin-google";
             });
 
@@ -135,13 +167,15 @@ namespace TravelMateAPI
 
             //var mailSettings = builder.Configuration.GetSection("MailSettings");
             //builder.Services.Configure<MailSettings>(mailSettings);
+
+
             var mailSettings = new MailSettings
             {
-                Mail = Environment.GetEnvironmentVariable("MAIL_ADDRESS"),
-                DisplayName = Environment.GetEnvironmentVariable("MAIL_DISPLAY_NAME"),
-                Password = Environment.GetEnvironmentVariable("MAIL_PASSWORD"),
-                Host = Environment.GetEnvironmentVariable("MAIL_HOST"),
-                Port = int.Parse(Environment.GetEnvironmentVariable("MAIL_PORT"))
+                Mail = mailAddress,
+                DisplayName = mailDisplayName,
+                Password = mailPassword,
+                Host = mailHost,
+                Port = int.Parse(mailPort)
             };
 
             builder.Services.AddSingleton(mailSettings);
@@ -151,14 +185,14 @@ namespace TravelMateAPI
             var firebaseConfig = new FirebaseConfig
             {
 
-                ApiKey = Environment.GetEnvironmentVariable("FIREBASE_API_KEY"),
-                AuthDomain = Environment.GetEnvironmentVariable("FIREBASE_AUTH_DOMAIN"),
-                ProjectId = Environment.GetEnvironmentVariable("FIREBASE_PROJECT_ID"),
-                StorageBucket = Environment.GetEnvironmentVariable("FIREBASE_STORAGE_BUCKET"),
-                MessagingSenderId = Environment.GetEnvironmentVariable("FIREBASE_MESSAGING_SENDER_ID"),
-                AppId = Environment.GetEnvironmentVariable("FIREBASE_APP_ID"),
-                MeasurementId = Environment.GetEnvironmentVariable("FIREBASE_MEASUREMENT_ID"),
-                FirebaseAdminSdkJsonPath = Environment.GetEnvironmentVariable("FIREBASE_ADMIN_SDK_JSON_PATH")
+                ApiKey = firebaseApiKey,
+                AuthDomain = firebaseAuthDomain,
+                ProjectId = firebaseProjectId,
+                StorageBucket = firebaseStorageBucket,
+                MessagingSenderId = firebaseMessagingSenderId,
+                AppId = firebaseAppId,
+                MeasurementId = firebaseMeasurementId,
+                FirebaseAdminSdkJsonPath = firebaseAdminSdkJsonPath
             };
             builder.Services.AddSingleton(firebaseConfig);
             builder.Services.AddSingleton<FirebaseService>();
