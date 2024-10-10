@@ -1,13 +1,8 @@
 ﻿using BussinessObjects.Entities;
 using BussinessObjects.Utils.Request;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text;
 using TravelMateAPI.Services.Email;
 
 namespace TravelMateAPI.Controllers
@@ -16,19 +11,19 @@ namespace TravelMateAPI.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        
+
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly TokenService _tokenService;
         private readonly IMailServiceSystem _mailService;
-        
+
         public AuthController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, TokenService tokenService, IMailServiceSystem mailService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _tokenService = tokenService;
             _mailService = mailService;
-            
+
         }
 
 
@@ -89,7 +84,7 @@ namespace TravelMateAPI.Controllers
                 UserName = registerDto.Username,
                 Email = registerDto.Email,
                 FullName = registerDto.FullName,
-                EmailConfirmed = false,
+                EmailConfirmed = true,
                 RegistrationTime = DateTime.UtcNow // Lưu thời gian đăng ký
             };
 
@@ -112,7 +107,7 @@ namespace TravelMateAPI.Controllers
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
 
             // Tạo liên kết xác nhận email
-            var confirmationLink = Url.Action("ConfirmEmail","Auth", new { userId = user.Id, token = token }, Request.Scheme);
+            var confirmationLink = Url.Action("ConfirmEmail", "Auth", new { userId = user.Id, token = token }, Request.Scheme);
 
             // Gửi email xác nhận
             MailContent content = new MailContent
