@@ -1,4 +1,6 @@
-﻿using BussinessObjects.Entities;
+﻿using Azure.Identity;
+using Azure.Security.KeyVault.Secrets;
+using BussinessObjects.Entities;
 using BussinessObjects.Utils.Request;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -23,7 +25,6 @@ namespace TravelMateAPI.Controllers
             _signInManager = signInManager;
             _tokenService = tokenService;
             _mailService = mailService;
-
         }
 
 
@@ -104,20 +105,20 @@ namespace TravelMateAPI.Controllers
             //}
 
             // Tạo token xác thực email
-            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            //var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
 
-            // Tạo liên kết xác nhận email
-            var confirmationLink = Url.Action("ConfirmEmail", "Auth", new { userId = user.Id, token = token }, Request.Scheme);
+            //// Tạo liên kết xác nhận email
+            //var confirmationLink = Url.Action("ConfirmEmail", "Auth", new { userId = user.Id, token = token }, Request.Scheme);
 
-            // Gửi email xác nhận
-            MailContent content = new MailContent
-            {
-                To = user.Email,
-                Subject = "Xác nhận tài khoản - Travel Mate",
-                Body = $"<p>Xin chào, vui lòng xác nhận email của bạn bằng cách nhấp vào liên kết bên dưới:</p><a href='{confirmationLink}'>Xác nhận email</a>"
-            };
+            //// Gửi email xác nhận
+            //MailContent content = new MailContent
+            //{
+            //    To = user.Email,
+            //    Subject = "Xác nhận tài khoản - Travel Mate",
+            //    Body = $"<p>Xin chào, vui lòng xác nhận email của bạn bằng cách nhấp vào liên kết bên dưới:</p><a href='{confirmationLink}'>Xác nhận email</a>"
+            //};
 
-            await _mailService.SendMail(content);
+            //await _mailService.SendMail(content);
 
             return Ok("Đăng ký thành công. Vui lòng kiểm tra email để xác nhận tài khoản.");
         }
@@ -376,16 +377,37 @@ namespace TravelMateAPI.Controllers
             return Ok("Đăng ký ADMIN thành công. Vui lòng kiểm tra email để xác nhận tài khoản.");
         }
 
+        //[HttpGet]
+        //public IActionResult GetKeys()
+        //{
+        //    var googleClientId = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_ID");
+        //    var googleClientSecret = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_SECRET");
+
+        //    return Ok(new
+        //    {
+        //        GoogleClientId = googleClientId,
+        //        GoogleClientSecret = googleClientSecret
+        //    });
+        //}
+
         [HttpGet]
-        public IActionResult GetKeys()
+        public async Task<IActionResult> GetKeysAsync()
         {
-            var googleClientId = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_ID");
-            var googleClientSecret = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_SECRET");
+            var keyVaultUrl = new Uri("https://travelmatekeyvault.vault.azure.net/");
+            var client = new SecretClient(vaultUri: keyVaultUrl, credential: new DefaultAzureCredential());
+            KeyVaultSecret jwtSecretKey = (await client.GetSecretAsync("JwtSecretKey"));
+            KeyVaultSecret jwtIssuer = (await client.GetSecretAsync("JwtIssuer"));
+            KeyVaultSecret jwtAudience = (await client.GetSecretAsync("JwtAudience"));
+            KeyVaultSecret jwtDurationInMinutes = (await client.GetSecretAsync("JwtDurationInMinutes"));
+            var googleClientId = (await client.GetSecretAsync("GoogleClientID")).Value.Value;
+            var googleClientSecret = (await client.GetSecretAsync("GoogleClientSecret")).Value.Value;
 
             return Ok(new
             {
                 GoogleClientId = googleClientId,
-                GoogleClientSecret = googleClientSecret
+                GoogleClientSecret = googleClientSecret,
+                JwtSecretKey = jwtSecretKey,
+                JwtIssuer = jwtIssuer
             });
         }
     }
