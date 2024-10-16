@@ -1,5 +1,4 @@
-﻿using Azure.Identity;
-using Azure.Security.KeyVault.Secrets;
+﻿using BussinessObjects.Configuration;
 using BussinessObjects.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
@@ -12,25 +11,18 @@ namespace BussinessObjects.Utils.Request
     public class TokenService
     {
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly AppSettings _appSettings;
 
-        public TokenService(UserManager<ApplicationUser> userManager)
+        public TokenService(UserManager<ApplicationUser> userManager, AppSettings appSettings)
         {
             _userManager = userManager;
+            _appSettings = appSettings;
         }
 
         public async Task<string> GenerateToken(ApplicationUser user)
         {
-            // Retrieve secrets from Azure Key Vault
-            var keyVaultUrl = new Uri("https://travelmatekeyvault.vault.azure.net/");
-            var client = new SecretClient(vaultUri: keyVaultUrl, credential: new DefaultAzureCredential());
-
-            KeyVaultSecret jwtSecretKey = (await client.GetSecretAsync("JwtSecretKey"));
-            KeyVaultSecret jwtIssuer = (await client.GetSecretAsync("JwtIssuer"));
-            KeyVaultSecret jwtAudience = (await client.GetSecretAsync("JwtAudience"));
-            KeyVaultSecret jwtDurationInMinutes = (await client.GetSecretAsync("JwtDurationInMinutes"));
-
             // Use the retrieved secrets
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecretKey.Value));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_appSettings.JwtSettings.SecretKey));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             // Get user roles from UserManager
@@ -53,10 +45,10 @@ namespace BussinessObjects.Utils.Request
 
             // Create token
             var token = new JwtSecurityToken(
-                issuer: jwtIssuer.Value,
-                audience: jwtAudience.Value,
+                issuer: _appSettings.JwtSettings.Issuer,
+                audience: _appSettings.JwtSettings.Audience,
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(Convert.ToDouble(jwtDurationInMinutes.Value)),
+                expires: DateTime.Now.AddMinutes(Convert.ToDouble(_appSettings.JwtSettings.DurationInMinutes)),
                 signingCredentials: creds
             );
 
