@@ -1,4 +1,5 @@
-﻿using Azure.Identity;
+﻿using AutoMapper;
+using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 using BussinessObjects;
 using BussinessObjects.Configuration;
@@ -14,7 +15,6 @@ using Microsoft.OpenApi.Models;
 using Repositories;
 using Repositories.Interface;
 using System.Text;
-using TravelMateAPI.Models;
 using TravelMateAPI.Services.Email;
 using TravelMateAPI.Services.FindLocal;
 using TravelMateAPI.Services.Notification;
