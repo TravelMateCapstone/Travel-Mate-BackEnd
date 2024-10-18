@@ -108,7 +108,7 @@ namespace BussinessObjects
                     UserName = "user1",
                     Email = "user1@example.com",
                     FullName = "User One",
-                    EmailConfirmed = false,
+                    EmailConfirmed = true,
                     RegistrationTime = DateTime.UtcNow
                 },
                 new ApplicationUser
@@ -117,7 +117,7 @@ namespace BussinessObjects
                     UserName = "user2",
                     Email = "user2@example.com",
                     FullName = "User Two",
-                    EmailConfirmed = false,
+                    EmailConfirmed = true,
                     RegistrationTime = DateTime.UtcNow
                 },
                 new ApplicationUser
@@ -126,7 +126,7 @@ namespace BussinessObjects
                     UserName = "user3",
                     Email = "user3@example.com",
                     FullName = "User Three",
-                    EmailConfirmed = false,
+                    EmailConfirmed = true,
                     RegistrationTime = DateTime.UtcNow
                 },
                 new ApplicationUser
@@ -135,7 +135,7 @@ namespace BussinessObjects
                     UserName = "user4",
                     Email = "user4@example.com",
                     FullName = "User Four",
-                    EmailConfirmed = false,
+                    EmailConfirmed = true,
                     RegistrationTime = DateTime.UtcNow
                 },
                 new ApplicationUser
@@ -144,7 +144,7 @@ namespace BussinessObjects
                     UserName = "user5",
                     Email = "user5@example.com",
                     FullName = "User Five",
-                    EmailConfirmed = false,
+                    EmailConfirmed = true,
                     RegistrationTime = DateTime.UtcNow
                 },
                 new ApplicationUser
@@ -153,7 +153,7 @@ namespace BussinessObjects
                     UserName = "userSystem1",
                     Email = "userSystem1@example.com",
                     FullName = "User System",
-                    EmailConfirmed = false,
+                    EmailConfirmed = true,
                     RegistrationTime = DateTime.UtcNow
                 },
                 new ApplicationUser
@@ -162,7 +162,7 @@ namespace BussinessObjects
                     UserName = "Admin1",
                     Email = "Admin1@example.com",
                     FullName = "Admin 1",
-                    EmailConfirmed = false,
+                    EmailConfirmed = true,
                     RegistrationTime = DateTime.UtcNow
                 }
             );

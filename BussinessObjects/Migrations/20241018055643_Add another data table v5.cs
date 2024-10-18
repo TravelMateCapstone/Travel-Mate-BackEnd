@@ -421,13 +421,13 @@ namespace BussinessObjects.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FullName", "LockoutEnabled", "LockoutEnd", "MatchingActivitiesCount", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "RegistrationTime", "SecurityStamp", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { 1, 0, "e2d081a1-3e17-41a3-9024-ca77e2023b38", "user1@example.com", false, "User One", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 6, 10, 47, 18, 633, DateTimeKind.Utc).AddTicks(7021), null, false, "user1" },
-                    { 2, 0, "b3498963-6579-48b1-a448-7a9ab21664d1", "user2@example.com", false, "User Two", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 6, 10, 47, 18, 633, DateTimeKind.Utc).AddTicks(7026), null, false, "user2" },
-                    { 3, 0, "05d87c7c-dc25-41bf-9756-a9173003ec0e", "user3@example.com", false, "User Three", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 6, 10, 47, 18, 633, DateTimeKind.Utc).AddTicks(7028), null, false, "user3" },
-                    { 4, 0, "67264949-c379-4f4d-9279-ab5aae1e23f5", "user4@example.com", false, "User Four", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 6, 10, 47, 18, 633, DateTimeKind.Utc).AddTicks(7031), null, false, "user4" },
-                    { 5, 0, "dd8f6bc5-3b69-4711-bd38-fd658c5fd701", "user5@example.com", false, "User Five", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 6, 10, 47, 18, 633, DateTimeKind.Utc).AddTicks(7033), null, false, "user5" },
-                    { 6, 0, "d7a10ea3-1f03-4e67-8702-a6e4d4fe0904", "userSystem1@example.com", false, "User System", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 6, 10, 47, 18, 633, DateTimeKind.Utc).AddTicks(7035), null, false, "userSystem1" },
-                    { 7, 0, "e3a25eda-7191-4369-8eef-05db4fc9242d", "Admin1@example.com", false, "Admin 1", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 6, 10, 47, 18, 633, DateTimeKind.Utc).AddTicks(7037), null, false, "Admin1" }
+                    { 1, 0, "ee3d93cf-fb20-441a-9e59-43a3716350ba", "user1@example.com", true, "User One", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 18, 5, 56, 42, 844, DateTimeKind.Utc).AddTicks(4106), null, false, "user1" },
+                    { 2, 0, "51b569c8-7016-4579-b88a-dd1bd5f839e5", "user2@example.com", true, "User Two", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 18, 5, 56, 42, 844, DateTimeKind.Utc).AddTicks(4111), null, false, "user2" },
+                    { 3, 0, "1da57609-7290-4fce-82d3-9acd871c7072", "user3@example.com", true, "User Three", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 18, 5, 56, 42, 844, DateTimeKind.Utc).AddTicks(4113), null, false, "user3" },
+                    { 4, 0, "6f2fab14-d07d-4f09-9a02-035fb6dba919", "user4@example.com", true, "User Four", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 18, 5, 56, 42, 844, DateTimeKind.Utc).AddTicks(4115), null, false, "user4" },
+                    { 5, 0, "5a56291d-1dee-433e-948b-2ca343b3c08a", "user5@example.com", true, "User Five", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 18, 5, 56, 42, 844, DateTimeKind.Utc).AddTicks(4131), null, false, "user5" },
+                    { 6, 0, "b5b53597-8209-42b4-9ca0-0bc59f9665a2", "userSystem1@example.com", true, "User System", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 18, 5, 56, 42, 844, DateTimeKind.Utc).AddTicks(4133), null, false, "userSystem1" },
+                    { 7, 0, "eb92539a-6997-456d-9295-4572064d5c7e", "Admin1@example.com", true, "Admin 1", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 18, 5, 56, 42, 844, DateTimeKind.Utc).AddTicks(4142), null, false, "Admin1" }
                 });
 
             migrationBuilder.InsertData(

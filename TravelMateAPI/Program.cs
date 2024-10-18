@@ -134,7 +134,7 @@ namespace TravelMateAPI
             builder.Services.AddControllers().AddOData(opt => opt.Select().Expand().Filter().OrderBy().Count().SetMaxTop(null)
                             .AddRouteComponents("odata", modelBuilder.GetEdmModel()));
 
-            //builder.Services.AddHostedService<AccountCleanupService>();
+            builder.Services.AddHostedService<AccountCleanupService>();
 
             //var mailSettings = builder.Configuration.GetSection("MailSettings");
             //builder.Services.Configure<MailSettings>(mailSettings);
@@ -172,6 +172,8 @@ namespace TravelMateAPI
 
             //builder.Services.AddScoped<IFindLocalRepository, FindLocalRepository>();
             builder.Services.AddScoped<IFindLocalService, FindLocalService>();
+            builder.Services.AddScoped<ISearchLocationService, SearchLocationService>();
+            builder.Services.AddScoped<SearchLocationFuzzyService>();
             builder.Services.AddScoped<IFindLocalByFeedbackService, FindLocalByFeedbackService>();
             builder.Services.AddScoped<INotificationService, NotificationService>();
             builder.Services.AddScoped<IEventRepository, EventRepository>();

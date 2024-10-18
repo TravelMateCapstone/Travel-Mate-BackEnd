@@ -16,6 +16,7 @@ namespace BussinessObjects.Entities
         public DateTime RegistrationTime { get; set; } // Thời gian đăng ký
         public int? MatchingActivitiesCount { get; set; }
         public ICollection<Profile>? Profiles { get; set; }
+        //public virtual Profile? Profiles { get; set; }
         public ICollection<Friendship>? Friendships { get; set; }
         public ICollection<UserActivity>? UserActivities { get; set; }
         public ICollection<UserLocation>? UserLocations { get; set; }
