@@ -3,35 +3,50 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BussinessObjects
 {
-    public class ApplicationDBContext : IdentityDbContext<ApplicationUser,ApplicationRole,int>
+    public class ApplicationDBContext : IdentityDbContext<ApplicationUser, ApplicationRole, int>
     {
         public ApplicationDBContext()
         {
-            
+
         }
         public ApplicationDBContext(DbContextOptions<ApplicationDBContext> options) : base(options) { }
 
-        public DbSet<Profile> Profiles { get; set; }
+
         public DbSet<Friendship> Friendships { get; set; }
         public DbSet<Location> Locations { get; set; }
         public DbSet<Activity> Activities { get; set; }
         public DbSet<UserLocation> UserLocations { get; set; }
         public DbSet<UserActivity> UserActivities { get; set; }
+        public DbSet<Contract> Contracts { get; set; }
+        public DbSet<Destination> Destinations { get; set; }
+        public DbSet<DetailForm> DetailForms { get; set; }
         public DbSet<Event> Events { get; set; }
         public DbSet<EventParticipants> EventParticipants { get; set; }
         public DbSet<Notification> Notifications { get; set; }
+        public DbSet<Group> Groups { get; set; }
+        public DbSet<GroupParticipant> GroupParticipants { get; set; }
+        public DbSet<GroupPost> GroupPosts { get; set; }
+        public DbSet<GroupPostPhoto> GroupPostPhotos { get; set; }
+        public DbSet<HomePhoto> HomePhotos { get; set; }
+        public DbSet<Language> Languages { get; set; }
+        public DbSet<Message> Messages { get; set; }
 
-        //public DbSet<Feedback> Feedbacks { get; set; }
+        public DbSet<OnTravelling> OnTravellings { get; set; }
+        public DbSet<PastTripPost> PastTripPosts { get; set; }
+        public DbSet<PostComment> PostComments { get; set; }
+        public DbSet<PostPhoto> PostPhotos { get; set; }
+        public DbSet<Reaction> Reactions { get; set; }
+        public DbSet<Report> Reports { get; set; }
+        public DbSet<Request> Requests { get; set; }
+        public DbSet<SpokenLanguage> SpokenLanguages { get; set; }
+        public DbSet<University> Universities { get; set; }
+        public DbSet<UserDescription> UserDescriptions { get; set; }
+        public DbSet<UserEducation> UserEducations { get; set; }
+        public DbSet<UserHome> UserHomes { get; set; }
+        public DbSet<UserProfile> UserProfiles { get; set; }
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -46,12 +61,7 @@ namespace BussinessObjects
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
-
-           
-            // Bỏ tiền tố AspNet của các bảng: mặc định các bảng trong IdentityDbContext có
-            // tên với tiền tố AspNet như: AspNetUserRoles, AspNetUser ...
-            // Đoạn mã sau chạy khi khởi tạo DbContext, tạo database sẽ loại bỏ tiền tố đó
+            base.OnModelCreating(modelBuilder); // Ensure base configurations are applied first
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
             {
                 var tableName = entityType.GetTableName();
@@ -177,48 +187,48 @@ namespace BussinessObjects
                 new IdentityUserRole<int> { UserId = 5, RoleId = 4 }  // user5 là user
             );
             // Seed data cho profiles
-            modelBuilder.Entity<Profile>().HasData(
-                new Profile
-                {
-                    UserId = 1,
-                    FullName = "User One",
-                    Address = "123 Main St, Hanoi",
-                    Phone = "0123456789",
-                    ImageUser = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png"
-                },
-                new Profile
-                {
-                    UserId = 2,
-                    FullName = "User Two",
-                    Address = "456 Secondary St, Ho Chi Minh",
-                    Phone = "0987654321",
-                    ImageUser = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png"
-                },
-                new Profile
-                {
-                    UserId = 3,
-                    FullName = "User Three",
-                    Address = "789 Tertiary St, Da Nang",
-                    Phone = "0912345678",
-                    ImageUser = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png"
-                },
-                new Profile
-                {
-                    UserId = 4,
-                    FullName = "User Four",
-                    Address = "101 Eleventh St, Hue",
-                    Phone = "0998765432",
-                    ImageUser = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png"
-                },
-                new Profile
-                {
-                    UserId = 5,
-                    FullName = "User Five",
-                    Address = "202 Twelfth St, Phu Quoc",
-                    Phone = "0923456789",
-                    ImageUser = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png"
-                }
-            );
+            //modelBuilder.Entity<UserProfile>().HasData(
+            //    new UserProfile
+            //    {
+            //        UserId = 1,
+            //        FullName = "User One",
+            //        Address = "123 Main St, Hanoi",
+            //        Phone = "0123456789",
+            //        ImageUser = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png"
+            //    },
+            //    new UserProfile
+            //    {
+            //        UserId = 2,
+            //        FullName = "User Two",
+            //        Address = "456 Secondary St, Ho Chi Minh",
+            //        Phone = "0987654321",
+            //        ImageUser = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png"
+            //    },
+            //    new UserProfile
+            //    {
+            //        UserId = 3,
+            //        FullName = "User Three",
+            //        Address = "789 Tertiary St, Da Nang",
+            //        Phone = "0912345678",
+            //        ImageUser = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png"
+            //    },
+            //    new UserProfile
+            //    {
+            //        UserId = 4,
+            //        FullName = "User Four",
+            //        Address = "101 Eleventh St, Hue",
+            //        Phone = "0998765432",
+            //        ImageUser = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png"
+            //    },
+            //    new UserProfile
+            //    {
+            //        UserId = 5,
+            //        FullName = "User Five",
+            //        Address = "202 Twelfth St, Phu Quoc",
+            //        Phone = "0923456789",
+            //        ImageUser = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png"
+            //    }
+            //);
             // Seed data cho Locations (địa điểm trên lãnh thổ Việt Nam)
             modelBuilder.Entity<Location>().HasData(
                 new Location { LocationId = 1, LocationName = "Hà Nội" },
@@ -407,6 +417,127 @@ namespace BussinessObjects
             //    .HasKey(d => d.DiscountId);
 
 
+            modelBuilder.Entity<Contract>()
+                .HasOne(c => c.CreatedByUser)
+                .WithMany(u => u.CreatedContracts)
+                .HasForeignKey(c => c.CreatedById)
+            .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Contract>()
+                .HasOne(c => c.PaidByUser)
+                .WithMany(u => u.PaidContracts)
+                .HasForeignKey(c => c.PaidById)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Message>()
+       .HasOne(m => m.CreatedByUser)
+       .WithMany(u => u.Messages)
+       .HasForeignKey(m => m.CreatedById)
+       .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Message>()
+                .HasOne(m => m.SendToUser)
+                .WithMany(u => u.ReceivedMessages)
+                .HasForeignKey(m => m.SendToId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<PastTripPost>()
+       .HasOne(m => m.UserPastTrip)
+       .WithMany(u => u.PastTripPosts)
+       .HasForeignKey(m => m.UserId)
+       .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<PastTripPost>()
+                .HasOne(m => m.ReviewByUser)
+                .WithMany(u => u.PastTripPostReviews)
+                .HasForeignKey(m => m.ReviewById)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Report>()
+      .HasOne(m => m.ReportToUser)
+      .WithMany(u => u.ReceivedReports)
+      .HasForeignKey(m => m.ReportToId)
+      .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Report>()
+                .HasOne(m => m.SentByUser)
+                .WithMany(u => u.Reports)
+                .HasForeignKey(m => m.SentById)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Request>()
+     .HasOne(m => m.RequestByUser)
+     .WithMany(u => u.Requests)
+     .HasForeignKey(m => m.RequestById)
+     .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Request>()
+                .HasOne(m => m.RequestToUser)
+                .WithMany(u => u.ReceivedRequests)
+                .HasForeignKey(m => m.RequestToId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<OnTravelling>()
+       .HasKey(ot => new { ot.UserId, ot.DestinationId });
+
+            modelBuilder.Entity<OnTravelling>()
+                .HasOne(ot => ot.User)
+                .WithMany(e => e.OnTravel)
+                .HasForeignKey(ep => ep.UserId);
+
+            modelBuilder.Entity<OnTravelling>()
+                .HasOne(ep => ep.Destination)
+                .WithMany(u => u.Travellers)
+                .HasForeignKey(ep => ep.DestinationId);
+
+            modelBuilder.Entity<Reaction>()
+       .HasKey(ot => new { ot.ReactedById, ot.PostId });
+
+            modelBuilder.Entity<Reaction>()
+                .HasOne(ot => ot.ReactedByUser)
+                .WithMany(e => e.Reactions)
+                .HasForeignKey(ep => ep.ReactedById);
+
+            modelBuilder.Entity<Reaction>()
+                .HasOne(ep => ep.GroupPost)
+                .WithMany(u => u.Reactions)
+                .HasForeignKey(ep => ep.PostId);
+
+            modelBuilder.Entity<SpokenLanguage>()
+       .HasKey(ot => new { ot.UserId, ot.LanguageId });
+
+            modelBuilder.Entity<SpokenLanguage>()
+                .HasOne(ot => ot.User)
+                .WithMany(e => e.SpokenLanguages)
+                .HasForeignKey(ep => ep.UserId);
+
+            modelBuilder.Entity<SpokenLanguage>()
+                .HasOne(ep => ep.Language)
+                .WithMany(u => u.SpokenLanguages);
+
+            modelBuilder.Entity<UserDescription>()
+                .HasKey(ud => ud.UserId);
+            modelBuilder.Entity<UserHome>()
+                .HasKey(ud => ud.UserId);
+            modelBuilder.Entity<UserProfile>()
+                .HasKey(ud => ud.UserId);
+
+            modelBuilder.Entity<UserEducation>()
+       .HasKey(ot => new { ot.UserId, ot.UniversityId });
+
+            modelBuilder.Entity<UserEducation>()
+                .HasOne(ot => ot.User)
+                .WithMany(e => e.UserEducations)
+                .HasForeignKey(ep => ep.UserId);
+
+            modelBuilder.Entity<UserEducation>()
+                .HasOne(ep => ep.University)
+                .WithMany(u => u.Users);
+
+            modelBuilder.Entity<GroupParticipant>()
+       .HasKey(ot => new { ot.UserId, ot.GroupId });
+
+            base.OnModelCreating(modelBuilder);
         }
     }
 }
