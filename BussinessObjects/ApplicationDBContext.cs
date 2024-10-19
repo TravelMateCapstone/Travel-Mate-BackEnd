@@ -46,7 +46,7 @@ namespace BussinessObjects
         public DbSet<UserDescription> UserDescriptions { get; set; }
         public DbSet<UserEducation> UserEducations { get; set; }
         public DbSet<UserHome> UserHomes { get; set; }
-        public DbSet<UserProfile> UserProfiles { get; set; }
+        public DbSet<UserProfile> Profiles { get; set; }
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

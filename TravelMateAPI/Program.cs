@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Azure.Identity;
+﻿using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 using BussinessObjects;
 using BussinessObjects.Configuration;
@@ -153,7 +152,7 @@ namespace TravelMateAPI
             // OData configuration
             ODataConventionModelBuilder modelBuilder = new ODataConventionModelBuilder();
             modelBuilder.EntitySet<ApplicationUser>("ApplicationUsers");
-            modelBuilder.EntitySet<Profile>("Profiles");
+            //modelBuilder.EntitySet<UserProfile>("UserProfiles");
             modelBuilder.EntitySet<Friendship>("Friends");
             modelBuilder.EntitySet<Event>("Events");
             modelBuilder.EntitySet<EventParticipants>("EventParticipants");
@@ -173,7 +172,7 @@ namespace TravelMateAPI
             //builder.Services.AddSingleton<FirebaseService>();
 
             // Đăng ký các repository
-            builder.Services.AddScoped<IProfileRepository, ProfileRepository>();
+            builder.Services.AddScoped<IUserProfileRepository, UserProfileRepository>();
             builder.Services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
             builder.Services.AddScoped<IFindLocalService, FindLocalService>();
             builder.Services.AddScoped<IFindLocalByFeedbackService, FindLocalByFeedbackService>();
