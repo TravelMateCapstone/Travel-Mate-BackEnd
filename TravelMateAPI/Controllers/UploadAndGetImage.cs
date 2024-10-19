@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Repositories.Interface;
 using TravelMateAPI.Services.Firebase;
 
 namespace TravelMateAPI.Controllers
@@ -8,9 +7,9 @@ namespace TravelMateAPI.Controllers
     [ApiController]
     public class UploadAndGetImage : Controller
     {
-        private readonly IProfileRepository _profileRepository;
+        private readonly Repositories.Interface.IUserProfileRepository _profileRepository;
         private readonly FirebaseService _firebaseService;
-        public UploadAndGetImage(IProfileRepository profileRepository, FirebaseService firebaseService)
+        public UploadAndGetImage(Repositories.Interface.IUserProfileRepository profileRepository, FirebaseService firebaseService)
         {
             _profileRepository = profileRepository;
             _firebaseService = firebaseService;
@@ -34,7 +33,7 @@ namespace TravelMateAPI.Controllers
                 }
 
                 // Cập nhật URL của hình ảnh vào Profile
-                profile.ImageUser = imageUrl;
+                profile.ProfilePictureUrl = imageUrl;
                 await _profileRepository.UpdateProfileAsync(profile);
 
                 return Ok(new { imageUrl });
@@ -58,14 +57,13 @@ namespace TravelMateAPI.Controllers
             }
 
             // Kiểm tra nếu imageURL có tồn tại
-            if (string.IsNullOrEmpty(profile.ImageUser))
+            if (string.IsNullOrEmpty(profile.ProfilePictureUrl))
             {
                 return NotFound("No image URL found for this user.");
             }
 
             // Trả về URL của hình ảnh
-            return Ok(new { imageUrl = profile.ImageUser });
+            return Ok(new { imageUrl = profile.ProfilePictureUrl });
         }
     }
 }
-
