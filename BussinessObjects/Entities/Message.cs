@@ -8,10 +8,10 @@ namespace BussinessObjects.Entities
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int MessageId { get; set; }
-        public int CreatedById { get; set; }
-        public ApplicationUser? CreatedByUser { get; set; }
-        public int SendToId { get; set; }
-        public ApplicationUser? SendToUser { get; set; }
+        public int SenderId { get; set; }
+        public ApplicationUser? Sender { get; set; }
+        public int ReceiverId { get; set; }
+        public ApplicationUser? Receiver { get; set; }
         public string Text { get; set; }
         public DateTime CreatedTime { get; set; } = DateTime.UtcNow;
     }

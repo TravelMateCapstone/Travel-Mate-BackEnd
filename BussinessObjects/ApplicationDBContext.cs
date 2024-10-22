@@ -430,15 +430,15 @@ namespace BussinessObjects
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Message>()
-       .HasOne(m => m.CreatedByUser)
+       .HasOne(m => m.Sender)
        .WithMany(u => u.Messages)
-       .HasForeignKey(m => m.CreatedById)
+       .HasForeignKey(m => m.SenderId)
        .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Message>()
-                .HasOne(m => m.SendToUser)
+                .HasOne(m => m.Receiver)
                 .WithMany(u => u.ReceivedMessages)
-                .HasForeignKey(m => m.SendToId)
+                .HasForeignKey(m => m.ReceiverId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<PastTripPost>()

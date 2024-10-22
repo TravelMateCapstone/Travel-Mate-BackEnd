@@ -226,6 +226,8 @@ namespace TravelMateAPI
                         .AllowAnyHeader());
             });
 
+            builder.Services.AddSignalR();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline
@@ -237,6 +239,7 @@ namespace TravelMateAPI
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
                 });
             }
+            app.MapHub<ChatHub>("/Chat");
 
             app.UseHttpsRedirection();
             app.UseRouting();
