@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
 using Repositories.Interface;
 using BussinessObjects.Entities;
+using Microsoft.EntityFrameworkCore;
+using BussinessObjects;
 
 namespace TravelMateAPI.Controllers
 {
@@ -73,10 +75,12 @@ namespace TravelMateAPI.Controllers
     public class ActivityController : ControllerBase
     {
         private readonly IActivityRepository _activityRepository;
+        
 
         public ActivityController(IActivityRepository activityRepository)
         {
             _activityRepository = activityRepository;
+           
         }
 
         // GET: api/Activity
@@ -86,11 +90,7 @@ namespace TravelMateAPI.Controllers
             var activities = await _activityRepository.GetAllActivitiesAsync();
             return Ok(activities);
         }
-        //public IActionResult GetAll()
-        //{
-        //    var activities = _activityRepository.GetAllActivitiesAsync().Result.AsQueryable();
-        //    return Ok(activities);
-        //}
+        
 
         // GET: api/Activity/1
         [HttpGet("{id}")]
@@ -109,7 +109,7 @@ namespace TravelMateAPI.Controllers
         public async Task<IActionResult> Create([FromBody] Activity newActivity)
         {
             if (newActivity == null)
-        {
+            {
                 return BadRequest("Activity is null.");
             }
 
@@ -117,24 +117,20 @@ namespace TravelMateAPI.Controllers
             return CreatedAtAction(nameof(GetById), new { id = createdActivity.ActivityId }, createdActivity);
         }
 
+
         // PUT: api/Activity/1
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] Activity updatedActivity)
         {
             if (id != updatedActivity.ActivityId)
-        {
-                return BadRequest("Activity ID mismatch.");
-            }
-
-            var activity = await _activityRepository.GetActivityByIdAsync(id);
-            if (activity == null)
             {
-                return NotFound(new { Message = $"Activity with id {id} not found." });
+                return BadRequest("Activity ID mismatch.");
             }
 
             await _activityRepository.UpdateActivityAsync(updatedActivity);
             return NoContent();
         }
+
 
         // DELETE: api/Activity/1
         [HttpDelete("{id}")]

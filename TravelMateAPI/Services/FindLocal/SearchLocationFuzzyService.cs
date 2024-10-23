@@ -19,7 +19,7 @@ namespace TravelMateAPI.Services.FindLocal
 
             // Tính toán độ tương tự giữa query và từng LocationName
             var results = locations
-                .Where(l => Fuzz.Ratio(normalizedQuery, l.LocationName.ToLower()) > 70) // Ngưỡng tương tự 70%
+                .Where(l => Fuzz.Ratio(normalizedQuery, l.LocationName.ToLower()) > 60) // Ngưỡng tương tự 70%
                 .Select(l => new LocationDTO
                 {
                     LocationId = l.LocationId,

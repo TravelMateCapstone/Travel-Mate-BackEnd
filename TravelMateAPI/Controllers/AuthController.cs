@@ -1,9 +1,11 @@
 ﻿using BussinessObjects.Entities;
+using BussinessObjects.EnumClass;
 using BussinessObjects.Utils.Request;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -59,9 +61,11 @@ namespace TravelMateAPI.Controllers
             var token = _tokenService.GenerateToken(user);
 
             // Thay thế {userId} bằng giá trị thực tế từ user.Id
-            var avatarUrl = $"https://travelmateapp.azurewebsites.net/odata/Profiles/GetImageUrl/{user.Id}";
+            var avatarUrl1 = $"https://travelmateapp.azurewebsites.net/odata/Profiles/GetImageUrl/{user.Id}";
+            var avatarUrl2 = $"https://travelmateapp.azurewebsites.net/api/clound/getall/{user.Id}";
 
-            return Ok(new { Token = token, AvataUrl = avatarUrl });
+
+            return Ok(new { Token = token, AvataUrl = avatarUrl2 });
         }
 
 
@@ -393,5 +397,8 @@ namespace TravelMateAPI.Controllers
                 GoogleClientSecret = googleClientSecret
             });
         }
+
+       
+
     }
 }

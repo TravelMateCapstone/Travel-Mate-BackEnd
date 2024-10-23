@@ -6,7 +6,7 @@ namespace TravelMateAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UploadAndGetImage : Controller
+    public class UploadAndGetImage : ControllerBase 
     {
         private readonly IProfileRepository _profileRepository;
         private readonly FirebaseService _firebaseService;

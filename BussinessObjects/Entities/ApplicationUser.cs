@@ -16,10 +16,13 @@ namespace BussinessObjects.Entities
         public DateTime RegistrationTime { get; set; } // Thời gian đăng ký
         public int? MatchingActivitiesCount { get; set; }
         public ICollection<Profile>? Profiles { get; set; }
-        //public virtual Profile? Profiles { get; set; }
         public ICollection<Friendship>? Friendships { get; set; }
         public ICollection<UserActivity>? UserActivities { get; set; }
         public ICollection<UserLocation>? UserLocations { get; set; }
+        public ICollection<Local>? Locals { get; set; }
+        public ICollection<Traveler> Travelers { get; set; }
+        public ICollection<UserEducation>? UserEducations { get; set; }
+        public ICollection<SpokenLanguages>? SpokenLanguages { get; set; }
         public ICollection<EventParticipants>?  EventParticipants { get; set; }
         // Quan hệ với bảng Friendship: Người dùng gửi lời mời kết bạn
         public ICollection<Friendship>? SentFriendRequests { get; set; }
@@ -27,5 +30,7 @@ namespace BussinessObjects.Entities
         // Quan hệ với bảng Friendship: Người dùng nhận lời mời kết bạn
         public ICollection<Friendship>? ReceivedFriendRequests { get; set; }
         //public ICollection<Feedback>? Feedbacks { get; set; }
+        public ICollection<UserHome>? UserHomes { get; set; }
+        public ICollection<HomePhoto>? HomePhotos { get; set; }
     }
 }

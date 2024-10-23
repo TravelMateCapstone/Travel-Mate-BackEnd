@@ -27,11 +27,21 @@ namespace BussinessObjects
         public DbSet<Activity> Activities { get; set; }
         public DbSet<UserLocation> UserLocations { get; set; }
         public DbSet<UserActivity> UserActivities { get; set; }
+
+        public DbSet<Local> Locals { get; set; }
+        public DbSet<Traveler> Travelers { get; set; }
+        public DbSet<UserEducation> UserEducations { get; set; }
+        public DbSet<SpokenLanguages> SpokenLanguages { get; set; }
+        public DbSet<University> Universities { get; set; }
+        public DbSet<Languages> Languages { get; set; }
         public DbSet<Event> Events { get; set; }
         public DbSet<EventParticipants> EventParticipants { get; set; }
         public DbSet<Notification> Notifications { get; set; }
 
         //public DbSet<Feedback> Feedbacks { get; set; }
+        public DbSet<UserHome> UserHomes { get; set; }
+        public DbSet<HomePhoto> HomePhotos { get; set; }
+
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -80,6 +90,12 @@ namespace BussinessObjects
                 .WithOne(f => f.User2)
                 .HasForeignKey(f => f.UserId2)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            //Cấu hình cho UserLocation/Activity
+            modelBuilder.Entity<UserEducation>()
+            .HasKey(ul => new { ul.UserId, ul.UniversityId });
+            modelBuilder.Entity<SpokenLanguages>()
+                .HasKey(ua => new { ua.UserId, ua.LanguagesId });
 
             // Cấu hình khóa chính và quan hệ cho bảng Friendship
             // modelBuilder.Entity<Friendship>()
@@ -184,6 +200,8 @@ namespace BussinessObjects
                     FullName = "User One",
                     Address = "123 Main St, Hanoi",
                     Phone = "0123456789",
+                    Gender = "Male",
+                    Birthdate = DateTime.UtcNow,
                     ImageUser = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png"
                 },
                 new Profile
@@ -192,6 +210,8 @@ namespace BussinessObjects
                     FullName = "User Two",
                     Address = "456 Secondary St, Ho Chi Minh",
                     Phone = "0987654321",
+                    Gender = "Male",
+                    Birthdate = DateTime.UtcNow,
                     ImageUser = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png"
                 },
                 new Profile
@@ -200,6 +220,8 @@ namespace BussinessObjects
                     FullName = "User Three",
                     Address = "789 Tertiary St, Da Nang",
                     Phone = "0912345678",
+                    Gender = "Male",
+                    Birthdate = DateTime.UtcNow,
                     ImageUser = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png"
                 },
                 new Profile
@@ -208,6 +230,8 @@ namespace BussinessObjects
                     FullName = "User Four",
                     Address = "101 Eleventh St, Hue",
                     Phone = "0998765432",
+                    Gender = "Male",
+                    Birthdate = DateTime.UtcNow,
                     ImageUser = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png"
                 },
                 new Profile
@@ -216,6 +240,8 @@ namespace BussinessObjects
                     FullName = "User Five",
                     Address = "202 Twelfth St, Phu Quoc",
                     Phone = "0923456789",
+                    Gender = "Male",
+                    Birthdate = DateTime.UtcNow,
                     ImageUser = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png"
                 }
             );

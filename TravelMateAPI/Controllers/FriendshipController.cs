@@ -15,12 +15,14 @@ namespace TravelMateAPI.Controllers
         private readonly ApplicationDBContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly INotificationService _notificationService;
+       
 
         public FriendshipController(ApplicationDBContext context, UserManager<ApplicationUser> userManager, INotificationService notificationService)
         {
             _context = context;
             _userManager = userManager;
             _notificationService = notificationService;
+            
         }
 
         // Gửi lời mời kết bạn
@@ -122,6 +124,32 @@ namespace TravelMateAPI.Controllers
 
             return Ok(friends);
         }
+
+        [HttpGet("friends/{userId}")]
+        public async Task<IActionResult> GetFriendsByUserId(int userId)
+        {
+            // Kiểm tra xem user có tồn tại không
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user == null)
+            {
+                return NotFound("Người dùng không tồn tại");
+            }
+
+            // Lấy danh sách bạn bè
+            var friends = await _context.Friendships
+                .Where(f => (f.UserId1 == userId || f.UserId2 == userId) && f.Status == FriendshipStatus.Accepted)
+                .Select(f => new
+                {
+                    FriendId = f.UserId1 == userId ? f.UserId2 : f.UserId1,
+                    FriendName = f.UserId1 == userId ? f.User2.UserName : f.User1.UserName,
+                    FriendshipId = f.FriendshipId,
+                    ConfirmedAt = f.ConfirmedAt
+                })
+                .ToListAsync();
+
+            return Ok(friends);
+        }
+
     }
 }
 

@@ -8,7 +8,7 @@ namespace TravelMateAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class FindLocalWOOController : Controller
+    public class FindLocalWOOController : ControllerBase
     {
         
         private readonly IFindLocalService _findLocalService;

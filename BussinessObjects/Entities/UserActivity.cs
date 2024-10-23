@@ -10,9 +10,7 @@ namespace BussinessObjects.Entities
 {
     public class UserActivity
     {
-        //[Key]
-        //[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        //public int UserActivityId { get; set; }
+        
         [Key, Column(Order = 0)]
         public int UserId { get; set; }
         [Key, Column(Order = 1)]

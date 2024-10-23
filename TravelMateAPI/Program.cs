@@ -20,6 +20,7 @@ using TravelMateAPI.Services.Firebase;
 using TravelMateAPI.Models;
 using System.ComponentModel;
 using TravelMateAPI.Services.Notification;
+using TravelMateAPI.Services.Storage;
 
 namespace TravelMateAPI
 {
@@ -166,6 +167,8 @@ namespace TravelMateAPI
             builder.Services.AddSingleton(firebaseConfig);
             builder.Services.AddSingleton<FirebaseService>();
 
+            builder.Services.AddScoped<ICloudStorageService, CloudStorageService>();
+
             // Register your repositories
             builder.Services.AddScoped<IProfileRepository, ProfileRepository>();
             builder.Services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
@@ -180,9 +183,25 @@ namespace TravelMateAPI
             builder.Services.AddScoped<IEventParticipantsRepository, EventParticipantsRepository>();
             builder.Services.AddScoped<ActivitiesDAO>();
             builder.Services.AddScoped<IActivityRepository, ActivityRepository>();
+            builder.Services.AddScoped<LocationsDAO>();
             builder.Services.AddScoped<ILocationRepository, LocationRepository>();
+            builder.Services.AddScoped<UserActivitiesDAO>();
             builder.Services.AddScoped<IUserActivitiesRepository, UserActivitiesRepository>();
+            builder.Services.AddScoped<UserLocationsDAO>();
             builder.Services.AddScoped<IUserLocationsRepository, UserLocationsRepository>();
+            builder.Services.AddScoped<LanguagesDAO>();
+            builder.Services.AddScoped<ILanguagesRepository, LanguagesRepository>();
+            builder.Services.AddScoped<SpokenLanguagesDAO>();
+            builder.Services.AddScoped<ISpokenLanguagesRepository, SpokenLanguagesRepository>();
+            builder.Services.AddScoped<UniversityDAO>();
+            builder.Services.AddScoped<IUniversityRepository, UniversityRepository>();
+            builder.Services.AddScoped<UserEducationDAO>();
+            builder.Services.AddScoped<IUserEducationRepository, UserEducationRepository>();
+            builder.Services.AddScoped<UserHomeDAO>();
+            builder.Services.AddScoped<IUserHomeRepository, UserHomeRepository>();
+            builder.Services.AddScoped<HomePhotoDAO>();
+            builder.Services.AddScoped<IHomePhotoRepository, HomePhotoRepository>();
+
 
 
 

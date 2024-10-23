@@ -16,4 +16,5 @@ namespace Repositories.Interface
         Task DeleteProfileAsync(int userId);
     }
 
+
 }

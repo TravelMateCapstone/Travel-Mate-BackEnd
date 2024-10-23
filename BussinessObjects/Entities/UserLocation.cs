@@ -10,9 +10,7 @@ namespace BussinessObjects.Entities
 {
     public class UserLocation
     {
-        //[Key]
-        //[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        //public int UserLocationId { get; set; }
+        
 
         [Key, Column(Order = 0)]
         public int UserId { get; set; }

@@ -5,7 +5,7 @@ namespace TravelMateAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class FindLocalFeedbackWOOController : Controller
+    public class FindLocalFeedbackWOOController : ControllerBase
     {
         private readonly FindLocalByFeedbackService _findLocalByFeedbackService;
 
