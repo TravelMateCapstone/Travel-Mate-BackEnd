@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using BussinessObjects.Entities;
-using BussinessObjects.Utils.Reponse;
+using BusinessObjects.Entities;
+using BusinessObjects.Utils.Response;
 using Microsoft.AspNetCore.Mvc;
 using Repositories.Interface;
 

@@ -1,4 +1,4 @@
-﻿namespace BussinessObjects.Configuration
+﻿namespace BusinessObjects.Configuration
 {
     public class AppSettings
     {

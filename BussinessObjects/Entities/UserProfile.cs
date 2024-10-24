@@ -1,4 +1,4 @@
-﻿namespace BussinessObjects.Entities
+﻿namespace BusinessObjects.Entities
 {
     public class UserProfile
     {

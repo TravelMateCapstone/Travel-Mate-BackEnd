@@ -1,9 +1,9 @@
 ﻿using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
-using BussinessObjects;
-using BussinessObjects.Configuration;
-using BussinessObjects.Entities;
-using BussinessObjects.Utils.Request;
+using BusinessObjects;
+using BusinessObjects.Configuration;
+using BusinessObjects.Entities;
+using BusinessObjects.Utils.Request;
 using DataAccess;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -184,7 +184,8 @@ namespace TravelMateAPI
             builder.Services.AddScoped<ILocationRepository, LocationRepository>();
             builder.Services.AddScoped<IUserActivitiesRepository, UserActivitiesRepository>();
             builder.Services.AddScoped<IUserLocationsRepository, UserLocationsRepository>();
-
+            builder.Services.AddScoped<GroupDAO>();
+            builder.Services.AddScoped<IGroupRepository, GroupRepository>();
             builder.Services.AddControllers();
 
             // Cấu hình Swagger

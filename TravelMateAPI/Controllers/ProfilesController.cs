@@ -80,7 +80,7 @@
     //                if (profile == null)
     //                {
     //                    return NotFound($"Profile with UserId '{userId}' not found.");
-    //                }
+    //                }s
 
     //                // Cập nhật URL của hình ảnh vào Profile
     //                profile.ImageUser = imageUrl;

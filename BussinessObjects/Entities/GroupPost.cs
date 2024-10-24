@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace BussinessObjects.Entities
+namespace BusinessObjects.Entities
 {
     public class GroupPost
     {
@@ -12,9 +12,9 @@ namespace BussinessObjects.Entities
 
         public string Title { get; set; }
 
-        public string? Description { get; set; }
+        //public string? Description { get; set; }
 
-        public DateTime CreatedTime { get; set; } = DateTime.UtcNow;
+        //public DateTime CreatedTime { get; set; };
 
         public int PostById { get; set; }
 

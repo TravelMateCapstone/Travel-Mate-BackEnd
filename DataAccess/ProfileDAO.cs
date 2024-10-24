@@ -1,5 +1,5 @@
-﻿using BussinessObjects;
-using BussinessObjects.Entities;
+﻿using BusinessObjects;
+using BusinessObjects.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace DataAccess

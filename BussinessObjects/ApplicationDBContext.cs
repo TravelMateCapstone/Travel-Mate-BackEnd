@@ -1,10 +1,10 @@
-﻿using BussinessObjects.Entities;
+﻿using BusinessObjects.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
-namespace BussinessObjects
+namespace BusinessObjects
 {
     public class ApplicationDBContext : IdentityDbContext<ApplicationUser, ApplicationRole, int>
     {

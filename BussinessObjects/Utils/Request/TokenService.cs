@@ -1,12 +1,12 @@
-﻿using BussinessObjects.Configuration;
-using BussinessObjects.Entities;
+﻿using BusinessObjects.Configuration;
+using BusinessObjects.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace BussinessObjects.Utils.Request
+namespace BusinessObjects.Utils.Request
 {
     public class TokenService
     {

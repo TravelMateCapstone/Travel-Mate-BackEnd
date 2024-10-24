@@ -5,9 +5,9 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BussinessObjects.EnumClass;
+using BusinessObjects.EnumClass;
 
-namespace BussinessObjects.Entities
+namespace BusinessObjects.Entities
 {
     public class Friendship
     {
