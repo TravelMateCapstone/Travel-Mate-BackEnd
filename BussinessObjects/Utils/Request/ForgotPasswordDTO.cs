@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BussinessObjects.Utils.Request
+namespace BusinessObjects.Utils.Request
 {
     public class ForgotPasswordDTO
     {

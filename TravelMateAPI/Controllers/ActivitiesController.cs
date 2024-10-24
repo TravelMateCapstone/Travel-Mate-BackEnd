@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.OData.Formatter;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
 using Repositories.Interface;
-using BussinessObjects.Entities;
+using BusinessObjects.Entities;
 
 namespace TravelMateAPI.Controllers
 {

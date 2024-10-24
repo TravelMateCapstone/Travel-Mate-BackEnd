@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TravelMateAPI", "TravelMate
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataAccess", "DataAccess\DataAccess.csproj", "{03FBF061-B83E-4D96-A950-A3C8F7638819}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BussinessObjects", "BussinessObjects\BussinessObjects.csproj", "{4C996072-6FCF-47B4-9BB3-A1389AC8B259}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BusinessObjects", "BussinessObjects\BusinessObjects.csproj", "{4C996072-6FCF-47B4-9BB3-A1389AC8B259}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Repositories", "Repositories\Repositories.csproj", "{C53CE285-8EA7-4432-8BAD-44AA9BADA83F}"
 EndProject
@@ -22,12 +22,15 @@ Global
 		{F629B371-F02A-44F6-A1CA-72C8CAA9147B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F629B371-F02A-44F6-A1CA-72C8CAA9147B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{03FBF061-B83E-4D96-A950-A3C8F7638819}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{03FBF061-B83E-4D96-A950-A3C8F7638819}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{03FBF061-B83E-4D96-A950-A3C8F7638819}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{03FBF061-B83E-4D96-A950-A3C8F7638819}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4C996072-6FCF-47B4-9BB3-A1389AC8B259}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C996072-6FCF-47B4-9BB3-A1389AC8B259}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4C996072-6FCF-47B4-9BB3-A1389AC8B259}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4C996072-6FCF-47B4-9BB3-A1389AC8B259}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C53CE285-8EA7-4432-8BAD-44AA9BADA83F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C53CE285-8EA7-4432-8BAD-44AA9BADA83F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C53CE285-8EA7-4432-8BAD-44AA9BADA83F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C53CE285-8EA7-4432-8BAD-44AA9BADA83F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection

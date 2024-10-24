@@ -1,4 +1,4 @@
-﻿using BussinessObjects.Entities;
+﻿using BusinessObjects.Entities;
 using Microsoft.Data.SqlClient;
 using Repositories.Interface;
 using Dapper;

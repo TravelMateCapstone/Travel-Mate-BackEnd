@@ -1,4 +1,5 @@
-﻿using MailKit.Security;
+﻿using BusinessObjects.Configuration;
+using MailKit.Security;
 using Microsoft.Extensions.Options;
 using MimeKit;
 

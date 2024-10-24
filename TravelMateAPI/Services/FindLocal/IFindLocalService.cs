@@ -1,4 +1,4 @@
-﻿using BussinessObjects.Entities;
+﻿using BusinessObjects.Entities;
 
 namespace TravelMateAPI.Services.FindLocal
 {

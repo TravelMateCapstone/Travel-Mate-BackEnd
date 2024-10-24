@@ -1,10 +1,5 @@
-﻿using BussinessObjects.Entities;
-using BussinessObjects;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using BusinessObjects;
+using BusinessObjects.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace DataAccess
@@ -18,24 +13,24 @@ namespace DataAccess
             _dbContext = SingletonBase<ProfileDAO>._context;
         }
 
-        public async Task<List<Profile>> GetAllProfilesAsync()
+        public async Task<List<UserProfile>> GetAllProfilesAsync()
         {
             return await _dbContext.Profiles.ToListAsync();
         }
 
-        public async Task<Profile> GetProfileByIdAsync(int userId)
+        public async Task<UserProfile> GetProfileByIdAsync(int userId)
         {
             return await _dbContext.Profiles.FirstOrDefaultAsync(p => p.UserId == userId);
         }
 
-        public async Task<Profile> AddProfileAsync(Profile newProfile)
+        public async Task<UserProfile> AddProfileAsync(UserProfile newProfile)
         {
             _dbContext.Profiles.Add(newProfile);
             await _dbContext.SaveChangesAsync();
             return newProfile;
         }
 
-        public async Task UpdateProfileAsync(Profile updatedProfile)
+        public async Task UpdateProfileAsync(UserProfile updatedProfile)
         {
             _dbContext.Profiles.Update(updatedProfile);
             await _dbContext.SaveChangesAsync();

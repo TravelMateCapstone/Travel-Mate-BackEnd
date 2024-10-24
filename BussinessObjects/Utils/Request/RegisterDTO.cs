@@ -1,5 +1,5 @@
 ﻿
-namespace BussinessObjects.Utils.Request
+namespace BusinessObjects.Utils.Request
 {
     public class RegisterDTO
     {
