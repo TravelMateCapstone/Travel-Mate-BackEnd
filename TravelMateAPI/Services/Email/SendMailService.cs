@@ -15,7 +15,14 @@ namespace TravelMateAPI.Services.Email
         // Có inject Logger để xuất log
         public SendMailService(IOptions<MailSettings> _mailSettings, ILogger<SendMailService> _logger)
         {
-            mailSettings = _mailSettings.Value;
+            mailSettings = new MailSettings
+            {
+                Mail = Environment.GetEnvironmentVariable("MAIL_ADDRESS"),
+                DisplayName = Environment.GetEnvironmentVariable("MAIL_DISPLAY_NAME"),
+                Password = Environment.GetEnvironmentVariable("MAIL_PASSWORD"),
+                Host = Environment.GetEnvironmentVariable("MAIL_HOST"),
+                Port = int.Parse(Environment.GetEnvironmentVariable("MAIL_PORT"))
+            };
             logger = _logger;
             logger.LogInformation("Create SendMailService");
         }
@@ -24,6 +31,8 @@ namespace TravelMateAPI.Services.Email
         public async Task SendMail(MailContent mailContent)
         {
             var email = new MimeMessage();
+            //email.Sender = new MailboxAddress(mailSettings.DisplayName, mailSettings.Mail);
+            //email.From.Add(new MailboxAddress(mailSettings.DisplayName, mailSettings.Mail));
             email.Sender = new MailboxAddress(mailSettings.DisplayName, mailSettings.Mail);
             email.From.Add(new MailboxAddress(mailSettings.DisplayName, mailSettings.Mail));
             email.To.Add(MailboxAddress.Parse(mailContent.To));

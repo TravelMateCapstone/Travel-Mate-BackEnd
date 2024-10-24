@@ -170,10 +170,10 @@ namespace TravelMateAPI
             builder.Services.AddScoped<ICloudStorageService, CloudStorageService>();
 
             // Register your repositories
+            builder.Services.AddScoped<ProfileDAO>();
             builder.Services.AddScoped<IProfileRepository, ProfileRepository>();
             builder.Services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
 
-            //builder.Services.AddScoped<IFindLocalRepository, FindLocalRepository>();
             builder.Services.AddScoped<IFindLocalService, FindLocalService>();
             builder.Services.AddScoped<ISearchLocationService, SearchLocationService>();
             builder.Services.AddScoped<SearchLocationFuzzyService>();

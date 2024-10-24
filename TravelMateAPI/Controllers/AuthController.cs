@@ -124,6 +124,7 @@ namespace TravelMateAPI.Controllers
                 To = user.Email,
                 Subject = "Xác nhận tài khoản - Travel Mate",
                 Body = $"<p>Xin chào, vui lòng xác nhận email của bạn bằng cách nhấp vào liên kết bên dưới:</p><a href='{confirmationLink}'>Xác nhận email</a>"
+                //Body = "Xin chào, vui lòng xác nhận email của bạn bằng cách nhấp vào liên kết bên dưới"
             };
 
             await _mailService.SendMail(content);
