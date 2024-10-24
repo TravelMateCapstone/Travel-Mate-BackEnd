@@ -104,6 +104,7 @@ namespace TravelMateAPI.Controllers
             }
 
             await _groupRepository.DeleteAsync(id);
+            //return NoContent();
             return NoContent();
         }
 
