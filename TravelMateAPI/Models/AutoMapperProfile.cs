@@ -1,7 +1,5 @@
-﻿using BussinessObjects.Entities;
-using DataAccess;
-using BussinessObjects.Utils.Reponse;
-using AutoMapper;
+﻿using BusinessObjects.Entities;
+using BusinessObjects.Utils.Response;
 
 namespace TravelMateAPI.Models
 {
@@ -14,7 +12,7 @@ namespace TravelMateAPI.Models
             //.ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.ApplicationUser.UserName));
 
             CreateMap<UserLocation, UserLocationDTO>()
-                .ForMember(dest =>dest.LocationName, opt=>opt.MapFrom(src=> src.Location.LocationName));
+                .ForMember(dest => dest.LocationName, opt => opt.MapFrom(src => src.Location.LocationName));
         }
     }
 }

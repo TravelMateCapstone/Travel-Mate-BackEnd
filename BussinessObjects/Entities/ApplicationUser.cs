@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace BussinessObjects.Entities
+namespace BusinessObjects.Entities
 {
     /// <summary>
     /// IdentityUser<int> tức là cấu hình cho userid là int nếu muốn string thì thay bằng string

@@ -1,5 +1,5 @@
-﻿using BussinessObjects;
-using BussinessObjects.Entities;
+﻿using BusinessObjects;
+using BusinessObjects.Entities;
 
 namespace TravelMateAPI.Services.Notification
 {
@@ -14,7 +14,7 @@ namespace TravelMateAPI.Services.Notification
 
         public async Task CreateNotificationAsync(int userId, string message)
         {
-            var notification = new BussinessObjects.Entities.Notification
+            var notification = new BusinessObjects.Entities.Notification
             {
                 UserId = userId,
                 Message = message,

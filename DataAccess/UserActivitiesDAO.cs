@@ -1,11 +1,11 @@
-﻿using BussinessObjects;
+﻿using BusinessObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using BussinessObjects.Entities;
+using BusinessObjects.Entities;
 
 namespace DataAccess
 {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BussinessObjects.EnumClass
+namespace BusinessObjects.EnumClass
 {
     public enum FriendshipStatus
     {

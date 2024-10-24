@@ -1,4 +1,4 @@
-﻿using BussinessObjects.Configuration;
+﻿using BusinessObjects.Configuration;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using Google.Cloud.Storage.V1;

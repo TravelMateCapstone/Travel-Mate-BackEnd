@@ -1,11 +1,6 @@
-﻿using BussinessObjects.Entities;
+﻿using BusinessObjects.Entities;
 using DataAccess;
 using Repositories.Interface;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Repositories
 {

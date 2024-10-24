@@ -1,7 +1,7 @@
 ﻿using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
-using BussinessObjects.Entities;
-using BussinessObjects.Utils.Request;
+using BusinessObjects.Entities;
+using BusinessObjects.Utils.Request;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;

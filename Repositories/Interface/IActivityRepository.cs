@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BussinessObjects.Entities;
+using BusinessObjects.Entities;
 
 namespace Repositories.Interface
 {

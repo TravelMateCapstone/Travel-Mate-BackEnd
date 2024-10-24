@@ -1,4 +1,4 @@
-﻿using BussinessObjects.Entities;
+﻿using BusinessObjects.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Formatter;
 using Microsoft.AspNetCore.OData.Query;
