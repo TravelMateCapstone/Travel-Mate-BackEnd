@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Repositories.Interface;
 using System.Security.Claims;
 
 namespace TravelMateAPI.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class GroupsController : ControllerBase
@@ -20,8 +22,8 @@ namespace TravelMateAPI.Controllers
         private int GetUserId()
         {
             var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            //return int.TryParse(userIdString, out var userId) ? userId : -1;
-            return 3;
+            return int.TryParse(userIdString, out var userId) ? userId : -1;
+            //return 3;
         }
 
         [HttpGet]
@@ -49,8 +51,6 @@ namespace TravelMateAPI.Controllers
 
             return Ok(result);
         }
-
-
 
         // GET: api/Groups/CreatedGroup/id
         [HttpGet("{groupId}")]
@@ -89,8 +89,6 @@ namespace TravelMateAPI.Controllers
 
             return Ok(result);
         }
-
-
 
         // GET: api/Groups/CreatedGroup/id
         [HttpGet("CreatedGroups/{groupId}")]
@@ -132,7 +130,6 @@ namespace TravelMateAPI.Controllers
             return Ok(result);
         }
 
-
         // POST: api/Groups/Join/5
         [HttpGet("JoinedGroups/{groupId}")]
         public async Task<IActionResult> GetJoinedGroupByIdAsync(int groupId)
@@ -147,7 +144,6 @@ namespace TravelMateAPI.Controllers
             return Ok(joinedGroups);
         }
 
-
         [HttpPost("JoinedGroups/Join/{groupId}")]
         public async Task<IActionResult> JoinGroup(int groupId)
         {
@@ -159,10 +155,20 @@ namespace TravelMateAPI.Controllers
 
             await _groupRepository.JoinGroup(userId, groupId);
 
-            return Ok("Đã join group");
-
+            return Ok("Request Join group sent");
         }
 
+        [HttpPost("JoinedGroups/{groupId}/AcceptJoin")]
+        public async Task<IActionResult> AcceptJoinGroup([FromQuery] int requesterId, int groupId)
+        {
+            var userId = GetUserId();
+            var isGroupCreator = _groupRepository.GetCreatedGroupByIdAsync(userId, groupId);
+            if (isGroupCreator == null) return NotFound();
+
+            await _groupRepository.AcceptJoinGroup(requesterId, groupId);
+
+            return Ok("Accepted a join group request");
+        }
 
         // DELETE: api/Groups/Leave/5
         [HttpDelete("LeaveGroup/{groupId}")]
@@ -175,7 +181,7 @@ namespace TravelMateAPI.Controllers
 
             await _groupRepository.LeaveGroup(userId, groupId);
 
-            return Ok();
+            return Ok("Leave group successfully");
         }
 
         // POST: api/Group
@@ -188,7 +194,6 @@ namespace TravelMateAPI.Controllers
 
             //get user id from session
             var userId = GetUserId();
-
             newGroup.CreatedById = userId;
             // add user id to object
             await _groupRepository.AddAsync(newGroup);
@@ -203,19 +208,16 @@ namespace TravelMateAPI.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest();
-
             if (groupId != updatedGroup.GroupId)
             {
                 return BadRequest("Group ID mismatch");
             }
             var userId = GetUserId();
-
             var existingGroup = await _groupRepository.GetCreatedGroupByIdAsync(userId, groupId);
             if (existingGroup == null)
             {
                 return NotFound();
             }
-
             await _groupRepository.UpdateAsync(updatedGroup);
             return NoContent();
         }
@@ -225,13 +227,11 @@ namespace TravelMateAPI.Controllers
         public async Task<IActionResult> DeleteGroup(int groupId)
         {
             var userId = GetUserId();
-
             var existingGroup = await _groupRepository.GetCreatedGroupByIdAsync(userId, groupId);
             if (existingGroup == null)
             {
                 return NotFound();
             }
-
             await _groupRepository.DeleteAsync(groupId);
             return NoContent();
         }
