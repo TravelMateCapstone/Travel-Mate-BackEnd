@@ -55,7 +55,7 @@ namespace DataAccess
             return await _dbContext.Groups
                 .Include(g => g.GroupParticipants)
                 .Where(g => g.GroupParticipants.Any(gp => gp.UserId == userId && gp.JoinedStatus))
-                .FirstOrDefaultAsync(g => g.GroupId == groupId);
+                .FirstAsync(g => g.GroupId == groupId);
         }
 
 
