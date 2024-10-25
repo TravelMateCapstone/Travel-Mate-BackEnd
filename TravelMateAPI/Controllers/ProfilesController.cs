@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Repositories.Interface;
 using BusinessObjects.Entities;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
 
 namespace TravelMateAPI.Controllers
 {
@@ -125,10 +127,17 @@ namespace TravelMateAPI.Controllers
     public class ProfileController : ControllerBase
     {
         private readonly IProfileRepository _profileRepository;
-
-        public ProfileController(IProfileRepository profileRepository)
+        private readonly UserManager<ApplicationUser> _userManager;
+        public ProfileController(IProfileRepository profileRepository, UserManager<ApplicationUser> userManager)
         {
             _profileRepository = profileRepository;
+            _userManager = userManager;
+        }
+        // Phương thức để lấy UserId từ JWT token
+        private int GetUserId()
+        {
+            var userIdString = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+            return int.TryParse(userIdString, out var userId) ? userId : -1;
         }
 
         // GET: api/Profile
@@ -143,11 +152,37 @@ namespace TravelMateAPI.Controllers
         [HttpGet("{userId}")]
         public async Task<IActionResult> GetById(int userId)
         {
+            // Kiểm tra xem userId có tồn tại trong hệ thống hay không
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user == null)
+            {
+                return NotFound(new { Message = $"UserId {userId} not found." });
+            }
             var profile = await _profileRepository.GetProfileByIdAsync(userId);
             if (profile == null)
             {
-                return NotFound(new { Message = $"Profile with UserId {userId} not found." });
+                return NotFound(new { Message = $"Profile with UserId {userId} null." });
             }
+            return Ok(profile);
+        }
+        // API để lấy profile của người dùng hiện tại
+        [HttpGet("current-profile")]
+        public async Task<IActionResult> GetCurrentProfile()
+        {
+            // Lấy UserId từ token
+            var userId = GetUserId();
+            if (userId == -1)
+            {
+                return Unauthorized("Invalid token or user not found.");
+            }
+
+            // Tìm hồ sơ của người dùng dựa vào UserId
+            var profile = await _profileRepository.GetProfileByIdAsync(userId);
+            if (profile == null)
+            {
+                return NotFound(new { Message = $"Profile with UserId {userId} null" });
+            }
+
             return Ok(profile);
         }
 
