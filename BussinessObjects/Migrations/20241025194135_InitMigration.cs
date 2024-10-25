@@ -104,6 +104,19 @@ namespace BusinessObjects.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Languages",
+                columns: table => new
+                {
+                    LanguagesId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    LanguagesName = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Languages", x => x.LanguagesId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Locations",
                 columns: table => new
                 {
@@ -114,6 +127,19 @@ namespace BusinessObjects.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Locations", x => x.LocationId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Universities",
+                columns: table => new
+                {
+                    UniversityId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UniversityName = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Universities", x => x.UniversityId);
                 });
 
             migrationBuilder.CreateTable(
@@ -337,6 +363,26 @@ namespace BusinessObjects.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "HomePhotos",
+                columns: table => new
+                {
+                    PhotoId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    HomePhotoUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ApplicationUserId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_HomePhotos", x => x.PhotoId);
+                    table.ForeignKey(
+                        name: "FK_HomePhotos_AspNetUsers_ApplicationUserId",
+                        column: x => x.ApplicationUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Messages",
                 columns: table => new
                 {
@@ -422,23 +468,32 @@ namespace BusinessObjects.Migrations
                 name: "Profiles",
                 columns: table => new
                 {
+                    ProfileId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<int>(type: "int", nullable: false),
-                    HostingAvailability = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Gender = table.Column<bool>(type: "bit", nullable: false),
-                    Location = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    BirthDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    NationalID = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ProfilePictureUrl = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    FullName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Gender = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Birthdate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    City = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    WhyUseTravelMate = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    MusicMoviesBooks = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    WhatToShare = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ImageUser = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ApplicationUserId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Profiles", x => x.UserId);
+                    table.PrimaryKey("PK_Profiles", x => x.ProfileId);
                     table.ForeignKey(
-                        name: "FK_Profiles_AspNetUsers_UserId",
-                        column: x => x.UserId,
+                        name: "FK_Profiles_AspNetUsers_ApplicationUserId",
+                        column: x => x.ApplicationUserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -549,25 +604,26 @@ namespace BusinessObjects.Migrations
                 name: "UserHomes",
                 columns: table => new
                 {
-                    UserId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     MaxGuests = table.Column<int>(type: "int", nullable: false),
-                    GuestPreferences = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    HouseRules = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    GuestPreferences = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    HouseRules = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsPrivateRoom = table.Column<bool>(type: "bit", nullable: false),
-                    RoomMate = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Amenities = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Transportation = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    RoomMateInfo = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Amenities = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Transportation = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ApplicationUserId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_UserHomes", x => x.UserId);
                     table.ForeignKey(
-                        name: "FK_UserHomes_AspNetUsers_UserId",
-                        column: x => x.UserId,
+                        name: "FK_UserHomes_AspNetUsers_ApplicationUserId",
+                        column: x => x.ApplicationUserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -624,6 +680,31 @@ namespace BusinessObjects.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "SpokenLanguages",
+                columns: table => new
+                {
+                    LanguagesId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    Proficiency = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ApplicationUserId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SpokenLanguages", x => new { x.UserId, x.LanguagesId });
+                    table.ForeignKey(
+                        name: "FK_SpokenLanguages_AspNetUsers_ApplicationUserId",
+                        column: x => x.ApplicationUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_SpokenLanguages_Languages_LanguagesId",
+                        column: x => x.LanguagesId,
+                        principalTable: "Languages",
+                        principalColumn: "LanguagesId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "UserLocations",
                 columns: table => new
                 {
@@ -644,6 +725,31 @@ namespace BusinessObjects.Migrations
                         column: x => x.LocationId,
                         principalTable: "Locations",
                         principalColumn: "LocationId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserEducations",
+                columns: table => new
+                {
+                    UniversityId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    GraduationYear = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ApplicationUserId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserEducations", x => new { x.UserId, x.UniversityId });
+                    table.ForeignKey(
+                        name: "FK_UserEducations_AspNetUsers_ApplicationUserId",
+                        column: x => x.ApplicationUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_UserEducations_Universities_UniversityId",
+                        column: x => x.UniversityId,
+                        principalTable: "Universities",
+                        principalColumn: "UniversityId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -697,64 +803,6 @@ namespace BusinessObjects.Migrations
                         principalTable: "Groups",
                         principalColumn: "GroupId",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Languages",
-                columns: table => new
-                {
-                    LanguageId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UserProfileUserId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Languages", x => x.LanguageId);
-                    table.ForeignKey(
-                        name: "FK_Languages_Profiles_UserProfileUserId",
-                        column: x => x.UserProfileUserId,
-                        principalTable: "Profiles",
-                        principalColumn: "UserId");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Universities",
-                columns: table => new
-                {
-                    UniversityId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UniversityName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UserProfileUserId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Universities", x => x.UniversityId);
-                    table.ForeignKey(
-                        name: "FK_Universities_Profiles_UserProfileUserId",
-                        column: x => x.UserProfileUserId,
-                        principalTable: "Profiles",
-                        principalColumn: "UserId");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "HomePhotos",
-                columns: table => new
-                {
-                    PhotoId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    PhotoUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    UserHomeUserId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_HomePhotos", x => x.PhotoId);
-                    table.ForeignKey(
-                        name: "FK_HomePhotos_UserHomes_UserHomeUserId",
-                        column: x => x.UserHomeUserId,
-                        principalTable: "UserHomes",
-                        principalColumn: "UserId");
                 });
 
             migrationBuilder.CreateTable(
@@ -855,56 +903,6 @@ namespace BusinessObjects.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "SpokenLanguages",
-                columns: table => new
-                {
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    LanguageId = table.Column<int>(type: "int", nullable: false),
-                    Proficiency = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_SpokenLanguages", x => new { x.UserId, x.LanguageId });
-                    table.ForeignKey(
-                        name: "FK_SpokenLanguages_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_SpokenLanguages_Languages_LanguageId",
-                        column: x => x.LanguageId,
-                        principalTable: "Languages",
-                        principalColumn: "LanguageId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "UserEducations",
-                columns: table => new
-                {
-                    UniversityId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    GraduationYear = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserEducations", x => new { x.UserId, x.UniversityId });
-                    table.ForeignKey(
-                        name: "FK_UserEducations_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_UserEducations_Universities_UniversityId",
-                        column: x => x.UniversityId,
-                        principalTable: "Universities",
-                        principalColumn: "UniversityId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
             migrationBuilder.InsertData(
                 table: "Activities",
                 columns: new[] { "ActivityId", "ActivityName" },
@@ -936,13 +934,13 @@ namespace BusinessObjects.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FullName", "LockoutEnabled", "LockoutEnd", "MatchingActivitiesCount", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "RegistrationTime", "SecurityStamp", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { 1, 0, "b52d2d1e-d149-4dd3-a50f-10d677e0bfa1", "user1@example.com", false, "User One", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 25, 9, 49, 7, 256, DateTimeKind.Utc).AddTicks(9703), null, false, "user1" },
-                    { 2, 0, "841a34aa-f390-4545-ab34-5ff498160035", "user2@example.com", false, "User Two", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 25, 9, 49, 7, 256, DateTimeKind.Utc).AddTicks(9726), null, false, "user2" },
-                    { 3, 0, "1377bd99-b3af-4a0d-bef4-1d01fb856bca", "user3@example.com", false, "User Three", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 25, 9, 49, 7, 256, DateTimeKind.Utc).AddTicks(9742), null, false, "user3" },
-                    { 4, 0, "c3fcb905-7d33-4c19-9080-b42616bcf9b5", "user4@example.com", false, "User Four", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 25, 9, 49, 7, 256, DateTimeKind.Utc).AddTicks(9756), null, false, "user4" },
-                    { 5, 0, "5e2a37e8-392c-45be-8488-5aa1e14b3f07", "user5@example.com", false, "User Five", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 25, 9, 49, 7, 256, DateTimeKind.Utc).AddTicks(9768), null, false, "user5" },
-                    { 6, 0, "98d0f078-d472-475a-beee-288f0bc40d40", "userSystem1@example.com", false, "User System", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 25, 9, 49, 7, 256, DateTimeKind.Utc).AddTicks(9782), null, false, "userSystem1" },
-                    { 7, 0, "e4c8d87c-66fa-4bda-bf3c-d1051c4a8c93", "Admin1@example.com", false, "Admin 1", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 25, 9, 49, 7, 256, DateTimeKind.Utc).AddTicks(9795), null, false, "Admin1" }
+                    { 1, 0, "47be21af-8013-4cd1-bc01-d213d3df02a3", "user1@example.com", false, "User One", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 25, 19, 41, 34, 794, DateTimeKind.Utc).AddTicks(7127), null, false, "user1" },
+                    { 2, 0, "188356a5-5435-45db-914d-527fa8a01dfc", "user2@example.com", false, "User Two", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 25, 19, 41, 34, 794, DateTimeKind.Utc).AddTicks(7131), null, false, "user2" },
+                    { 3, 0, "2a55e178-82ec-4df2-8b67-220e59694eee", "user3@example.com", false, "User Three", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 25, 19, 41, 34, 794, DateTimeKind.Utc).AddTicks(7134), null, false, "user3" },
+                    { 4, 0, "4425f372-92d9-41c3-b19d-892f8e10c96f", "user4@example.com", false, "User Four", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 25, 19, 41, 34, 794, DateTimeKind.Utc).AddTicks(7136), null, false, "user4" },
+                    { 5, 0, "3e19e06d-6e91-4b94-9164-81f7dd79be7c", "user5@example.com", false, "User Five", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 25, 19, 41, 34, 794, DateTimeKind.Utc).AddTicks(7138), null, false, "user5" },
+                    { 6, 0, "bbd44b40-8c6e-42d6-a523-6b881a622ba0", "userSystem1@example.com", false, "User System", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 25, 19, 41, 34, 794, DateTimeKind.Utc).AddTicks(7140), null, false, "userSystem1" },
+                    { 7, 0, "90a5e71f-0bba-481d-973b-33b55ffe88c8", "Admin1@example.com", false, "Admin 1", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 25, 19, 41, 34, 794, DateTimeKind.Utc).AddTicks(7142), null, false, "Admin1" }
                 });
 
             migrationBuilder.InsertData(
@@ -958,6 +956,18 @@ namespace BusinessObjects.Migrations
                     { 6, "Nha Trang" },
                     { 7, "Phú Quốc" },
                     { 8, "Vịnh Hạ Long" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Profiles",
+                columns: new[] { "ProfileId", "Address", "ApplicationUserId", "Birthdate", "City", "Description", "FirstName", "FullName", "Gender", "ImageUser", "LastName", "MusicMoviesBooks", "Phone", "UserId", "WhatToShare", "WhyUseTravelMate" },
+                values: new object[,]
+                {
+                    { 1, "123 Main St, Hanoi", null, new DateTime(2024, 10, 25, 19, 41, 34, 794, DateTimeKind.Utc).AddTicks(7211), null, null, null, "User One", "Male", "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png", null, null, "0123456789", 1, null, null },
+                    { 2, "456 Secondary St, Ho Chi Minh", null, new DateTime(2024, 10, 25, 19, 41, 34, 794, DateTimeKind.Utc).AddTicks(7215), null, null, null, "User Two", "Male", "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png", null, null, "0987654321", 2, null, null },
+                    { 3, "789 Tertiary St, Da Nang", null, new DateTime(2024, 10, 25, 19, 41, 34, 794, DateTimeKind.Utc).AddTicks(7216), null, null, null, "User Three", "Male", "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png", null, null, "0912345678", 3, null, null },
+                    { 4, "101 Eleventh St, Hue", null, new DateTime(2024, 10, 25, 19, 41, 34, 794, DateTimeKind.Utc).AddTicks(7218), null, null, null, "User Four", "Male", "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png", null, null, "0998765432", 4, null, null },
+                    { 5, "202 Twelfth St, Phu Quoc", null, new DateTime(2024, 10, 25, 19, 41, 34, 794, DateTimeKind.Utc).AddTicks(7219), null, null, null, "User Five", "Male", "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png", null, null, "0923456789", 5, null, null }
                 });
 
             migrationBuilder.InsertData(
@@ -1111,14 +1121,9 @@ namespace BusinessObjects.Migrations
                 column: "CreatedByUserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_HomePhotos_UserHomeUserId",
+                name: "IX_HomePhotos_ApplicationUserId",
                 table: "HomePhotos",
-                column: "UserHomeUserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Languages_UserProfileUserId",
-                table: "Languages",
-                column: "UserProfileUserId");
+                column: "ApplicationUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Messages_CreatedById",
@@ -1171,6 +1176,11 @@ namespace BusinessObjects.Migrations
                 column: "PostId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Profiles_ApplicationUserId",
+                table: "Profiles",
+                column: "ApplicationUserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Reactions_PostId",
                 table: "Reactions",
                 column: "PostId");
@@ -1196,14 +1206,14 @@ namespace BusinessObjects.Migrations
                 column: "RequestToId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SpokenLanguages_LanguageId",
+                name: "IX_SpokenLanguages_ApplicationUserId",
                 table: "SpokenLanguages",
-                column: "LanguageId");
+                column: "ApplicationUserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Universities_UserProfileUserId",
-                table: "Universities",
-                column: "UserProfileUserId");
+                name: "IX_SpokenLanguages_LanguagesId",
+                table: "SpokenLanguages",
+                column: "LanguagesId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserActivities_ActivityId",
@@ -1216,9 +1226,19 @@ namespace BusinessObjects.Migrations
                 column: "ApplicationUserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_UserEducations_ApplicationUserId",
+                table: "UserEducations",
+                column: "ApplicationUserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UserEducations_UniversityId",
                 table: "UserEducations",
                 column: "UniversityId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserHomes_ApplicationUserId",
+                table: "UserHomes",
+                column: "ApplicationUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserLocations_ApplicationUserId",
@@ -1286,6 +1306,9 @@ namespace BusinessObjects.Migrations
                 name: "PostPhotos");
 
             migrationBuilder.DropTable(
+                name: "Profiles");
+
+            migrationBuilder.DropTable(
                 name: "Reactions");
 
             migrationBuilder.DropTable(
@@ -1307,6 +1330,9 @@ namespace BusinessObjects.Migrations
                 name: "UserEducations");
 
             migrationBuilder.DropTable(
+                name: "UserHomes");
+
+            migrationBuilder.DropTable(
                 name: "UserLocations");
 
             migrationBuilder.DropTable(
@@ -1314,9 +1340,6 @@ namespace BusinessObjects.Migrations
 
             migrationBuilder.DropTable(
                 name: "Events");
-
-            migrationBuilder.DropTable(
-                name: "UserHomes");
 
             migrationBuilder.DropTable(
                 name: "Destinations");
@@ -1341,9 +1364,6 @@ namespace BusinessObjects.Migrations
 
             migrationBuilder.DropTable(
                 name: "Groups");
-
-            migrationBuilder.DropTable(
-                name: "Profiles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

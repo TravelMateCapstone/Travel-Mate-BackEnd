@@ -1,10 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BusinessObjects.Entities
 {
     public class Profile
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int ProfileId { get; set; }
+        
         public int UserId { get; set; }
 
         public string? FullName { get; set; }

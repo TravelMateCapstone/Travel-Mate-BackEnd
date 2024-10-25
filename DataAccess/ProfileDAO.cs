@@ -60,9 +60,9 @@ namespace DataAccess
             return await _dbContext.Profiles.Include(p => p.ApplicationUser).ToListAsync();
         }
 
-        public async Task<Profile> GetProfileByIdAsync(int userId)
+        public async Task<Profile> GetProfileByIdAsync(int profileId)
         {
-            return await _dbContext.Profiles.Include(p => p.ApplicationUser).FirstOrDefaultAsync(p => p.UserId == userId);
+            return await _dbContext.Profiles.Include(p => p.ApplicationUser).FirstOrDefaultAsync(p => p.ProfileId == profileId);
         }
 
         public async Task<Profile> AddProfileAsync(Profile newProfile)
@@ -78,9 +78,9 @@ namespace DataAccess
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task DeleteProfileAsync(int userId)
+        public async Task DeleteProfileAsync(int profileId)
         {
-            var profile = await GetProfileByIdAsync(userId);
+            var profile = await GetProfileByIdAsync(profileId);
             if (profile != null)
             {
                 _dbContext.Profiles.Remove(profile);
@@ -88,6 +88,7 @@ namespace DataAccess
             }
         }
     }
+
 
 
 }
