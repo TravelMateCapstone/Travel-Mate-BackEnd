@@ -194,7 +194,7 @@ namespace TravelMateAPI.Controllers
             await _groupRepository.AddAsync(newGroup);
 
             //test to check data 
-            return CreatedAtAction(nameof(GetCreatedGroupByIdAsync), new { id = newGroup.GroupId }, newGroup);
+            return Ok(newGroup);
         }
 
         // PUT: api/Group/5
