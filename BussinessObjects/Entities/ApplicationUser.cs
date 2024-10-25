@@ -11,7 +11,7 @@ namespace BusinessObjects.Entities
         public string FullName { get; set; }
         public DateTime RegistrationTime { get; set; } // Thời gian đăng ký
         public int? MatchingActivitiesCount { get; set; }
-        public UserProfile? UserProfiles { get; set; }
+        public ICollection<Profile>? Profiles { get; set; }
         public ICollection<Friendship>? Friendships { get; set; }
         public ICollection<UserActivity>? UserActivities { get; set; }
         public ICollection<UserLocation>? UserLocations { get; set; }
@@ -28,7 +28,7 @@ namespace BusinessObjects.Entities
         public ICollection<PastTripPost>? PastTripPosts { get; set; }
         public ICollection<PastTripPost>? PastTripPostReviews { get; set; }
         public ICollection<Notification>? Notifications { get; set; }
-        public ICollection<SpokenLanguage>? SpokenLanguages { get; set; }
+        public ICollection<SpokenLanguages>? SpokenLanguages { get; set; }
         public ICollection<Request>? Requests { get; set; }
         public ICollection<Request>? ReceivedRequests { get; set; }
         public ICollection<Contract>? CreatedContracts { get; set; }

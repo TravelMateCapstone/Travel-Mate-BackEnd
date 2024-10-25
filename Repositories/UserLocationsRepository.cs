@@ -13,9 +13,9 @@ namespace Repositories
     {
         private readonly UserLocationsDAO _userLocationsDAO;
 
-        public UserLocationsRepository()
+        public UserLocationsRepository(UserLocationsDAO userLocationsDAO)
         {
-            _userLocationsDAO = UserLocationsDAO.Instance;
+            _userLocationsDAO = userLocationsDAO;
         }
 
         public async Task<List<UserLocation>> GetAllUserLocationsAsync()

@@ -1,34 +1,39 @@
 ﻿using BusinessObjects.Entities;
 using DataAccess;
 using Repositories.Interface;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Repositories
 {
-    public class UserProfileRepository : IUserProfileRepository
+    public class ProfileRepository : IProfileRepository
     {
         private readonly ProfileDAO _profileDAO;
 
-        public UserProfileRepository()
+        public ProfileRepository(ProfileDAO profileDAO)
         {
-            _profileDAO = ProfileDAO.Instance;
+            _profileDAO = profileDAO;
         }
 
-        public async Task<List<UserProfile>> GetAllProfilesAsync()
+        public async Task<List<Profile>> GetAllProfilesAsync()
         {
             return await _profileDAO.GetAllProfilesAsync();
         }
 
-        public async Task<UserProfile> GetProfileByIdAsync(int userId)
+        public async Task<Profile> GetProfileByIdAsync(int userId)
         {
             return await _profileDAO.GetProfileByIdAsync(userId);
         }
 
-        public async Task<UserProfile> AddProfileAsync(UserProfile newProfile)
+        public async Task<Profile> AddProfileAsync(Profile newProfile)
         {
             return await _profileDAO.AddProfileAsync(newProfile);
         }
 
-        public async Task UpdateProfileAsync(UserProfile updatedProfile)
+        public async Task UpdateProfileAsync(Profile updatedProfile)
         {
             await _profileDAO.UpdateProfileAsync(updatedProfile);
         }

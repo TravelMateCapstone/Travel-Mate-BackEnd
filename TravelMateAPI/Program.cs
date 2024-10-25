@@ -152,7 +152,7 @@ namespace TravelMateAPI
             // OData configuration
             ODataConventionModelBuilder modelBuilder = new ODataConventionModelBuilder();
             modelBuilder.EntitySet<ApplicationUser>("ApplicationUsers");
-            //modelBuilder.EntitySet<UserProfile>("UserProfiles");
+            modelBuilder.EntitySet<Profile>("Profiles");
             modelBuilder.EntitySet<Friendship>("Friends");
             modelBuilder.EntitySet<Event>("Events");
             modelBuilder.EntitySet<EventParticipants>("EventParticipants");
@@ -172,7 +172,8 @@ namespace TravelMateAPI
             //builder.Services.AddSingleton<FirebaseService>();
 
             // Đăng ký các repository
-            builder.Services.AddScoped<IUserProfileRepository, UserProfileRepository>();
+            builder.Services.AddScoped<ProfileDAO>();
+            builder.Services.AddScoped<IProfileRepository, ProfileRepository>();
             builder.Services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
             builder.Services.AddScoped<IFindLocalService, FindLocalService>();
             builder.Services.AddScoped<IFindLocalByFeedbackService, FindLocalByFeedbackService>();
@@ -181,9 +182,24 @@ namespace TravelMateAPI
             builder.Services.AddScoped<IEventParticipantsRepository, EventParticipantsRepository>();
             builder.Services.AddScoped<ActivitiesDAO>();
             builder.Services.AddScoped<IActivityRepository, ActivityRepository>();
+            builder.Services.AddScoped<LocationsDAO>();
             builder.Services.AddScoped<ILocationRepository, LocationRepository>();
+            builder.Services.AddScoped<UserActivitiesDAO>();
             builder.Services.AddScoped<IUserActivitiesRepository, UserActivitiesRepository>();
+            builder.Services.AddScoped<UserLocationsDAO>();
             builder.Services.AddScoped<IUserLocationsRepository, UserLocationsRepository>();
+            builder.Services.AddScoped<LanguagesDAO>();
+            builder.Services.AddScoped<ILanguagesRepository, LanguagesRepository>();
+            builder.Services.AddScoped<SpokenLanguagesDAO>();
+            builder.Services.AddScoped<ISpokenLanguagesRepository, SpokenLanguagesRepository>();
+            builder.Services.AddScoped<UniversityDAO>();
+            builder.Services.AddScoped<IUniversityRepository, UniversityRepository>();
+            builder.Services.AddScoped<UserEducationDAO>();
+            builder.Services.AddScoped<IUserEducationRepository, UserEducationRepository>();
+            builder.Services.AddScoped<UserHomeDAO>();
+            builder.Services.AddScoped<IUserHomeRepository, UserHomeRepository>();
+            builder.Services.AddScoped<HomePhotoDAO>();
+            builder.Services.AddScoped<IHomePhotoRepository, HomePhotoRepository>();
             builder.Services.AddScoped<GroupDAO>();
             builder.Services.AddScoped<IGroupRepository, GroupRepository>();
             builder.Services.AddControllers();

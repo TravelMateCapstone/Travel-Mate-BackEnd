@@ -8,8 +8,6 @@ namespace BusinessObjects.Entities
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int UniversityId { get; set; }
-
         public string UniversityName { get; set; }
-        public ICollection<UserEducation>? Users { get; set; }
     }
 }

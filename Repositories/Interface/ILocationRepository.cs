@@ -16,4 +16,5 @@ namespace Repositories.Interface
         Task DeleteLocationAsync(int locationId);
     }
 
+
 }

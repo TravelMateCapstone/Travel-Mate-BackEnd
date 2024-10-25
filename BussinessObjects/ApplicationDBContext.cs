@@ -31,7 +31,7 @@ namespace BusinessObjects
         public DbSet<GroupPost> GroupPosts { get; set; }
         public DbSet<GroupPostPhoto> GroupPostPhotos { get; set; }
         public DbSet<HomePhoto> HomePhotos { get; set; }
-        public DbSet<Language> Languages { get; set; }
+        public DbSet<Languages> Languages { get; set; }
         public DbSet<Message> Messages { get; set; }
 
         public DbSet<OnTravelling> OnTravellings { get; set; }
@@ -41,12 +41,12 @@ namespace BusinessObjects
         public DbSet<Reaction> Reactions { get; set; }
         public DbSet<Report> Reports { get; set; }
         public DbSet<Request> Requests { get; set; }
-        public DbSet<SpokenLanguage> SpokenLanguages { get; set; }
+        public DbSet<SpokenLanguages> SpokenLanguages { get; set; }
         public DbSet<University> Universities { get; set; }
         public DbSet<UserDescription> UserDescriptions { get; set; }
         public DbSet<UserEducation> UserEducations { get; set; }
         public DbSet<UserHome> UserHomes { get; set; }
-        public DbSet<UserProfile> Profiles { get; set; }
+        public DbSet<Profile> Profiles { get; set; }
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -90,6 +90,11 @@ namespace BusinessObjects
                 .WithOne(f => f.User2)
                 .HasForeignKey(f => f.UserId2)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<SpokenLanguages>()
+            .HasKey(ul => new { ul.UserId, ul.LanguagesId });
+            modelBuilder.Entity<UserEducation>()
+                .HasKey(ua => new { ua.UserId, ua.UniversityId });
 
             // Cấu hình khóa chính và quan hệ cho bảng Friendship
             // modelBuilder.Entity<Friendship>()
@@ -502,37 +507,9 @@ namespace BusinessObjects
                 .HasOne(ep => ep.GroupPost)
                 .WithMany(u => u.Reactions)
                 .HasForeignKey(ep => ep.PostId);
-
-            modelBuilder.Entity<SpokenLanguage>()
-       .HasKey(ot => new { ot.UserId, ot.LanguageId });
-
-            modelBuilder.Entity<SpokenLanguage>()
-                .HasOne(ot => ot.User)
-                .WithMany(e => e.SpokenLanguages)
-                .HasForeignKey(ep => ep.UserId);
-
-            modelBuilder.Entity<SpokenLanguage>()
-                .HasOne(ep => ep.Language)
-                .WithMany(u => u.SpokenLanguages);
-
+      
             modelBuilder.Entity<UserDescription>()
                 .HasKey(ud => ud.UserId);
-            modelBuilder.Entity<UserHome>()
-                .HasKey(ud => ud.UserId);
-            modelBuilder.Entity<UserProfile>()
-                .HasKey(ud => ud.UserId);
-
-            modelBuilder.Entity<UserEducation>()
-       .HasKey(ot => new { ot.UserId, ot.UniversityId });
-
-            modelBuilder.Entity<UserEducation>()
-                .HasOne(ot => ot.User)
-                .WithMany(e => e.UserEducations)
-                .HasForeignKey(ep => ep.UserId);
-
-            modelBuilder.Entity<UserEducation>()
-                .HasOne(ep => ep.University)
-                .WithMany(u => u.Users);
 
             modelBuilder.Entity<GroupParticipant>()
        .HasKey(ot => new { ot.UserId, ot.GroupId });

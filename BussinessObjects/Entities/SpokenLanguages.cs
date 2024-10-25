@@ -3,18 +3,16 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BusinessObjects.Entities
 {
-    public class UserEducation
+    public class SpokenLanguages
     {
-        //[Key]
-        //[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        //public int UserActivityId { get; set; }
         [Key, Column(Order = 0)]
-        public int UniversityId { get; set; }
+        public int LanguagesId { get; set; }
         [Key, Column(Order = 1)]
         public int UserId { get; set; }
 
-        public DateTime GraduationYear { get; set; }
-        public virtual University? University { get; set; }
+        public string Proficiency { get; set; }
+
+        public virtual Languages? Languages { get; set; }
         public virtual ApplicationUser? ApplicationUser { get; set; }
     }
 }
