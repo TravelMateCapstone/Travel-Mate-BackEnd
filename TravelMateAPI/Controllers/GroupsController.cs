@@ -10,24 +10,33 @@ namespace TravelMateAPI.Controllers
     {
 
         private readonly IGroupRepository _groupRepository;
+        private const int pageSize = 6;
 
         public GroupsController(IGroupRepository groupRepository)
         {
             _groupRepository = groupRepository;
         }
 
-        // GET: api/Group
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Group>>> GetGroups([FromQuery] int pageNumber = 1)
+        private int GetUserId()
         {
-            int pageSize = 9;
-            var groups = await _groupRepository.GetAll();
+            var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            //return int.TryParse(userIdString, out var userId) ? userId : -1;
+            return 3;
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Group>>> GetGroupsAsync([FromQuery] int pageNumber = 1)
+        {
+            var userId = GetUserId();
+
+            var groups = await _groupRepository.GetGroupsAsync();
             if (groups == null)
                 return NotFound();
+
             var totalCount = groups.Count();
             var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
 
-            groups = groups.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+            groups = groups.Skip((pageNumber - 1) * pageSize).Take(pageSize);
 
             var result = new
             {
@@ -41,15 +50,132 @@ namespace TravelMateAPI.Controllers
             return Ok(result);
         }
 
-        // GET: api/Group/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Group>> GetGroupById(int id)
+
+
+        // GET: api/Groups/CreatedGroup/id
+        [HttpGet("{groupId}")]
+        public async Task<ActionResult<Group>> GetGroupByIdAsync(int groupId)
         {
-            var group = await _groupRepository.GetByIdAsync(id);
+            var group = await _groupRepository.GetGroupByIdAsync(groupId);
             if (group == null)
                 return NotFound();
 
             return Ok(group);
+        }
+
+        // GET: api/Groups/CreatedGroups
+        [HttpGet("CreatedGroups")]
+        public async Task<ActionResult<IEnumerable<Group>>> GetCreatedGroups([FromQuery] int pageNumber = 1)
+        {
+            var userId = GetUserId();
+
+            var groups = await _groupRepository.GetCreatedGroupsAsync(userId);
+            if (groups == null)
+                return NotFound();
+
+            var totalCount = groups.Count();
+            var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+
+            groups = groups.Skip((pageNumber - 1) * pageSize).Take(pageSize);
+
+            var result = new
+            {
+                TotalPages = totalPages,
+                TotalCount = totalCount,
+                CurrentPage = pageNumber,
+                PageSize = pageSize,
+                Groups = groups
+            };
+
+            return Ok(result);
+        }
+
+
+
+        // GET: api/Groups/CreatedGroup/id
+        [HttpGet("CreatedGroups/{groupId}")]
+        public async Task<ActionResult<Group>> GetCreatedGroupByIdAsync(int groupId)
+        {
+            var userId = GetUserId();
+
+            var group = await _groupRepository.GetCreatedGroupByIdAsync(userId, groupId);
+            if (group == null)
+                return NotFound();
+
+            return Ok(group);
+        }
+
+        // GET: api/Groups/Joined
+        [HttpGet("JoinedGroups")]
+        public async Task<ActionResult<IEnumerable<Group>>> GetJoinedGroupsAsync([FromQuery] int pageNumber = 1)
+        {
+            var userId = GetUserId();
+
+            var joinedGroups = await _groupRepository.GetJoinedGroupsAsync(userId);
+            if (joinedGroups == null)
+                return NotFound();
+
+            var totalCount = joinedGroups.Count();
+            var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+
+            joinedGroups = joinedGroups.Skip((pageNumber - 1) * pageSize).Take(pageSize);
+
+            var result = new
+            {
+                TotalPages = totalPages,
+                TotalCount = totalCount,
+                CurrentPage = pageNumber,
+                PageSize = pageSize,
+                Groups = joinedGroups
+            };
+
+            return Ok(result);
+        }
+
+
+        // POST: api/Groups/Join/5
+        [HttpGet("JoinedGroups/{groupId}")]
+        public async Task<IActionResult> GetJoinedGroupByIdAsync(int groupId)
+        {
+            var userId = GetUserId();
+
+            var joinedGroups = _groupRepository.GetJoinedGroupByIdAsync(userId, groupId);
+
+            if (joinedGroups == null)
+                return NotFound();
+
+            return Ok(joinedGroups);
+        }
+
+
+        [HttpPost("JoinedGroups/Join/{groupId}")]
+        public async Task<IActionResult> JoinGroup(int groupId)
+        {
+            var userId = GetUserId();
+
+            var existingParticipant = await _groupRepository.GetJoinedGroupByIdAsync(userId, groupId);
+
+            if (existingParticipant != null) return BadRequest();
+
+            await _groupRepository.JoinGroup(userId, groupId);
+
+            return Ok("Đã join group");
+
+        }
+
+
+        // DELETE: api/Groups/Leave/5
+        [HttpDelete("LeaveGroup/{groupId}")]
+        public async Task<IActionResult> LeaveGroup(int groupId)
+        {
+            var userId = GetUserId();
+            //var group = _groupRepository.GetJoinedGroupByIdAsync(userId, groupId);
+            //if (group == null)
+            //    return NotFound();
+
+            await _groupRepository.LeaveGroup(userId, groupId);
+
+            return Ok();
         }
 
         // POST: api/Group
@@ -61,29 +187,30 @@ namespace TravelMateAPI.Controllers
                 return BadRequest();
 
             //get user id from session
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userId = GetUserId();
+
+            newGroup.CreatedById = userId;
             // add user id to object
             await _groupRepository.AddAsync(newGroup);
+
             //test to check data 
-            return CreatedAtAction(nameof(GetGroupById), new { id = newGroup.GroupId }, newGroup);
-
-            //return Created();
-
+            return CreatedAtAction(nameof(GetCreatedGroupByIdAsync), new { id = newGroup.GroupId }, newGroup);
         }
 
         // PUT: api/Group/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateGroup(int id, [FromBody] Group updatedGroup)
+        [HttpPut("{groupId}")]
+        public async Task<IActionResult> UpdateGroup(int groupId, [FromBody] Group updatedGroup)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
 
-            if (id != updatedGroup.GroupId)
+            if (groupId != updatedGroup.GroupId)
             {
                 return BadRequest("Group ID mismatch");
             }
+            var userId = GetUserId();
 
-            var existingGroup = await _groupRepository.GetByIdAsync(id);
+            var existingGroup = await _groupRepository.GetCreatedGroupByIdAsync(userId, groupId);
             if (existingGroup == null)
             {
                 return NotFound();
@@ -94,16 +221,18 @@ namespace TravelMateAPI.Controllers
         }
 
         // DELETE: api/Group/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteGroup(int id)
+        [HttpDelete("{groupId}")]
+        public async Task<IActionResult> DeleteGroup(int groupId)
         {
-            var group = await _groupRepository.GetByIdAsync(id);
-            if (group == null)
+            var userId = GetUserId();
+
+            var existingGroup = await _groupRepository.GetCreatedGroupByIdAsync(userId, groupId);
+            if (existingGroup == null)
             {
                 return NotFound();
             }
 
-            await _groupRepository.DeleteAsync(id);
+            await _groupRepository.DeleteAsync(groupId);
             return NoContent();
         }
 
