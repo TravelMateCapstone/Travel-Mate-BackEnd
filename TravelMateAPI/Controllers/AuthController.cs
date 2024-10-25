@@ -294,7 +294,7 @@ namespace TravelMateAPI.Controllers
                 Roles = await _userManager.GetRolesAsync(user) // Lấy các vai trò của người dùng
             };
 
-            return Ok(userInfo);
+            return Ok(userId);
         }
 
         //ADMIN
