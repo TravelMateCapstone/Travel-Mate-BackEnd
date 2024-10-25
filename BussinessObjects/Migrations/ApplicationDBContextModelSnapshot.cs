@@ -219,13 +219,13 @@ namespace BusinessObjects.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "b52d2d1e-d149-4dd3-a50f-10d677e0bfa1",
+                            ConcurrencyStamp = "49184601-e535-48f8-9650-3fe17f4c186c",
                             Email = "user1@example.com",
                             EmailConfirmed = false,
                             FullName = "User One",
                             LockoutEnabled = false,
                             PhoneNumberConfirmed = false,
-                            RegistrationTime = new DateTime(2024, 10, 25, 9, 49, 7, 256, DateTimeKind.Utc).AddTicks(9703),
+                            RegistrationTime = new DateTime(2024, 10, 25, 15, 22, 18, 508, DateTimeKind.Utc).AddTicks(1406),
                             TwoFactorEnabled = false,
                             UserName = "user1"
                         },
@@ -233,13 +233,13 @@ namespace BusinessObjects.Migrations
                         {
                             Id = 2,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "841a34aa-f390-4545-ab34-5ff498160035",
+                            ConcurrencyStamp = "18678e44-a09c-4179-9292-a55545fca420",
                             Email = "user2@example.com",
                             EmailConfirmed = false,
                             FullName = "User Two",
                             LockoutEnabled = false,
                             PhoneNumberConfirmed = false,
-                            RegistrationTime = new DateTime(2024, 10, 25, 9, 49, 7, 256, DateTimeKind.Utc).AddTicks(9726),
+                            RegistrationTime = new DateTime(2024, 10, 25, 15, 22, 18, 508, DateTimeKind.Utc).AddTicks(1422),
                             TwoFactorEnabled = false,
                             UserName = "user2"
                         },
@@ -247,13 +247,13 @@ namespace BusinessObjects.Migrations
                         {
                             Id = 3,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "1377bd99-b3af-4a0d-bef4-1d01fb856bca",
+                            ConcurrencyStamp = "56497cc7-ed7b-41aa-9c20-ec82642054db",
                             Email = "user3@example.com",
                             EmailConfirmed = false,
                             FullName = "User Three",
                             LockoutEnabled = false,
                             PhoneNumberConfirmed = false,
-                            RegistrationTime = new DateTime(2024, 10, 25, 9, 49, 7, 256, DateTimeKind.Utc).AddTicks(9742),
+                            RegistrationTime = new DateTime(2024, 10, 25, 15, 22, 18, 508, DateTimeKind.Utc).AddTicks(1424),
                             TwoFactorEnabled = false,
                             UserName = "user3"
                         },
@@ -261,13 +261,13 @@ namespace BusinessObjects.Migrations
                         {
                             Id = 4,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "c3fcb905-7d33-4c19-9080-b42616bcf9b5",
+                            ConcurrencyStamp = "691b8223-05bd-4175-8bb2-8462c4583c3a",
                             Email = "user4@example.com",
                             EmailConfirmed = false,
                             FullName = "User Four",
                             LockoutEnabled = false,
                             PhoneNumberConfirmed = false,
-                            RegistrationTime = new DateTime(2024, 10, 25, 9, 49, 7, 256, DateTimeKind.Utc).AddTicks(9756),
+                            RegistrationTime = new DateTime(2024, 10, 25, 15, 22, 18, 508, DateTimeKind.Utc).AddTicks(1427),
                             TwoFactorEnabled = false,
                             UserName = "user4"
                         },
@@ -275,13 +275,13 @@ namespace BusinessObjects.Migrations
                         {
                             Id = 5,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "5e2a37e8-392c-45be-8488-5aa1e14b3f07",
+                            ConcurrencyStamp = "002efe88-5748-46fd-ab23-53fad70cc881",
                             Email = "user5@example.com",
                             EmailConfirmed = false,
                             FullName = "User Five",
                             LockoutEnabled = false,
                             PhoneNumberConfirmed = false,
-                            RegistrationTime = new DateTime(2024, 10, 25, 9, 49, 7, 256, DateTimeKind.Utc).AddTicks(9768),
+                            RegistrationTime = new DateTime(2024, 10, 25, 15, 22, 18, 508, DateTimeKind.Utc).AddTicks(1429),
                             TwoFactorEnabled = false,
                             UserName = "user5"
                         },
@@ -289,13 +289,13 @@ namespace BusinessObjects.Migrations
                         {
                             Id = 6,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "98d0f078-d472-475a-beee-288f0bc40d40",
+                            ConcurrencyStamp = "15b249f6-93b7-43d6-8cd1-c7e8c2d76fb9",
                             Email = "userSystem1@example.com",
                             EmailConfirmed = false,
                             FullName = "User System",
                             LockoutEnabled = false,
                             PhoneNumberConfirmed = false,
-                            RegistrationTime = new DateTime(2024, 10, 25, 9, 49, 7, 256, DateTimeKind.Utc).AddTicks(9782),
+                            RegistrationTime = new DateTime(2024, 10, 25, 15, 22, 18, 508, DateTimeKind.Utc).AddTicks(1431),
                             TwoFactorEnabled = false,
                             UserName = "userSystem1"
                         },
@@ -303,13 +303,13 @@ namespace BusinessObjects.Migrations
                         {
                             Id = 7,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "e4c8d87c-66fa-4bda-bf3c-d1051c4a8c93",
+                            ConcurrencyStamp = "3babb8fd-0908-44b4-ad62-6a9866be1496",
                             Email = "Admin1@example.com",
                             EmailConfirmed = false,
                             FullName = "Admin 1",
                             LockoutEnabled = false,
                             PhoneNumberConfirmed = false,
-                            RegistrationTime = new DateTime(2024, 10, 25, 9, 49, 7, 256, DateTimeKind.Utc).AddTicks(9795),
+                            RegistrationTime = new DateTime(2024, 10, 25, 15, 22, 18, 508, DateTimeKind.Utc).AddTicks(1434),
                             TwoFactorEnabled = false,
                             UserName = "Admin1"
                         });
@@ -574,41 +574,36 @@ namespace BusinessObjects.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PhotoId"));
 
-                    b.Property<string>("PhotoUrl")
+                    b.Property<int?>("ApplicationUserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("HomePhotoUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("UserHomeUserId")
-                        .HasColumnType("int");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("PhotoId");
 
-                    b.HasIndex("UserHomeUserId");
+                    b.HasIndex("ApplicationUserId");
 
                     b.ToTable("HomePhotos");
                 });
 
-            modelBuilder.Entity("BusinessObjects.Entities.Language", b =>
+            modelBuilder.Entity("BusinessObjects.Entities.Languages", b =>
                 {
-                    b.Property<int>("LanguageId")
+                    b.Property<int>("LanguagesId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LanguageId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LanguagesId"));
 
-                    b.Property<string>("Name")
+                    b.Property<string>("LanguagesName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("UserProfileUserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("LanguageId");
-
-                    b.HasIndex("UserProfileUserId");
+                    b.HasKey("LanguagesId");
 
                     b.ToTable("Languages");
                 });
@@ -856,6 +851,63 @@ namespace BusinessObjects.Migrations
                     b.ToTable("PostPhotos");
                 });
 
+            modelBuilder.Entity("BusinessObjects.Entities.Profile", b =>
+                {
+                    b.Property<int>("UserId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
+
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ApplicationUserId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("Birthdate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("City")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FullName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Gender")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageUser")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MusicMoviesBooks")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Phone")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WhatToShare")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WhyUseTravelMate")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("UserId");
+
+                    b.HasIndex("ApplicationUserId");
+
+                    b.ToTable("Profiles");
+                });
+
             modelBuilder.Entity("BusinessObjects.Entities.Reaction", b =>
                 {
                     b.Property<int>("ReactedById")
@@ -938,20 +990,28 @@ namespace BusinessObjects.Migrations
                     b.ToTable("Requests");
                 });
 
-            modelBuilder.Entity("BusinessObjects.Entities.SpokenLanguage", b =>
+            modelBuilder.Entity("BusinessObjects.Entities.SpokenLanguages", b =>
                 {
                     b.Property<int>("UserId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
 
-                    b.Property<int>("LanguageId")
+                    b.Property<int>("LanguagesId")
+                        .HasColumnType("int")
+                        .HasColumnOrder(0);
+
+                    b.Property<int?>("ApplicationUserId")
                         .HasColumnType("int");
 
                     b.Property<string>("Proficiency")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("UserId", "LanguageId");
+                    b.HasKey("UserId", "LanguagesId");
 
-                    b.HasIndex("LanguageId");
+                    b.HasIndex("ApplicationUserId");
+
+                    b.HasIndex("LanguagesId");
 
                     b.ToTable("SpokenLanguages");
                 });
@@ -968,12 +1028,7 @@ namespace BusinessObjects.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("UserProfileUserId")
-                        .HasColumnType("int");
-
                     b.HasKey("UniversityId");
-
-                    b.HasIndex("UserProfileUserId");
 
                     b.ToTable("Universities");
                 });
@@ -1080,15 +1135,22 @@ namespace BusinessObjects.Migrations
             modelBuilder.Entity("BusinessObjects.Entities.UserEducation", b =>
                 {
                     b.Property<int>("UserId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
 
                     b.Property<int>("UniversityId")
+                        .HasColumnType("int")
+                        .HasColumnOrder(0);
+
+                    b.Property<int?>("ApplicationUserId")
                         .HasColumnType("int");
 
-                    b.Property<string>("GraduationYear")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime>("GraduationYear")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("UserId", "UniversityId");
+
+                    b.HasIndex("ApplicationUserId");
 
                     b.HasIndex("UniversityId");
 
@@ -1098,18 +1160,28 @@ namespace BusinessObjects.Migrations
             modelBuilder.Entity("BusinessObjects.Entities.UserHome", b =>
                 {
                     b.Property<int>("UserId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
+
                     b.Property<string>("Amenities")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("ApplicationUserId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("GuestPreferences")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("HouseRules")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsPrivateRoom")
@@ -1118,13 +1190,17 @@ namespace BusinessObjects.Migrations
                     b.Property<int>("MaxGuests")
                         .HasColumnType("int");
 
-                    b.Property<string>("RoomMate")
+                    b.Property<string>("RoomMateInfo")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Transportation")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("UserId");
+
+                    b.HasIndex("ApplicationUserId");
 
                     b.ToTable("UserHomes");
                 });
@@ -1186,35 +1262,6 @@ namespace BusinessObjects.Migrations
                             UserId = 4,
                             LocationId = 2
                         });
-                });
-
-            modelBuilder.Entity("BusinessObjects.Entities.UserProfile", b =>
-                {
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("BirthDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("Gender")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("HostingAvailability")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Location")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("NationalID")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ProfilePictureUrl")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("UserId");
-
-                    b.ToTable("Profiles");
                 });
 
             modelBuilder.Entity("Group", b =>
@@ -1515,18 +1562,11 @@ namespace BusinessObjects.Migrations
 
             modelBuilder.Entity("BusinessObjects.Entities.HomePhoto", b =>
                 {
-                    b.HasOne("BusinessObjects.Entities.UserHome", "UserHome")
-                        .WithMany("HomePhotos")
-                        .HasForeignKey("UserHomeUserId");
+                    b.HasOne("BusinessObjects.Entities.ApplicationUser", "ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("ApplicationUserId");
 
-                    b.Navigation("UserHome");
-                });
-
-            modelBuilder.Entity("BusinessObjects.Entities.Language", b =>
-                {
-                    b.HasOne("BusinessObjects.Entities.UserProfile", null)
-                        .WithMany("Languages")
-                        .HasForeignKey("UserProfileUserId");
+                    b.Navigation("ApplicationUser");
                 });
 
             modelBuilder.Entity("BusinessObjects.Entities.Message", b =>
@@ -1625,6 +1665,15 @@ namespace BusinessObjects.Migrations
                     b.Navigation("Post");
                 });
 
+            modelBuilder.Entity("BusinessObjects.Entities.Profile", b =>
+                {
+                    b.HasOne("BusinessObjects.Entities.ApplicationUser", "ApplicationUser")
+                        .WithMany("Profiles")
+                        .HasForeignKey("ApplicationUserId");
+
+                    b.Navigation("ApplicationUser");
+                });
+
             modelBuilder.Entity("BusinessObjects.Entities.Reaction", b =>
                 {
                     b.HasOne("BusinessObjects.Entities.GroupPost", "GroupPost")
@@ -1682,30 +1731,21 @@ namespace BusinessObjects.Migrations
                     b.Navigation("RequestToUser");
                 });
 
-            modelBuilder.Entity("BusinessObjects.Entities.SpokenLanguage", b =>
+            modelBuilder.Entity("BusinessObjects.Entities.SpokenLanguages", b =>
                 {
-                    b.HasOne("BusinessObjects.Entities.Language", "Language")
+                    b.HasOne("BusinessObjects.Entities.ApplicationUser", "ApplicationUser")
                         .WithMany("SpokenLanguages")
-                        .HasForeignKey("LanguageId")
+                        .HasForeignKey("ApplicationUserId");
+
+                    b.HasOne("BusinessObjects.Entities.Languages", "Languages")
+                        .WithMany()
+                        .HasForeignKey("LanguagesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BusinessObjects.Entities.ApplicationUser", "User")
-                        .WithMany("SpokenLanguages")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("ApplicationUser");
 
-                    b.Navigation("Language");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("BusinessObjects.Entities.University", b =>
-                {
-                    b.HasOne("BusinessObjects.Entities.UserProfile", null)
-                        .WithMany("Universities")
-                        .HasForeignKey("UserProfileUserId");
+                    b.Navigation("Languages");
                 });
 
             modelBuilder.Entity("BusinessObjects.Entities.UserActivity", b =>
@@ -1738,32 +1778,28 @@ namespace BusinessObjects.Migrations
 
             modelBuilder.Entity("BusinessObjects.Entities.UserEducation", b =>
                 {
+                    b.HasOne("BusinessObjects.Entities.ApplicationUser", "ApplicationUser")
+                        .WithMany("UserEducations")
+                        .HasForeignKey("ApplicationUserId");
+
                     b.HasOne("BusinessObjects.Entities.University", "University")
-                        .WithMany("Users")
+                        .WithMany()
                         .HasForeignKey("UniversityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BusinessObjects.Entities.ApplicationUser", "User")
-                        .WithMany("UserEducations")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("ApplicationUser");
 
                     b.Navigation("University");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("BusinessObjects.Entities.UserHome", b =>
                 {
-                    b.HasOne("BusinessObjects.Entities.ApplicationUser", "User")
-                        .WithOne("UserHome")
-                        .HasForeignKey("BusinessObjects.Entities.UserHome", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasOne("BusinessObjects.Entities.ApplicationUser", "ApplicationUser")
+                        .WithMany("UserHome")
+                        .HasForeignKey("ApplicationUserId");
 
-                    b.Navigation("User");
+                    b.Navigation("ApplicationUser");
                 });
 
             modelBuilder.Entity("BusinessObjects.Entities.UserLocation", b =>
@@ -1781,17 +1817,6 @@ namespace BusinessObjects.Migrations
                     b.Navigation("ApplicationUser");
 
                     b.Navigation("Location");
-                });
-
-            modelBuilder.Entity("BusinessObjects.Entities.UserProfile", b =>
-                {
-                    b.HasOne("BusinessObjects.Entities.ApplicationUser", "User")
-                        .WithOne("UserProfiles")
-                        .HasForeignKey("BusinessObjects.Entities.UserProfile", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Group", b =>
@@ -1897,6 +1922,8 @@ namespace BusinessObjects.Migrations
 
                     b.Navigation("PastTripPosts");
 
+                    b.Navigation("Profiles");
+
                     b.Navigation("Reactions");
 
                     b.Navigation("ReceivedFriendRequests");
@@ -1924,8 +1951,6 @@ namespace BusinessObjects.Migrations
                     b.Navigation("UserHome");
 
                     b.Navigation("UserLocations");
-
-                    b.Navigation("UserProfiles");
                 });
 
             modelBuilder.Entity("BusinessObjects.Entities.Destination", b =>
@@ -1947,31 +1972,9 @@ namespace BusinessObjects.Migrations
                     b.Navigation("Reactions");
                 });
 
-            modelBuilder.Entity("BusinessObjects.Entities.Language", b =>
-                {
-                    b.Navigation("SpokenLanguages");
-                });
-
             modelBuilder.Entity("BusinessObjects.Entities.PastTripPost", b =>
                 {
                     b.Navigation("Photos");
-                });
-
-            modelBuilder.Entity("BusinessObjects.Entities.University", b =>
-                {
-                    b.Navigation("Users");
-                });
-
-            modelBuilder.Entity("BusinessObjects.Entities.UserHome", b =>
-                {
-                    b.Navigation("HomePhotos");
-                });
-
-            modelBuilder.Entity("BusinessObjects.Entities.UserProfile", b =>
-                {
-                    b.Navigation("Languages");
-
-                    b.Navigation("Universities");
                 });
 
             modelBuilder.Entity("Group", b =>
