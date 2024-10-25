@@ -21,11 +21,12 @@ namespace TravelMateAPI.Controllers
 
         private int GetUserId()
         {
-            var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userIdString = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
             return int.TryParse(userIdString, out var userId) ? userId : -1;
             //return 3;
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Group>>> GetGroupsAsync([FromQuery] int pageNumber = 1)
         {
@@ -52,6 +53,7 @@ namespace TravelMateAPI.Controllers
             return Ok(result);
         }
 
+        [AllowAnonymous]
         // GET: api/Groups/CreatedGroup/id
         [HttpGet("{groupId}")]
         public async Task<ActionResult<Group>> GetGroupByIdAsync(int groupId)
