@@ -4,6 +4,7 @@ using BusinessObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BusinessObjects.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20241025044439_UpdateGroupParticipant")]
+    partial class UpdateGroupParticipant
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -219,13 +222,13 @@ namespace BusinessObjects.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "9f67d52e-b907-40ad-a5b2-6f232ca94a5b",
+                            ConcurrencyStamp = "febc14b0-7d14-4170-98d2-f0cdc6d47df2",
                             Email = "user1@example.com",
                             EmailConfirmed = false,
                             FullName = "User One",
                             LockoutEnabled = false,
                             PhoneNumberConfirmed = false,
-                            RegistrationTime = new DateTime(2024, 10, 25, 9, 11, 51, 348, DateTimeKind.Utc).AddTicks(3138),
+                            RegistrationTime = new DateTime(2024, 10, 25, 4, 44, 38, 504, DateTimeKind.Utc).AddTicks(2291),
                             TwoFactorEnabled = false,
                             UserName = "user1"
                         },
@@ -233,13 +236,13 @@ namespace BusinessObjects.Migrations
                         {
                             Id = 2,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "cf122f38-0865-4a44-81b1-5dce24a567e8",
+                            ConcurrencyStamp = "a49adf31-37bd-43a6-970e-05a22412a8ae",
                             Email = "user2@example.com",
                             EmailConfirmed = false,
                             FullName = "User Two",
                             LockoutEnabled = false,
                             PhoneNumberConfirmed = false,
-                            RegistrationTime = new DateTime(2024, 10, 25, 9, 11, 51, 348, DateTimeKind.Utc).AddTicks(3143),
+                            RegistrationTime = new DateTime(2024, 10, 25, 4, 44, 38, 504, DateTimeKind.Utc).AddTicks(2306),
                             TwoFactorEnabled = false,
                             UserName = "user2"
                         },
@@ -247,13 +250,13 @@ namespace BusinessObjects.Migrations
                         {
                             Id = 3,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "12ac5c10-30a2-4624-bd11-8bc86b2f0d49",
+                            ConcurrencyStamp = "9a7186e7-227a-4da0-831c-c73ba17cdc9f",
                             Email = "user3@example.com",
                             EmailConfirmed = false,
                             FullName = "User Three",
                             LockoutEnabled = false,
                             PhoneNumberConfirmed = false,
-                            RegistrationTime = new DateTime(2024, 10, 25, 9, 11, 51, 348, DateTimeKind.Utc).AddTicks(3153),
+                            RegistrationTime = new DateTime(2024, 10, 25, 4, 44, 38, 504, DateTimeKind.Utc).AddTicks(2310),
                             TwoFactorEnabled = false,
                             UserName = "user3"
                         },
@@ -261,13 +264,13 @@ namespace BusinessObjects.Migrations
                         {
                             Id = 4,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "27d88f91-ab9f-4d77-b2ab-55dbada9401c",
+                            ConcurrencyStamp = "ecff4505-cf6d-4f9b-90ba-7417c3fb9d9c",
                             Email = "user4@example.com",
                             EmailConfirmed = false,
                             FullName = "User Four",
                             LockoutEnabled = false,
                             PhoneNumberConfirmed = false,
-                            RegistrationTime = new DateTime(2024, 10, 25, 9, 11, 51, 348, DateTimeKind.Utc).AddTicks(3155),
+                            RegistrationTime = new DateTime(2024, 10, 25, 4, 44, 38, 504, DateTimeKind.Utc).AddTicks(2313),
                             TwoFactorEnabled = false,
                             UserName = "user4"
                         },
@@ -275,13 +278,13 @@ namespace BusinessObjects.Migrations
                         {
                             Id = 5,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "5614ed8b-bda0-4ee1-8903-e110b90d918f",
+                            ConcurrencyStamp = "088f7d80-b74b-4ade-b48c-0874de8e7a79",
                             Email = "user5@example.com",
                             EmailConfirmed = false,
                             FullName = "User Five",
                             LockoutEnabled = false,
                             PhoneNumberConfirmed = false,
-                            RegistrationTime = new DateTime(2024, 10, 25, 9, 11, 51, 348, DateTimeKind.Utc).AddTicks(3158),
+                            RegistrationTime = new DateTime(2024, 10, 25, 4, 44, 38, 504, DateTimeKind.Utc).AddTicks(2316),
                             TwoFactorEnabled = false,
                             UserName = "user5"
                         },
@@ -289,13 +292,13 @@ namespace BusinessObjects.Migrations
                         {
                             Id = 6,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "5307964e-71ef-404d-a9f3-9c1f3039129c",
+                            ConcurrencyStamp = "bf5b605e-8a76-43b5-bb9c-634a403dd3c4",
                             Email = "userSystem1@example.com",
                             EmailConfirmed = false,
                             FullName = "User System",
                             LockoutEnabled = false,
                             PhoneNumberConfirmed = false,
-                            RegistrationTime = new DateTime(2024, 10, 25, 9, 11, 51, 348, DateTimeKind.Utc).AddTicks(3161),
+                            RegistrationTime = new DateTime(2024, 10, 25, 4, 44, 38, 504, DateTimeKind.Utc).AddTicks(2319),
                             TwoFactorEnabled = false,
                             UserName = "userSystem1"
                         },
@@ -303,13 +306,13 @@ namespace BusinessObjects.Migrations
                         {
                             Id = 7,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "00269dde-ad68-47b4-b8f4-059ec7d9dffa",
+                            ConcurrencyStamp = "b6449f9e-8d83-4ad8-834c-76b9eb12a465",
                             Email = "Admin1@example.com",
                             EmailConfirmed = false,
                             FullName = "Admin 1",
                             LockoutEnabled = false,
                             PhoneNumberConfirmed = false,
-                            RegistrationTime = new DateTime(2024, 10, 25, 9, 11, 51, 348, DateTimeKind.Utc).AddTicks(3163),
+                            RegistrationTime = new DateTime(2024, 10, 25, 4, 44, 38, 504, DateTimeKind.Utc).AddTicks(2321),
                             TwoFactorEnabled = false,
                             UserName = "Admin1"
                         });
