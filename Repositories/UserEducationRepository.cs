@@ -27,7 +27,10 @@ namespace Repositories
         {
             return await _userEducationDAO.GetUserEducationByIdAsync(universityId, userId);
         }
-
+        public async Task<List<UserEducation>> GetUserEducationByUserIdAsync(int userId)
+        {
+            return await _userEducationDAO.GetUserEducationByUserIdAsync(userId);
+        }
         public async Task<UserEducation> AddUserEducationAsync(UserEducation newUserEducation)
         {
             return await _userEducationDAO.AddUserEducationAsync(newUserEducation);

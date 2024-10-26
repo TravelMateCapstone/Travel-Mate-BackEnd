@@ -30,7 +30,13 @@ namespace DataAccess
                 .Include(sl => sl.ApplicationUser)
                 .FirstOrDefaultAsync(sl => sl.LanguagesId == languagesId && sl.UserId == userId);
         }
-
+        public async Task<List<SpokenLanguages>> GetSpokenLanguagesByUserIdAsync(int userId)
+        {
+            return await _dbContext.SpokenLanguages.Include(sl => sl.Languages)
+                                                    .Include(sl => sl.ApplicationUser)
+                                                    .Where(sl => sl.UserId == userId)
+                                                    .ToListAsync();
+        }
         public async Task<SpokenLanguages> AddSpokenLanguageAsync(SpokenLanguages newSpokenLanguage)
         {
             _dbContext.SpokenLanguages.Add(newSpokenLanguage);

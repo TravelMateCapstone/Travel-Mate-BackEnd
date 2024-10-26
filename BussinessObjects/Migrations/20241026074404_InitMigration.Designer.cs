@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BusinessObjects.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20241025194135_InitMigration")]
+    [Migration("20241026074404_InitMigration")]
     partial class InitMigration
     {
         /// <inheritdoc />
@@ -222,13 +222,13 @@ namespace BusinessObjects.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "47be21af-8013-4cd1-bc01-d213d3df02a3",
+                            ConcurrencyStamp = "998ef710-9908-4823-b198-3a7e6410c677",
                             Email = "user1@example.com",
                             EmailConfirmed = false,
                             FullName = "User One",
                             LockoutEnabled = false,
                             PhoneNumberConfirmed = false,
-                            RegistrationTime = new DateTime(2024, 10, 25, 19, 41, 34, 794, DateTimeKind.Utc).AddTicks(7127),
+                            RegistrationTime = new DateTime(2024, 10, 26, 7, 44, 3, 504, DateTimeKind.Utc).AddTicks(6602),
                             TwoFactorEnabled = false,
                             UserName = "user1"
                         },
@@ -236,13 +236,13 @@ namespace BusinessObjects.Migrations
                         {
                             Id = 2,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "188356a5-5435-45db-914d-527fa8a01dfc",
+                            ConcurrencyStamp = "79a62111-fc4a-48ba-bd99-7e517445ea3d",
                             Email = "user2@example.com",
                             EmailConfirmed = false,
                             FullName = "User Two",
                             LockoutEnabled = false,
                             PhoneNumberConfirmed = false,
-                            RegistrationTime = new DateTime(2024, 10, 25, 19, 41, 34, 794, DateTimeKind.Utc).AddTicks(7131),
+                            RegistrationTime = new DateTime(2024, 10, 26, 7, 44, 3, 504, DateTimeKind.Utc).AddTicks(6607),
                             TwoFactorEnabled = false,
                             UserName = "user2"
                         },
@@ -250,13 +250,13 @@ namespace BusinessObjects.Migrations
                         {
                             Id = 3,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "2a55e178-82ec-4df2-8b67-220e59694eee",
+                            ConcurrencyStamp = "9634708d-1478-44f2-9cb9-79cb0e910683",
                             Email = "user3@example.com",
                             EmailConfirmed = false,
                             FullName = "User Three",
                             LockoutEnabled = false,
                             PhoneNumberConfirmed = false,
-                            RegistrationTime = new DateTime(2024, 10, 25, 19, 41, 34, 794, DateTimeKind.Utc).AddTicks(7134),
+                            RegistrationTime = new DateTime(2024, 10, 26, 7, 44, 3, 504, DateTimeKind.Utc).AddTicks(6609),
                             TwoFactorEnabled = false,
                             UserName = "user3"
                         },
@@ -264,13 +264,13 @@ namespace BusinessObjects.Migrations
                         {
                             Id = 4,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "4425f372-92d9-41c3-b19d-892f8e10c96f",
+                            ConcurrencyStamp = "e7c2f0e7-658a-43ba-92df-e52bb2db4bd2",
                             Email = "user4@example.com",
                             EmailConfirmed = false,
                             FullName = "User Four",
                             LockoutEnabled = false,
                             PhoneNumberConfirmed = false,
-                            RegistrationTime = new DateTime(2024, 10, 25, 19, 41, 34, 794, DateTimeKind.Utc).AddTicks(7136),
+                            RegistrationTime = new DateTime(2024, 10, 26, 7, 44, 3, 504, DateTimeKind.Utc).AddTicks(6611),
                             TwoFactorEnabled = false,
                             UserName = "user4"
                         },
@@ -278,13 +278,13 @@ namespace BusinessObjects.Migrations
                         {
                             Id = 5,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "3e19e06d-6e91-4b94-9164-81f7dd79be7c",
+                            ConcurrencyStamp = "38f3d55f-d2f3-44e4-9247-04dac0bf4e66",
                             Email = "user5@example.com",
                             EmailConfirmed = false,
                             FullName = "User Five",
                             LockoutEnabled = false,
                             PhoneNumberConfirmed = false,
-                            RegistrationTime = new DateTime(2024, 10, 25, 19, 41, 34, 794, DateTimeKind.Utc).AddTicks(7138),
+                            RegistrationTime = new DateTime(2024, 10, 26, 7, 44, 3, 504, DateTimeKind.Utc).AddTicks(6613),
                             TwoFactorEnabled = false,
                             UserName = "user5"
                         },
@@ -292,13 +292,13 @@ namespace BusinessObjects.Migrations
                         {
                             Id = 6,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "bbd44b40-8c6e-42d6-a523-6b881a622ba0",
+                            ConcurrencyStamp = "a76e56ad-8815-4560-a869-ae49f46d82bc",
                             Email = "userSystem1@example.com",
                             EmailConfirmed = false,
                             FullName = "User System",
                             LockoutEnabled = false,
                             PhoneNumberConfirmed = false,
-                            RegistrationTime = new DateTime(2024, 10, 25, 19, 41, 34, 794, DateTimeKind.Utc).AddTicks(7140),
+                            RegistrationTime = new DateTime(2024, 10, 26, 7, 44, 3, 504, DateTimeKind.Utc).AddTicks(6615),
                             TwoFactorEnabled = false,
                             UserName = "userSystem1"
                         },
@@ -306,13 +306,13 @@ namespace BusinessObjects.Migrations
                         {
                             Id = 7,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "90a5e71f-0bba-481d-973b-33b55ffe88c8",
+                            ConcurrencyStamp = "5a3d4afb-157f-4b2a-99d5-2bc19dec9a0e",
                             Email = "Admin1@example.com",
                             EmailConfirmed = false,
                             FullName = "Admin 1",
                             LockoutEnabled = false,
                             PhoneNumberConfirmed = false,
-                            RegistrationTime = new DateTime(2024, 10, 25, 19, 41, 34, 794, DateTimeKind.Utc).AddTicks(7142),
+                            RegistrationTime = new DateTime(2024, 10, 26, 7, 44, 3, 504, DateTimeKind.Utc).AddTicks(6617),
                             TwoFactorEnabled = false,
                             UserName = "Admin1"
                         });
@@ -584,12 +584,14 @@ namespace BusinessObjects.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("UserId")
+                    b.Property<int>("UserHomeId")
                         .HasColumnType("int");
 
                     b.HasKey("PhotoId");
 
                     b.HasIndex("ApplicationUserId");
+
+                    b.HasIndex("UserHomeId");
 
                     b.ToTable("HomePhotos");
                 });
@@ -918,7 +920,7 @@ namespace BusinessObjects.Migrations
                         {
                             ProfileId = 1,
                             Address = "123 Main St, Hanoi",
-                            Birthdate = new DateTime(2024, 10, 25, 19, 41, 34, 794, DateTimeKind.Utc).AddTicks(7211),
+                            Birthdate = new DateTime(2024, 10, 26, 7, 44, 3, 504, DateTimeKind.Utc).AddTicks(6691),
                             FullName = "User One",
                             Gender = "Male",
                             ImageUser = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png",
@@ -929,7 +931,7 @@ namespace BusinessObjects.Migrations
                         {
                             ProfileId = 2,
                             Address = "456 Secondary St, Ho Chi Minh",
-                            Birthdate = new DateTime(2024, 10, 25, 19, 41, 34, 794, DateTimeKind.Utc).AddTicks(7215),
+                            Birthdate = new DateTime(2024, 10, 26, 7, 44, 3, 504, DateTimeKind.Utc).AddTicks(6697),
                             FullName = "User Two",
                             Gender = "Male",
                             ImageUser = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png",
@@ -940,7 +942,7 @@ namespace BusinessObjects.Migrations
                         {
                             ProfileId = 3,
                             Address = "789 Tertiary St, Da Nang",
-                            Birthdate = new DateTime(2024, 10, 25, 19, 41, 34, 794, DateTimeKind.Utc).AddTicks(7216),
+                            Birthdate = new DateTime(2024, 10, 26, 7, 44, 3, 504, DateTimeKind.Utc).AddTicks(6699),
                             FullName = "User Three",
                             Gender = "Male",
                             ImageUser = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png",
@@ -951,7 +953,7 @@ namespace BusinessObjects.Migrations
                         {
                             ProfileId = 4,
                             Address = "101 Eleventh St, Hue",
-                            Birthdate = new DateTime(2024, 10, 25, 19, 41, 34, 794, DateTimeKind.Utc).AddTicks(7218),
+                            Birthdate = new DateTime(2024, 10, 26, 7, 44, 3, 504, DateTimeKind.Utc).AddTicks(6700),
                             FullName = "User Four",
                             Gender = "Male",
                             ImageUser = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png",
@@ -962,7 +964,7 @@ namespace BusinessObjects.Migrations
                         {
                             ProfileId = 5,
                             Address = "202 Twelfth St, Phu Quoc",
-                            Birthdate = new DateTime(2024, 10, 25, 19, 41, 34, 794, DateTimeKind.Utc).AddTicks(7219),
+                            Birthdate = new DateTime(2024, 10, 26, 7, 44, 3, 504, DateTimeKind.Utc).AddTicks(6702),
                             FullName = "User Five",
                             Gender = "Male",
                             ImageUser = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png",
@@ -1222,11 +1224,11 @@ namespace BusinessObjects.Migrations
 
             modelBuilder.Entity("BusinessObjects.Entities.UserHome", b =>
                 {
-                    b.Property<int>("UserId")
+                    b.Property<int>("UserHomeId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserHomeId"));
 
                     b.Property<string>("Amenities")
                         .IsRequired()
@@ -1261,7 +1263,10 @@ namespace BusinessObjects.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("UserId");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserHomeId");
 
                     b.HasIndex("ApplicationUserId");
 
@@ -1629,7 +1634,15 @@ namespace BusinessObjects.Migrations
                         .WithMany()
                         .HasForeignKey("ApplicationUserId");
 
+                    b.HasOne("BusinessObjects.Entities.UserHome", "UserHome")
+                        .WithMany("HomePhotos")
+                        .HasForeignKey("UserHomeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("ApplicationUser");
+
+                    b.Navigation("UserHome");
                 });
 
             modelBuilder.Entity("BusinessObjects.Entities.Message", b =>
@@ -2038,6 +2051,11 @@ namespace BusinessObjects.Migrations
             modelBuilder.Entity("BusinessObjects.Entities.PastTripPost", b =>
                 {
                     b.Navigation("Photos");
+                });
+
+            modelBuilder.Entity("BusinessObjects.Entities.UserHome", b =>
+                {
+                    b.Navigation("HomePhotos");
                 });
 
             modelBuilder.Entity("Group", b =>

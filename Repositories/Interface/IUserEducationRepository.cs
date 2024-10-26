@@ -11,6 +11,7 @@ namespace Repositories.Interface
     {
         Task<List<UserEducation>> GetAllUserEducationsAsync();
         Task<UserEducation> GetUserEducationByIdAsync(int universityId, int userId);
+        Task<List<UserEducation>> GetUserEducationByUserIdAsync(int userId);
         Task<UserEducation> AddUserEducationAsync(UserEducation newUserEducation);
         Task UpdateUserEducationAsync(UserEducation updatedUserEducation);
         Task DeleteUserEducationAsync(int universityId, int userId);

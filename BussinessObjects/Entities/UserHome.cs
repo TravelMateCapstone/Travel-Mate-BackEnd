@@ -1,10 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BusinessObjects.Entities
 {
     public class UserHome
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int UserHomeId { get; set; }
 
         public int UserId { get; set; }
         // Maximum number of guests
@@ -32,6 +35,8 @@ namespace BusinessObjects.Entities
         public string Transportation { get; set; }
 
         public virtual ApplicationUser? ApplicationUser { get; set; }
+        // Liên kết với HomePhoto
+        public virtual ICollection<HomePhoto>? HomePhotos { get; set; }
 
     }
 }

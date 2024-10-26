@@ -1,4 +1,5 @@
 ﻿using BusinessObjects.Entities;
+using BusinessObjects.Utils.Response;
 using DataAccess;
 using Repositories.Interface;
 using System;
@@ -27,7 +28,10 @@ namespace Repositories
         {
             return await _userActivitiesDAO.GetUserActivityByIdAsync(userId, activityId);
         }
-
+        public async Task<List<UserActivity>> GetUserActivitiesByUserIdAsync(int userId)
+        {
+            return await _userActivitiesDAO.GetUserActivitiesByUserIdAsync(userId);
+        }
         public async Task<UserActivity> AddUserActivityAsync(UserActivity newUserActivity)
         {
             return await _userActivitiesDAO.AddUserActivityAsync(newUserActivity);

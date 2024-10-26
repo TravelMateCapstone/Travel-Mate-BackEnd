@@ -17,16 +17,15 @@ namespace DataAccess
             _dbContext = dbContext;
         }
 
-        public async Task<List<HomePhoto>> GetAllHomePhotosAsync()
+        // Lấy danh sách ảnh theo UserHomeId
+        public async Task<List<HomePhoto>> GetPhotosByHomeIdAsync(int userHomeId)
         {
-            return await _dbContext.HomePhotos.Include(h => h.ApplicationUser).ToListAsync();
+            return await _dbContext.HomePhotos
+                .Where(photo => photo.UserHomeId == userHomeId)
+                .ToListAsync();
         }
 
-        public async Task<HomePhoto> GetHomePhotoByIdAsync(int photoId)
-        {
-            return await _dbContext.HomePhotos.Include(h => h.ApplicationUser).FirstOrDefaultAsync(h => h.PhotoId == photoId);
-        }
-
+        // Thêm ảnh mới
         public async Task<HomePhoto> AddHomePhotoAsync(HomePhoto newHomePhoto)
         {
             _dbContext.HomePhotos.Add(newHomePhoto);
@@ -34,21 +33,41 @@ namespace DataAccess
             return newHomePhoto;
         }
 
-        public async Task UpdateHomePhotoAsync(HomePhoto updatedHomePhoto)
+        // Lấy danh sách ảnh theo UserId
+        public async Task<List<HomePhoto>> GetPhotosByUserIdAsync(int userId)
         {
-            _dbContext.HomePhotos.Update(updatedHomePhoto);
-            await _dbContext.SaveChangesAsync();
+            var userHome = await _dbContext.UserHomes.FirstOrDefaultAsync(uh => uh.UserId == userId);
+            if (userHome != null)
+            {
+                return await GetPhotosByHomeIdAsync(userHome.UserHomeId);
+            }
+            return new List<HomePhoto>();
         }
 
-        public async Task DeleteHomePhotoAsync(int photoId)
+        // Thêm ảnh mới theo UserId
+        public async Task<HomePhoto> AddHomePhotoByUserIdAsync(int userId, string photoUrl)
         {
-            var homePhoto = await GetHomePhotoByIdAsync(photoId);
-            if (homePhoto != null)
+            // Tìm UserHome dựa vào UserId
+            var userHome = await _dbContext.UserHomes.FirstOrDefaultAsync(uh => uh.UserId == userId);
+
+            if (userHome == null)
             {
-                _dbContext.HomePhotos.Remove(homePhoto);
-                await _dbContext.SaveChangesAsync();
+                throw new Exception($"No UserHome found for UserId {userId}");
             }
+
+            // Tạo HomePhoto mới
+            var newHomePhoto = new HomePhoto
+            {
+                UserHomeId = userHome.UserHomeId,
+                HomePhotoUrl = photoUrl
+            };
+
+            _dbContext.HomePhotos.Add(newHomePhoto);
+            await _dbContext.SaveChangesAsync();
+
+            return newHomePhoto;
         }
     }
+
 
 }
