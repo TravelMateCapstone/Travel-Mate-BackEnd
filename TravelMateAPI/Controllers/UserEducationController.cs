@@ -23,7 +23,17 @@ namespace TravelMateAPI.Controllers
             var userEducations = await _userEducationRepository.GetAllUserEducationsAsync();
             return Ok(userEducations);
         }
-
+        // GET: api/UserEducation/user/1
+        [HttpGet("user/{userId}")]
+        public async Task<IActionResult> GetByUserId(int userId)
+        {
+            var userEducation = await _userEducationRepository.GetUserEducationByUserIdAsync(userId);
+            if (userEducation == null || !userEducation.Any())
+            {
+                return NotFound(new { Message = $"No education found for UserId {userId}." });
+            }
+            return Ok(userEducation);
+        }
         // GET: api/UserEducation/1/1
         [HttpGet("{universityId}/{userId}")]
         public async Task<IActionResult> GetById(int universityId, int userId)

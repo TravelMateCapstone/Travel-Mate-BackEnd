@@ -9,11 +9,10 @@ namespace Repositories.Interface
 {
     public interface IHomePhotoRepository
     {
-        Task<List<HomePhoto>> GetAllHomePhotosAsync();
-        Task<HomePhoto> GetHomePhotoByIdAsync(int photoId);
+        Task<List<HomePhoto>> GetPhotosByHomeIdAsync(int userHomeId);
         Task<HomePhoto> AddHomePhotoAsync(HomePhoto newHomePhoto);
-        Task UpdateHomePhotoAsync(HomePhoto updatedHomePhoto);
-        Task DeleteHomePhotoAsync(int photoId);
+        Task<List<HomePhoto>> GetPhotosByUserIdAsync(int userId);
+        Task<HomePhoto> AddHomePhotoByUserIdAsync(int userId, string photoUrl);
     }
 
 }

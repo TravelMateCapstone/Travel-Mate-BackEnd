@@ -19,12 +19,19 @@ namespace DataAccess
 
         public async Task<List<UserHome>> GetAllUserHomesAsync()
         {
-            return await _dbContext.UserHomes.Include(u => u.ApplicationUser).ToListAsync();
+            return await _dbContext.UserHomes.Include(uh => uh.ApplicationUser).ToListAsync();
         }
 
-        public async Task<UserHome> GetUserHomeByIdAsync(int userId)
+        public async Task<UserHome> GetUserHomeByIdAsync(int userHomeId)
         {
-            return await _dbContext.UserHomes.Include(u => u.ApplicationUser).FirstOrDefaultAsync(u => u.UserId == userId);
+            return await _dbContext.UserHomes.Include(uh => uh.ApplicationUser)
+                                             .FirstOrDefaultAsync(uh => uh.UserHomeId == userHomeId);
+        }
+
+        public async Task<UserHome> GetUserHomeByUserIdAsync(int userId)
+        {
+            return await _dbContext.UserHomes.Include(uh => uh.ApplicationUser).Include(uh => uh.HomePhotos)
+                                             .FirstOrDefaultAsync(uh => uh.UserId == userId);
         }
 
         public async Task<UserHome> AddUserHomeAsync(UserHome newUserHome)
@@ -40,9 +47,9 @@ namespace DataAccess
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task DeleteUserHomeAsync(int userId)
+        public async Task DeleteUserHomeAsync(int userHomeId)
         {
-            var userHome = await GetUserHomeByIdAsync(userId);
+            var userHome = await GetUserHomeByIdAsync(userHomeId);
             if (userHome != null)
             {
                 _dbContext.UserHomes.Remove(userHome);
@@ -50,5 +57,6 @@ namespace DataAccess
             }
         }
     }
+
 
 }

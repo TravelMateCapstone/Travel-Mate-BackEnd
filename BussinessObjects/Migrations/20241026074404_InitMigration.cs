@@ -363,26 +363,6 @@ namespace BusinessObjects.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "HomePhotos",
-                columns: table => new
-                {
-                    PhotoId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    HomePhotoUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ApplicationUserId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_HomePhotos", x => x.PhotoId);
-                    table.ForeignKey(
-                        name: "FK_HomePhotos_AspNetUsers_ApplicationUserId",
-                        column: x => x.ApplicationUserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Messages",
                 columns: table => new
                 {
@@ -604,8 +584,9 @@ namespace BusinessObjects.Migrations
                 name: "UserHomes",
                 columns: table => new
                 {
-                    UserId = table.Column<int>(type: "int", nullable: false)
+                    UserHomeId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
                     MaxGuests = table.Column<int>(type: "int", nullable: false),
                     GuestPreferences = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     HouseRules = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -618,7 +599,7 @@ namespace BusinessObjects.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserHomes", x => x.UserId);
+                    table.PrimaryKey("PK_UserHomes", x => x.UserHomeId);
                     table.ForeignKey(
                         name: "FK_UserHomes_AspNetUsers_ApplicationUserId",
                         column: x => x.ApplicationUserId,
@@ -806,6 +787,32 @@ namespace BusinessObjects.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "HomePhotos",
+                columns: table => new
+                {
+                    PhotoId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserHomeId = table.Column<int>(type: "int", nullable: false),
+                    HomePhotoUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ApplicationUserId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_HomePhotos", x => x.PhotoId);
+                    table.ForeignKey(
+                        name: "FK_HomePhotos_AspNetUsers_ApplicationUserId",
+                        column: x => x.ApplicationUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_HomePhotos_UserHomes_UserHomeId",
+                        column: x => x.UserHomeId,
+                        principalTable: "UserHomes",
+                        principalColumn: "UserHomeId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "GroupPostPhotos",
                 columns: table => new
                 {
@@ -934,13 +941,13 @@ namespace BusinessObjects.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FullName", "LockoutEnabled", "LockoutEnd", "MatchingActivitiesCount", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "RegistrationTime", "SecurityStamp", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { 1, 0, "47be21af-8013-4cd1-bc01-d213d3df02a3", "user1@example.com", false, "User One", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 25, 19, 41, 34, 794, DateTimeKind.Utc).AddTicks(7127), null, false, "user1" },
-                    { 2, 0, "188356a5-5435-45db-914d-527fa8a01dfc", "user2@example.com", false, "User Two", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 25, 19, 41, 34, 794, DateTimeKind.Utc).AddTicks(7131), null, false, "user2" },
-                    { 3, 0, "2a55e178-82ec-4df2-8b67-220e59694eee", "user3@example.com", false, "User Three", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 25, 19, 41, 34, 794, DateTimeKind.Utc).AddTicks(7134), null, false, "user3" },
-                    { 4, 0, "4425f372-92d9-41c3-b19d-892f8e10c96f", "user4@example.com", false, "User Four", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 25, 19, 41, 34, 794, DateTimeKind.Utc).AddTicks(7136), null, false, "user4" },
-                    { 5, 0, "3e19e06d-6e91-4b94-9164-81f7dd79be7c", "user5@example.com", false, "User Five", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 25, 19, 41, 34, 794, DateTimeKind.Utc).AddTicks(7138), null, false, "user5" },
-                    { 6, 0, "bbd44b40-8c6e-42d6-a523-6b881a622ba0", "userSystem1@example.com", false, "User System", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 25, 19, 41, 34, 794, DateTimeKind.Utc).AddTicks(7140), null, false, "userSystem1" },
-                    { 7, 0, "90a5e71f-0bba-481d-973b-33b55ffe88c8", "Admin1@example.com", false, "Admin 1", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 25, 19, 41, 34, 794, DateTimeKind.Utc).AddTicks(7142), null, false, "Admin1" }
+                    { 1, 0, "998ef710-9908-4823-b198-3a7e6410c677", "user1@example.com", false, "User One", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 26, 7, 44, 3, 504, DateTimeKind.Utc).AddTicks(6602), null, false, "user1" },
+                    { 2, 0, "79a62111-fc4a-48ba-bd99-7e517445ea3d", "user2@example.com", false, "User Two", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 26, 7, 44, 3, 504, DateTimeKind.Utc).AddTicks(6607), null, false, "user2" },
+                    { 3, 0, "9634708d-1478-44f2-9cb9-79cb0e910683", "user3@example.com", false, "User Three", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 26, 7, 44, 3, 504, DateTimeKind.Utc).AddTicks(6609), null, false, "user3" },
+                    { 4, 0, "e7c2f0e7-658a-43ba-92df-e52bb2db4bd2", "user4@example.com", false, "User Four", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 26, 7, 44, 3, 504, DateTimeKind.Utc).AddTicks(6611), null, false, "user4" },
+                    { 5, 0, "38f3d55f-d2f3-44e4-9247-04dac0bf4e66", "user5@example.com", false, "User Five", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 26, 7, 44, 3, 504, DateTimeKind.Utc).AddTicks(6613), null, false, "user5" },
+                    { 6, 0, "a76e56ad-8815-4560-a869-ae49f46d82bc", "userSystem1@example.com", false, "User System", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 26, 7, 44, 3, 504, DateTimeKind.Utc).AddTicks(6615), null, false, "userSystem1" },
+                    { 7, 0, "5a3d4afb-157f-4b2a-99d5-2bc19dec9a0e", "Admin1@example.com", false, "Admin 1", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 26, 7, 44, 3, 504, DateTimeKind.Utc).AddTicks(6617), null, false, "Admin1" }
                 });
 
             migrationBuilder.InsertData(
@@ -963,11 +970,11 @@ namespace BusinessObjects.Migrations
                 columns: new[] { "ProfileId", "Address", "ApplicationUserId", "Birthdate", "City", "Description", "FirstName", "FullName", "Gender", "ImageUser", "LastName", "MusicMoviesBooks", "Phone", "UserId", "WhatToShare", "WhyUseTravelMate" },
                 values: new object[,]
                 {
-                    { 1, "123 Main St, Hanoi", null, new DateTime(2024, 10, 25, 19, 41, 34, 794, DateTimeKind.Utc).AddTicks(7211), null, null, null, "User One", "Male", "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png", null, null, "0123456789", 1, null, null },
-                    { 2, "456 Secondary St, Ho Chi Minh", null, new DateTime(2024, 10, 25, 19, 41, 34, 794, DateTimeKind.Utc).AddTicks(7215), null, null, null, "User Two", "Male", "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png", null, null, "0987654321", 2, null, null },
-                    { 3, "789 Tertiary St, Da Nang", null, new DateTime(2024, 10, 25, 19, 41, 34, 794, DateTimeKind.Utc).AddTicks(7216), null, null, null, "User Three", "Male", "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png", null, null, "0912345678", 3, null, null },
-                    { 4, "101 Eleventh St, Hue", null, new DateTime(2024, 10, 25, 19, 41, 34, 794, DateTimeKind.Utc).AddTicks(7218), null, null, null, "User Four", "Male", "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png", null, null, "0998765432", 4, null, null },
-                    { 5, "202 Twelfth St, Phu Quoc", null, new DateTime(2024, 10, 25, 19, 41, 34, 794, DateTimeKind.Utc).AddTicks(7219), null, null, null, "User Five", "Male", "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png", null, null, "0923456789", 5, null, null }
+                    { 1, "123 Main St, Hanoi", null, new DateTime(2024, 10, 26, 7, 44, 3, 504, DateTimeKind.Utc).AddTicks(6691), null, null, null, "User One", "Male", "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png", null, null, "0123456789", 1, null, null },
+                    { 2, "456 Secondary St, Ho Chi Minh", null, new DateTime(2024, 10, 26, 7, 44, 3, 504, DateTimeKind.Utc).AddTicks(6697), null, null, null, "User Two", "Male", "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png", null, null, "0987654321", 2, null, null },
+                    { 3, "789 Tertiary St, Da Nang", null, new DateTime(2024, 10, 26, 7, 44, 3, 504, DateTimeKind.Utc).AddTicks(6699), null, null, null, "User Three", "Male", "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png", null, null, "0912345678", 3, null, null },
+                    { 4, "101 Eleventh St, Hue", null, new DateTime(2024, 10, 26, 7, 44, 3, 504, DateTimeKind.Utc).AddTicks(6700), null, null, null, "User Four", "Male", "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png", null, null, "0998765432", 4, null, null },
+                    { 5, "202 Twelfth St, Phu Quoc", null, new DateTime(2024, 10, 26, 7, 44, 3, 504, DateTimeKind.Utc).AddTicks(6702), null, null, null, "User Five", "Male", "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png", null, null, "0923456789", 5, null, null }
                 });
 
             migrationBuilder.InsertData(
@@ -1124,6 +1131,11 @@ namespace BusinessObjects.Migrations
                 name: "IX_HomePhotos_ApplicationUserId",
                 table: "HomePhotos",
                 column: "ApplicationUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_HomePhotos_UserHomeId",
+                table: "HomePhotos",
+                column: "UserHomeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Messages_CreatedById",
@@ -1330,9 +1342,6 @@ namespace BusinessObjects.Migrations
                 name: "UserEducations");
 
             migrationBuilder.DropTable(
-                name: "UserHomes");
-
-            migrationBuilder.DropTable(
                 name: "UserLocations");
 
             migrationBuilder.DropTable(
@@ -1340,6 +1349,9 @@ namespace BusinessObjects.Migrations
 
             migrationBuilder.DropTable(
                 name: "Events");
+
+            migrationBuilder.DropTable(
+                name: "UserHomes");
 
             migrationBuilder.DropTable(
                 name: "Destinations");

@@ -11,6 +11,7 @@ namespace Repositories.Interface
     {
         Task<List<SpokenLanguages>> GetAllSpokenLanguagesAsync();
         Task<SpokenLanguages> GetSpokenLanguageByIdAsync(int languagesId, int userId);
+        Task<List<SpokenLanguages>> GetSpokenLanguagesByUserIdAsync(int userId);
         Task<SpokenLanguages> AddSpokenLanguageAsync(SpokenLanguages newSpokenLanguage);
         Task UpdateSpokenLanguageAsync(SpokenLanguages updatedSpokenLanguage);
         Task DeleteSpokenLanguageAsync(int languagesId, int userId);

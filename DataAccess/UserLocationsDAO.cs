@@ -76,7 +76,13 @@ namespace DataAccess
                                    .Include(ul => ul.ApplicationUser)
                                    .FirstOrDefaultAsync(ul => ul.UserId == userId && ul.LocationId == locationId);
         }
-
+        public async Task<List<UserLocation>> GetUserLocationsByUserIdAsync(int userId)
+        {
+            return await _dbContext.UserLocations.Include(ul => ul.Location)
+                                                  .Include(ul => ul.ApplicationUser)
+                                                  .Where(ul => ul.UserId == userId)
+                                                  .ToListAsync();
+        }
         public async Task<UserLocation> AddUserLocationAsync(UserLocation newUserLocation)
         {
             _dbContext.UserLocations.Add(newUserLocation);

@@ -76,7 +76,13 @@ namespace DataAccess
                                    .Include(ua => ua.ApplicationUser)
                                    .FirstOrDefaultAsync(ua => ua.UserId == userId && ua.ActivityId == activityId);
         }
-
+        public async Task<List<UserActivity>> GetUserActivitiesByUserIdAsync(int userId)
+        {
+            return await _dbContext.UserActivities.Include(ua => ua.Activity)
+                                                   .Include(ua => ua.ApplicationUser)
+                                                   .Where(ua => ua.UserId == userId)
+                                                   .ToListAsync();
+        }
         public async Task<UserActivity> AddUserActivityAsync(UserActivity newUserActivity)
         {
             _dbContext.UserActivities.Add(newUserActivity);

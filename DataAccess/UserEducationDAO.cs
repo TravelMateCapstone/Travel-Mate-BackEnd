@@ -29,7 +29,13 @@ namespace DataAccess
                 .Include(ue => ue.ApplicationUser)
                 .FirstOrDefaultAsync(ue => ue.UniversityId == universityId && ue.UserId == userId);
         }
-
+        public async Task<List<UserEducation>> GetUserEducationByUserIdAsync(int userId)
+        {
+            return await _dbContext.UserEducations.Include(ue => ue.University)
+                                                  .Include(ue => ue.ApplicationUser)
+                                                  .Where(ue => ue.UserId == userId)
+                                                  .ToListAsync();
+        }
         public async Task<UserEducation> AddUserEducationAsync(UserEducation newUserEducation)
         {
             _dbContext.UserEducations.Add(newUserEducation);

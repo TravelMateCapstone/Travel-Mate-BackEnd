@@ -23,9 +23,14 @@ namespace Repositories
             return await _userHomeDAO.GetAllUserHomesAsync();
         }
 
-        public async Task<UserHome> GetUserHomeByIdAsync(int userId)
+        public async Task<UserHome> GetUserHomeByIdAsync(int userHomeId)
         {
-            return await _userHomeDAO.GetUserHomeByIdAsync(userId);
+            return await _userHomeDAO.GetUserHomeByIdAsync(userHomeId);
+        }
+
+        public async Task<UserHome> GetUserHomeByUserIdAsync(int userId)
+        {
+            return await _userHomeDAO.GetUserHomeByUserIdAsync(userId);
         }
 
         public async Task<UserHome> AddUserHomeAsync(UserHome newUserHome)
@@ -38,10 +43,11 @@ namespace Repositories
             await _userHomeDAO.UpdateUserHomeAsync(updatedUserHome);
         }
 
-        public async Task DeleteUserHomeAsync(int userId)
+        public async Task DeleteUserHomeAsync(int userHomeId)
         {
-            await _userHomeDAO.DeleteUserHomeAsync(userId);
+            await _userHomeDAO.DeleteUserHomeAsync(userHomeId);
         }
     }
+
 
 }
