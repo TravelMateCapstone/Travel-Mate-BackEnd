@@ -1,6 +1,7 @@
 ﻿using BusinessObjects.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Repositories;
 using Repositories.Interface;
 
 namespace TravelMateAPI.Controllers
@@ -23,7 +24,17 @@ namespace TravelMateAPI.Controllers
             var spokenLanguages = await _spokenLanguagesRepository.GetAllSpokenLanguagesAsync();
             return Ok(spokenLanguages);
         }
-
+        // GET: api/SpokenLanguage/user/1
+        [HttpGet("user/{userId}")]
+        public async Task<IActionResult> GetByUserId(int userId)
+        {
+            var spokenLanguages = await _spokenLanguagesRepository.GetSpokenLanguagesByUserIdAsync(userId);
+            if (spokenLanguages == null || !spokenLanguages.Any())
+            {
+                return NotFound(new { Message = $"No spoken languages found for UserId {userId}." });
+            }
+            return Ok(spokenLanguages);
+        }
         // GET: api/SpokenLanguages/1/1
         [HttpGet("{languagesId}/{userId}")]
         public async Task<IActionResult> GetById(int languagesId, int userId)

@@ -30,6 +30,17 @@ namespace TravelMateAPI.Controllers
             //return Ok(userActivities);
             return Ok(userActivityDTOs.AsQueryable());
         }
+        // GET: api/UserActivity/user/1
+        [HttpGet("user/{userId}")]
+        public async Task<IActionResult> GetByUserId(int userId)
+        {
+            var userActivities = await _userActivitiesRepository.GetUserActivitiesByUserIdAsync(userId);
+            if (userActivities == null || !userActivities.Any())
+            {
+                return NotFound(new { Message = $"No activities found for UserId {userId}." });
+            }
+            return Ok(userActivities);
+        }
 
         /*public IActionResult GetAll()
         {

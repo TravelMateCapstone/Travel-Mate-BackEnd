@@ -1,4 +1,5 @@
 ﻿using BusinessObjects.Entities;
+using BusinessObjects.Utils.Response;
 using DataAccess;
 using Repositories.Interface;
 using System;
@@ -27,7 +28,10 @@ namespace Repositories
         {
             return await _userLocationsDAO.GetUserLocationByIdAsync(userId, locationId);
         }
-
+        public async Task<List<UserLocation>> GetUserLocationsByUserIdAsync(int userId)
+        {
+            return await _userLocationsDAO.GetUserLocationsByUserIdAsync(userId);
+        }
         public async Task<UserLocation> AddUserLocationAsync(UserLocation newUserLocation)
         {
             return await _userLocationsDAO.AddUserLocationAsync(newUserLocation);

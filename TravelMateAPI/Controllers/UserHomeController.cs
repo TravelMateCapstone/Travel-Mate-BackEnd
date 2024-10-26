@@ -25,10 +25,22 @@ namespace TravelMateAPI.Controllers
         }
 
         // GET: api/UserHome/1
-        [HttpGet("{userId}")]
-        public async Task<IActionResult> GetById(int userId)
+        [HttpGet("{userHomeId}")]
+        public async Task<IActionResult> GetById(int userHomeId)
         {
-            var userHome = await _userHomeRepository.GetUserHomeByIdAsync(userId);
+            var userHome = await _userHomeRepository.GetUserHomeByIdAsync(userHomeId);
+            if (userHome == null)
+            {
+                return NotFound(new { Message = $"UserHome with UserHomeId {userHomeId} not found." });
+            }
+            return Ok(userHome);
+        }
+
+        // GET: api/UserHome/user/1
+        [HttpGet("user/{userId}")]
+        public async Task<IActionResult> GetByUserId(int userId)
+        {
+            var userHome = await _userHomeRepository.GetUserHomeByUserIdAsync(userId);
             if (userHome == null)
             {
                 return NotFound(new { Message = $"UserHome with UserId {userId} not found." });
@@ -46,14 +58,14 @@ namespace TravelMateAPI.Controllers
             }
 
             var createdUserHome = await _userHomeRepository.AddUserHomeAsync(newUserHome);
-            return CreatedAtAction(nameof(GetById), new { userId = createdUserHome.UserId }, createdUserHome);
+            return CreatedAtAction(nameof(GetById), new { userHomeId = createdUserHome.UserHomeId }, createdUserHome);
         }
 
         // PUT: api/UserHome/1
-        [HttpPut("{userId}")]
-        public async Task<IActionResult> Update(int userId, [FromBody] UserHome updatedUserHome)
+        [HttpPut("{userHomeId}")]
+        public async Task<IActionResult> Update(int userHomeId, [FromBody] UserHome updatedUserHome)
         {
-            if (userId != updatedUserHome.UserId)
+            if (userHomeId != updatedUserHome.UserHomeId)
             {
                 return BadRequest("UserHome ID mismatch.");
             }
@@ -63,18 +75,19 @@ namespace TravelMateAPI.Controllers
         }
 
         // DELETE: api/UserHome/1
-        [HttpDelete("{userId}")]
-        public async Task<IActionResult> Delete(int userId)
+        [HttpDelete("{userHomeId}")]
+        public async Task<IActionResult> Delete(int userHomeId)
         {
-            var userHome = await _userHomeRepository.GetUserHomeByIdAsync(userId);
+            var userHome = await _userHomeRepository.GetUserHomeByIdAsync(userHomeId);
             if (userHome == null)
             {
-                return NotFound(new { Message = $"UserHome with UserId {userId} not found." });
+                return NotFound(new { Message = $"UserHome with UserHomeId {userHomeId} not found." });
             }
 
-            await _userHomeRepository.DeleteUserHomeAsync(userId);
+            await _userHomeRepository.DeleteUserHomeAsync(userHomeId);
             return NoContent();
         }
     }
+
 
 }

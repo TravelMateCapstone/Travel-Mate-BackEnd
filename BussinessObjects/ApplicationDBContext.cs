@@ -15,6 +15,7 @@ namespace BusinessObjects
         public ApplicationDBContext(DbContextOptions<ApplicationDBContext> options) : base(options) { }
 
 
+        public DbSet<Profile> Profiles { get; set; }
         public DbSet<Friendship> Friendships { get; set; }
         public DbSet<Location> Locations { get; set; }
         public DbSet<Activity> Activities { get; set; }
@@ -46,7 +47,7 @@ namespace BusinessObjects
         public DbSet<UserDescription> UserDescriptions { get; set; }
         public DbSet<UserEducation> UserEducations { get; set; }
         public DbSet<UserHome> UserHomes { get; set; }
-        public DbSet<Profile> Profiles { get; set; }
+        
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -95,6 +96,8 @@ namespace BusinessObjects
             .HasKey(ul => new { ul.UserId, ul.LanguagesId });
             modelBuilder.Entity<UserEducation>()
                 .HasKey(ua => new { ua.UserId, ua.UniversityId });
+            modelBuilder.Entity<EventParticipants>()
+                .HasKey(ua => new { ua.UserId, ua.EventId });
 
             // Cấu hình khóa chính và quan hệ cho bảng Friendship
             // modelBuilder.Entity<Friendship>()
@@ -192,48 +195,63 @@ namespace BusinessObjects
                 new IdentityUserRole<int> { UserId = 5, RoleId = 4 }  // user5 là user
             );
             // Seed data cho profiles
-            //modelBuilder.Entity<UserProfile>().HasData(
-            //    new UserProfile
-            //    {
-            //        UserId = 1,
-            //        FullName = "User One",
-            //        Address = "123 Main St, Hanoi",
-            //        Phone = "0123456789",
-            //        ImageUser = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png"
-            //    },
-            //    new UserProfile
-            //    {
-            //        UserId = 2,
-            //        FullName = "User Two",
-            //        Address = "456 Secondary St, Ho Chi Minh",
-            //        Phone = "0987654321",
-            //        ImageUser = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png"
-            //    },
-            //    new UserProfile
-            //    {
-            //        UserId = 3,
-            //        FullName = "User Three",
-            //        Address = "789 Tertiary St, Da Nang",
-            //        Phone = "0912345678",
-            //        ImageUser = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png"
-            //    },
-            //    new UserProfile
-            //    {
-            //        UserId = 4,
-            //        FullName = "User Four",
-            //        Address = "101 Eleventh St, Hue",
-            //        Phone = "0998765432",
-            //        ImageUser = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png"
-            //    },
-            //    new UserProfile
-            //    {
-            //        UserId = 5,
-            //        FullName = "User Five",
-            //        Address = "202 Twelfth St, Phu Quoc",
-            //        Phone = "0923456789",
-            //        ImageUser = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png"
-            //    }
-            //);
+            modelBuilder.Entity<Profile>().HasData(
+                new Profile
+                {
+                    ProfileId = 1,
+                    UserId = 1,
+                    FullName = "User One",
+                    Address = "123 Main St, Hanoi",
+                    Phone = "0123456789",
+                    Gender = "Male",
+                    Birthdate = DateTime.UtcNow,
+                    ImageUser = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png"
+                },
+                new Profile
+                {
+                    ProfileId = 2,
+                    UserId = 2,
+                    FullName = "User Two",
+                    Address = "456 Secondary St, Ho Chi Minh",
+                    Phone = "0987654321",
+                    Gender = "Male",
+                    Birthdate = DateTime.UtcNow,
+                    ImageUser = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png"
+                },
+                new Profile
+                {
+                    ProfileId = 3,
+                    UserId = 3,
+                    FullName = "User Three",
+                    Address = "789 Tertiary St, Da Nang",
+                    Phone = "0912345678",
+                    Gender = "Male",
+                    Birthdate = DateTime.UtcNow,
+                    ImageUser = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png"
+                },
+                new Profile
+                {
+                    ProfileId = 4,
+                    UserId = 4,
+                    FullName = "User Four",
+                    Address = "101 Eleventh St, Hue",
+                    Phone = "0998765432",
+                    Gender = "Male",
+                    Birthdate = DateTime.UtcNow,
+                    ImageUser = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png"
+                },
+                new Profile
+                {
+                    ProfileId= 5,
+                    UserId = 5,
+                    FullName = "User Five",
+                    Address = "202 Twelfth St, Phu Quoc",
+                    Phone = "0923456789",
+                    Gender = "Male",
+                    Birthdate = DateTime.UtcNow,
+                    ImageUser = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png"
+                }
+            );
             // Seed data cho Locations (địa điểm trên lãnh thổ Việt Nam)
             modelBuilder.Entity<Location>().HasData(
                 new Location { LocationId = 1, LocationName = "Hà Nội" },

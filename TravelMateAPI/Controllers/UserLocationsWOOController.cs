@@ -27,6 +27,17 @@ namespace TravelMateAPI.Controllers
             var userLocationDTOs = _mapper.Map<List<UserLocationDTO>>(userLocations);
             return Ok(userLocationDTOs);
         }
+        // GET: api/UserLocation/user/1
+        [HttpGet("user/{userId}")]
+        public async Task<IActionResult> GetByUserId(int userId)
+        {
+            var userLocations = await _userLocationRepository.GetUserLocationsByUserIdAsync(userId);
+            if (userLocations == null || !userLocations.Any())
+            {
+                return NotFound(new { Message = $"No locations found for UserId {userId}." });
+            }
+            return Ok(userLocations);
+        }
         // GET: api/UserLocation
         //[HttpGet]
         //public async Task<IActionResult> GetAll()

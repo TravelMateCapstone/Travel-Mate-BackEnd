@@ -52,12 +52,13 @@ namespace TravelMateAPI.Controllers
             }
 
             // Nếu đăng nhập thành công, tạo token và trả về
-            var token = _tokenService.GenerateToken(user);
+            var token = await _tokenService.GenerateToken(user);
+            var token2 = "Bearer " + token;
 
             // Thay thế {userId} bằng giá trị thực tế từ user.Id
             var avatarUrl = $"https://travelmateapp.azurewebsites.net/odata/Profiles/GetImageUrl/{user.Id}";
 
-            return Ok(new { Token = token, AvataUrl = avatarUrl });
+            return Ok(new { Token = token2, AvataUrl = avatarUrl });
         }
 
 
@@ -269,33 +270,60 @@ namespace TravelMateAPI.Controllers
         [HttpGet("current-user")]
         public async Task<IActionResult> GetCurrentUser()
         {
-            // Lấy ID người dùng từ token đã đăng nhập
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            // Lấy UserId từ Claims
+            var userIdString = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
 
-            if (userId == null)
+            // Kiểm tra nếu userIdString là null
+            if (string.IsNullOrEmpty(userIdString))
             {
-                return Unauthorized("Người dùng chưa đăng nhập.");
+                return NotFound("UserId not found in token.");
             }
 
-            // Tìm người dùng trong hệ thống bằng UserManager
-            var user = await _userManager.FindByIdAsync(userId);
-
-            if (user == null)
+            // Chuyển UserId từ string sang int
+            if (int.TryParse(userIdString, out int userId))
             {
-                return NotFound("Không tìm thấy người dùng.");
+                return Ok(userId); // Trả về userId dưới dạng int
             }
-
-            // Trả về thông tin người dùng hiện tại
-            var userInfo = new
+            else
             {
-                Username = user.UserName,
-                Email = user.Email,
-                FullName = user.FullName,
-                Roles = await _userManager.GetRolesAsync(user) // Lấy các vai trò của người dùng
-            };
-
-            return Ok(userId);
+                return BadRequest($"Invalid UserId format.Value: {userIdString}");
+            }
         }
+        [HttpGet("claims")]
+        public IActionResult GetClaims()
+        {
+            // Lấy tất cả các claims
+            var claims = User.Claims.Select(c => new
+            {
+                c.Type,
+                c.Value
+            }).ToList();
+
+            // Tìm userId từ claims
+            var userIdClaim = claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+
+            // Trả về kết quả
+            if (userIdClaim != null)
+            {
+                // Chuyển đổi userId từ string sang int nếu cần
+                if (int.TryParse(userIdClaim.Value, out int userId))
+                {
+                    return Ok(new
+                    {
+                        UserId = userId
+                    });
+                }
+                else
+                {
+                    return BadRequest($"Invalid UserId format. Value: {userIdClaim.Value}");
+                }
+            }
+            else
+            {
+                return NotFound("UserId not found in claims.");
+            }
+        }
+
 
         //ADMIN
         [HttpPost("login-admin")]

@@ -2,6 +2,7 @@
 using BusinessObjects.Entities;
 using BusinessObjects.Utils.Response;
 using Microsoft.AspNetCore.Mvc;
+using Repositories;
 using Repositories.Interface;
 
 namespace TravelMateAPI.Controllers
@@ -45,7 +46,17 @@ namespace TravelMateAPI.Controllers
             }
             return Ok(userActivity);
         }
-
+        // GET: api/UserActivity/user/1
+        [HttpGet("user/{userId}")]
+        public async Task<IActionResult> GetByUserId(int userId)
+        {
+            var userActivities = await _userActivityRepository.GetUserActivitiesByUserIdAsync(userId);
+            if (userActivities == null || !userActivities.Any())
+            {
+                return NotFound(new { Message = $"No activities found for UserId {userId}." });
+            }
+            return Ok(userActivities);
+        }
         // POST: api/UserActivity
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] UserActivity newUserActivity)

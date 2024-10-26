@@ -187,6 +187,18 @@ namespace TravelMateAPI.Controllers
         }
 
         // POST: api/Profile
+        //[HttpPost]
+        //public async Task<IActionResult> Create([FromBody] Profile newProfile)
+        //{
+        //    if (newProfile == null)
+        //    {
+        //        return BadRequest("Profile is null.");
+        //    }
+
+        //    var createdProfile = await _profileRepository.AddProfileAsync(newProfile);
+        //    return CreatedAtAction(nameof(GetById), new { userId = createdProfile.UserId }, createdProfile);
+        //}
+        // POST: api/Profile
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] Profile newProfile)
         {
@@ -196,14 +208,51 @@ namespace TravelMateAPI.Controllers
             }
 
             var createdProfile = await _profileRepository.AddProfileAsync(newProfile);
-            return CreatedAtAction(nameof(GetById), new { userId = createdProfile.UserId }, createdProfile);
+            //return CreatedAtAction(nameof(GetById), new { profileId = createdProfile.ProfileId }, createdProfile);
+            // Return thông báo thành công khi tạo mới
+            return Ok(new
+            {
+                Success = true,
+                Message = "Profile created successfully!",
+                Data = createdProfile
+            });
+        }
+        // POST: api/Profile/current-user
+        [HttpPost("current-user")]
+        public async Task<IActionResult> CreateProfileForCurrentUser([FromBody] Profile newProfile)
+        {
+            if (newProfile == null)
+            {
+                return BadRequest("Profile is null.");
+            }
+
+            // Lấy UserId từ token
+            var userId = GetUserId();
+            if (userId == -1)
+            {
+                return Unauthorized("Invalid token or user not found.");
+            }
+
+            // Gán UserId vào profile mới
+            newProfile.UserId = userId;
+
+            // Thêm profile mới vào database
+            var createdProfile = await _profileRepository.AddProfileAsync(newProfile);
+
+            // Return thông báo thành công khi tạo mới
+            return Ok(new
+            {
+                Success = true,
+                Message = "Profile created successfully!",
+                Data = createdProfile
+            });
         }
 
         // PUT: api/Profile/1
-        [HttpPut("{userId}")]
-        public async Task<IActionResult> Update(int userId, [FromBody] Profile updatedProfile)
+        [HttpPut("{profileId}")]
+        public async Task<IActionResult> Update(int profileId, [FromBody] Profile updatedProfile)
         {
-            if (userId != updatedProfile.UserId)
+            if (profileId != updatedProfile.ProfileId)
             {
                 return BadRequest("Profile ID mismatch.");
             }
@@ -213,16 +262,16 @@ namespace TravelMateAPI.Controllers
         }
 
         // DELETE: api/Profile/1
-        [HttpDelete("{userId}")]
-        public async Task<IActionResult> Delete(int userId)
+        [HttpDelete("{profileId}")]
+        public async Task<IActionResult> Delete(int profileId)
         {
-            var profile = await _profileRepository.GetProfileByIdAsync(userId);
+            var profile = await _profileRepository.GetProfileByIdAsync(profileId);
             if (profile == null)
             {
-                return NotFound(new { Message = $"Profile with UserId {userId} not found." });
+                return NotFound(new { Message = $"Profile with ProfileId {profileId} not found." });
             }
 
-            await _profileRepository.DeleteProfileAsync(userId);
+            await _profileRepository.DeleteProfileAsync(profileId);
             return NoContent();
         }
     }

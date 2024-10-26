@@ -16,65 +16,61 @@ namespace TravelMateAPI.Controllers
             _homePhotoRepository = homePhotoRepository;
         }
 
-        // GET: api/HomePhoto
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
+        // GET: api/HomePhoto/home/{userHomeId}
+        [HttpGet("home/{userHomeId}")]
+        public async Task<IActionResult> GetPhotosByHomeId(int userHomeId)
         {
-            var homePhotos = await _homePhotoRepository.GetAllHomePhotosAsync();
-            return Ok(homePhotos);
-        }
-
-        // GET: api/HomePhoto/1
-        [HttpGet("{photoId}")]
-        public async Task<IActionResult> GetById(int photoId)
-        {
-            var homePhoto = await _homePhotoRepository.GetHomePhotoByIdAsync(photoId);
-            if (homePhoto == null)
+            var photos = await _homePhotoRepository.GetPhotosByHomeIdAsync(userHomeId);
+            if (photos == null || photos.Count == 0)
             {
-                return NotFound(new { Message = $"HomePhoto with PhotoId {photoId} not found." });
+                return NotFound(new { Message = $"No photos found for UserHomeId {userHomeId}" });
             }
-            return Ok(homePhoto);
+            return Ok(photos);
         }
 
         // POST: api/HomePhoto
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] HomePhoto newHomePhoto)
+        public async Task<IActionResult> AddHomePhoto([FromBody] HomePhoto newHomePhoto)
         {
             if (newHomePhoto == null)
             {
                 return BadRequest("HomePhoto is null.");
             }
 
-            var createdHomePhoto = await _homePhotoRepository.AddHomePhotoAsync(newHomePhoto);
-            return CreatedAtAction(nameof(GetById), new { photoId = createdHomePhoto.PhotoId }, createdHomePhoto);
+            var addedPhoto = await _homePhotoRepository.AddHomePhotoAsync(newHomePhoto);
+            return CreatedAtAction(nameof(GetPhotosByHomeId), new { userHomeId = addedPhoto.UserHomeId }, addedPhoto);
         }
 
-        // PUT: api/HomePhoto/1
-        [HttpPut("{photoId}")]
-        public async Task<IActionResult> Update(int photoId, [FromBody] HomePhoto updatedHomePhoto)
+        // GET: api/HomePhoto/user/{userId}
+        [HttpGet("user/{userId}")]
+        public async Task<IActionResult> GetPhotosByUserId(int userId)
         {
-            if (photoId != updatedHomePhoto.PhotoId)
+            var photos = await _homePhotoRepository.GetPhotosByUserIdAsync(userId);
+            if (photos == null || photos.Count == 0)
             {
-                return BadRequest("Photo ID mismatch.");
+                return NotFound(new { Message = $"No photos found for UserId {userId}" });
             }
-
-            await _homePhotoRepository.UpdateHomePhotoAsync(updatedHomePhoto);
-            return NoContent();
+            return Ok(photos);
         }
 
-        // DELETE: api/HomePhoto/1
-        [HttpDelete("{photoId}")]
-        public async Task<IActionResult> Delete(int photoId)
+        // POST: api/HomePhoto/user/{userId}
+        [HttpPost("user/{userId}")]
+        public async Task<IActionResult> AddHomePhotoByUserId(int userId, [FromBody] string photoUrl)
         {
-            var homePhoto = await _homePhotoRepository.GetHomePhotoByIdAsync(photoId);
-            if (homePhoto == null)
+            if (string.IsNullOrWhiteSpace(photoUrl))
             {
-                return NotFound(new { Message = $"HomePhoto with PhotoId {photoId} not found." });
+                return BadRequest("Photo URL is required.");
             }
 
-            await _homePhotoRepository.DeleteHomePhotoAsync(photoId);
-            return NoContent();
+            try
+            {
+                var addedPhoto = await _homePhotoRepository.AddHomePhotoByUserIdAsync(userId, photoUrl);
+                return CreatedAtAction(nameof(GetPhotosByUserId), new { userId = addedPhoto.UserHomeId }, addedPhoto);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
         }
     }
-
 }

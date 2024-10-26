@@ -1,4 +1,5 @@
-﻿using BusinessObjects.Entities;
+﻿using BusinessObjects;
+using BusinessObjects.Entities;
 using DataAccess;
 using Repositories.Interface;
 using System;
@@ -18,30 +19,31 @@ namespace Repositories
             _homePhotoDAO = homePhotoDAO;
         }
 
-        public async Task<List<HomePhoto>> GetAllHomePhotosAsync()
+        // Lấy danh sách ảnh theo UserHomeId
+        public async Task<List<HomePhoto>> GetPhotosByHomeIdAsync(int userHomeId)
         {
-            return await _homePhotoDAO.GetAllHomePhotosAsync();
+            return await _homePhotoDAO.GetPhotosByHomeIdAsync(userHomeId);
         }
 
-        public async Task<HomePhoto> GetHomePhotoByIdAsync(int photoId)
-        {
-            return await _homePhotoDAO.GetHomePhotoByIdAsync(photoId);
-        }
-
+        // Thêm ảnh mới
         public async Task<HomePhoto> AddHomePhotoAsync(HomePhoto newHomePhoto)
         {
             return await _homePhotoDAO.AddHomePhotoAsync(newHomePhoto);
         }
 
-        public async Task UpdateHomePhotoAsync(HomePhoto updatedHomePhoto)
+        // Lấy danh sách ảnh theo UserId
+        public async Task<List<HomePhoto>> GetPhotosByUserIdAsync(int userId)
         {
-            await _homePhotoDAO.UpdateHomePhotoAsync(updatedHomePhoto);
+            return await _homePhotoDAO.GetPhotosByUserIdAsync(userId);
         }
 
-        public async Task DeleteHomePhotoAsync(int photoId)
+        // Thêm ảnh mới theo UserId
+        public async Task<HomePhoto> AddHomePhotoByUserIdAsync(int userId, string photoUrl)
         {
-            await _homePhotoDAO.DeleteHomePhotoAsync(photoId);
+            return await _homePhotoDAO.AddHomePhotoByUserIdAsync(userId, photoUrl);
         }
     }
+
+
 
 }

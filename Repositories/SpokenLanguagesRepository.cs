@@ -27,7 +27,10 @@ namespace Repositories
         {
             return await _spokenLanguagesDAO.GetSpokenLanguageByIdAsync(languagesId, userId);
         }
-
+        public async Task<List<SpokenLanguages>> GetSpokenLanguagesByUserIdAsync(int userId)
+        {
+            return await _spokenLanguagesDAO.GetSpokenLanguagesByUserIdAsync(userId);
+        }
         public async Task<SpokenLanguages> AddSpokenLanguageAsync(SpokenLanguages newSpokenLanguage)
         {
             return await _spokenLanguagesDAO.AddSpokenLanguageAsync(newSpokenLanguage);
