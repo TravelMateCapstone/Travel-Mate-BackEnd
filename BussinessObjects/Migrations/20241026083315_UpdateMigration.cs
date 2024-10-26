@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace BusinessObjects.Migrations
 {
     /// <inheritdoc />
-    public partial class InitMigration : Migration
+    public partial class UpdateMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -323,6 +323,7 @@ namespace BusinessObjects.Migrations
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     GroupImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    NumberOfParticipants = table.Column<int>(type: "int", nullable: false),
                     CreatedById = table.Column<int>(type: "int", nullable: false),
                     CreatedByUserId = table.Column<int>(type: "int", nullable: true)
                 },
@@ -936,13 +937,13 @@ namespace BusinessObjects.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FullName", "LockoutEnabled", "LockoutEnd", "MatchingActivitiesCount", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "RegistrationTime", "SecurityStamp", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { 1, 0, "b52d2d1e-d149-4dd3-a50f-10d677e0bfa1", "user1@example.com", false, "User One", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 25, 9, 49, 7, 256, DateTimeKind.Utc).AddTicks(9703), null, false, "user1" },
-                    { 2, 0, "841a34aa-f390-4545-ab34-5ff498160035", "user2@example.com", false, "User Two", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 25, 9, 49, 7, 256, DateTimeKind.Utc).AddTicks(9726), null, false, "user2" },
-                    { 3, 0, "1377bd99-b3af-4a0d-bef4-1d01fb856bca", "user3@example.com", false, "User Three", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 25, 9, 49, 7, 256, DateTimeKind.Utc).AddTicks(9742), null, false, "user3" },
-                    { 4, 0, "c3fcb905-7d33-4c19-9080-b42616bcf9b5", "user4@example.com", false, "User Four", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 25, 9, 49, 7, 256, DateTimeKind.Utc).AddTicks(9756), null, false, "user4" },
-                    { 5, 0, "5e2a37e8-392c-45be-8488-5aa1e14b3f07", "user5@example.com", false, "User Five", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 25, 9, 49, 7, 256, DateTimeKind.Utc).AddTicks(9768), null, false, "user5" },
-                    { 6, 0, "98d0f078-d472-475a-beee-288f0bc40d40", "userSystem1@example.com", false, "User System", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 25, 9, 49, 7, 256, DateTimeKind.Utc).AddTicks(9782), null, false, "userSystem1" },
-                    { 7, 0, "e4c8d87c-66fa-4bda-bf3c-d1051c4a8c93", "Admin1@example.com", false, "Admin 1", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 25, 9, 49, 7, 256, DateTimeKind.Utc).AddTicks(9795), null, false, "Admin1" }
+                    { 1, 0, "a794c063-16c4-4924-ab96-3495ff9d6967", "user1@example.com", false, "User One", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 26, 8, 33, 15, 78, DateTimeKind.Utc).AddTicks(3530), null, false, "user1" },
+                    { 2, 0, "1bb80d3e-1fff-4f2c-99ca-8cfe30fad90f", "user2@example.com", false, "User Two", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 26, 8, 33, 15, 78, DateTimeKind.Utc).AddTicks(3536), null, false, "user2" },
+                    { 3, 0, "8d41a361-aa9a-4815-aadc-afdcea337259", "user3@example.com", false, "User Three", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 26, 8, 33, 15, 78, DateTimeKind.Utc).AddTicks(3548), null, false, "user3" },
+                    { 4, 0, "b478bb9f-da54-4f03-be33-e7c1be529d21", "user4@example.com", false, "User Four", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 26, 8, 33, 15, 78, DateTimeKind.Utc).AddTicks(3551), null, false, "user4" },
+                    { 5, 0, "803f992b-fe3d-492e-8f1a-76961ed2840f", "user5@example.com", false, "User Five", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 26, 8, 33, 15, 78, DateTimeKind.Utc).AddTicks(3553), null, false, "user5" },
+                    { 6, 0, "82b2f089-56a2-4eba-ad29-b96b7444d8f0", "userSystem1@example.com", false, "User System", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 26, 8, 33, 15, 78, DateTimeKind.Utc).AddTicks(3556), null, false, "userSystem1" },
+                    { 7, 0, "5cde90ec-527e-432b-b106-9a57c0e35b3d", "Admin1@example.com", false, "Admin 1", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 26, 8, 33, 15, 78, DateTimeKind.Utc).AddTicks(3559), null, false, "Admin1" }
                 });
 
             migrationBuilder.InsertData(
