@@ -10,13 +10,17 @@ namespace BusinessObjects.Entities
 {
     public class EventParticipants
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int EventParticipantId { get; set; }
+        //[Key]
+        //[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        //public int EventParticipantId { get; set; }
+
+        [Key, Column(Order = 0)]
         public int EventId { get; set; }
+        [Key, Column(Order = 1)]
         public int UserId { get; set; }
+        
         public DateTime JoinedAt { get; set; }
-        public bool Notification { get; set; }
+        public bool? Notification { get; set; }
 
         // Navigation property to link with Event
         public virtual Event? Event { get; set; }

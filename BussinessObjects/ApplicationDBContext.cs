@@ -96,6 +96,8 @@ namespace BusinessObjects
             .HasKey(ul => new { ul.UserId, ul.LanguagesId });
             modelBuilder.Entity<UserEducation>()
                 .HasKey(ua => new { ua.UserId, ua.UniversityId });
+            modelBuilder.Entity<EventParticipants>()
+                .HasKey(ua => new { ua.UserId, ua.EventId });
 
             // Cấu hình khóa chính và quan hệ cho bảng Friendship
             // modelBuilder.Entity<Friendship>()

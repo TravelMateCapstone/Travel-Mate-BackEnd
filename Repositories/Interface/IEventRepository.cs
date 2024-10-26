@@ -11,6 +11,7 @@ namespace Repositories.Interface
     {
         Task<List<Event>> GetAllEventsAsync();
         Task<Event> GetEventByIdAsync(int eventId);
+        Task<List<Event>> GetEventsByCreaterUserIdAsync(int createrUserId);
         Task<Event> AddEventAsync(Event newEvent);
         Task UpdateEventAsync(Event updatedEvent);
         Task DeleteEventAsync(int eventId);

@@ -73,9 +73,9 @@ namespace TravelMateAPI.Services.FindLocal
                     SELECT u.Id, u.FullName, u.Email, u.RegistrationTime, 
                            p.UserId, p.FullName, p.Address, p.Phone, p.ImageUser, 
                            COUNT(ua.ActivityId) AS MatchingActivitiesCount
-                    FROM Users u
-                    INNER JOIN UserRoles ur ON u.Id = ur.UserId
-                    INNER JOIN Roles r ON ur.RoleId = r.Id
+                    FROM AspNetUsers u
+                    INNER JOIN AspNetUserRoles ur ON u.Id = ur.UserId
+                    INNER JOIN AspNetRoles r ON ur.RoleId = r.Id
                     INNER JOIN UserLocations ul ON u.Id = ul.UserId
                     INNER JOIN UserActivities ua ON u.Id = ua.UserId
                     LEFT JOIN Profiles p ON u.Id = p.UserId  -- Thêm JOIN bảng Profile
