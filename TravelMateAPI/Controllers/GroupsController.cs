@@ -21,7 +21,7 @@ namespace TravelMateAPI.Controllers
 
         private int GetUserId()
         {
-            var userIdString = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+            var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             return int.TryParse(userIdString, out var userId) ? userId : -1;
             //return 3;
         }
@@ -31,7 +31,6 @@ namespace TravelMateAPI.Controllers
         public async Task<ActionResult<IEnumerable<Group>>> GetGroupsAsync([FromQuery] int pageNumber = 1)
         {
             var userId = GetUserId();
-
             var groups = await _groupRepository.GetGroupsAsync();
             if (groups == null)
                 return NotFound();
@@ -40,6 +39,11 @@ namespace TravelMateAPI.Controllers
             var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
 
             groups = groups.Skip((pageNumber - 1) * pageSize).Take(pageSize);
+
+            foreach (var group in groups)
+            {
+                group.NumberOfParticipants = await _groupRepository.CountGroupParticipants(group.GroupId);
+            }
 
             var result = new
             {
@@ -59,6 +63,8 @@ namespace TravelMateAPI.Controllers
         public async Task<ActionResult<Group>> GetGroupByIdAsync(int groupId)
         {
             var group = await _groupRepository.GetGroupByIdAsync(groupId);
+
+            group.NumberOfParticipants = await _groupRepository.CountGroupParticipants(group.GroupId);
             if (group == null)
                 return NotFound();
 
@@ -72,6 +78,11 @@ namespace TravelMateAPI.Controllers
             var userId = GetUserId();
 
             var groups = await _groupRepository.GetCreatedGroupsAsync(userId);
+            foreach (var group in groups)
+            {
+                group.NumberOfParticipants = await _groupRepository.CountGroupParticipants(group.GroupId);
+            }
+
             if (groups == null)
                 return NotFound();
 
@@ -99,6 +110,9 @@ namespace TravelMateAPI.Controllers
             var userId = GetUserId();
 
             var group = await _groupRepository.GetCreatedGroupByIdAsync(userId, groupId);
+
+            group.NumberOfParticipants = await _groupRepository.CountGroupParticipants(group.GroupId);
+
             if (group == null)
                 return NotFound();
 
@@ -112,6 +126,11 @@ namespace TravelMateAPI.Controllers
             var userId = GetUserId();
 
             var joinedGroups = await _groupRepository.GetJoinedGroupsAsync(userId);
+
+            foreach (var group in joinedGroups)
+                group.NumberOfParticipants = await _groupRepository.CountGroupParticipants(group.GroupId);
+
+
             if (joinedGroups == null)
                 return NotFound();
 
@@ -139,6 +158,8 @@ namespace TravelMateAPI.Controllers
             var userId = GetUserId();
 
             var joinedGroups = _groupRepository.GetJoinedGroupByIdAsync(userId, groupId);
+
+            //joinedGroups.NumberOfParticipants = await _groupRepository.CountGroupParticipants(group.GroupId);
 
             if (joinedGroups == null)
                 return NotFound();

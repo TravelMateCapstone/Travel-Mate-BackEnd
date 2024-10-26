@@ -92,7 +92,8 @@ namespace BusinessObjects.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CreaterUserId = table.Column<int>(type: "int", nullable: false),
                     EventName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    EventImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     StartAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -349,6 +350,7 @@ namespace BusinessObjects.Migrations
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     GroupImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    NumberOfParticipants = table.Column<int>(type: "int", nullable: false),
                     CreatedById = table.Column<int>(type: "int", nullable: false),
                     CreatedByUserId = table.Column<int>(type: "int", nullable: true)
                 },
@@ -636,17 +638,15 @@ namespace BusinessObjects.Migrations
                 name: "EventParticipants",
                 columns: table => new
                 {
-                    EventParticipantId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
                     EventId = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: false),
                     JoinedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Notification = table.Column<bool>(type: "bit", nullable: false),
+                    Notification = table.Column<bool>(type: "bit", nullable: true),
                     ApplicationUserId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_EventParticipants", x => x.EventParticipantId);
+                    table.PrimaryKey("PK_EventParticipants", x => new { x.UserId, x.EventId });
                     table.ForeignKey(
                         name: "FK_EventParticipants_AspNetUsers_ApplicationUserId",
                         column: x => x.ApplicationUserId,
@@ -941,13 +941,13 @@ namespace BusinessObjects.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FullName", "LockoutEnabled", "LockoutEnd", "MatchingActivitiesCount", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "RegistrationTime", "SecurityStamp", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { 1, 0, "998ef710-9908-4823-b198-3a7e6410c677", "user1@example.com", false, "User One", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 26, 7, 44, 3, 504, DateTimeKind.Utc).AddTicks(6602), null, false, "user1" },
-                    { 2, 0, "79a62111-fc4a-48ba-bd99-7e517445ea3d", "user2@example.com", false, "User Two", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 26, 7, 44, 3, 504, DateTimeKind.Utc).AddTicks(6607), null, false, "user2" },
-                    { 3, 0, "9634708d-1478-44f2-9cb9-79cb0e910683", "user3@example.com", false, "User Three", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 26, 7, 44, 3, 504, DateTimeKind.Utc).AddTicks(6609), null, false, "user3" },
-                    { 4, 0, "e7c2f0e7-658a-43ba-92df-e52bb2db4bd2", "user4@example.com", false, "User Four", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 26, 7, 44, 3, 504, DateTimeKind.Utc).AddTicks(6611), null, false, "user4" },
-                    { 5, 0, "38f3d55f-d2f3-44e4-9247-04dac0bf4e66", "user5@example.com", false, "User Five", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 26, 7, 44, 3, 504, DateTimeKind.Utc).AddTicks(6613), null, false, "user5" },
-                    { 6, 0, "a76e56ad-8815-4560-a869-ae49f46d82bc", "userSystem1@example.com", false, "User System", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 26, 7, 44, 3, 504, DateTimeKind.Utc).AddTicks(6615), null, false, "userSystem1" },
-                    { 7, 0, "5a3d4afb-157f-4b2a-99d5-2bc19dec9a0e", "Admin1@example.com", false, "Admin 1", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 26, 7, 44, 3, 504, DateTimeKind.Utc).AddTicks(6617), null, false, "Admin1" }
+                    { 1, 0, "5165472b-cba5-406b-8d73-fa7697c2d53f", "user1@example.com", false, "User One", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 26, 10, 20, 16, 798, DateTimeKind.Utc).AddTicks(4456), null, false, "user1" },
+                    { 2, 0, "b9958c32-cb7d-404a-9383-f5ef6bc0afaa", "user2@example.com", false, "User Two", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 26, 10, 20, 16, 798, DateTimeKind.Utc).AddTicks(4469), null, false, "user2" },
+                    { 3, 0, "c0dce08d-7cb4-4512-a58a-296635e0faad", "user3@example.com", false, "User Three", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 26, 10, 20, 16, 798, DateTimeKind.Utc).AddTicks(4472), null, false, "user3" },
+                    { 4, 0, "5e71fe4b-e485-45d2-8085-14f2a248337b", "user4@example.com", false, "User Four", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 26, 10, 20, 16, 798, DateTimeKind.Utc).AddTicks(4474), null, false, "user4" },
+                    { 5, 0, "312ffe76-9a1b-4d42-a874-25f6e08e3910", "user5@example.com", false, "User Five", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 26, 10, 20, 16, 798, DateTimeKind.Utc).AddTicks(4476), null, false, "user5" },
+                    { 6, 0, "91b86b4f-11a7-4fe7-9dc7-dd499ecab52e", "userSystem1@example.com", false, "User System", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 26, 10, 20, 16, 798, DateTimeKind.Utc).AddTicks(4478), null, false, "userSystem1" },
+                    { 7, 0, "d72a46b8-84b2-44d9-8231-f25f97ee553c", "Admin1@example.com", false, "Admin 1", false, null, null, null, null, null, null, false, new DateTime(2024, 10, 26, 10, 20, 16, 798, DateTimeKind.Utc).AddTicks(4480), null, false, "Admin1" }
                 });
 
             migrationBuilder.InsertData(
@@ -970,11 +970,11 @@ namespace BusinessObjects.Migrations
                 columns: new[] { "ProfileId", "Address", "ApplicationUserId", "Birthdate", "City", "Description", "FirstName", "FullName", "Gender", "ImageUser", "LastName", "MusicMoviesBooks", "Phone", "UserId", "WhatToShare", "WhyUseTravelMate" },
                 values: new object[,]
                 {
-                    { 1, "123 Main St, Hanoi", null, new DateTime(2024, 10, 26, 7, 44, 3, 504, DateTimeKind.Utc).AddTicks(6691), null, null, null, "User One", "Male", "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png", null, null, "0123456789", 1, null, null },
-                    { 2, "456 Secondary St, Ho Chi Minh", null, new DateTime(2024, 10, 26, 7, 44, 3, 504, DateTimeKind.Utc).AddTicks(6697), null, null, null, "User Two", "Male", "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png", null, null, "0987654321", 2, null, null },
-                    { 3, "789 Tertiary St, Da Nang", null, new DateTime(2024, 10, 26, 7, 44, 3, 504, DateTimeKind.Utc).AddTicks(6699), null, null, null, "User Three", "Male", "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png", null, null, "0912345678", 3, null, null },
-                    { 4, "101 Eleventh St, Hue", null, new DateTime(2024, 10, 26, 7, 44, 3, 504, DateTimeKind.Utc).AddTicks(6700), null, null, null, "User Four", "Male", "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png", null, null, "0998765432", 4, null, null },
-                    { 5, "202 Twelfth St, Phu Quoc", null, new DateTime(2024, 10, 26, 7, 44, 3, 504, DateTimeKind.Utc).AddTicks(6702), null, null, null, "User Five", "Male", "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png", null, null, "0923456789", 5, null, null }
+                    { 1, "123 Main St, Hanoi", null, new DateTime(2024, 10, 26, 10, 20, 16, 798, DateTimeKind.Utc).AddTicks(4555), null, null, null, "User One", "Male", "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png", null, null, "0123456789", 1, null, null },
+                    { 2, "456 Secondary St, Ho Chi Minh", null, new DateTime(2024, 10, 26, 10, 20, 16, 798, DateTimeKind.Utc).AddTicks(4560), null, null, null, "User Two", "Male", "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png", null, null, "0987654321", 2, null, null },
+                    { 3, "789 Tertiary St, Da Nang", null, new DateTime(2024, 10, 26, 10, 20, 16, 798, DateTimeKind.Utc).AddTicks(4561), null, null, null, "User Three", "Male", "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png", null, null, "0912345678", 3, null, null },
+                    { 4, "101 Eleventh St, Hue", null, new DateTime(2024, 10, 26, 10, 20, 16, 798, DateTimeKind.Utc).AddTicks(4563), null, null, null, "User Four", "Male", "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png", null, null, "0998765432", 4, null, null },
+                    { 5, "202 Twelfth St, Phu Quoc", null, new DateTime(2024, 10, 26, 10, 20, 16, 798, DateTimeKind.Utc).AddTicks(4564), null, null, null, "User Five", "Male", "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png", null, null, "0923456789", 5, null, null }
                 });
 
             migrationBuilder.InsertData(

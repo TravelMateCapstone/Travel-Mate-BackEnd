@@ -8,66 +8,57 @@ using Repositories.Interface;
 
 namespace TravelMateAPI.Controllers
 {
-    //[ApiController]
-    //[Route("odata/[controller]")]
-    public class EventParticipantsController : ODataController
+    [ApiController]
+    [Route("api/[controller]")]
+    public class EventParticipantsController : ControllerBase
     {
-        private readonly IEventParticipantsRepository _participantsRepository;
+        private readonly IEventParticipantsRepository _eventParticipantsRepository;
 
-        public EventParticipantsController(IEventParticipantsRepository participantsRepository)
+        public EventParticipantsController(IEventParticipantsRepository eventParticipantsRepository)
         {
-            _participantsRepository = participantsRepository;
+            _eventParticipantsRepository = eventParticipantsRepository;
         }
 
-        // GET: odata/EventParticipants
-        [EnableQuery] // Kích hoạt OData cho truy vấn
-        public async Task<IActionResult> Get(ODataQueryOptions<ApplicationUser> queryOptions)
+        // GET: api/EventParticipants
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
         {
-            var participants = await _participantsRepository.GetAllParticipantsAsync();
+            var participants = await _eventParticipantsRepository.GetAllEventParticipantsAsync();
             return Ok(participants);
         }
 
-        /*public IActionResult GetAll()
+        // GET: api/EventParticipants/event/1
+        [HttpGet("event/{eventId}")]
+        public async Task<IActionResult> GetByEventId(int eventId)
         {
-            var participants = _participantsRepository.GetAllParticipantsAsync().Result.AsQueryable();
+            var participants = await _eventParticipantsRepository.GetEventParticipantsByEventIdAsync(eventId);
+            if (participants == null || !participants.Any())
+            {
+                return NotFound(new { Message = $"No participants found for EventId {eventId}." });
+            }
             return Ok(participants);
-        }*/
+        }
 
-        // GET: odata/EventParticipants(1)
-        [EnableQuery] // Kích hoạt OData cho truy vấn theo ID
-        public async Task<IActionResult> Get([FromODataUri] int key)
+        // POST: api/EventParticipants
+        [HttpPost]
+        public async Task<IActionResult> Add([FromBody] EventParticipants newParticipant)
         {
-            var participant = await _participantsRepository.GetParticipantByIdAsync(key);
-            if (participant == null)
+            if (newParticipant == null)
             {
-                return NotFound();
+                return BadRequest("Participant data is null.");
             }
-            return Ok(participant);
+
+            await _eventParticipantsRepository.AddEventParticipantAsync(newParticipant);
+            return Ok(newParticipant);
         }
 
-        // POST: odata/EventParticipants
-        public async Task<IActionResult> Post([FromBody] EventParticipants participant)
+        // DELETE: api/EventParticipants/1/1
+        [HttpDelete("{eventId}/{userId}")]
+        public async Task<IActionResult> Remove(int eventId, int userId)
         {
-            var createdParticipant = await _participantsRepository.AddParticipantAsync(participant);
-            return Created(createdParticipant);
-        }
-
-        // PUT: odata/EventParticipants(1)
-        public async Task<IActionResult> Put([FromODataUri] int key, [FromBody] EventParticipants participant)
-        {
-            if (key != participant.EventParticipantId)
-            {
-                return BadRequest();
-            }
-            await _participantsRepository.UpdateParticipantAsync(participant);
-            return NoContent();
-        }
-
-        // DELETE: odata/EventParticipants(1)
-        public async Task<IActionResult> Delete([FromODataUri] int key)
-        {
-            await _participantsRepository.DeleteParticipantAsync(key);
+            await _eventParticipantsRepository.RemoveEventParticipantAsync(eventId, userId);
             return NoContent();
         }
     }
+
 }

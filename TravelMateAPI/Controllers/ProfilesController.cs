@@ -217,6 +217,36 @@ namespace TravelMateAPI.Controllers
                 Data = createdProfile
             });
         }
+        // POST: api/Profile/current-user
+        [HttpPost("current-user")]
+        public async Task<IActionResult> CreateProfileForCurrentUser([FromBody] Profile newProfile)
+        {
+            if (newProfile == null)
+            {
+                return BadRequest("Profile is null.");
+            }
+
+            // Lấy UserId từ token
+            var userId = GetUserId();
+            if (userId == -1)
+            {
+                return Unauthorized("Invalid token or user not found.");
+            }
+
+            // Gán UserId vào profile mới
+            newProfile.UserId = userId;
+
+            // Thêm profile mới vào database
+            var createdProfile = await _profileRepository.AddProfileAsync(newProfile);
+
+            // Return thông báo thành công khi tạo mới
+            return Ok(new
+            {
+                Success = true,
+                Message = "Profile created successfully!",
+                Data = createdProfile
+            });
+        }
 
         // PUT: api/Profile/1
         [HttpPut("{profileId}")]
