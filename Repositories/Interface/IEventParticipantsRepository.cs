@@ -14,6 +14,7 @@ namespace Repositories.Interface
         Task<List<EventParticipants>> GetEventParticipantsByEventIdAsync(int eventId); // Thêm phương thức mới
         Task AddEventParticipantAsync(EventParticipants eventParticipant);
         Task RemoveEventParticipantAsync(int eventId, int userId);
+        Task<int> GetParticipantCountByEventIdAsync(int eventId);
     }
 
 }

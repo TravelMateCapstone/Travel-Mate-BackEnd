@@ -53,12 +53,12 @@ namespace TravelMateAPI.Controllers
 
             // Nếu đăng nhập thành công, tạo token và trả về
             var token = await _tokenService.GenerateToken(user);
-            var token2 = "Bearer " + token;
+            //var token2 = "Bearer " + token;
 
             // Thay thế {userId} bằng giá trị thực tế từ user.Id
             var avatarUrl = $"https://travelmateapp.azurewebsites.net/odata/Profiles/GetImageUrl/{user.Id}";
 
-            return Ok(new { Token = token2, AvataUrl = avatarUrl });
+            return Ok(new { Token = token, AvataUrl = avatarUrl });
         }
 
 

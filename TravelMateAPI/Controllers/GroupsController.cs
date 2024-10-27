@@ -229,21 +229,36 @@ namespace TravelMateAPI.Controllers
         [HttpPut("{groupId}")]
         public async Task<IActionResult> UpdateGroup(int groupId, [FromBody] Group updatedGroup)
         {
-            if (!ModelState.IsValid)
-                return BadRequest();
-            if (groupId != updatedGroup.GroupId)
-            {
-                return BadRequest("Group ID mismatch");
-            }
+            // Kiểm tra dữ liệu hợp lệ
+            if (!ModelState.IsValid || updatedGroup == null)
+                return BadRequest(ModelState);
+
+            // Lấy User ID hiện tại
             var userId = GetUserId();
+
+            // Tìm nhóm mà người dùng sở hữu
             var existingGroup = await _groupRepository.GetCreatedGroupByIdAsync(userId, groupId);
             if (existingGroup == null)
             {
-                return NotFound();
+                return NotFound(new { Message = "Group not found or you do not have permission to update this group." });
             }
-            await _groupRepository.UpdateAsync(updatedGroup);
+
+            existingGroup.GroupName = updatedGroup.GroupName;
+            existingGroup.Description = updatedGroup.Description;
+            existingGroup.Location = updatedGroup.Location;
+            existingGroup.GroupImageUrl = updatedGroup.GroupImageUrl;
+
+            // Thực hiện cập nhật trong database
+            var updateResult = _groupRepository.UpdateAsync(existingGroup);
+
+            if (updateResult == null)
+            {
+                return StatusCode(500, new { Message = "Failed to update the group. Please try again later." });
+            }
+
             return NoContent();
         }
+
 
         // DELETE: api/Group/5
         [HttpDelete("{groupId}")]

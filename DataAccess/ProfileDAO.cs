@@ -60,9 +60,9 @@ namespace DataAccess
             return await _dbContext.Profiles.Include(p => p.ApplicationUser).ToListAsync();
         }
 
-        public async Task<Profile> GetProfileByIdAsync(int profileId)
+        public async Task<Profile> GetProfileByIdAsync(int userId)
         {
-            return await _dbContext.Profiles.Include(p => p.ApplicationUser).FirstOrDefaultAsync(p => p.ProfileId == profileId);
+            return await _dbContext.Profiles.FirstOrDefaultAsync(p => p.UserId == userId);
         }
 
         public async Task<Profile> AddProfileAsync(Profile newProfile)
