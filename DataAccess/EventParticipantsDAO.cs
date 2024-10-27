@@ -105,6 +105,12 @@ namespace DataAccess
                 await _dbContext.SaveChangesAsync();
             }
         }
+        public async Task<int> GetParticipantCountByEventIdAsync(int eventId)
+        {
+            return await _dbContext.EventParticipants
+                .Where(ep => ep.EventId == eventId)
+                .CountAsync();
+        }
     }
 
 

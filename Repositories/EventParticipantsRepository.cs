@@ -1,5 +1,6 @@
 ﻿using BusinessObjects.Entities;
 using DataAccess;
+using Microsoft.EntityFrameworkCore;
 using Repositories.Interface;
 
 namespace Repositories
@@ -36,6 +37,11 @@ namespace Repositories
         public async Task RemoveEventParticipantAsync(int eventId, int userId)
         {
             await _eventParticipantsDAO.RemoveEventParticipantAsync(eventId, userId);
+        }
+        // Đếm số lượng người tham gia cho một sự kiện
+        public async Task<int> GetParticipantCountByEventIdAsync(int eventId)
+        {
+            return await _eventParticipantsDAO.GetParticipantCountByEventIdAsync(eventId);
         }
     }
 

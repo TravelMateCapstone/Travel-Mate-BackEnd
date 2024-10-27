@@ -186,18 +186,7 @@ namespace TravelMateAPI.Controllers
             return Ok(profile);
         }
 
-        // POST: api/Profile
-        //[HttpPost]
-        //public async Task<IActionResult> Create([FromBody] Profile newProfile)
-        //{
-        //    if (newProfile == null)
-        //    {
-        //        return BadRequest("Profile is null.");
-        //    }
-
-        //    var createdProfile = await _profileRepository.AddProfileAsync(newProfile);
-        //    return CreatedAtAction(nameof(GetById), new { userId = createdProfile.UserId }, createdProfile);
-        //}
+        
         // POST: api/Profile
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] Profile newProfile)
@@ -259,6 +248,55 @@ namespace TravelMateAPI.Controllers
 
             await _profileRepository.UpdateProfileAsync(updatedProfile);
             return NoContent();
+        }
+        // PUT: api/Profile/current-user
+        [HttpPut("edit-by-current-user")]
+        public async Task<IActionResult> UpdateProfileForCurrentUser([FromBody] Profile updatedProfile)
+        {
+            // Lấy UserId từ token
+            var userId = GetUserId();
+            if (userId == -1)
+            {
+                return Unauthorized("Invalid token or user not found.");
+            }
+
+            // Lấy profile hiện tại của người dùng từ database
+            var existingProfile = await _profileRepository.GetProfileByIdAsync(userId);
+            if (existingProfile == null)
+            {
+                return NotFound(new { Message = $"Profile with UserId {userId} not found." });
+            }
+
+            // Kiểm tra nếu profile không thuộc về người dùng hiện tại
+            if (existingProfile.UserId != userId)
+            {
+                return Forbid("You do not have permission to edit this profile.");
+            }
+
+            // Cập nhật các thuộc tính của profile hiện tại
+            existingProfile.FullName = updatedProfile.FullName;
+            existingProfile.FirstName = updatedProfile.FirstName;
+            existingProfile.LastName = updatedProfile.LastName;
+            existingProfile.Address = updatedProfile.Address;
+            existingProfile.Phone = updatedProfile.Phone;
+            existingProfile.Gender = updatedProfile.Gender;
+            existingProfile.Birthdate = updatedProfile.Birthdate;
+            existingProfile.City = updatedProfile.City;
+            existingProfile.Description = updatedProfile.Description;
+            existingProfile.WhyUseTravelMate = updatedProfile.WhyUseTravelMate;
+            existingProfile.MusicMoviesBooks = updatedProfile.MusicMoviesBooks;
+            existingProfile.WhatToShare = updatedProfile.WhatToShare;
+            existingProfile.ImageUser = updatedProfile.ImageUser;
+
+            // Lưu thay đổi
+            await _profileRepository.UpdateProfileAsync(existingProfile);
+
+            return Ok(new
+            {
+                Success = true,
+                Message = "Profile updated successfully!",
+                Data = existingProfile
+            });
         }
 
         // DELETE: api/Profile/1
