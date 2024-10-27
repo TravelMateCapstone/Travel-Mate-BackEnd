@@ -206,7 +206,11 @@ namespace TravelMateAPI
             builder.Services.AddScoped<IHomePhotoRepository, HomePhotoRepository>();
             builder.Services.AddScoped<GroupDAO>();
             builder.Services.AddScoped<IGroupRepository, GroupRepository>();
-            builder.Services.AddControllers();
+            builder.Services.AddControllers().AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+                options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
+            });
 
             // Cấu hình Swagger
             builder.Services.AddSwaggerGen(c =>
