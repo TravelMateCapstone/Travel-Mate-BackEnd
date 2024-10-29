@@ -41,6 +41,26 @@ namespace TravelMateAPI.Controllers
             }
             return Ok(events);
         }
+        // GET: api/Event/my-events
+        [HttpGet("get-event-current-user")]
+        public async Task<IActionResult> GetMyEvents()
+        {
+            // Lấy UserId từ JWT token
+            var userId = GetUserId();
+            if (userId == -1)
+            {
+                return Unauthorized(new { Message = "Invalid token or user not found." });
+            }
+
+            // Gọi repository để lấy danh sách sự kiện của user
+            var events = await _eventRepository.GetEventsByCreaterUserIdAsync(userId);
+            if (events == null || !events.Any())
+            {
+                return NotFound(new { Message = $"No events found for the current user with UserId {userId}." });
+            }
+
+            return Ok(events);
+        }
         // POST: api/Event/current-user
         [HttpPost("add-by-current-user")]
         public async Task<IActionResult> CreateEventForCurrentUser([FromBody] Event newEvent)
@@ -132,12 +152,21 @@ namespace TravelMateAPI.Controllers
                 return Forbid("You are not the owner of this event.");
             }
 
-            // Cập nhật thông tin sự kiện
-            updatedEvent.EventId = eventId; // Đảm bảo cập nhật đúng sự kiện
-            updatedEvent.CreaterUserId = userId; // Đảm bảo không thay đổi người tạo sự kiện
+            // Cập nhật thông tin sự kiện (chỉ các trường được phép cập nhật)
+            eventItem.EventName = updatedEvent.EventName;
+            eventItem.Description = updatedEvent.Description;
+            eventItem.EventImageUrl = updatedEvent.EventImageUrl;
+            eventItem.StartAt = updatedEvent.StartAt;
+            eventItem.EndAt = updatedEvent.EndAt;
+            eventItem.EventLocation = updatedEvent.EventLocation;
 
             await _eventRepository.UpdateEventAsync(updatedEvent);
-            return NoContent();
+            return Ok(new
+            {
+                Success = true,
+                Message = "Event updated successfully!",
+                Data = eventItem
+            });
         }
         // DELETE: api/Event/current-user/1
         [HttpDelete("current-user-delete-event/{eventId}")]

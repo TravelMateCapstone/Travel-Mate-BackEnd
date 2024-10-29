@@ -20,7 +20,7 @@ namespace TravelMateAPI.Controllers
         }
 
         // Lấy danh sách thông báo của người dùng
-        [HttpGet("get")]
+        [HttpGet("get-notification-current-user")]
         public async Task<IActionResult> GetNotifications()
         {
             var user = await _userManager.GetUserAsync(User);
@@ -32,6 +32,36 @@ namespace TravelMateAPI.Controllers
 
             return Ok(notifications);
         }
+        // Lấy danh sách thông báo của người dùng hiện tại
+        [HttpGet("current-user/notifications")]
+        public async Task<IActionResult> GetCurrentUserNotifications()
+        {
+            // Lấy thông tin người dùng hiện tại từ JWT token
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null) return Unauthorized("Không tìm thấy người dùng hiện tại.");
+
+            // Lấy danh sách thông báo và sắp xếp theo thời gian giảm dần (mới nhất lên đầu)
+            var notifications = await _context.Notifications
+                .Where(n => n.UserId == currentUser.Id)
+                .OrderByDescending(n => n.CreatedAt) // Sắp xếp thông báo mới nhất lên đầu
+                .Select(n => new
+                {
+                    n.NotificationId,
+                    n.Message,
+                    n.CreatedAt,
+                    n.IsRead
+                })
+                .ToListAsync();
+
+            // Kiểm tra nếu không có thông báo nào
+            if (notifications == null || !notifications.Any())
+            {
+                return NotFound("Không có thông báo nào.");
+            }
+
+            return Ok(notifications);
+        }
+
         // Lấy danh sách thông báo của người dùng theo UserId // cái trên cũng được// cái dưới này để test nếu chưa đăng nhập
         [HttpGet("getByUser/{userId}")]
         public async Task<IActionResult> GetNotificationsByUserId(int userId)
@@ -49,7 +79,7 @@ namespace TravelMateAPI.Controllers
         }
 
         // Đánh dấu thông báo là đã đọc
-        [HttpPost("read/{id}")]
+        [HttpPost("current-user-read/{id}")]
         public async Task<IActionResult> MarkAsRead(int id)
         {
             var notification = await _context.Notifications.FindAsync(id);
