@@ -109,6 +109,89 @@ namespace TravelMateAPI.Controllers
             return Ok("Bạn đã từ chối lời mời kết bạn");
         }
 
+        // Xóa bạn bè
+        [HttpDelete("remove")]
+        public async Task<IActionResult> RemoveFriend(int friendUserId)
+        {
+            // Lấy thông tin người dùng hiện tại
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null) return Unauthorized();
+
+            // Tìm mối quan hệ bạn bè giữa người dùng hiện tại và bạn cần xóa
+            var friendship = await _context.Friendships
+                .FirstOrDefaultAsync(f => (f.UserId1 == currentUser.Id && f.UserId2 == friendUserId) ||
+                                          (f.UserId1 == friendUserId && f.UserId2 == currentUser.Id) &&
+                                          f.Status == FriendshipStatus.Accepted);
+
+            if (friendship == null)
+            {
+                return NotFound("Không tìm thấy bạn bè.");
+            }
+
+            // Xóa mối quan hệ bạn bè
+            _context.Friendships.Remove(friendship);
+            await _context.SaveChangesAsync();
+
+            // Gửi thông báo đến người dùng đã bị xóa (nếu cần)
+            await _notificationService.CreateNotificationAsync(friendUserId, $"Bạn đã bị {currentUser.UserName} xóa khỏi danh sách bạn bè.");
+
+            return Ok("Bạn đã xóa bạn bè thành công.");
+        }
+        // Lấy danh sách bạn bè của người dùng hiện tại
+        [HttpGet("current-user/friends")]
+        public async Task<IActionResult> GetCurrentUserFriends()
+        {
+            // Lấy thông tin người dùng hiện tại từ JWT token
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null) return Unauthorized("Không tìm thấy người dùng hiện tại.");
+
+            // Lấy danh sách bạn bè với trạng thái 'Accepted'
+            var friends = await _context.Friendships
+                .Where(f => (f.UserId1 == currentUser.Id || f.UserId2 == currentUser.Id) && f.Status == FriendshipStatus.Accepted)
+                .Select(f => new
+                {
+                    FriendId = f.UserId1 == currentUser.Id ? f.UserId2 : f.UserId1,
+                    FriendName = f.UserId1 == currentUser.Id ? f.User2.UserName : f.User1.UserName,
+                    FriendshipId = f.FriendshipId,
+                    ConfirmedAt = f.ConfirmedAt
+                })
+                .ToListAsync();
+
+            // Nếu không có bạn bè nào
+            if (friends == null || !friends.Any())
+            {
+                return NotFound("Bạn không có bạn bè nào.");
+            }
+
+            return Ok(friends);
+        }
+
+
+        [HttpGet("List-friends/{userId}")]
+        public async Task<IActionResult> GetFriendsByUserId(int userId)
+        {
+            // Kiểm tra xem user có tồn tại không
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user == null)
+            {
+                return NotFound("Người dùng không tồn tại");
+            }
+
+            // Lấy danh sách bạn bè
+            var friends = await _context.Friendships
+                .Where(f => (f.UserId1 == userId || f.UserId2 == userId) && f.Status == FriendshipStatus.Accepted)
+                .Select(f => new
+                {
+                    FriendId = f.UserId1 == userId ? f.UserId2 : f.UserId1,
+                    FriendName = f.UserId1 == userId ? f.User2.UserName : f.User1.UserName,
+                    FriendshipId = f.FriendshipId,
+                    ConfirmedAt = f.ConfirmedAt
+                })
+                .ToListAsync();
+
+            return Ok(friends);
+        }
+
         // Xem danh sách bạn bè
         [HttpGet("friends")]
         public async Task<IActionResult> GetFriends()
