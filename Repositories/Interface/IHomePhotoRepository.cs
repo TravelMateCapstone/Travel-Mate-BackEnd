@@ -13,6 +13,10 @@ namespace Repositories.Interface
         Task<HomePhoto> AddHomePhotoAsync(HomePhoto newHomePhoto);
         Task<List<HomePhoto>> GetPhotosByUserIdAsync(int userId);
         Task<HomePhoto> AddHomePhotoByUserIdAsync(int userId, string photoUrl);
+        // Thêm phương thức để lấy ảnh theo ID
+        Task<HomePhoto> GetPhotoByIdAsync(int photoId);
+        // Thêm phương thức để xóa ảnh theo ID
+        Task DeleteHomePhotoAsync(int photoId);
     }
 
 }

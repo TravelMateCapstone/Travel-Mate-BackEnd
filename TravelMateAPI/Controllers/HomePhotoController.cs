@@ -1,5 +1,6 @@
 ﻿using BusinessObjects.Entities;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Repositories.Interface;
 
@@ -10,10 +11,12 @@ namespace TravelMateAPI.Controllers
     public class HomePhotoController : ControllerBase
     {
         private readonly IHomePhotoRepository _homePhotoRepository;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public HomePhotoController(IHomePhotoRepository homePhotoRepository)
+        public HomePhotoController(IHomePhotoRepository homePhotoRepository, UserManager<ApplicationUser> userManager)
         {
             _homePhotoRepository = homePhotoRepository;
+            _userManager = userManager;
         }
 
         // GET: api/HomePhoto/home/{userHomeId}
@@ -71,6 +74,44 @@ namespace TravelMateAPI.Controllers
             {
                 return BadRequest(new { Message = ex.Message });
             }
+        }
+
+        // POST: api/HomePhoto/user/current
+        [HttpPost("user/current")]
+        public async Task<IActionResult> AddHomePhotoForCurrentUser([FromBody] string photoUrl)
+        {
+            if (string.IsNullOrWhiteSpace(photoUrl))
+            {
+                return BadRequest("Photo URL is required.");
+            }
+
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null)
+            {
+                return Unauthorized("User not found.");
+            }
+
+            try
+            {
+                var addedPhoto = await _homePhotoRepository.AddHomePhotoByUserIdAsync(currentUser.Id, photoUrl);
+                return CreatedAtAction(nameof(GetPhotosByUserId), new { userId = addedPhoto.UserHomeId }, addedPhoto);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+        // DELETE: api/HomePhoto/{photoId}
+        [HttpDelete("{photoId}")]
+        public async Task<IActionResult> DeleteHomePhoto(int photoId)
+        {
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null)
+            {
+                return Unauthorized("User not found.");
+            }
+            await _homePhotoRepository.DeleteHomePhotoAsync(photoId);
+            return Ok("Ảnh được xóa thành công");
         }
     }
 }
