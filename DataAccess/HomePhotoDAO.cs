@@ -67,6 +67,26 @@ namespace DataAccess
 
             return newHomePhoto;
         }
+        // Lấy ảnh theo ID
+        public async Task<HomePhoto> GetPhotoByIdAsync(int photoId)
+        {
+            return await _dbContext.HomePhotos.FindAsync(photoId);
+        }
+
+        // Xóa ảnh theo ID
+        public async Task DeleteHomePhotoAsync(int photoId)
+        {
+            var photo = await GetPhotoByIdAsync(photoId);
+            if (photo != null)
+            {
+                _dbContext.HomePhotos.Remove(photo);
+                await _dbContext.SaveChangesAsync();
+            }
+            else
+            {
+                throw new Exception($"Photo with ID {photoId} not found.");
+            }
+        }
     }
 
 

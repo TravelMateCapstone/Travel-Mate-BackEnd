@@ -42,6 +42,15 @@ namespace Repositories
         {
             return await _homePhotoDAO.AddHomePhotoByUserIdAsync(userId, photoUrl);
         }
+        public async Task<HomePhoto> GetPhotoByIdAsync(int photoId)
+        {
+            return await _homePhotoDAO.GetPhotoByIdAsync(photoId);
+        }
+
+        public async Task DeleteHomePhotoAsync(int photoId)
+        {
+            await _homePhotoDAO.DeleteHomePhotoAsync(photoId);
+        }
     }
 
 

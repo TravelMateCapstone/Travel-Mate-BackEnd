@@ -153,18 +153,63 @@ namespace TravelMateAPI.Controllers
                     FriendId = f.UserId1 == currentUser.Id ? f.UserId2 : f.UserId1,
                     FriendName = f.UserId1 == currentUser.Id ? f.User2.UserName : f.User1.UserName,
                     FriendshipId = f.FriendshipId,
-                    ConfirmedAt = f.ConfirmedAt
+                    ConfirmedAt = f.ConfirmedAt,
+
                 })
                 .ToListAsync();
-
+            // Lấy profile của từng bạn bè dựa vào FriendId
+            var friendsWithProfiles = new List<object>();
+            foreach (var friend in friends)
+            {
+                var profile = await _context.Profiles.FirstOrDefaultAsync(p => p.UserId == friend.FriendId);
+                friendsWithProfiles.Add(new
+                {
+                    FriendId = friend.FriendId,
+                    FriendName = friend.FriendName,
+                    FriendshipId = friend.FriendshipId,
+                    ConfirmedAt = friend.ConfirmedAt,
+                    Profile = profile
+                });
+            }
             // Nếu không có bạn bè nào
             if (friends == null || !friends.Any())
             {
                 return NotFound("Bạn không có bạn bè nào.");
             }
 
-            return Ok(friends);
+            //return Ok(friends);
+            return Ok(friendsWithProfiles);
         }
+        [HttpGet("current-user/friends-with-profiles")]
+        public async Task<IActionResult> GetFriendsWithProfilesForCurrentUser()
+        {
+            // Lấy thông tin người dùng hiện tại từ JWT token
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null) return Unauthorized("Không tìm thấy người dùng hiện tại.");
+
+            // Lấy danh sách bạn bè và thông tin Profile của họ dựa trên friendId
+            var friendsWithProfiles = await _context.Friendships
+                .Where(f => (f.UserId1 == currentUser.Id || f.UserId2 == currentUser.Id) && f.Status == FriendshipStatus.Accepted)
+                .Select(f => new
+                {
+                    FriendId = f.UserId1 == currentUser.Id ? f.UserId2 : f.UserId1,
+                    FriendshipId = f.FriendshipId,
+                    ConfirmedAt = f.ConfirmedAt
+                })
+                .ToListAsync();
+
+            // Lấy thông tin Profile dựa trên friendId
+            var friendsWithProfileDetails = await Task.WhenAll(friendsWithProfiles.Select(async friend => new
+            {
+                FriendId = friend.FriendId,
+                FriendshipId = friend.FriendshipId,
+                ConfirmedAt = friend.ConfirmedAt,
+                Profile = await _context.Profiles.FirstOrDefaultAsync(p => p.UserId == friend.FriendId) // Lấy Profile từ friendId
+            }));
+
+            return Ok(friendsWithProfileDetails);
+        }
+
 
 
         [HttpGet("List-friends/{userId}")]
