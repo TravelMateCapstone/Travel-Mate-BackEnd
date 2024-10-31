@@ -221,7 +221,16 @@ namespace TravelMateAPI.Controllers
             {
                 return Unauthorized("Invalid token or user not found.");
             }
-
+            // Kiểm tra xem profile của user đã tồn tại chưa
+            var existingProfile = await _profileRepository.GetProfileByIdAsync(userId);
+            if (existingProfile != null)
+            {
+                return BadRequest(new
+                {
+                    Success = false,
+                    Message = "Profile for this user already exists."
+                });
+            }
             // Gán UserId vào profile mới
             newProfile.UserId = userId;
 
