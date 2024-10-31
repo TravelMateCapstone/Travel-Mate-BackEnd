@@ -23,11 +23,6 @@ namespace Repositories
             await _groupDAO.AddAsync(group);
         }
 
-        public async Task<int> CountGroupParticipants(int groupId)
-        {
-            return await _groupDAO.GroupParticipantCount(groupId);
-        }
-
         public async Task DeleteAsync(int Id)
         {
             await _groupDAO.DeleteAsync(Id);
@@ -79,6 +74,10 @@ namespace Repositories
             await _groupDAO.UpdateAsync(group);
         }
 
+        public async Task<IEnumerable<GroupParticipant>> ListJoinGroupRequests(int groupId)
+        {
+            return await _groupDAO.ListJoinGroupRequests(groupId);
+        }
 
     }
 }
