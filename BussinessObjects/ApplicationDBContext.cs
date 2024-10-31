@@ -47,7 +47,7 @@ namespace BusinessObjects
         public DbSet<UserDescription> UserDescriptions { get; set; }
         public DbSet<UserEducation> UserEducations { get; set; }
         public DbSet<UserHome> UserHomes { get; set; }
-        
+
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -242,7 +242,7 @@ namespace BusinessObjects
                 },
                 new Profile
                 {
-                    ProfileId= 5,
+                    ProfileId = 5,
                     UserId = 5,
                     FullName = "User Five",
                     Address = "202 Twelfth St, Phu Quoc",
@@ -525,7 +525,7 @@ namespace BusinessObjects
                 .HasOne(ep => ep.GroupPost)
                 .WithMany(u => u.Reactions)
                 .HasForeignKey(ep => ep.PostId);
-      
+
             modelBuilder.Entity<UserDescription>()
                 .HasKey(ud => ud.UserId);
 
