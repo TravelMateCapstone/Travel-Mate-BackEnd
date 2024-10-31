@@ -24,19 +24,19 @@ namespace DataAccess
                 .FirstOrDefaultAsync(g => g.GroupId == groupId);
         }
 
-        public async Task IncreaseGroupParticipant(int groupId)
-        {
-            var group = await _dbContext.Groups.FindAsync(groupId);
+        //public async Task IncreaseGroupParticipant(int groupId)
+        //{
+        //    var group = await _dbContext.Groups.FindAsync(groupId);
 
-            group.NumberOfParticipants += 1;
-        }
+        //    group.NumberOfParticipants += 1;
+        //}
 
-        public async Task DecreaseGroupParticipant(int groupId)
-        {
-            var group = await _dbContext.Groups.FindAsync(groupId);
+        //public async Task DecreaseGroupParticipant(int groupId)
+        //{
+        //    var group = await _dbContext.Groups.FindAsync(groupId);
 
-            group.NumberOfParticipants -= 1;
-        }
+        //    group.NumberOfParticipants -= 1;
+        //}
 
         //Get Created Group
         public async Task<IQueryable<Group>> GetCreatedGroupsAsync(int userId)
@@ -94,6 +94,8 @@ namespace DataAccess
             if (findGroupParticipant != null)
             {
                 _dbContext.GroupParticipants.Remove(findGroupParticipant);
+                var group = await _dbContext.Groups.FindAsync(groupId);
+                group.NumberOfParticipants -= 1;
                 await _dbContext.SaveChangesAsync();
             }
         }
@@ -110,6 +112,9 @@ namespace DataAccess
             };
 
             _dbContext.GroupParticipants.Update(updateParticipantStatus);
+            var group = await _dbContext.Groups.FindAsync(groupId);
+
+            group.NumberOfParticipants += 1;
             await _dbContext.SaveChangesAsync();
         }
 
