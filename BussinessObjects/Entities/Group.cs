@@ -25,9 +25,9 @@ public class Group
     [Url]
     public string? GroupImageUrl { get; set; }
 
-    public int NumberOfParticipants { get; set; } = 0;
+    public int NumberOfParticipants { get; set; }
 
-    [Required]
+    //[Required]
     public int CreatedById { get; set; }
     [JsonIgnore]
     public ApplicationUser? CreatedByUser { get; set; }

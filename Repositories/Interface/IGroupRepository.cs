@@ -24,7 +24,6 @@
         // Accept a user's request to join the group
         Task AcceptJoinGroup(int userId, int groupId);
 
-        Task<int> CountGroupParticipants(int groupId);
-
+        Task<IEnumerable<GroupParticipant>> ListJoinGroupRequests(int groupId);
     }
 }

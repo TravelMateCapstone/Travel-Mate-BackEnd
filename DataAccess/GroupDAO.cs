@@ -21,14 +21,22 @@ namespace DataAccess
         public async Task<Group> GetGroupByIdAsync(int groupId)
         {
             return await _dbContext.Groups
-                //.Include(g => g.GroupParticipants)
                 .FirstOrDefaultAsync(g => g.GroupId == groupId);
         }
 
-        public async Task<int> GroupParticipantCount(int groupId)
-        {
-            return _dbContext.GroupParticipants.Count(g => g.GroupId == groupId && g.JoinedStatus);
-        }
+        //public async Task IncreaseGroupParticipant(int groupId)
+        //{
+        //    var group = await _dbContext.Groups.FindAsync(groupId);
+
+        //    group.NumberOfParticipants += 1;
+        //}
+
+        //public async Task DecreaseGroupParticipant(int groupId)
+        //{
+        //    var group = await _dbContext.Groups.FindAsync(groupId);
+
+        //    group.NumberOfParticipants -= 1;
+        //}
 
         //Get Created Group
         public async Task<IQueryable<Group>> GetCreatedGroupsAsync(int userId)
@@ -45,7 +53,6 @@ namespace DataAccess
                 .FirstOrDefaultAsync(g => g.GroupId == groupId);
         }
 
-
         //Get Joined Group
         public async Task<IQueryable<Group>> GetJoinedGroupsAsync(int userId)
         {
@@ -57,11 +64,14 @@ namespace DataAccess
         public async Task<Group> GetJoinedGroupByIdAsync(int userId, int groupId)
         {
             return await _dbContext.Groups
-                //.Include(g => g.GroupParticipants)
-                .Where(g => g.GroupParticipants.Any(gp => gp.UserId == userId && gp.JoinedStatus))
-                .FirstAsync(g => g.GroupId == groupId);
+                    .Include(g => g.GroupParticipants)
+                    .FirstOrDefaultAsync(g => g.GroupId == groupId && g.GroupParticipants.Any(gp => gp.UserId == userId && gp.JoinedStatus));
         }
 
+        public async Task<IQueryable<GroupParticipant>> ListJoinGroupRequests(int groupId)
+        {
+            return _dbContext.GroupParticipants.Where(g => g.GroupId == groupId && g.JoinedStatus == false);
+        }
 
         //Ask to join a group
         public async Task JoinGroup(int userId, int groupId)
@@ -84,6 +94,8 @@ namespace DataAccess
             if (findGroupParticipant != null)
             {
                 _dbContext.GroupParticipants.Remove(findGroupParticipant);
+                var group = await _dbContext.Groups.FindAsync(groupId);
+                group.NumberOfParticipants -= 1;
                 await _dbContext.SaveChangesAsync();
             }
         }
@@ -100,6 +112,9 @@ namespace DataAccess
             };
 
             _dbContext.GroupParticipants.Update(updateParticipantStatus);
+            var group = await _dbContext.Groups.FindAsync(groupId);
+
+            group.NumberOfParticipants += 1;
             await _dbContext.SaveChangesAsync();
         }
 

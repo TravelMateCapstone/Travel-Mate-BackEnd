@@ -10,7 +10,6 @@ namespace TravelMateAPI.Controllers
     [Route("api/[controller]")]
     public class GroupsController : ControllerBase
     {
-
         private readonly IGroupRepository _groupRepository;
         private const int pageSize = 6;
 
@@ -23,257 +22,234 @@ namespace TravelMateAPI.Controllers
         {
             var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             return int.TryParse(userIdString, out var userId) ? userId : -1;
-            //return 3;
         }
 
         [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Group>>> GetGroupsAsync([FromQuery] int pageNumber = 1)
         {
-            var userId = GetUserId();
             var groups = await _groupRepository.GetGroupsAsync();
-            if (groups == null)
-                return NotFound();
+            if (groups == null || !groups.Any())
+                return NotFound(new { Message = "No groups found." });
 
             var totalCount = groups.Count();
             var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
-
             groups = groups.Skip((pageNumber - 1) * pageSize).Take(pageSize);
 
-            foreach (var group in groups)
-            {
-                group.NumberOfParticipants = await _groupRepository.CountGroupParticipants(group.GroupId);
-            }
-
-            var result = new
+            return Ok(new
             {
                 TotalPages = totalPages,
                 TotalCount = totalCount,
                 CurrentPage = pageNumber,
                 PageSize = pageSize,
                 Groups = groups
-            };
-
-            return Ok(result);
+            });
         }
 
         [AllowAnonymous]
-        // GET: api/Groups/CreatedGroup/id
         [HttpGet("{groupId}")]
         public async Task<ActionResult<Group>> GetGroupByIdAsync(int groupId)
         {
             var group = await _groupRepository.GetGroupByIdAsync(groupId);
-
-            group.NumberOfParticipants = await _groupRepository.CountGroupParticipants(group.GroupId);
             if (group == null)
-                return NotFound();
+                return NotFound(new { Message = "Group not found." });
 
             return Ok(group);
         }
 
-        // GET: api/Groups/CreatedGroups
         [HttpGet("CreatedGroups")]
         public async Task<ActionResult<IEnumerable<Group>>> GetCreatedGroups([FromQuery] int pageNumber = 1)
         {
             var userId = GetUserId();
+            if (userId == -1)
+                return Unauthorized(new { Message = "Unauthorized access." });
 
             var groups = await _groupRepository.GetCreatedGroupsAsync(userId);
-            foreach (var group in groups)
-            {
-                group.NumberOfParticipants = await _groupRepository.CountGroupParticipants(group.GroupId);
-            }
-
-            if (groups == null)
-                return NotFound();
+            if (groups == null || !groups.Any())
+                return NotFound(new { Message = "No created groups found." });
 
             var totalCount = groups.Count();
             var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
-
             groups = groups.Skip((pageNumber - 1) * pageSize).Take(pageSize);
 
-            var result = new
+            return Ok(new
             {
                 TotalPages = totalPages,
                 TotalCount = totalCount,
                 CurrentPage = pageNumber,
                 PageSize = pageSize,
                 Groups = groups
-            };
-
-            return Ok(result);
+            });
         }
 
-        // GET: api/Groups/CreatedGroup/id
+        [HttpGet("ListJoinGroupRequest/{groupId}")]
+        public async Task<ActionResult<IEnumerable<GroupParticipant>>> ListJoinGroupRequest(int groupId)
+        {
+            var userId = GetUserId();
+            if (userId == -1)
+                return Unauthorized(new { Message = "Unauthorized access." });
+
+            var groups = await _groupRepository.GetGroupByIdAsync(groupId);
+            if (groups == null)
+                return NotFound(new { Message = "No created groups found." });
+
+            var listParticipants = await _groupRepository.ListJoinGroupRequests(groupId);
+
+            return Ok(listParticipants);
+
+        }
+
         [HttpGet("CreatedGroups/{groupId}")]
         public async Task<ActionResult<Group>> GetCreatedGroupByIdAsync(int groupId)
         {
             var userId = GetUserId();
+            if (userId == -1)
+                return Unauthorized(new { Message = "Unauthorized access." });
 
             var group = await _groupRepository.GetCreatedGroupByIdAsync(userId, groupId);
-
-            group.NumberOfParticipants = await _groupRepository.CountGroupParticipants(group.GroupId);
-
             if (group == null)
-                return NotFound();
+                return NotFound(new { Message = "Group not found." });
 
             return Ok(group);
         }
 
-        // GET: api/Groups/Joined
         [HttpGet("JoinedGroups")]
         public async Task<ActionResult<IEnumerable<Group>>> GetJoinedGroupsAsync([FromQuery] int pageNumber = 1)
         {
             var userId = GetUserId();
+            if (userId == -1)
+                return Unauthorized(new { Message = "Unauthorized access." });
 
             var joinedGroups = await _groupRepository.GetJoinedGroupsAsync(userId);
-
-            foreach (var group in joinedGroups)
-                group.NumberOfParticipants = await _groupRepository.CountGroupParticipants(group.GroupId);
-
-
-            if (joinedGroups == null)
-                return NotFound();
+            if (joinedGroups == null || !joinedGroups.Any())
+                return NotFound(new { Message = "No joined groups found." });
 
             var totalCount = joinedGroups.Count();
             var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
-
             joinedGroups = joinedGroups.Skip((pageNumber - 1) * pageSize).Take(pageSize);
 
-            var result = new
+            return Ok(new
             {
                 TotalPages = totalPages,
                 TotalCount = totalCount,
                 CurrentPage = pageNumber,
                 PageSize = pageSize,
                 Groups = joinedGroups
-            };
-
-            return Ok(result);
+            });
         }
 
-        // POST: api/Groups/Join/5
         [HttpGet("JoinedGroups/{groupId}")]
         public async Task<IActionResult> GetJoinedGroupByIdAsync(int groupId)
         {
             var userId = GetUserId();
+            if (userId == -1)
+                return Unauthorized(new { Message = "Unauthorized access." });
 
-            var joinedGroups = _groupRepository.GetJoinedGroupByIdAsync(userId, groupId);
+            var joinedGroup = await _groupRepository.GetJoinedGroupByIdAsync(userId, groupId);
+            if (joinedGroup == null)
+                return NotFound(new { Message = "Joined group not found." });
 
-            //joinedGroups.NumberOfParticipants = await _groupRepository.CountGroupParticipants(group.GroupId);
-
-            if (joinedGroups == null)
-                return NotFound();
-
-            return Ok(joinedGroups);
+            return Ok(joinedGroup);
         }
 
         [HttpPost("JoinedGroups/Join/{groupId}")]
         public async Task<IActionResult> JoinGroup(int groupId)
         {
             var userId = GetUserId();
+            if (userId == -1)
+                return Unauthorized(new { Message = "Unauthorized access." });
+            var isCreator = await _groupRepository.GetCreatedGroupByIdAsync(userId, groupId);
+            if (isCreator != null)
+                return BadRequest(new { Message = "You are creator of the group" });
 
-            var existingParticipant = await _groupRepository.GetJoinedGroupByIdAsync(userId, groupId);
-
-            if (existingParticipant != null) return BadRequest();
+            var isMember = await _groupRepository.GetJoinedGroupByIdAsync(userId, groupId);
+            if (isMember != null)
+                return BadRequest(new { Message = "You have already joined this group." });
 
             await _groupRepository.JoinGroup(userId, groupId);
-
-            return Ok("Request Join group sent");
+            return Ok("Join request sent.");
         }
 
         [HttpPost("JoinedGroups/{groupId}/AcceptJoin")]
         public async Task<IActionResult> AcceptJoinGroup([FromQuery] int requesterId, int groupId)
         {
             var userId = GetUserId();
-            var isGroupCreator = _groupRepository.GetCreatedGroupByIdAsync(userId, groupId);
-            if (isGroupCreator == null) return NotFound();
+            if (userId == -1)
+                return Unauthorized(new { Message = "Unauthorized access." });
+
+            var isGroupCreator = await _groupRepository.GetCreatedGroupByIdAsync(userId, groupId);
+            if (isGroupCreator == null)
+                return NotFound(new { Message = "Group not found or access denied." });
 
             await _groupRepository.AcceptJoinGroup(requesterId, groupId);
-
-            return Ok("Accepted a join group request");
+            return Ok("Join request accepted.");
         }
 
-        // DELETE: api/Groups/Leave/5
+
         [HttpDelete("LeaveGroup/{groupId}")]
         public async Task<IActionResult> LeaveGroup(int groupId)
         {
             var userId = GetUserId();
-            //var group = _groupRepository.GetJoinedGroupByIdAsync(userId, groupId);
-            //if (group == null)
-            //    return NotFound();
+            if (userId == -1)
+                return Unauthorized(new { Message = "Unauthorized access." });
 
             await _groupRepository.LeaveGroup(userId, groupId);
-
-            return Ok("Leave group successfully");
+            return Ok("Left group successfully.");
         }
 
-        // POST: api/Group
-        //get creator id and group information
         [HttpPost]
         public async Task<ActionResult<Group>> CreateGroup([FromBody] Group newGroup)
         {
             if (!ModelState.IsValid)
-                return BadRequest();
+                return BadRequest(ModelState);
 
-            //get user id from session
             var userId = GetUserId();
-            newGroup.CreatedById = userId;
-            // add user id to object
-            await _groupRepository.AddAsync(newGroup);
+            if (userId == -1)
+                return Unauthorized(new { Message = "Unauthorized access." });
 
-            //test to check data 
+            newGroup.CreatedById = userId;
+            await _groupRepository.AddAsync(newGroup);
             return Ok(newGroup);
         }
 
-        // PUT: api/Group/5
         [HttpPut("{groupId}")]
         public async Task<IActionResult> UpdateGroup(int groupId, [FromBody] Group updatedGroup)
         {
-            // Kiểm tra dữ liệu hợp lệ
-            if (!ModelState.IsValid || updatedGroup == null)
+            if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            // Lấy User ID hiện tại
             var userId = GetUserId();
+            if (userId == -1)
+                return Unauthorized(new { Message = "Unauthorized access." });
 
-            // Tìm nhóm mà người dùng sở hữu
             var existingGroup = await _groupRepository.GetCreatedGroupByIdAsync(userId, groupId);
             if (existingGroup == null)
-            {
-                return NotFound(new { Message = "Group not found or you do not have permission to update this group." });
-            }
+                return NotFound(new { Message = "Group not found or access denied." });
 
             existingGroup.GroupName = updatedGroup.GroupName;
             existingGroup.Description = updatedGroup.Description;
             existingGroup.Location = updatedGroup.Location;
             existingGroup.GroupImageUrl = updatedGroup.GroupImageUrl;
 
-            // Thực hiện cập nhật trong database
-            var updateResult = _groupRepository.UpdateAsync(existingGroup);
-
-            if (updateResult == null)
-            {
-                return StatusCode(500, new { Message = "Failed to update the group. Please try again later." });
-            }
-
+            await _groupRepository.UpdateAsync(existingGroup);
             return NoContent();
         }
 
-
-        // DELETE: api/Group/5
         [HttpDelete("{groupId}")]
         public async Task<IActionResult> DeleteGroup(int groupId)
         {
             var userId = GetUserId();
+            if (userId == -1)
+                return Unauthorized(new { Message = "Unauthorized access." });
+
             var existingGroup = await _groupRepository.GetCreatedGroupByIdAsync(userId, groupId);
             if (existingGroup == null)
-            {
-                return NotFound();
-            }
+                return NotFound(new { Message = "Group not found or access denied." });
+
             await _groupRepository.DeleteAsync(groupId);
             return NoContent();
         }
 
-    }
 
+    }
 }
