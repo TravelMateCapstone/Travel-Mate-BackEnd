@@ -404,6 +404,26 @@ namespace TravelMateAPI.Controllers
 
             return Ok("Đăng ký ADMIN thành công. Vui lòng kiểm tra email để xác nhận tài khoản.");
         }
+        [HttpPost("log-out")]
+        public async Task<IActionResult> Logout()
+        {
+            // Hủy đăng nhập người dùng
+            await _signInManager.SignOutAsync();
+
+            // Xóa thông tin người dùng khỏi claims
+            var claimsIdentity = User.Identity as ClaimsIdentity;
+            if (claimsIdentity != null)
+            {
+                // Xóa tất cả các claims
+                foreach (var claim in claimsIdentity.Claims.ToList())
+                {
+                    claimsIdentity.RemoveClaim(claim);
+                }
+            }
+
+            // Trả về phản hồi thành công
+            return Ok(new { message = "Logout successful" });
+        }
 
         //[HttpGet]
         //public IActionResult GetKeys()
