@@ -24,7 +24,7 @@ namespace BusinessObjects.Entities
         public DateTime? Birthdate { get; set; }
         public string? City { get; set; }
         public string? Description { get; set; }
-
+        public string? HostingAvailability { get; set; }
         public string? WhyUseTravelMate { get; set; }
 
         public string? MusicMoviesBooks { get; set; }
