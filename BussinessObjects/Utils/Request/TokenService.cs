@@ -48,7 +48,7 @@ namespace BusinessObjects.Utils.Request
                 issuer: _appSettings.JwtSettings.Issuer,
                 audience: _appSettings.JwtSettings.Audience,
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(Convert.ToDouble(_appSettings.JwtSettings.DurationInMinutes)),
+                expires: DateTime.Now.AddMinutes(Convert.ToDouble(_appSettings.JwtSettings.DurationInMinutes)),  //bỏ để không cần reload token
                 signingCredentials: creds
             );
 

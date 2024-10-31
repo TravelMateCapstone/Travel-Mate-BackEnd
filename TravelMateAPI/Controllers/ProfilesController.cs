@@ -234,6 +234,12 @@ namespace TravelMateAPI.Controllers
             // Gán UserId vào profile mới
             newProfile.UserId = userId;
 
+            // Kiểm tra nếu ImageUser không được cung cấp, gán hình ảnh mặc định
+            if (string.IsNullOrWhiteSpace(newProfile.ImageUser))
+            {
+                newProfile.ImageUser = "https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3467.jpg";
+            }
+
             // Thêm profile mới vào database
             var createdProfile = await _profileRepository.AddProfileAsync(newProfile);
 
