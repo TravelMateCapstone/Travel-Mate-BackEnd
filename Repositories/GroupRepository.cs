@@ -74,6 +74,10 @@ namespace Repositories
             await _groupDAO.UpdateAsync(group);
         }
 
+        public async Task<IEnumerable<GroupParticipant>> ListJoinGroupRequests(int groupId)
+        {
+            return await _groupDAO.ListJoinGroupRequests(groupId);
+        }
 
     }
 }

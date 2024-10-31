@@ -31,7 +31,7 @@ namespace BusinessObjects.Utils.Request
             // Create claims
             var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
+                //new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Name, user.UserName)
@@ -48,11 +48,12 @@ namespace BusinessObjects.Utils.Request
                 issuer: _appSettings.JwtSettings.Issuer,
                 audience: _appSettings.JwtSettings.Audience,
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(Convert.ToDouble(_appSettings.JwtSettings.DurationInMinutes)),
+                expires: DateTime.Now.AddMinutes(Convert.ToDouble(_appSettings.JwtSettings.DurationInMinutes)),  //bỏ để không cần reload token
                 signingCredentials: creds
             );
 
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            //return new JwtSecurityTokenHandler().WriteToken(token);
+            return $"Bearer {new JwtSecurityTokenHandler().WriteToken(token)}";
         }
     }
 }

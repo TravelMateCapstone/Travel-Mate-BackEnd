@@ -13,9 +13,9 @@ namespace Repositories
     {
         private readonly LocationsDAO _locationsDAO;
 
-        public LocationRepository()
+        public LocationRepository(LocationsDAO locationsDAO)
         {
-            _locationsDAO = LocationsDAO.Instance;
+            _locationsDAO = locationsDAO;
         }
 
         public async Task<List<Location>> GetAllLocationsAsync()
@@ -43,5 +43,6 @@ namespace Repositories
             await _locationsDAO.DeleteLocationAsync(locationId);
         }
     }
+
 
 }

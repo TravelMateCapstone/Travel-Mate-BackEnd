@@ -1,4 +1,5 @@
 ﻿using BusinessObjects.Entities;
+using BusinessObjects.Utils.Response;
 using DataAccess;
 using Repositories.Interface;
 using System;
@@ -13,9 +14,9 @@ namespace Repositories
     {
         private readonly UserLocationsDAO _userLocationsDAO;
 
-        public UserLocationsRepository()
+        public UserLocationsRepository(UserLocationsDAO userLocationsDAO)
         {
-            _userLocationsDAO = UserLocationsDAO.Instance;
+            _userLocationsDAO = userLocationsDAO;
         }
 
         public async Task<List<UserLocation>> GetAllUserLocationsAsync()
@@ -27,7 +28,10 @@ namespace Repositories
         {
             return await _userLocationsDAO.GetUserLocationByIdAsync(userId, locationId);
         }
-
+        public async Task<List<UserLocation>> GetUserLocationsByUserIdAsync(int userId)
+        {
+            return await _userLocationsDAO.GetUserLocationsByUserIdAsync(userId);
+        }
         public async Task<UserLocation> AddUserLocationAsync(UserLocation newUserLocation)
         {
             return await _userLocationsDAO.AddUserLocationAsync(newUserLocation);

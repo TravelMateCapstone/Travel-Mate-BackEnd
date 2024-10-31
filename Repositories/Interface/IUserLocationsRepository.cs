@@ -11,6 +11,7 @@ namespace Repositories.Interface
     {
         Task<List<UserLocation>> GetAllUserLocationsAsync();
         Task<UserLocation> GetUserLocationByIdAsync(int userId, int locationId);
+        Task<List<UserLocation>> GetUserLocationsByUserIdAsync(int userId);
         Task<UserLocation> AddUserLocationAsync(UserLocation newUserLocation);
         Task UpdateUserLocationAsync(UserLocation updatedUserLocation);
         Task DeleteUserLocationAsync(int userId, int locationId);
