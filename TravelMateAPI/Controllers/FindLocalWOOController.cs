@@ -1,6 +1,7 @@
 ﻿using BusinessObjects;
 using BusinessObjects.Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Repositories;
 using Repositories.Interface;
 using System.Security.Claims;
@@ -14,11 +15,13 @@ namespace TravelMateAPI.Controllers
     {
         
         private readonly IFindLocalService _findLocalService;
+        private readonly ApplicationDBContext _context;
 
         // Inject FindLocalService qua constructor
-        public FindLocalWOOController(IFindLocalService findLocalService)
+        public FindLocalWOOController(IFindLocalService findLocalService, ApplicationDBContext context)
         {
             _findLocalService = findLocalService ?? throw new ArgumentNullException(nameof(findLocalService));
+            _context = context;
         }
         // Phương thức để lấy UserId từ JWT token
         private int GetUserId()
@@ -125,12 +128,12 @@ namespace TravelMateAPI.Controllers
 
                 case 2:
                     // Thực hiện logic khi option = 2
-                    matchingUsers = await _findLocalService.GetMatchingUsersAsync(locationId, travelerActivities, "Local", pageNumber, pageSize);
+                    matchingUsers = await _findLocalService.GetMatchingUsersAndWoMcAsync(locationId, travelerActivities, "Local", pageNumber, pageSize);
                     break;
 
                 default:
                     // Thực hiện logic mặc định (khi option không phải 1 hoặc 2)
-                    matchingUsers = await _findLocalService.GetMatchingUsersAsync(locationId, travelerActivities, "Local", pageNumber, pageSize);
+                    matchingUsers = await _findLocalService.GetMatchingUsersAndWoMcAsync(locationId, travelerActivities, "Local", pageNumber, pageSize);
                     break;
             }
 
@@ -142,11 +145,17 @@ namespace TravelMateAPI.Controllers
             return Ok(matchingUsers);
         }
         // Giả sử bạn có phương thức lấy danh sách activityIds cho traveler
-        private Task<List<int>> GetTravelerActivitiesAsync(int travelerId)
+        private async Task<List<int>> GetTravelerActivitiesAsync(int travelerId)
         {
-            // Logic để lấy danh sách activityIds từ cơ sở dữ liệu
-            // Trả về danh sách hoạt động của traveler
-            return Task.FromResult(new List<int> { 1, 2, 3 });
+            // Lấy danh sách ActivityId từ cơ sở dữ liệu theo UserId (travelerId)
+            var activityIds = await _context.UserActivities
+                .Where(ua => ua.UserId == travelerId)
+                .Select(ua => ua.ActivityId)
+                .ToListAsync();
+
+            // Trả về danh sách activityIds của traveler
+            return activityIds;
         }
+
     }
 }
