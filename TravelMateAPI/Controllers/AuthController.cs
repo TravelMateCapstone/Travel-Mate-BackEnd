@@ -60,7 +60,7 @@ namespace TravelMateAPI.Controllers
             var avatarUrl = $"https://travelmateapp.azurewebsites.net/api/Profile/current-user/image";
 
             //return Ok(new { Token = token, AvataUrl = avatarUrl });
-            return Ok(new { Token = token, AvataUrl = avatarUrl });
+            return Ok(new { Token = token });
         }
 
 
