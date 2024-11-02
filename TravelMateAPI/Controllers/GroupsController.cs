@@ -208,7 +208,8 @@ namespace TravelMateAPI.Controllers
                 return Unauthorized(new { Message = "Unauthorized access." });
 
             newGroup.CreatedById = userId;
-            await _groupRepository.AddAsync(newGroup);
+            newGroup.CreateAt = DateTime.Now;
+            await _groupRepository.AddAsync(userId, newGroup);
             return Ok(newGroup);
         }
 

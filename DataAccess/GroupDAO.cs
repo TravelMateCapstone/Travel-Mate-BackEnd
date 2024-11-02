@@ -24,21 +24,6 @@ namespace DataAccess
                 .FirstOrDefaultAsync(g => g.GroupId == groupId);
         }
 
-        //public async Task IncreaseGroupParticipant(int groupId)
-        //{
-        //    var group = await _dbContext.Groups.FindAsync(groupId);
-
-        //    group.NumberOfParticipants += 1;
-        //}
-
-        //public async Task DecreaseGroupParticipant(int groupId)
-        //{
-        //    var group = await _dbContext.Groups.FindAsync(groupId);
-
-        //    group.NumberOfParticipants -= 1;
-        //}
-
-        //Get Created Group
         public async Task<IQueryable<Group>> GetCreatedGroupsAsync(int userId)
         {
             return _dbContext.Groups
@@ -118,14 +103,29 @@ namespace DataAccess
             await _dbContext.SaveChangesAsync();
         }
 
-
-
         //create a group
-        public async Task<Group> AddAsync(Group group)
+        public async Task<Group> AddAsync(int userId, Group group)
         {
+
             await _dbContext.Groups.AddAsync(group);
             await _dbContext.SaveChangesAsync();
+            var GetGroup = await GetLatestGroupAsync();
+            var firstParticipant = new GroupParticipant()
+            {
+                UserId = userId,
+                GroupId = GetGroup.GroupId,
+                JoinedStatus = true
+            };
+            group.NumberOfParticipants += 1;
+            await _dbContext.GroupParticipants.AddAsync(firstParticipant);
+            await _dbContext.SaveChangesAsync();
             return group;
+        }
+        public async Task<Group> GetLatestGroupAsync()
+        {
+            return await _dbContext.Groups
+                .OrderByDescending(g => g.CreateAt)  // Use CreatedDate if it exists
+                .FirstOrDefaultAsync();
         }
 
 
@@ -139,7 +139,6 @@ namespace DataAccess
                 await _dbContext.SaveChangesAsync();
             }
         }
-
 
         //group admin can update group information
         public async Task UpdateAsync(Group group)
