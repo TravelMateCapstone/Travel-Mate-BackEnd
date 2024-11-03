@@ -3,6 +3,7 @@ using BusinessObjects.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Repositories;
 using Repositories.Interface;
 using System.Security.Claims;
 
@@ -14,11 +15,13 @@ namespace TravelMateAPI.Controllers
     {
         private readonly IEventRepository _eventRepository;
         private readonly ApplicationDBContext _context;
+        private readonly IEventParticipantsRepository _eventParticipantsRepository;
 
-        public EventControllerWOO(IEventRepository eventRepository, ApplicationDBContext context)
+        public EventControllerWOO(IEventRepository eventRepository, ApplicationDBContext context, IEventParticipantsRepository eventParticipantsRepository)
         {
             _eventRepository = eventRepository;
             _context = context;
+            _eventParticipantsRepository = eventParticipantsRepository;
         }
         // Phương thức để lấy UserId từ JWT token
         private int GetUserId()
@@ -123,6 +126,12 @@ namespace TravelMateAPI.Controllers
                 .Where(e => !_context.EventParticipants
                     .Any(ep => ep.EventId == e.EventId && ep.UserId == userId))
                 .ToListAsync();
+            //// Lấy các sự kiện mà người dùng chưa tham gia và cũng không phải là người tạo ra sự kiện
+            //var notJoinedEvents = await _context.Events
+            //    .Where(e => !_context.EventParticipants
+            //                    .Any(ep => ep.EventId == e.EventId && ep.UserId == userId)
+            //                && e.CreaterUserId != userId)
+            //    .ToListAsync();
 
             return Ok(notJoinedEvents);
         }
@@ -148,7 +157,15 @@ namespace TravelMateAPI.Controllers
 
             // Thêm sự kiện mới vào cơ sở dữ liệu
             var createdEvent = await _eventRepository.AddEventAsync(newEvent);
-
+            // Thêm người dùng hiện tại vào danh sách tham gia sự kiện ngay lập tức
+            var newParticipant = new EventParticipants
+            {
+                EventId = createdEvent.EventId,
+                UserId = userId,
+                JoinedAt = DateTime.Now,
+                Notification = true
+            };
+            await _eventParticipantsRepository.AddEventParticipantAsync(newParticipant);
             // Trả về phản hồi thành công
             return CreatedAtAction(nameof(GetById), new { eventId = createdEvent.EventId }, createdEvent);
         }
