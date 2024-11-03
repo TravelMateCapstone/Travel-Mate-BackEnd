@@ -6,7 +6,6 @@ namespace DataAccess
 {
     public class GroupPostDAO
     {
-
         private readonly ApplicationDBContext _dbContext;
 
         public GroupPostDAO(ApplicationDBContext dbContext)
@@ -14,27 +13,42 @@ namespace DataAccess
             _dbContext = dbContext;
         }
 
-        public async Task<IEnumerable<GroupPost>> GetAll()
+        public async Task<IEnumerable<GroupPost>> GetAll(int groupId)
         {
-            return _dbContext.GroupPosts.Include(g => g.Comments).Include(g => g.PostPhotos).ToList();
+            return await _dbContext.GroupPosts
+                .Where(p => p.GroupId == groupId)
+                .Include(g => g.Comments)
+                .Include(g => g.PostPhotos)
+                .ToListAsync();
         }
 
-        //public async Task<GroupPost> GetGroupPostById(int id)
-        //{
-        //    //return await _dbContext.GroupPosts.Include(g => g.Comments).Include(g => g.PostPhotos).FirstOrDefaultAsync(g => g.GroupPostId == id);
-        //}
-
-        public async Task<GroupPost> AddGroupPostAsync(GroupPost GroupPost)
+        public async Task<GroupPost> GetGroupPostById(int id)
         {
-            _dbContext.GroupPosts.Add(GroupPost);
+            return await _dbContext.GroupPosts
+                .Include(g => g.Comments)
+                .Include(g => g.PostPhotos)
+                .FirstOrDefaultAsync(g => g.PostId == id);
+        }
+        public async Task<bool> IsGroupPostCreator(int postId, int userId)
+        {
+            return await _dbContext.GroupPosts.AnyAsync(g => g.PostById == userId && g.PostId == postId);
+        }
+
+        public async Task<bool> IsPostExistInGroup(int groupId, int postId)
+        {
+            return await _dbContext.GroupPosts.AnyAsync(g => g.GroupId == groupId && g.PostId == postId);
+        }
+
+        public async Task<GroupPost> AddGroupPostAsync(GroupPost groupPost)
+        {
+            await _dbContext.GroupPosts.AddAsync(groupPost);
             await _dbContext.SaveChangesAsync();
-            return GroupPost;
-
+            return groupPost;
         }
-        public async Task DeleteGroupPostAsync(int GroupPostId)
-        {
 
-            var findGroupPost = await _dbContext.GroupPosts.FindAsync(GroupPostId);
+        public async Task DeleteGroupPostAsync(int groupPostId)
+        {
+            var findGroupPost = await _dbContext.GroupPosts.FindAsync(groupPostId);
             if (findGroupPost != null)
             {
                 _dbContext.GroupPosts.Remove(findGroupPost);
@@ -42,9 +56,9 @@ namespace DataAccess
             }
         }
 
-        public async Task UpdateGroupPostDetailAsync(GroupPost GroupPost)
+        public async Task UpdateGroupPostDetailAsync(GroupPost updatedGroupPost)
         {
-            _dbContext.GroupPosts.Update(GroupPost);
+            _dbContext.GroupPosts.Update(updatedGroupPost);
             await _dbContext.SaveChangesAsync();
         }
     }

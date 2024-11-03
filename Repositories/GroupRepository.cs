@@ -18,9 +18,9 @@ namespace Repositories
             await _groupDAO.AcceptJoinGroup(userId, groupId);
         }
 
-        public async Task AddAsync(Group group)
+        public async Task AddAsync(int userId, Group group)
         {
-            await _groupDAO.AddAsync(group);
+            await _groupDAO.AddAsync(userId, group);
         }
 
         public async Task DeleteAsync(int Id)
