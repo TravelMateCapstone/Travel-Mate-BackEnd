@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace BusinessObjects.Entities
 {
@@ -10,22 +11,23 @@ namespace BusinessObjects.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int PostId { get; set; }
 
-        public string Title { get; set; }
+        public string? Title { get; set; }
 
-        //public string? Description { get; set; }
-
-        //public DateTime CreatedTime { get; set; };
+        public DateTime CreatedTime { get; set; }
 
         public int PostById { get; set; }
 
+        [JsonIgnore]
         public ApplicationUser? PostByUser { get; set; }
 
         public int GroupId { get; set; }
 
+        [JsonIgnore]
         public Group? Group { get; set; }
 
-        public ICollection<PostPhoto>? PostPhotos { get; set; }
-        public virtual ICollection<PostComment>? Comments { get; set; }
+        public ICollection<GroupPostPhoto>? PostPhotos { get; set; }
+        public ICollection<PostComment>? Comments { get; set; }
+        [JsonIgnore]
         public ICollection<Reaction>? Reactions { get; set; }
     }
 
