@@ -11,7 +11,7 @@ namespace BusinessObjects.Entities
         public int CommentId { get; set; }
         public int CommentedById { get; set; }
         [JsonIgnore]
-        public ApplicationUser? CommentedByUser { get; set; }
+        public ApplicationUser? CommentedBy { get; set; }
         public int PostId { get; set; }
         [JsonIgnore]
         public GroupPost? Post { get; set; }

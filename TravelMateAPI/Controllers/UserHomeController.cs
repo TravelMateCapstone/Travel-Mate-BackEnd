@@ -145,11 +145,12 @@ namespace TravelMateAPI.Controllers
             // Cập nhật thông tin UserHome
             existingUserHome.MaxGuests = updatedUserHome.MaxGuests;
             existingUserHome.GuestPreferences = updatedUserHome.GuestPreferences;
-            existingUserHome.HouseRules = updatedUserHome.HouseRules;
-            existingUserHome.IsPrivateRoom = updatedUserHome.IsPrivateRoom;
+            existingUserHome.AllowedSmoking = updatedUserHome.AllowedSmoking;
+            existingUserHome.RoomType = updatedUserHome.RoomType;
+            existingUserHome.RoomDescription = updatedUserHome.RoomDescription;
             existingUserHome.RoomMateInfo = updatedUserHome.RoomMateInfo;
             existingUserHome.Amenities = updatedUserHome.Amenities;
-            existingUserHome.Description = updatedUserHome.Description;
+            existingUserHome.OverallDescription = updatedUserHome.OverallDescription;
             existingUserHome.Transportation = updatedUserHome.Transportation;
 
             // Nếu bạn cần cập nhật các HomePhotos, cần xử lý riêng
