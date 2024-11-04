@@ -57,7 +57,7 @@ namespace DataAccess
 
         public async Task<List<Profile>> GetAllProfilesAsync()
         {
-            return await _dbContext.Profiles.Include(p => p.ApplicationUser).ToListAsync();
+            return await _dbContext.Profiles.Include(p => p.User).ToListAsync();
         }
 
         public async Task<Profile> GetProfileByIdAsync(int userId)

@@ -17,8 +17,8 @@ namespace BusinessObjects.Entities
 
         public int PostById { get; set; }
 
-        [JsonIgnore]
-        public ApplicationUser? PostByUser { get; set; }
+        //[JsonIgnore]
+        public ApplicationUser? PostBy { get; set; }
 
         public int GroupId { get; set; }
 
