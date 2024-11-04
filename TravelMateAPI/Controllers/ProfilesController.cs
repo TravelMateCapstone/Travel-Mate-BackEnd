@@ -328,6 +328,7 @@ namespace TravelMateAPI.Controllers
             existingProfile.Birthdate = updatedProfile.Birthdate;
             existingProfile.City = updatedProfile.City;
             existingProfile.Description = updatedProfile.Description;
+            existingProfile.HostingAvailability = updatedProfile.HostingAvailability;
             existingProfile.WhyUseTravelMate = updatedProfile.WhyUseTravelMate;
             existingProfile.MusicMoviesBooks = updatedProfile.MusicMoviesBooks;
             existingProfile.WhatToShare = updatedProfile.WhatToShare;
