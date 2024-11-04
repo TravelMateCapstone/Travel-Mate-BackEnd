@@ -9,6 +9,7 @@
         Task<Group> GetJoinedGroupByIdAsync(int userId, int groupId);
 
         Task<IQueryable<Group>> GetGroupsAsync();
+        Task<IQueryable<Group>> GetUnjoinedGroupsAsync(int userId);
         Task<Group> GetGroupByIdAsync(int groupId);
 
         //Group operations
@@ -25,5 +26,8 @@
         Task AcceptJoinGroup(int userId, int groupId);
 
         Task<IEnumerable<GroupParticipant>> ListJoinGroupRequests(int groupId);
+        Task<IEnumerable<GroupParticipant>> GetGroupMembers(int groupId);
+
+        Task<bool> DoesRequestSend(int groupId, int userId);
     }
 }

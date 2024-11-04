@@ -24,6 +24,22 @@ namespace TravelMateAPI.Controllers
             return int.TryParse(userIdString, out var userId) ? userId : -1;
         }
 
+        private async Task<ActionResult<IEnumerable<Group>>> PaginateAndRespondAsync(IEnumerable<Group> groups, int pageNumber)
+        {
+            var totalCount = groups.Count();
+            var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+            var paginatedGroups = groups.Skip((pageNumber - 1) * pageSize).Take(pageSize);
+
+            return Ok(new
+            {
+                TotalPages = totalPages,
+                TotalCount = totalCount,
+                CurrentPage = pageNumber,
+                PageSize = pageSize,
+                Groups = paginatedGroups
+            });
+        }
+
         [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Group>>> GetGroupsAsync([FromQuery] int pageNumber = 1)
@@ -32,18 +48,21 @@ namespace TravelMateAPI.Controllers
             if (groups == null || !groups.Any())
                 return NotFound(new { Message = "No groups found." });
 
-            var totalCount = groups.Count();
-            var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
-            groups = groups.Skip((pageNumber - 1) * pageSize).Take(pageSize);
+            return await PaginateAndRespondAsync(groups, pageNumber);
+        }
 
-            return Ok(new
-            {
-                TotalPages = totalPages,
-                TotalCount = totalCount,
-                CurrentPage = pageNumber,
-                PageSize = pageSize,
-                Groups = groups
-            });
+        [HttpGet("UnjoinedGroups")]
+        public async Task<ActionResult<IEnumerable<Group>>> GetUnjoinedGroupsAsync([FromQuery] int pageNumber = 1)
+        {
+            var userId = GetUserId();
+            if (userId == -1)
+                return Unauthorized(new { Message = "Unauthorized access." });
+
+            var groups = await _groupRepository.GetUnjoinedGroupsAsync(userId);
+            if (groups == null || !groups.Any())
+                return NotFound(new { Message = "No groups found." });
+
+            return await PaginateAndRespondAsync(groups, pageNumber);
         }
 
         [AllowAnonymous]
@@ -68,18 +87,7 @@ namespace TravelMateAPI.Controllers
             if (groups == null || !groups.Any())
                 return NotFound(new { Message = "No created groups found." });
 
-            var totalCount = groups.Count();
-            var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
-            groups = groups.Skip((pageNumber - 1) * pageSize).Take(pageSize);
-
-            return Ok(new
-            {
-                TotalPages = totalPages,
-                TotalCount = totalCount,
-                CurrentPage = pageNumber,
-                PageSize = pageSize,
-                Groups = groups
-            });
+            return await PaginateAndRespondAsync(groups, pageNumber);
         }
 
         [HttpGet("ListJoinGroupRequest/{groupId}")]
@@ -124,18 +132,7 @@ namespace TravelMateAPI.Controllers
             if (joinedGroups == null || !joinedGroups.Any())
                 return NotFound(new { Message = "No joined groups found." });
 
-            var totalCount = joinedGroups.Count();
-            var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
-            joinedGroups = joinedGroups.Skip((pageNumber - 1) * pageSize).Take(pageSize);
-
-            return Ok(new
-            {
-                TotalPages = totalPages,
-                TotalCount = totalCount,
-                CurrentPage = pageNumber,
-                PageSize = pageSize,
-                Groups = joinedGroups
-            });
+            return await PaginateAndRespondAsync(joinedGroups, pageNumber);
         }
 
         [HttpGet("JoinedGroups/{groupId}")]
@@ -152,15 +149,39 @@ namespace TravelMateAPI.Controllers
             return Ok(joinedGroup);
         }
 
+        [HttpGet("{groupId}/Members")]
+        public async Task<IActionResult> GetGroupMembers(int groupId)
+        {
+            var userId = GetUserId();
+            if (userId == -1)
+                return Unauthorized(new { Message = "Unauthorized access." });
+
+            var group = await _groupRepository.GetGroupByIdAsync(groupId);
+            if (group == null)
+                return NotFound(new { Message = "Group not found." });
+
+            var listGroupMembers = await _groupRepository.GetGroupMembers(groupId);
+            if (listGroupMembers == null)
+                return NotFound("No members were found in the group.");
+
+
+            return Ok(listGroupMembers);
+        }
+
         [HttpPost("JoinedGroups/Join/{groupId}")]
         public async Task<IActionResult> JoinGroup(int groupId)
         {
             var userId = GetUserId();
             if (userId == -1)
                 return Unauthorized(new { Message = "Unauthorized access." });
+
             var isCreator = await _groupRepository.GetCreatedGroupByIdAsync(userId, groupId);
             if (isCreator != null)
                 return BadRequest(new { Message = "You are creator of the group" });
+
+            var isRequestSent = await _groupRepository.DoesRequestSend(groupId, userId);
+            if (isRequestSent)
+                return NotFound("You have sent join request!");
 
             var isMember = await _groupRepository.GetJoinedGroupByIdAsync(userId, groupId);
             if (isMember != null)
@@ -207,8 +228,10 @@ namespace TravelMateAPI.Controllers
             if (userId == -1)
                 return Unauthorized(new { Message = "Unauthorized access." });
 
+            newGroup.GroupImageUrl ??= "https://images.unsplash.com/photo-1725500221821-c4c770db5290?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
             newGroup.CreatedById = userId;
             newGroup.CreateAt = DateTime.Now;
+
             await _groupRepository.AddAsync(userId, newGroup);
             return Ok(newGroup);
         }
@@ -250,7 +273,6 @@ namespace TravelMateAPI.Controllers
             await _groupRepository.DeleteAsync(groupId);
             return NoContent();
         }
-
 
     }
 }

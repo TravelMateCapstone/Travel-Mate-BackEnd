@@ -24,6 +24,12 @@ namespace DataAccess
                 .FirstOrDefaultAsync(g => g.GroupId == groupId);
         }
 
+        public async Task<IQueryable<Group>> GetUnjoinedGroupsAsync(int userId)
+        {
+            return _dbContext.Groups.Include(g => g.GroupParticipants)
+                .Where(g => !g.GroupParticipants.Any(p => p.UserId == userId));
+        }
+
         public async Task<IQueryable<Group>> GetCreatedGroupsAsync(int userId)
         {
             return _dbContext.Groups
@@ -33,7 +39,6 @@ namespace DataAccess
         public async Task<Group> GetCreatedGroupByIdAsync(int userId, int groupId)
         {
             return await _dbContext.Groups
-                //.Include(g => g.GroupParticipants)
                 .Where(g => g.CreatedById == userId)
                 .FirstOrDefaultAsync(g => g.GroupId == groupId);
         }
@@ -55,7 +60,17 @@ namespace DataAccess
 
         public async Task<IQueryable<GroupParticipant>> ListJoinGroupRequests(int groupId)
         {
-            return _dbContext.GroupParticipants.Where(g => g.GroupId == groupId && g.JoinedStatus == false);
+            return _dbContext.GroupParticipants.Where(g => g.GroupId == groupId && !g.JoinedStatus);
+        }
+
+        public async Task<bool> DoesRequestSend(int groupId, int userId)
+        {
+            return await _dbContext.GroupParticipants.AnyAsync(g => g.GroupId == groupId && g.UserId == userId && !g.JoinedStatus);
+        }
+
+        public async Task<IQueryable<GroupParticipant>> GetGroupMembers(int groupId)
+        {
+            return _dbContext.GroupParticipants.Where(g => g.GroupId == groupId && g.JoinedStatus);
         }
 
         //Ask to join a group
