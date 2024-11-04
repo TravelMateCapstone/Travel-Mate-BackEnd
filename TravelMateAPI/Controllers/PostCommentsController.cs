@@ -32,8 +32,9 @@ namespace TravelMateAPI.Controllers
             if (userId == -1)
                 return Unauthorized(new { Message = "Unauthorized access." });
 
-            var isGroupMember = await _postCommentRepository.IsGroupMember(groupId, userId);
-            if (!isGroupMember) return NotFound("Access Denied");
+            //check if group member or admin
+            var isGroupMemberOrAdmin = await _postCommentRepository.IsGroupMemberOrAdmin(groupId, userId);
+            if (!isGroupMemberOrAdmin) return NotFound("Access Denied");
 
             var comments = await _postCommentRepository.GetAllAsync(postId);
             return Ok(comments);
@@ -46,8 +47,11 @@ namespace TravelMateAPI.Controllers
             var userId = GetUserId();
             if (userId == -1)
                 return Unauthorized(new { Message = "Unauthorized access." });
-            var isGroupMember = await _postCommentRepository.IsGroupMember(groupId, userId);
-            if (!isGroupMember) return NotFound("Access Denied");
+
+            //check if group member or admin
+            var isGroupMemberOrAdmin = await _postCommentRepository.IsGroupMemberOrAdmin(groupId, userId);
+            if (!isGroupMemberOrAdmin) return NotFound("Access Denied");
+
             var comment = await _postCommentRepository.GetByIdAsync(commentId);
             if (comment == null)
                 return NotFound("Comment not found");
@@ -66,9 +70,9 @@ namespace TravelMateAPI.Controllers
             if (userId == -1)
                 return Unauthorized(new { Message = "Unauthorized access." });
 
-            //check if user is a group member
-            var isGroupMember = await _postCommentRepository.IsGroupMember(groupId, userId);
-            if (!isGroupMember) return NotFound("Access Denied");
+            //check if user is a group member or admin
+            var isGroupMemberOrAdmin = await _postCommentRepository.IsGroupMemberOrAdmin(groupId, userId);
+            if (!isGroupMemberOrAdmin) return NotFound("Access Denied");
 
             // Set group and post identifiers for the new comment
             newComment.PostId = postId;
@@ -119,7 +123,7 @@ namespace TravelMateAPI.Controllers
             if (existingComment == null)
                 return NotFound("Comment not found");
 
-            //check if user is comment creator or groupadmin
+            //check if user is comment creator or group admin
             var isCommentor = await _postCommentRepository.IsCommentCreator(commentId, userId);
             if (!isCommentor)
                 return NotFound("Access Denied");
