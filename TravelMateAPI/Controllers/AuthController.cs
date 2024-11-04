@@ -1,9 +1,11 @@
 ﻿using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
+using BusinessObjects;
 using BusinessObjects.Entities;
 using BusinessObjects.Utils.Request;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using TravelMateAPI.Services.Email;
 
@@ -18,13 +20,15 @@ namespace TravelMateAPI.Controllers
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly TokenService _tokenService;
         private readonly IMailServiceSystem _mailService;
+        private readonly ApplicationDBContext _context;
 
-        public AuthController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, TokenService tokenService, IMailServiceSystem mailService)
+        public AuthController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, TokenService tokenService, IMailServiceSystem mailService, ApplicationDBContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _tokenService = tokenService;
             _mailService = mailService;
+            _context = context;
         }
 
 
@@ -100,6 +104,44 @@ namespace TravelMateAPI.Controllers
             var roleResult = await _userManager.AddToRoleAsync(user, "User");
             if (!roleResult.Succeeded) return BadRequest(roleResult.Errors);
 
+            // Tạo bản ghi Profile mặc định
+            var defaultProfile = new Profile
+            {
+                UserId = user.Id,
+                FullName = "Không có dữ liệu",
+                FirstName = "Không có dữ liệu",
+                LastName = "Không có dữ liệu",
+                Address = "Không có dữ liệu",
+                Phone = "Không có dữ liệu",
+                Gender = "Không có dữ liệu",
+                Birthdate = DateTime.MinValue,
+                City = "Không có dữ liệu",
+                Description = "Không có dữ liệu",
+                HostingAvailability = "Không có dữ liệu",
+                WhyUseTravelMate = "Không có dữ liệu",
+                MusicMoviesBooks = "Không có dữ liệu",
+                WhatToShare = "Không có dữ liệu"
+            };
+            _context.Profiles.Add(defaultProfile);
+
+            // Tạo bản ghi UserHome mặc định
+            var defaultUserHome = new UserHome
+            {
+                UserId = user.Id,
+                MaxGuests = 0,
+                GuestPreferences = "Không có dữ liệu",
+                AllowedSmoking = "Không có dữ liệu",
+                RoomDescription = "Không có dữ liệu",
+                RoomType = "Không có dữ liệu",
+                RoomMateInfo = "Không có dữ liệu",
+                Amenities = "Không có dữ liệu",
+                Transportation = "Không có dữ liệu",
+                OverallDescription = "Không có dữ liệu"
+            };
+            _context.UserHomes.Add(defaultUserHome);
+
+            // Lưu thay đổi vào cơ sở dữ liệu
+            await _context.SaveChangesAsync();
 
             //var roleExist = await _roleManager.RoleExistsAsync("User");
             //if (!roleExist)
