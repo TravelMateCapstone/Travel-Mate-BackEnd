@@ -206,6 +206,10 @@ namespace TravelMateAPI
             builder.Services.AddScoped<IHomePhotoRepository, HomePhotoRepository>();
             builder.Services.AddScoped<GroupDAO>();
             builder.Services.AddScoped<IGroupRepository, GroupRepository>();
+            builder.Services.AddScoped<GroupPostDAO>();
+            builder.Services.AddScoped<IGroupPostRepository, GroupPostRepository>();
+            builder.Services.AddScoped<PostCommentDAO>();
+            builder.Services.AddScoped<IPostCommentRepository, PostCommentRepository>();
             builder.Services.AddControllers().AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
