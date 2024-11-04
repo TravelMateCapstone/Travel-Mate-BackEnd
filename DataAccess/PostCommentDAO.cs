@@ -50,7 +50,10 @@ namespace DataAccess
 
         public async Task<bool> IsGroupMemberOrAdmin(int groupId, int userId)
         {
-            return await _dbContext.GroupPosts.AnyAsync(g => g.GroupId == groupId && (g.Group.CreatedById == userId || g.Group.GroupParticipants.Any(g => g.UserId == userId)));
+            return await _dbContext.Groups
+                .AnyAsync(g => g.GroupId == groupId &&
+                               (g.CreatedById == userId ||
+                                g.GroupParticipants.Any(p => p.UserId == userId && p.GroupId == groupId && p.JoinedStatus)));
         }
 
         public async Task<bool> IsCommentCreator(int commentId, int userId)

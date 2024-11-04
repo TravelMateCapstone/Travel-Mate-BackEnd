@@ -29,8 +29,8 @@ public class Group
 
     //[Required]
     public int CreatedById { get; set; }
-    [JsonIgnore]
-    public ApplicationUser? CreatedByUser { get; set; }
+    //[JsonIgnore]
+    public ApplicationUser? CreatedBy { get; set; }
     [JsonIgnore]
     public ICollection<GroupParticipant>? GroupParticipants { get; set; }
     public ICollection<GroupPost>? GroupPosts { get; set; }
