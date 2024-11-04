@@ -76,13 +76,18 @@ namespace TravelMateAPI.Controllers
             // Gán UserId của người dùng hiện tại cho participant
             newParticipant.UserId = userId;
 
+            // Gán giá trị mặc định cho JoinedAt và Notification
+            newParticipant.JoinedAt = DateTime.Now;
+            newParticipant.Notification = true;
+
+
             // Thêm người tham gia vào sự kiện
             await _eventParticipantsRepository.AddEventParticipantAsync(newParticipant);
 
             return Ok(new
             {
                 Success = true,
-                Message = "Participant added successfully!",
+                Message = "Bạn đã tham gia sự kiện thành công",
                 Data = newParticipant
             });
         }
