@@ -1,4 +1,6 @@
-﻿using BusinessObjects.Entities;
+﻿using AutoMapper;
+using BusinessObjects.Entities;
+using BusinessObjects.Utils.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Repositories.Interface;
@@ -12,10 +14,12 @@ namespace TravelMateAPI.Controllers
     public class GroupPostsController : Controller
     {
         private readonly IGroupPostRepository _groupPostRepository;
+        private readonly IMapper _mapper;
 
-        public GroupPostsController(IGroupPostRepository groupPostRepository)
+        public GroupPostsController(IGroupPostRepository groupPostRepository, IMapper mapper)
         {
             _groupPostRepository = groupPostRepository;
+            _mapper = mapper;
         }
 
         private int GetUserId()
@@ -38,7 +42,7 @@ namespace TravelMateAPI.Controllers
         }
 
         [HttpGet("{postId}")]
-        public async Task<ActionResult<GroupPost>> GetGroupPostByIdAsync(int groupId, int postId)
+        public async Task<ActionResult<GroupPostDTO>> GetGroupPostByIdAsync(int groupId, int postId)
         {
             var userId = GetUserId();
             if (userId == -1)
@@ -48,8 +52,11 @@ namespace TravelMateAPI.Controllers
             if (groupPost == null || groupPost.GroupId != groupId)
                 return NotFound(new { Message = "No post found." });
 
-            return Ok(groupPost);
+            var groupPostDTO = _mapper.Map<GroupPostDTO>(groupPost);
+
+            return Ok(groupPostDTO);
         }
+
 
         [HttpPost]
         public async Task<ActionResult<GroupPost>> CreateGroupPost(int groupId, [FromBody] GroupPost newGroupPost)
