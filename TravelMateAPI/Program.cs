@@ -216,6 +216,7 @@ namespace TravelMateAPI
                 options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
             });
 
+
             // Cấu hình Swagger
             builder.Services.AddSwaggerGen(c =>
             {

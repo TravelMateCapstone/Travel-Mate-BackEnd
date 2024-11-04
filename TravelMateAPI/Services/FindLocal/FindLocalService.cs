@@ -1,7 +1,6 @@
 ﻿using BusinessObjects.Entities;
-using Microsoft.Data.SqlClient;
-using Repositories.Interface;
 using Dapper;
+using Microsoft.Data.SqlClient;
 
 namespace TravelMateAPI.Services.FindLocal
 {
@@ -112,7 +111,7 @@ namespace TravelMateAPI.Services.FindLocal
                         // Gán Profile cho User
                         //user.Profiles = profile;
                         // Nếu bạn chỉ lấy một Profile, hãy chuyển nó thành một danh sách
-                        user.Profiles = new List<Profile> { profile };
+                        //user.Profiles = new List<Profile> { profile };
                         // Gán MatchingActivitiesCount
                         user.MatchingActivitiesCount = matchingActivitiesCount;
                         return user;
@@ -164,7 +163,7 @@ namespace TravelMateAPI.Services.FindLocal
                     (user, profile, matchingActivitiesCount) =>
                     {
                         // Gán Profile cho User
-                        user.Profiles = new List<Profile> { profile };
+                        //user.Profiles = new List<Profile> { profile };
                         // Gán MatchingActivitiesCount
                         user.MatchingActivitiesCount = matchingActivitiesCount;
                         return user;

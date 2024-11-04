@@ -8,7 +8,7 @@ namespace BusinessObjects.Entities
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ProfileId { get; set; }
-        
+
         public int UserId { get; set; }
 
         public string? FullName { get; set; }
@@ -32,6 +32,6 @@ namespace BusinessObjects.Entities
         public string? WhatToShare { get; set; }
         public string? ImageUser { get; set; }
 
-        public virtual ApplicationUser? ApplicationUser { get; set; }
+        public virtual ApplicationUser? User { get; set; }
     }
 }
