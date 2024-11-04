@@ -13,7 +13,7 @@
         Task<Group> GetGroupByIdAsync(int groupId);
 
         //Group operations
-        Task AddAsync(int userId, Group group);
+        Task AddAsync(Group group);
         Task UpdateAsync(Group group);
         Task DeleteAsync(int Id);
 

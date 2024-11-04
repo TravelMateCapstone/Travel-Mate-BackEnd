@@ -47,8 +47,7 @@ namespace DataAccess
         public async Task<IQueryable<Group>> GetJoinedGroupsAsync(int userId)
         {
             return _dbContext.Groups
-        //.Include(g => g.GroupParticipants)
-        .Where(g => g.GroupParticipants.Any(gp => gp.UserId == userId && gp.JoinedStatus));
+        .Where(g => g.GroupParticipants.Any(gp => gp.UserId == userId && gp.JoinedStatus) && g.CreatedById != userId);
         }
 
         public async Task<Group> GetJoinedGroupByIdAsync(int userId, int groupId)
@@ -119,21 +118,12 @@ namespace DataAccess
         }
 
         //create a group
-        public async Task<Group> AddAsync(int userId, Group group)
+        public async Task<Group> AddAsync(Group group)
         {
 
             await _dbContext.Groups.AddAsync(group);
             await _dbContext.SaveChangesAsync();
-            var GetGroup = await GetLatestGroupAsync();
-            var firstParticipant = new GroupParticipant()
-            {
-                UserId = userId,
-                GroupId = GetGroup.GroupId,
-                JoinedStatus = true
-            };
             group.NumberOfParticipants += 1;
-            await _dbContext.GroupParticipants.AddAsync(firstParticipant);
-            await _dbContext.SaveChangesAsync();
             return group;
         }
         public async Task<Group> GetLatestGroupAsync()
@@ -142,8 +132,6 @@ namespace DataAccess
                 .OrderByDescending(g => g.CreateAt)  // Use CreatedDate if it exists
                 .FirstOrDefaultAsync();
         }
-
-
         //creator delete a group
         public async Task DeleteAsync(int groupId)
         {
