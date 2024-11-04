@@ -29,17 +29,27 @@ namespace TravelMateAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<GroupPost>>> GetGroupPostsAsync(int groupId)
+        public async Task<ActionResult<IEnumerable<GroupPostDTO>>> GetGroupPostsAsync(int groupId)
         {
             var userId = GetUserId();
             if (userId == -1)
                 return Unauthorized(new { Message = "Unauthorized access." });
+
+            //check if you are a member of admin of 
+            var IsMemberOrAdmin = await _groupPostRepository.IsMemberOrAdmin(userId, groupId);
+            if (!IsMemberOrAdmin)
+                return BadRequest("Access Denied, You are not member of group");
+
             var groupPosts = await _groupPostRepository.GetGroupPostsAsync(groupId);
             if (groupPosts == null || !groupPosts.Any())
                 return NotFound(new { Message = "No post found." });
 
-            return Ok(groupPosts);
+            // Map the list of GroupPost to a list of GroupPostDTO
+            var groupPostDTOs = _mapper.Map<IEnumerable<GroupPostDTO>>(groupPosts);
+
+            return Ok(groupPostDTOs);
         }
+
 
         [HttpGet("{postId}")]
         public async Task<ActionResult<GroupPostDTO>> GetGroupPostByIdAsync(int groupId, int postId)
@@ -47,6 +57,11 @@ namespace TravelMateAPI.Controllers
             var userId = GetUserId();
             if (userId == -1)
                 return Unauthorized(new { Message = "Unauthorized access." });
+
+            //check if you are a member of admin of 
+            var IsMemberOrAdmin = await _groupPostRepository.IsMemberOrAdmin(userId, groupId);
+            if (!IsMemberOrAdmin)
+                return BadRequest("Access Denied, You are not member of group");
 
             var groupPost = await _groupPostRepository.GetGroupPostByIdAsync(postId);
             if (groupPost == null || groupPost.GroupId != groupId)
@@ -67,6 +82,11 @@ namespace TravelMateAPI.Controllers
             var userId = GetUserId();
             if (userId == -1)
                 return Unauthorized(new { Message = "Unauthorized access." });
+
+            //check if you are a member of admin of 
+            var IsMemberOrAdmin = await _groupPostRepository.IsMemberOrAdmin(userId, groupId);
+            if (!IsMemberOrAdmin)
+                return BadRequest("Access Denied, You are not member of group");
 
             newGroupPost.GroupId = groupId;
             newGroupPost.CreatedTime = DateTime.UtcNow;
@@ -92,6 +112,16 @@ namespace TravelMateAPI.Controllers
             var userId = GetUserId();
             if (userId == -1)
                 return Unauthorized(new { Message = "Unauthorized access." });
+            //check if you are a member 
+            var IsMemberOrAdmin = await _groupPostRepository.IsMemberOrAdmin(userId, groupId);
+            if (!IsMemberOrAdmin)
+                return BadRequest("Access Denied, You are not member of group");
+
+            //check if you are group post creator
+            var IsGroupPostCreator = await _groupPostRepository.IsGroupPostCreator(postId, userId);
+            if (!IsGroupPostCreator)
+                return BadRequest("Access Denied, You are not post creator");
+
 
             var existPost = await _groupPostRepository.GetGroupPostByIdAsync(postId);
             if (existPost == null)
@@ -101,6 +131,7 @@ namespace TravelMateAPI.Controllers
             var isPostExistInGroup = await _groupPostRepository.IsPostExistInGroup(groupId, postId);
             if (isPostExistInGroup == null)
                 return NotFound("Post does not exist in the group");
+
             //cập nhật data mới cho các trường
             existPost.Title = updatedGroupPost.Title;
 
@@ -131,6 +162,16 @@ namespace TravelMateAPI.Controllers
             var userId = GetUserId();
             if (userId == -1)
                 return Unauthorized(new { Message = "Unauthorized access." });
+
+            //check if you are a member of admin of 
+            var IsMemberOrAdmin = await _groupPostRepository.IsMemberOrAdmin(userId, groupId);
+            if (!IsMemberOrAdmin)
+                return BadRequest("Access Denied, You are not member of group");
+
+            //check if you are post creator
+            var IsGroupPostCreator = await _groupPostRepository.IsGroupPostCreator(postId, userId);
+            if (!IsGroupPostCreator)
+                return BadRequest("Access Denied, You are not post creator");
 
             var existPost = await _groupPostRepository.GetGroupPostByIdAsync(postId);
             if (existPost == null || existPost.GroupId != groupId)

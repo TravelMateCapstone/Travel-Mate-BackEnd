@@ -8,6 +8,7 @@ namespace Repositories.Interface
         Task<GroupPost> GetGroupPostByIdAsync(int postId);
 
         Task<bool> IsGroupPostCreator(int postId, int userId);
+        Task<bool> IsMemberOrAdmin(int userId, int groupId);
         Task<bool> IsPostExistInGroup(int groupId, int postId);
         Task AddAsync(GroupPost groupPost);
         Task UpdateAsync(GroupPost updatedGroupPost);

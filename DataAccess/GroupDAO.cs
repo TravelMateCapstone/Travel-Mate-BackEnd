@@ -27,7 +27,7 @@ namespace DataAccess
         public async Task<IQueryable<Group>> GetUnjoinedGroupsAsync(int userId)
         {
             return _dbContext.Groups.Include(g => g.GroupParticipants)
-                .Where(g => !g.GroupParticipants.Any(p => p.UserId == userId));
+                .Where(g => !g.GroupParticipants.Any(p => p.UserId == userId) && g.CreatedById != userId);
         }
 
         public async Task<IQueryable<Group>> GetCreatedGroupsAsync(int userId)
@@ -120,17 +120,10 @@ namespace DataAccess
         //create a group
         public async Task<Group> AddAsync(Group group)
         {
-
+            group.NumberOfParticipants += 1;
             await _dbContext.Groups.AddAsync(group);
             await _dbContext.SaveChangesAsync();
-            group.NumberOfParticipants += 1;
             return group;
-        }
-        public async Task<Group> GetLatestGroupAsync()
-        {
-            return await _dbContext.Groups
-                .OrderByDescending(g => g.CreateAt)  // Use CreatedDate if it exists
-                .FirstOrDefaultAsync();
         }
         //creator delete a group
         public async Task DeleteAsync(int groupId)
