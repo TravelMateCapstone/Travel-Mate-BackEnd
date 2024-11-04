@@ -114,7 +114,6 @@ namespace TravelMateAPI.Controllers
                 Address = "Không có dữ liệu",
                 Phone = "Không có dữ liệu",
                 Gender = "Không có dữ liệu",
-                Birthdate = DateTime.MinValue,
                 City = "Không có dữ liệu",
                 Description = "Không có dữ liệu",
                 HostingAvailability = "Không có dữ liệu",
