@@ -37,9 +37,9 @@ namespace Repositories
             await _postCommentDAO.UpdateGroupPostDetailAsync(postComment);
         }
 
-        public Task<bool> IsGroupMember(int groupId, int userId)
+        public Task<bool> IsGroupMemberOrAdmin(int groupId, int userId)
         {
-            return _postCommentDAO.IsGroupMember(groupId, userId);
+            return _postCommentDAO.IsGroupMemberOrAdmin(groupId, userId);
         }
 
         public Task<bool> IsCommentCreator(int commentId, int userId)

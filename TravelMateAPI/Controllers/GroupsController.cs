@@ -101,7 +101,14 @@ namespace TravelMateAPI.Controllers
             if (groups == null)
                 return NotFound(new { Message = "No created groups found." });
 
+            //check if you are group creator
+            var isGroupCreator = await _groupRepository.GetCreatedGroupByIdAsync(userId, groupId);
+            if (isGroupCreator == null)
+                return NotFound(new { Message = "Group not found or access denied." });
+
             var listParticipants = await _groupRepository.ListJoinGroupRequests(groupId);
+            if (listParticipants == null)
+                return NotFound("No request found");
 
             return Ok(listParticipants);
 
@@ -156,6 +163,12 @@ namespace TravelMateAPI.Controllers
             if (userId == -1)
                 return Unauthorized(new { Message = "Unauthorized access." });
 
+            //check if you are group member
+            var isMember = await _groupRepository.GetJoinedGroupByIdAsync(userId, groupId);
+            var isCreator = await _groupRepository.GetCreatedGroupByIdAsync(userId, groupId);
+            if (isMember == null || isCreator == null)
+                return BadRequest(new { Message = "You are not member of this group." });
+
             var group = await _groupRepository.GetGroupByIdAsync(groupId);
             if (group == null)
                 return NotFound(new { Message = "Group not found." });
@@ -200,7 +213,7 @@ namespace TravelMateAPI.Controllers
 
             var isGroupCreator = await _groupRepository.GetCreatedGroupByIdAsync(userId, groupId);
             if (isGroupCreator == null)
-                return NotFound(new { Message = "Group not found or access denied." });
+                return NotFound(new { Message = "Access denied. You are not a group admin" });
 
             await _groupRepository.AcceptJoinGroup(requesterId, groupId);
             return Ok("Join request accepted.");
@@ -213,6 +226,10 @@ namespace TravelMateAPI.Controllers
             var userId = GetUserId();
             if (userId == -1)
                 return Unauthorized(new { Message = "Unauthorized access." });
+
+            var isMember = await _groupRepository.GetJoinedGroupByIdAsync(userId, groupId);
+            if (isMember != null)
+                return BadRequest(new { Message = "You are not a member of this group" });
 
             await _groupRepository.LeaveGroup(userId, groupId);
             return Ok("Left group successfully.");
