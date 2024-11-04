@@ -25,6 +25,8 @@ namespace DataAccess
         public async Task<GroupPost> GetGroupPostById(int id)
         {
             return await _dbContext.GroupPosts
+                .Include(g => g.PostBy)
+                .ThenInclude(g => g.Profiles)
                 .Include(g => g.Comments)
                 .Include(g => g.PostPhotos)
                 .FirstOrDefaultAsync(g => g.PostId == id);
