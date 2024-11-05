@@ -37,6 +37,11 @@ namespace Repositories
             return await _groupPostDAO.IsGroupPostCreator(postId, userId);
         }
 
+        public async Task<bool> IsMemberOrAdmin(int userId, int groupId)
+        {
+            return await _groupPostDAO.IsMemberOrAdmin(userId, groupId);
+        }
+
         public async Task<bool> IsPostExistInGroup(int groupId, int postId)
         {
             return await _groupPostDAO.IsPostExistInGroup(groupId, postId);

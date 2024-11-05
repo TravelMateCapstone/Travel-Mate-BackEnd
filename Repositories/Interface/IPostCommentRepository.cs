@@ -9,7 +9,7 @@ namespace Repositories
         Task<PostComment> AddAsync(PostComment postComment);
         Task DeleteAsync(int commentId);
         Task UpdateAsync(PostComment postComment);
-        Task<bool> IsGroupMember(int groupId, int userId);
+        Task<bool> IsGroupMemberOrAdmin(int groupId, int userId);
         Task<bool> IsCommentCreator(int commentId, int userId);
 
     }
