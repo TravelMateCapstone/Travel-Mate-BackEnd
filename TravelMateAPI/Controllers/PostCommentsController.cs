@@ -1,4 +1,6 @@
-﻿using BusinessObjects.Entities;
+﻿using AutoMapper;
+using BusinessObjects.Entities;
+using BusinessObjects.Utils.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Repositories;
@@ -12,10 +14,12 @@ namespace TravelMateAPI.Controllers
     public class PostCommentsController : ControllerBase
     {
         private readonly IPostCommentRepository _postCommentRepository;
+        private readonly IMapper _mapper;
 
-        public PostCommentsController(IPostCommentRepository postCommentRepository)
+        public PostCommentsController(IPostCommentRepository postCommentRepository, IMapper mapper)
         {
             _postCommentRepository = postCommentRepository;
+            _mapper = mapper;
         }
 
         private int GetUserId()
@@ -26,7 +30,7 @@ namespace TravelMateAPI.Controllers
 
         // GET: api/Groups/{groupId}/GroupPosts/{postId}/comments
         [HttpGet]
-        public async Task<IActionResult> GetCommentsByPostId(int groupId, int postId)
+        public async Task<ActionResult<IEnumerable<PostCommentDTO>>> GetCommentsByPostId(int groupId, int postId)
         {
             var userId = GetUserId();
             if (userId == -1)
@@ -37,12 +41,14 @@ namespace TravelMateAPI.Controllers
             if (!isGroupMemberOrAdmin) return NotFound("Access Denied");
 
             var comments = await _postCommentRepository.GetAllAsync(postId);
-            return Ok(comments);
+
+            var commentDTOs = _mapper.Map<IEnumerable<PostCommentDTO>>(comments);
+            return Ok(commentDTOs);
         }
 
         // GET: api/Groups/{groupId}/GroupPosts/{postId}/comments/{commentId}
         [HttpGet("{commentId}")]
-        public async Task<IActionResult> GetCommentById(int groupId, int commentId)
+        public async Task<ActionResult<PostCommentDTO>> GetCommentById(int groupId, int commentId)
         {
             var userId = GetUserId();
             if (userId == -1)
@@ -56,7 +62,8 @@ namespace TravelMateAPI.Controllers
             if (comment == null)
                 return NotFound("Comment not found");
 
-            return Ok(comment);
+            var commentDTO = _mapper.Map<PostCommentDTO>(comment);
+            return Ok(commentDTO);
         }
 
         // POST: api/Groups/{groupId}/GroupPosts/{postId}/comments

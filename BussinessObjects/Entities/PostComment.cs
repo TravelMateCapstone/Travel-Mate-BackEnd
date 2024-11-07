@@ -10,7 +10,6 @@ namespace BusinessObjects.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int CommentId { get; set; }
         public int CommentedById { get; set; }
-        [JsonIgnore]
         public ApplicationUser? CommentedBy { get; set; }
         public int PostId { get; set; }
         [JsonIgnore]

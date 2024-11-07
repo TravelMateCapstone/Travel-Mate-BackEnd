@@ -16,12 +16,14 @@ namespace DataAccess
         public async Task<IEnumerable<PostComment>> GetAll(int postId)
         {
             return _dbContext.PostComments
+                .Include(p => p.CommentedBy)
                 .Where(p => p.PostId == postId).ToList();
         }
 
         public async Task<PostComment> GetGroupPostCommentById(int commentId)
         {
             return await _dbContext.PostComments
+                .Include(p => p.CommentedBy)
                 .FirstOrDefaultAsync(p => p.CommentId == commentId);
         }
 

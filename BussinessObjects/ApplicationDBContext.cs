@@ -537,7 +537,31 @@ namespace BusinessObjects
                 .HasKey(ud => ud.UserId);
 
             modelBuilder.Entity<GroupParticipant>()
-       .HasKey(ot => new { ot.UserId, ot.GroupId });
+       .HasKey(g => new { g.UserId, g.GroupId });
+
+            modelBuilder.Entity<GroupParticipant>()
+                 .HasOne(gp => gp.Group)
+                 .WithMany(g => g.GroupParticipants)
+                 .HasForeignKey(gp => gp.GroupId)
+                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<GroupParticipant>()
+                 .HasOne(gp => gp.User)
+                 .WithMany(g => g.GroupParticipants)
+                 .HasForeignKey(gp => gp.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<GroupPost>()
+                 .HasOne(gp => gp.Group)
+                 .WithMany(g => g.GroupPosts)
+                 .HasForeignKey(gp => gp.GroupId)
+                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<GroupPost>()
+                 .HasOne(gp => gp.PostBy)
+                 .WithMany(g => g.GroupPosts)
+                 .HasForeignKey(gp => gp.PostById)
+                 .OnDelete(DeleteBehavior.Restrict);
 
             base.OnModelCreating(modelBuilder);
         }

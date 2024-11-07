@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using BusinessObjects.Utils.Response;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Repositories.Interface;
 using System.Security.Claims;
@@ -11,11 +13,13 @@ namespace TravelMateAPI.Controllers
     public class GroupsController : ControllerBase
     {
         private readonly IGroupRepository _groupRepository;
+        private readonly IMapper _mapper;
         private const int pageSize = 6;
 
-        public GroupsController(IGroupRepository groupRepository)
+        public GroupsController(IGroupRepository groupRepository, IMapper mapper)
         {
             _groupRepository = groupRepository;
+            _mapper = mapper;
         }
 
         private int GetUserId()
@@ -24,25 +28,25 @@ namespace TravelMateAPI.Controllers
             return int.TryParse(userIdString, out var userId) ? userId : -1;
         }
 
-        private async Task<ActionResult<IEnumerable<Group>>> PaginateAndRespondAsync(IEnumerable<Group> groups, int pageNumber)
+        private async Task<ActionResult<IEnumerable<GroupDTO>>> PaginateAndRespondAsync(IEnumerable<Group> groups, int pageNumber)
         {
             var totalCount = groups.Count();
             var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
             var paginatedGroups = groups.Skip((pageNumber - 1) * pageSize).Take(pageSize);
-
+            var groupDTOs = _mapper.Map<IEnumerable<GroupDTO>>(paginatedGroups);
             return Ok(new
             {
                 TotalPages = totalPages,
                 TotalCount = totalCount,
                 CurrentPage = pageNumber,
                 PageSize = pageSize,
-                Groups = paginatedGroups
+                Groups = groupDTOs
             });
         }
 
         [AllowAnonymous]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Group>>> GetGroupsAsync([FromQuery] int pageNumber = 1)
+        public async Task<ActionResult<IEnumerable<GroupDTO>>> GetGroupsAsync([FromQuery] int pageNumber = 1)
         {
             var groups = await _groupRepository.GetGroupsAsync();
             if (groups == null || !groups.Any())
@@ -52,7 +56,7 @@ namespace TravelMateAPI.Controllers
         }
 
         [HttpGet("UnjoinedGroups")]
-        public async Task<ActionResult<IEnumerable<Group>>> GetUnjoinedGroupsAsync([FromQuery] int pageNumber = 1)
+        public async Task<ActionResult<IEnumerable<GroupDTO>>> GetUnjoinedGroupsAsync([FromQuery] int pageNumber = 1)
         {
             var userId = GetUserId();
             if (userId == -1)
@@ -67,17 +71,19 @@ namespace TravelMateAPI.Controllers
 
         [AllowAnonymous]
         [HttpGet("{groupId}")]
-        public async Task<ActionResult<Group>> GetGroupByIdAsync(int groupId)
+        public async Task<ActionResult<GroupDTO>> GetGroupByIdAsync(int groupId)
         {
             var group = await _groupRepository.GetGroupByIdAsync(groupId);
             if (group == null)
                 return NotFound(new { Message = "Group not found." });
 
-            return Ok(group);
+            var groupDTOs = _mapper.Map<GroupDTO>(group);
+
+            return Ok(groupDTOs);
         }
 
         [HttpGet("CreatedGroups")]
-        public async Task<ActionResult<IEnumerable<Group>>> GetCreatedGroups([FromQuery] int pageNumber = 1)
+        public async Task<ActionResult<IEnumerable<GroupDTO>>> GetCreatedGroups([FromQuery] int pageNumber = 1)
         {
             var userId = GetUserId();
             if (userId == -1)
@@ -91,7 +97,7 @@ namespace TravelMateAPI.Controllers
         }
 
         [HttpGet("ListJoinGroupRequest/{groupId}")]
-        public async Task<ActionResult<IEnumerable<GroupParticipant>>> ListJoinGroupRequest(int groupId)
+        public async Task<ActionResult<IEnumerable<GroupMemberDTO>>> ListJoinGroupRequest(int groupId)
         {
             var userId = GetUserId();
             if (userId == -1)
@@ -110,12 +116,14 @@ namespace TravelMateAPI.Controllers
             if (listParticipants == null)
                 return NotFound("No request found");
 
-            return Ok(listParticipants);
+            var groupMemberDTOs = _mapper.Map<IEnumerable<GroupMemberDTO>>(listParticipants);
+
+            return Ok(groupMemberDTOs);
 
         }
 
         [HttpGet("CreatedGroups/{groupId}")]
-        public async Task<ActionResult<Group>> GetCreatedGroupByIdAsync(int groupId)
+        public async Task<ActionResult<GroupDTO>> GetCreatedGroupByIdAsync(int groupId)
         {
             var userId = GetUserId();
             if (userId == -1)
@@ -125,11 +133,13 @@ namespace TravelMateAPI.Controllers
             if (group == null)
                 return NotFound(new { Message = "Group not found." });
 
-            return Ok(group);
+            var groupDTOs = _mapper.Map<GroupDTO>(group);
+
+            return Ok(groupDTOs);
         }
 
         [HttpGet("JoinedGroups")]
-        public async Task<ActionResult<IEnumerable<Group>>> GetJoinedGroupsAsync([FromQuery] int pageNumber = 1)
+        public async Task<ActionResult<IEnumerable<GroupDTO>>> GetJoinedGroupsAsync([FromQuery] int pageNumber = 1)
         {
             var userId = GetUserId();
             if (userId == -1)
@@ -143,7 +153,7 @@ namespace TravelMateAPI.Controllers
         }
 
         [HttpGet("JoinedGroups/{groupId}")]
-        public async Task<IActionResult> GetJoinedGroupByIdAsync(int groupId)
+        public async Task<ActionResult<GroupDTO>> GetJoinedGroupByIdAsync(int groupId)
         {
             var userId = GetUserId();
             if (userId == -1)
@@ -153,11 +163,13 @@ namespace TravelMateAPI.Controllers
             if (joinedGroup == null)
                 return NotFound(new { Message = "Joined group not found." });
 
-            return Ok(joinedGroup);
+            var groupDTOs = _mapper.Map<GroupDTO>(joinedGroup);
+
+            return Ok(groupDTOs);
         }
 
         [HttpGet("{groupId}/Members")]
-        public async Task<IActionResult> GetGroupMembers(int groupId)
+        public async Task<ActionResult<IEnumerable<GroupMemberDTO>>> GetGroupMembers(int groupId)
         {
             var userId = GetUserId();
             if (userId == -1)
@@ -166,7 +178,7 @@ namespace TravelMateAPI.Controllers
             //check if you are group member
             var isMember = await _groupRepository.GetJoinedGroupByIdAsync(userId, groupId);
             var isCreator = await _groupRepository.GetCreatedGroupByIdAsync(userId, groupId);
-            if (isMember == null || isCreator == null)
+            if (isMember == null && isCreator == null)
                 return BadRequest(new { Message = "You are not member of this group." });
 
             var group = await _groupRepository.GetGroupByIdAsync(groupId);
@@ -177,8 +189,9 @@ namespace TravelMateAPI.Controllers
             if (listGroupMembers == null)
                 return NotFound("No members were found in the group.");
 
+            var groupMemberDTOs = _mapper.Map<IEnumerable<GroupMemberDTO>>(listGroupMembers);
 
-            return Ok(listGroupMembers);
+            return Ok(groupMemberDTOs);
         }
 
         [HttpPost("JoinedGroups/Join/{groupId}")]

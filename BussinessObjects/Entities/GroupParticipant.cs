@@ -3,17 +3,17 @@ using System.ComponentModel.DataAnnotations;
 
 public class GroupParticipant
 {
-    [Required]
-    public int GroupId { get; set; }
-    //[JsonIgnore]
+    public int? GroupId { get; set; }
     public Group? Group { get; set; }
 
-    [Required]
-    public int UserId { get; set; }
-
-    //[JsonIgnore]
+    public int? UserId { get; set; }
     public ApplicationUser? User { get; set; }
     [Required]
     public bool JoinedStatus { get; set; }
+
+    [Required]
+    public DateTime RequestAt { get; set; }
+
+    public DateTime JoinAt { get; set; }
 
 }

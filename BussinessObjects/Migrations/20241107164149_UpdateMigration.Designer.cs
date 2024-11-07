@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BusinessObjects.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20241102161300_UpdateMigration")]
+    [Migration("20241107164149_UpdateMigration")]
     partial class UpdateMigration
     {
         /// <inheritdoc />
@@ -222,13 +222,13 @@ namespace BusinessObjects.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "6914cebf-66e3-43b4-819f-da491b92746f",
+                            ConcurrencyStamp = "ff6ad642-3771-47e9-a8bf-a6b587863466",
                             Email = "user1@example.com",
                             EmailConfirmed = false,
                             FullName = "User One",
                             LockoutEnabled = false,
                             PhoneNumberConfirmed = false,
-                            RegistrationTime = new DateTime(2024, 11, 2, 16, 12, 59, 524, DateTimeKind.Utc).AddTicks(1953),
+                            RegistrationTime = new DateTime(2024, 11, 7, 16, 41, 48, 879, DateTimeKind.Utc).AddTicks(6933),
                             TwoFactorEnabled = false,
                             UserName = "user1"
                         },
@@ -236,13 +236,13 @@ namespace BusinessObjects.Migrations
                         {
                             Id = 2,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "28645638-5fad-4966-8225-47d05dc40c70",
+                            ConcurrencyStamp = "33dbc910-805b-480d-b404-c8993c7e67ec",
                             Email = "user2@example.com",
                             EmailConfirmed = false,
                             FullName = "User Two",
                             LockoutEnabled = false,
                             PhoneNumberConfirmed = false,
-                            RegistrationTime = new DateTime(2024, 11, 2, 16, 12, 59, 524, DateTimeKind.Utc).AddTicks(1963),
+                            RegistrationTime = new DateTime(2024, 11, 7, 16, 41, 48, 879, DateTimeKind.Utc).AddTicks(6943),
                             TwoFactorEnabled = false,
                             UserName = "user2"
                         },
@@ -250,13 +250,13 @@ namespace BusinessObjects.Migrations
                         {
                             Id = 3,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "ff3f1c71-94b7-419c-bde0-3a7323e5ae3a",
+                            ConcurrencyStamp = "a80aae01-be70-40bc-924a-79d9c06a3810",
                             Email = "user3@example.com",
                             EmailConfirmed = false,
                             FullName = "User Three",
                             LockoutEnabled = false,
                             PhoneNumberConfirmed = false,
-                            RegistrationTime = new DateTime(2024, 11, 2, 16, 12, 59, 524, DateTimeKind.Utc).AddTicks(1970),
+                            RegistrationTime = new DateTime(2024, 11, 7, 16, 41, 48, 879, DateTimeKind.Utc).AddTicks(6950),
                             TwoFactorEnabled = false,
                             UserName = "user3"
                         },
@@ -264,13 +264,13 @@ namespace BusinessObjects.Migrations
                         {
                             Id = 4,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "c4e0b425-5fd9-409e-824a-105f3cd41379",
+                            ConcurrencyStamp = "97072e8a-1f59-48b1-9367-dc57f94b9449",
                             Email = "user4@example.com",
                             EmailConfirmed = false,
                             FullName = "User Four",
                             LockoutEnabled = false,
                             PhoneNumberConfirmed = false,
-                            RegistrationTime = new DateTime(2024, 11, 2, 16, 12, 59, 524, DateTimeKind.Utc).AddTicks(1993),
+                            RegistrationTime = new DateTime(2024, 11, 7, 16, 41, 48, 879, DateTimeKind.Utc).AddTicks(6956),
                             TwoFactorEnabled = false,
                             UserName = "user4"
                         },
@@ -278,13 +278,13 @@ namespace BusinessObjects.Migrations
                         {
                             Id = 5,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "f9532a28-d40c-4153-a148-3945d3641a6e",
+                            ConcurrencyStamp = "9fc7012d-e5f6-4bb8-b67a-9ddde2dca1cd",
                             Email = "user5@example.com",
                             EmailConfirmed = false,
                             FullName = "User Five",
                             LockoutEnabled = false,
                             PhoneNumberConfirmed = false,
-                            RegistrationTime = new DateTime(2024, 11, 2, 16, 12, 59, 524, DateTimeKind.Utc).AddTicks(2000),
+                            RegistrationTime = new DateTime(2024, 11, 7, 16, 41, 48, 879, DateTimeKind.Utc).AddTicks(6961),
                             TwoFactorEnabled = false,
                             UserName = "user5"
                         },
@@ -292,13 +292,13 @@ namespace BusinessObjects.Migrations
                         {
                             Id = 6,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "37330816-e4f0-4397-8235-13dd5c8b7af6",
+                            ConcurrencyStamp = "7e7cdf90-ee06-4c46-86a9-7f40e60b8e20",
                             Email = "userSystem1@example.com",
                             EmailConfirmed = false,
                             FullName = "User System",
                             LockoutEnabled = false,
                             PhoneNumberConfirmed = false,
-                            RegistrationTime = new DateTime(2024, 11, 2, 16, 12, 59, 524, DateTimeKind.Utc).AddTicks(2006),
+                            RegistrationTime = new DateTime(2024, 11, 7, 16, 41, 48, 879, DateTimeKind.Utc).AddTicks(6967),
                             TwoFactorEnabled = false,
                             UserName = "userSystem1"
                         },
@@ -306,13 +306,13 @@ namespace BusinessObjects.Migrations
                         {
                             Id = 7,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "30e93a5a-b0e4-43f2-b126-80c8fc5c03ae",
+                            ConcurrencyStamp = "6a20e3fa-a689-44c7-ad78-4fe3248dfcbc",
                             Email = "Admin1@example.com",
                             EmailConfirmed = false,
                             FullName = "Admin 1",
                             LockoutEnabled = false,
                             PhoneNumberConfirmed = false,
-                            RegistrationTime = new DateTime(2024, 11, 2, 16, 12, 59, 524, DateTimeKind.Utc).AddTicks(2012),
+                            RegistrationTime = new DateTime(2024, 11, 7, 16, 41, 48, 879, DateTimeKind.Utc).AddTicks(7001),
                             TwoFactorEnabled = false,
                             UserName = "Admin1"
                         });
@@ -534,9 +534,6 @@ namespace BusinessObjects.Migrations
                     b.Property<int>("PostById")
                         .HasColumnType("int");
 
-                    b.Property<int?>("PostByUserId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
 
@@ -544,7 +541,7 @@ namespace BusinessObjects.Migrations
 
                     b.HasIndex("GroupId");
 
-                    b.HasIndex("PostByUserId");
+                    b.HasIndex("PostById");
 
                     b.ToTable("GroupPosts");
                 });
@@ -813,9 +810,6 @@ namespace BusinessObjects.Migrations
                     b.Property<int>("CommentedById")
                         .HasColumnType("int");
 
-                    b.Property<int?>("CommentedByUserId")
-                        .HasColumnType("int");
-
                     b.Property<bool>("IsEdited")
                         .HasColumnType("bit");
 
@@ -824,7 +818,7 @@ namespace BusinessObjects.Migrations
 
                     b.HasKey("CommentId");
 
-                    b.HasIndex("CommentedByUserId");
+                    b.HasIndex("CommentedById");
 
                     b.HasIndex("PostId");
 
@@ -863,9 +857,6 @@ namespace BusinessObjects.Migrations
 
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("ApplicationUserId")
-                        .HasColumnType("int");
 
                     b.Property<DateTime?>("Birthdate")
                         .HasColumnType("datetime2");
@@ -911,7 +902,8 @@ namespace BusinessObjects.Migrations
 
                     b.HasKey("ProfileId");
 
-                    b.HasIndex("ApplicationUserId");
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("Profiles");
 
@@ -920,7 +912,7 @@ namespace BusinessObjects.Migrations
                         {
                             ProfileId = 1,
                             Address = "123 Main St, Hanoi",
-                            Birthdate = new DateTime(2024, 11, 2, 16, 12, 59, 524, DateTimeKind.Utc).AddTicks(2173),
+                            Birthdate = new DateTime(2024, 11, 7, 16, 41, 48, 879, DateTimeKind.Utc).AddTicks(7378),
                             FullName = "User One",
                             Gender = "Male",
                             ImageUser = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png",
@@ -931,7 +923,7 @@ namespace BusinessObjects.Migrations
                         {
                             ProfileId = 2,
                             Address = "456 Secondary St, Ho Chi Minh",
-                            Birthdate = new DateTime(2024, 11, 2, 16, 12, 59, 524, DateTimeKind.Utc).AddTicks(2186),
+                            Birthdate = new DateTime(2024, 11, 7, 16, 41, 48, 879, DateTimeKind.Utc).AddTicks(7390),
                             FullName = "User Two",
                             Gender = "Male",
                             ImageUser = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png",
@@ -942,7 +934,7 @@ namespace BusinessObjects.Migrations
                         {
                             ProfileId = 3,
                             Address = "789 Tertiary St, Da Nang",
-                            Birthdate = new DateTime(2024, 11, 2, 16, 12, 59, 524, DateTimeKind.Utc).AddTicks(2190),
+                            Birthdate = new DateTime(2024, 11, 7, 16, 41, 48, 879, DateTimeKind.Utc).AddTicks(7394),
                             FullName = "User Three",
                             Gender = "Male",
                             ImageUser = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png",
@@ -953,7 +945,7 @@ namespace BusinessObjects.Migrations
                         {
                             ProfileId = 4,
                             Address = "101 Eleventh St, Hue",
-                            Birthdate = new DateTime(2024, 11, 2, 16, 12, 59, 524, DateTimeKind.Utc).AddTicks(2193),
+                            Birthdate = new DateTime(2024, 11, 7, 16, 41, 48, 879, DateTimeKind.Utc).AddTicks(7397),
                             FullName = "User Four",
                             Gender = "Male",
                             ImageUser = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png",
@@ -964,7 +956,7 @@ namespace BusinessObjects.Migrations
                         {
                             ProfileId = 5,
                             Address = "202 Twelfth St, Phu Quoc",
-                            Birthdate = new DateTime(2024, 11, 2, 16, 12, 59, 524, DateTimeKind.Utc).AddTicks(2197),
+                            Birthdate = new DateTime(2024, 11, 7, 16, 41, 48, 879, DateTimeKind.Utc).AddTicks(7400),
                             FullName = "User Five",
                             Gender = "Male",
                             ImageUser = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png",
@@ -1230,6 +1222,10 @@ namespace BusinessObjects.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserHomeId"));
 
+                    b.Property<string>("AllowedSmoking")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Amenities")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -1237,25 +1233,26 @@ namespace BusinessObjects.Migrations
                     b.Property<int?>("ApplicationUserId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("GuestPreferences")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("HouseRules")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsPrivateRoom")
-                        .HasColumnType("bit");
-
                     b.Property<int>("MaxGuests")
                         .HasColumnType("int");
 
+                    b.Property<string>("OverallDescription")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RoomDescription")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("RoomMateInfo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RoomType")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -1346,9 +1343,6 @@ namespace BusinessObjects.Migrations
                     b.Property<int>("CreatedById")
                         .HasColumnType("int");
 
-                    b.Property<int?>("CreatedByUserId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
@@ -1370,21 +1364,27 @@ namespace BusinessObjects.Migrations
 
                     b.HasKey("GroupId");
 
-                    b.HasIndex("CreatedByUserId");
+                    b.HasIndex("CreatedById");
 
                     b.ToTable("Groups");
                 });
 
             modelBuilder.Entity("GroupParticipant", b =>
                 {
-                    b.Property<int>("UserId")
+                    b.Property<int?>("UserId")
                         .HasColumnType("int");
 
-                    b.Property<int>("GroupId")
+                    b.Property<int?>("GroupId")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("JoinAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("JoinedStatus")
                         .HasColumnType("bit");
+
+                    b.Property<DateTime>("RequestAt")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("UserId", "GroupId");
 
@@ -1608,16 +1608,18 @@ namespace BusinessObjects.Migrations
                     b.HasOne("Group", "Group")
                         .WithMany("GroupPosts")
                         .HasForeignKey("GroupId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("BusinessObjects.Entities.ApplicationUser", "PostByUser")
-                        .WithMany()
-                        .HasForeignKey("PostByUserId");
+                    b.HasOne("BusinessObjects.Entities.ApplicationUser", "PostBy")
+                        .WithMany("GroupPosts")
+                        .HasForeignKey("PostById")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("Group");
 
-                    b.Navigation("PostByUser");
+                    b.Navigation("PostBy");
                 });
 
             modelBuilder.Entity("BusinessObjects.Entities.GroupPostPhoto", b =>
@@ -1716,9 +1718,11 @@ namespace BusinessObjects.Migrations
 
             modelBuilder.Entity("BusinessObjects.Entities.PostComment", b =>
                 {
-                    b.HasOne("BusinessObjects.Entities.ApplicationUser", "CommentedByUser")
-                        .WithMany()
-                        .HasForeignKey("CommentedByUserId");
+                    b.HasOne("BusinessObjects.Entities.ApplicationUser", "CommentedBy")
+                        .WithMany("PostComments")
+                        .HasForeignKey("CommentedById")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("BusinessObjects.Entities.GroupPost", "Post")
                         .WithMany("Comments")
@@ -1726,7 +1730,7 @@ namespace BusinessObjects.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("CommentedByUser");
+                    b.Navigation("CommentedBy");
 
                     b.Navigation("Post");
                 });
@@ -1744,11 +1748,13 @@ namespace BusinessObjects.Migrations
 
             modelBuilder.Entity("BusinessObjects.Entities.Profile", b =>
                 {
-                    b.HasOne("BusinessObjects.Entities.ApplicationUser", "ApplicationUser")
-                        .WithMany("Profiles")
-                        .HasForeignKey("ApplicationUserId");
+                    b.HasOne("BusinessObjects.Entities.ApplicationUser", "User")
+                        .WithOne("Profiles")
+                        .HasForeignKey("BusinessObjects.Entities.Profile", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("ApplicationUser");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("BusinessObjects.Entities.Reaction", b =>
@@ -1898,11 +1904,13 @@ namespace BusinessObjects.Migrations
 
             modelBuilder.Entity("Group", b =>
                 {
-                    b.HasOne("BusinessObjects.Entities.ApplicationUser", "CreatedByUser")
+                    b.HasOne("BusinessObjects.Entities.ApplicationUser", "CreatedBy")
                         .WithMany()
-                        .HasForeignKey("CreatedByUserId");
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("CreatedByUser");
+                    b.Navigation("CreatedBy");
                 });
 
             modelBuilder.Entity("GroupParticipant", b =>
@@ -1916,7 +1924,7 @@ namespace BusinessObjects.Migrations
                     b.HasOne("BusinessObjects.Entities.ApplicationUser", "User")
                         .WithMany("GroupParticipants")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Group");
@@ -1987,6 +1995,8 @@ namespace BusinessObjects.Migrations
 
                     b.Navigation("GroupParticipants");
 
+                    b.Navigation("GroupPosts");
+
                     b.Navigation("Messages");
 
                     b.Navigation("Notifications");
@@ -1999,7 +2009,10 @@ namespace BusinessObjects.Migrations
 
                     b.Navigation("PastTripPosts");
 
-                    b.Navigation("Profiles");
+                    b.Navigation("PostComments");
+
+                    b.Navigation("Profiles")
+                        .IsRequired();
 
                     b.Navigation("Reactions");
 
