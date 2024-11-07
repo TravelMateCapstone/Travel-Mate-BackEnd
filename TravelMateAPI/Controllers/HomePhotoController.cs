@@ -1,4 +1,5 @@
 ﻿using BusinessObjects.Entities;
+using BusinessObjects.Utils.Request;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -101,6 +102,50 @@ namespace TravelMateAPI.Controllers
                 return BadRequest(new { Message = ex.Message });
             }
         }
+
+        [HttpPost("currentAddImagesHome")]
+        public async Task<IActionResult> AddHomePhotosForCurrentUser([FromBody] AddHomePhotosRequest request)
+        {
+            if (request.PhotoUrls == null || request.PhotoUrls.Count == 0)
+            {
+                return BadRequest("At least one photo URL is required.");
+            }
+
+            // Lấy người dùng hiện tại
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null)
+            {
+                return Unauthorized("User not found.");
+            }
+
+            try
+            {
+                // Kiểm tra UserHomeId có hợp lệ hay không
+                var userHomeId = request.UserHomeId;
+                if (userHomeId <= 0)
+                {
+                    return BadRequest("Invalid UserHomeId.");
+                }
+
+                // Tạo danh sách các đối tượng HomePhoto từ danh sách URL ảnh
+                var homePhotos = request.PhotoUrls.Select(photoUrl => new HomePhoto
+                {
+                    UserHomeId = userHomeId, // Gán UserHomeId từ request
+                    HomePhotoUrl = photoUrl // Gán URL ảnh vào HomePhotoUrl
+                }).ToList();
+
+                // Thêm tất cả các ảnh vào cơ sở dữ liệu trong một lần
+                await _homePhotoRepository.AddHomePhotosAsync(homePhotos);
+
+                // Trả về phản hồi thành công với tất cả ảnh đã thêm
+                return Ok(new { Message = "Photos added successfully." });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
         // DELETE: api/HomePhoto/{photoId}
         [HttpDelete("{photoId}")]
         public async Task<IActionResult> DeleteHomePhoto(int photoId)

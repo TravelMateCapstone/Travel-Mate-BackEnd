@@ -87,6 +87,21 @@ namespace DataAccess
                 throw new Exception($"Photo with ID {photoId} not found.");
             }
         }
+
+        public async Task<List<HomePhoto>> AddHomePhotosAsync(List<HomePhoto> newHomePhotos)
+        {
+            if (newHomePhotos == null || newHomePhotos.Count == 0)
+            {
+                throw new ArgumentNullException(nameof(newHomePhotos), "Photo list cannot be null or empty.");
+            }
+
+            // Thêm tất cả các ảnh vào bảng HomePhotos
+            _dbContext.HomePhotos.AddRange(newHomePhotos);
+            await _dbContext.SaveChangesAsync();
+
+            return newHomePhotos; // Trả về danh sách ảnh đã thêm
+        }
+
     }
 
 
