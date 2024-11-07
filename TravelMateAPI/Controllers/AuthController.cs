@@ -149,20 +149,21 @@ namespace TravelMateAPI.Controllers
             //}
 
             // Tạo token xác thực email
-            //var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
 
-            //// Tạo liên kết xác nhận email
-            //var confirmationLink = Url.Action("ConfirmEmail", "Auth", new { userId = user.Id, token = token }, Request.Scheme);
+            // Tạo liên kết xác nhận email
+            var confirmationLink = Url.Action("ConfirmEmail", "Auth", new { userId = user.Id, token = token }, Request.Scheme);
 
-            //// Gửi email xác nhận
-            //MailContent content = new MailContent
-            //{
-            //    To = user.Email,
-            //    Subject = "Xác nhận tài khoản - Travel Mate",
-            //    Body = $"<p>Xin chào, vui lòng xác nhận email của bạn bằng cách nhấp vào liên kết bên dưới:</p><a href='{confirmationLink}'>Xác nhận email</a>"
-            //};
+            // Gửi email xác nhận
+            MailContent content = new MailContent
+            {
+                To = user.Email,
+                Subject = "Xác nhận tài khoản - Travel Mate",
+                //Body = $"<p>Xin chào, vui lòng xác nhận email của bạn bằng cách nhấp vào liên kết bên dưới:</p><a href='{confirmationLink}'>Xác nhận email</a>"
+                Body = $"<p>Xin chào, chào mừng bạn đến với Travel Mate ♥</a>"
+            };
 
-            //await _mailService.SendMail(content);
+            await _mailService.SendMail(content);
 
             return Ok("Đăng ký thành công. Vui lòng kiểm tra email để xác nhận tài khoản.");
         }

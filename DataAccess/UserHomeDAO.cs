@@ -19,8 +19,14 @@ namespace DataAccess
 
         public async Task<List<UserHome>> GetAllUserHomesAsync()
         {
-            return await _dbContext.UserHomes.Include(uh => uh.ApplicationUser).ToListAsync();
+            return await _dbContext.UserHomes
+                           .Include(uh => uh.ApplicationUser)
+                           .ThenInclude(u => u.Profiles) // Thêm Include cho Profile của ApplicationUser
+                           .Include(uh => uh.HomePhotos) // Lấy kèm HomePhotos nếu cần
+                           .ToListAsync();
+            //return await _dbContext.UserHomes.Include(uh => uh.ApplicationUser).ToListAsync();
         }
+
 
         public async Task<UserHome> GetUserHomeByIdAsync(int userHomeId)
         {

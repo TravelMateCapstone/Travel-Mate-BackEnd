@@ -109,7 +109,7 @@ namespace TravelMateAPI.Services.FindLocal
                     (user, profile, matchingActivitiesCount) =>
                     {
                         // Gán Profile cho User
-                        //user.Profiles = profile;
+                        user.Profiles = profile;
                         // Nếu bạn chỉ lấy một Profile, hãy chuyển nó thành một danh sách
                         //user.Profiles = new List<Profile> { profile };
                         // Gán MatchingActivitiesCount
@@ -163,6 +163,7 @@ namespace TravelMateAPI.Services.FindLocal
                     (user, profile, matchingActivitiesCount) =>
                     {
                         // Gán Profile cho User
+                        user.Profiles = profile;
                         //user.Profiles = new List<Profile> { profile };
                         // Gán MatchingActivitiesCount
                         user.MatchingActivitiesCount = matchingActivitiesCount;
