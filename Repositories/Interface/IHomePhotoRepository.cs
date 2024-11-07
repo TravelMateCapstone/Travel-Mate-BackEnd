@@ -17,6 +17,7 @@ namespace Repositories.Interface
         Task<HomePhoto> GetPhotoByIdAsync(int photoId);
         // Thêm phương thức để xóa ảnh theo ID
         Task DeleteHomePhotoAsync(int photoId);
+        Task<List<HomePhoto>> AddHomePhotosAsync(List<HomePhoto> newHomePhotos);
     }
 
 }

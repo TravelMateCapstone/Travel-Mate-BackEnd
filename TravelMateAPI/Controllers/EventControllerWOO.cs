@@ -243,7 +243,7 @@ namespace TravelMateAPI.Controllers
             eventItem.EndAt = updatedEvent.EndAt;
             eventItem.EventLocation = updatedEvent.EventLocation;
 
-            await _eventRepository.UpdateEventAsync(updatedEvent);
+            await _eventRepository.UpdateEventAsync(eventItem);
             return Ok(new
             {
                 Success = true,
