@@ -17,6 +17,7 @@ namespace DataAccess
         {
             return _dbContext.PostComments
                 .Include(p => p.CommentedBy)
+                .ThenInclude(p => p.Profiles)
                 .Where(p => p.PostId == postId).ToList();
         }
 
@@ -24,6 +25,7 @@ namespace DataAccess
         {
             return await _dbContext.PostComments
                 .Include(p => p.CommentedBy)
+                .ThenInclude(p => p.Profiles)
                 .FirstOrDefaultAsync(p => p.CommentId == commentId);
         }
 
@@ -53,9 +55,7 @@ namespace DataAccess
         public async Task<bool> IsGroupMemberOrAdmin(int groupId, int userId)
         {
             return await _dbContext.Groups
-                .AnyAsync(g => g.GroupId == groupId &&
-                               (g.CreatedById == userId ||
-                                g.GroupParticipants.Any(p => p.UserId == userId && p.GroupId == groupId && p.JoinedStatus)));
+                .AnyAsync(g => g.GroupId == groupId && (g.CreatedById == userId || g.GroupParticipants.Any(p => p.UserId == userId && p.GroupId == groupId && p.JoinedStatus)));
         }
 
         public async Task<bool> IsCommentCreator(int commentId, int userId)
