@@ -23,7 +23,9 @@ namespace TravelMateAPI.Models
             //.ForMember(dest => dest.Comments, opt => opt.MapFrom(src => src.Comments));
 
             CreateMap<PostComment, PostCommentDTO>()
-                .ForMember(dest => dest.Commentor, opt => opt.MapFrom(src => src.CommentedBy.FullName));
+                .ForMember(dest => dest.Commentor, opt => opt.MapFrom(src => src.CommentedBy.FullName))
+                .ForMember(dest => dest.CommentorAvatar, opt => opt.MapFrom(src => src.CommentedBy.Profiles.ImageUser));
+
 
             CreateMap<GroupParticipant, GroupMemberDTO>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.User.Id))
