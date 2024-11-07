@@ -21,6 +21,7 @@ namespace DataAccess
                 .ThenInclude(g => g.Profiles)
                 .Include(g => g.Comments)
                 .Include(g => g.PostPhotos)
+                .OrderByDescending(g => g.CreatedTime)
                 .ToListAsync();
         }
 

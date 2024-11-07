@@ -8,7 +8,7 @@
         public string Title { get; set; }
         public DateTime CreatedTime { get; set; }
         public List<string> PostPhotos { get; set; }
-        public List<PostCommentDTO> Comments { get; set; }
+        //public List<PostCommentDTO> Comments { get; set; }
     }
 
 }

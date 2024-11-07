@@ -15,7 +15,7 @@ namespace DataAccess
         //Get UnJoin Group
         public async Task<IQueryable<Group>> GetGroupsAsync()
         {
-            return _dbContext.Groups.Include(g => g.GroupParticipants);
+            return _dbContext.Groups.Include(g => g.GroupParticipants).OrderByDescending(g => g.CreateAt);
         }
 
         public async Task<Group> GetGroupByIdAsync(int groupId)
@@ -27,13 +27,15 @@ namespace DataAccess
         public async Task<IQueryable<Group>> GetUnjoinedGroupsAsync(int userId)
         {
             return _dbContext.Groups.Include(g => g.GroupParticipants)
-                .Where(g => !g.GroupParticipants.Any(p => p.UserId == userId) && g.CreatedById != userId);
+                .Where(g => !g.GroupParticipants.Any(p => p.UserId == userId && p.JoinedStatus) && g.CreatedById != userId)
+                .OrderByDescending(g => g.CreateAt);
         }
 
         public async Task<IQueryable<Group>> GetCreatedGroupsAsync(int userId)
         {
             return _dbContext.Groups
-                .Where(g => g.CreatedById == userId);
+                .Where(g => g.CreatedById == userId)
+                .OrderByDescending(g => g.CreateAt);
         }
 
         public async Task<Group> GetCreatedGroupByIdAsync(int userId, int groupId)
@@ -47,7 +49,8 @@ namespace DataAccess
         public async Task<IQueryable<Group>> GetJoinedGroupsAsync(int userId)
         {
             return _dbContext.Groups
-        .Where(g => g.GroupParticipants.Any(gp => gp.UserId == userId && gp.JoinedStatus) && g.CreatedById != userId);
+        .Where(g => g.GroupParticipants.Any(gp => gp.UserId == userId && gp.JoinedStatus) && g.CreatedById != userId)
+        .OrderByDescending(g => g.CreateAt);
         }
 
         public async Task<Group> GetJoinedGroupByIdAsync(int userId, int groupId)
@@ -59,7 +62,11 @@ namespace DataAccess
 
         public async Task<IQueryable<GroupParticipant>> ListJoinGroupRequests(int groupId)
         {
-            return _dbContext.GroupParticipants.Where(g => g.GroupId == groupId && !g.JoinedStatus);
+            return _dbContext.GroupParticipants
+                .Include(g => g.User)
+                .ThenInclude(g => g.Profiles)
+                .Where(g => g.GroupId == groupId && !g.JoinedStatus)
+                .OrderByDescending(g => g.RequestAt);
         }
 
         public async Task<bool> DoesRequestSend(int groupId, int userId)
@@ -69,7 +76,11 @@ namespace DataAccess
 
         public async Task<IQueryable<GroupParticipant>> GetGroupMembers(int groupId)
         {
-            return _dbContext.GroupParticipants.Where(g => g.GroupId == groupId && g.JoinedStatus);
+            return _dbContext.GroupParticipants
+                .Include(g => g.User)
+                .ThenInclude(g => g.Profiles)
+                .Where(g => g.GroupId == groupId && g.JoinedStatus)
+                .OrderByDescending(g => g.JoinAt);
         }
 
         //Ask to join a group
@@ -79,7 +90,8 @@ namespace DataAccess
             {
                 UserId = userId,
                 GroupId = groupId,
-                JoinedStatus = false
+                JoinedStatus = false,
+                RequestAt = DateTime.UtcNow
             };
 
             await _dbContext.GroupParticipants.AddAsync(newParticipant);
@@ -103,15 +115,18 @@ namespace DataAccess
         //Group creator accept join 
         public async Task AcceptJoinGroup(int userId, int groupId)
         {
+            var group = await _dbContext.Groups.FindAsync(groupId);
+            var getGroupParticipant = await _dbContext.GroupParticipants.FindAsync(groupId, userId);
             var updateParticipantStatus = new GroupParticipant()
             {
                 UserId = userId,
                 GroupId = groupId,
-                JoinedStatus = true
+                JoinedStatus = true,
+                RequestAt = getGroupParticipant.RequestAt,
+                JoinAt = DateTime.UtcNow
             };
 
             _dbContext.GroupParticipants.Update(updateParticipantStatus);
-            var group = await _dbContext.Groups.FindAsync(groupId);
 
             group.NumberOfParticipants += 1;
             await _dbContext.SaveChangesAsync();

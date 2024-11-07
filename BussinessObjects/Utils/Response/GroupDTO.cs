@@ -12,8 +12,9 @@
         public string? Description { get; set; }
         public string? GroupImageUrl { get; set; }
 
+        public int NumberOfParticipants { get; set; }
+
         public int CreatedById { get; set; }
 
-        public ICollection<GroupParticipantDTO>? Participants { get; set; }
     }
 }
