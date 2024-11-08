@@ -103,5 +103,10 @@ namespace Repositories
         {
             return await _groupDAO.GetGroupMember(userId, groupId);
         }
+
+        public async Task RejectJoinGroupRequest(GroupParticipant groupParticipant)
+        {
+            await _groupDAO.RejectJoinGroupRequest(groupParticipant);
+        }
     }
 }

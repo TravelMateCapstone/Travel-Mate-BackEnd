@@ -242,6 +242,24 @@ namespace TravelMateAPI.Controllers
             return Ok("Join request accepted.");
         }
 
+        [HttpPost("JoinedGroups/{groupId}/RejectJoinGroup")]
+        public async Task<IActionResult> RejectJoinGroup([FromQuery] int requesterId, int groupId)
+        {
+            var userId = GetUserId();
+            if (userId == -1)
+                return Unauthorized(new { Message = "Unauthorized access." });
+
+            var isGroupCreator = await _groupRepository.GetCreatedGroupByIdAsync(userId, groupId);
+            if (isGroupCreator == null)
+                return NotFound(new { Message = "Access denied. You are not a group admin" });
+
+            var removeRequest = await _groupRepository.GetJoinRequestParticipant(requesterId, groupId);
+
+            await _groupRepository.RejectJoinGroupRequest(removeRequest);
+
+            return Ok("Reject request successful.");
+        }
+
 
         [HttpDelete("LeaveGroup/{groupId}")]
         public async Task<IActionResult> LeaveGroup(int groupId)

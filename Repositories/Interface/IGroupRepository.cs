@@ -24,6 +24,7 @@
 
         // Accept a user's request to join the group
         Task AcceptJoinGroup(GroupParticipant groupParticipant);
+        Task RejectJoinGroupRequest(GroupParticipant groupParticipant);
 
         Task<IEnumerable<GroupParticipant>> ListJoinGroupRequests(int groupId);
         Task<IEnumerable<GroupParticipant>> GetGroupMembers(int groupId);

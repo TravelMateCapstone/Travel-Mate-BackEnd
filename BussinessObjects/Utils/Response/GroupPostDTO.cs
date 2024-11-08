@@ -10,7 +10,8 @@ namespace BusinessObjects.Utils.Response
         public string PostCreatorAvatar { get; set; }
         public string Title { get; set; }
         public DateTime CreatedTime { get; set; }
-        public List<GroupPostPhoto> PostPhotos { get; set; }
+        public List<GroupPostPhoto> GroupPostPhotos { get; set; }
+
         //public List<PostCommentDTO> Comments { get; set; }
     }
 
