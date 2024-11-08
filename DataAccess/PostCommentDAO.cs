@@ -26,7 +26,7 @@ namespace DataAccess
             return await _dbContext.PostComments
                 .Include(p => p.CommentedBy)
                 .ThenInclude(p => p.Profiles)
-                .FirstOrDefaultAsync(p => p.CommentId == commentId);
+                .FirstOrDefaultAsync(p => p.PostCommentId == commentId);
         }
 
         public async Task<PostComment> AddGroupPostCommentAsync(PostComment postComment)
@@ -61,7 +61,7 @@ namespace DataAccess
         public async Task<bool> IsCommentCreator(int commentId, int userId)
         {
             return await _dbContext.PostComments
-                .AnyAsync(p => p.CommentId == commentId && p.CommentedById == userId);
+                .AnyAsync(p => p.PostCommentId == commentId && p.CommentedById == userId);
         }
     }
 }

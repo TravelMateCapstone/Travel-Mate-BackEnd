@@ -64,9 +64,9 @@ namespace Repositories
             await _groupDAO.JoinGroup(userId, groupId);
         }
 
-        public async Task LeaveGroup(int userId, int groupId)
+        public async Task LeaveGroup(GroupParticipant groupParticipant)
         {
-            await _groupDAO.LeaveGroup(userId, groupId);
+            await _groupDAO.LeaveGroup(groupParticipant);
         }
 
         public async Task UpdateAsync(Group group)
@@ -97,6 +97,11 @@ namespace Repositories
         public async Task<GroupParticipant> GetJoinRequestParticipant(int userId, int groupId)
         {
             return await _groupDAO.GetJoinRequestParticipant(userId, groupId);
+        }
+
+        public async Task<GroupParticipant> GetGroupMember(int userId, int groupId)
+        {
+            return await _groupDAO.GetGroupMember(userId, groupId);
         }
     }
 }
