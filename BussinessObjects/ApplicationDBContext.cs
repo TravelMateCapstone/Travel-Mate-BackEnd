@@ -520,48 +520,64 @@ namespace BusinessObjects
                 .WithMany(u => u.Travellers)
                 .HasForeignKey(ep => ep.DestinationId);
 
-            modelBuilder.Entity<Reaction>()
-       .HasKey(ot => new { ot.ReactedById, ot.PostId });
+            //     modelBuilder.Entity<Reaction>()
+            //.HasKey(ot => new { ot.ReactedById, ot.PostId });
 
-            modelBuilder.Entity<Reaction>()
-                .HasOne(ot => ot.ReactedByUser)
-                .WithMany(e => e.Reactions)
-                .HasForeignKey(ep => ep.ReactedById);
+            //modelBuilder.Entity<Reaction>()
+            //    .HasOne(ot => ot.ReactedByUser)
+            //    .WithMany(e => e.Reactions)
+            //    .HasForeignKey(ep => ep.ReactedById);
 
-            modelBuilder.Entity<Reaction>()
-                .HasOne(ep => ep.GroupPost)
-                .WithMany(u => u.Reactions)
-                .HasForeignKey(ep => ep.PostId);
+            //modelBuilder.Entity<Reaction>()
+            //    .HasOne(ep => ep.GroupPost)
+            //    .WithMany(u => u.Reactions)
+            //    .HasForeignKey(ep => ep.PostId);
 
             modelBuilder.Entity<UserDescription>()
                 .HasKey(ud => ud.UserId);
 
             modelBuilder.Entity<GroupParticipant>()
-            .HasKey(g => new { g.UserId, g.GroupId });
+               .HasOne(gp => gp.Group)
+               .WithMany(g => g.GroupParticipants)
+               .HasForeignKey(gp => gp.GroupId)
+               .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<GroupParticipant>()
-                 .HasOne(gp => gp.Group)
-                 .WithMany(g => g.GroupParticipants)
-                 .HasForeignKey(gp => gp.GroupId)
-                 .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<GroupParticipant>()
-                 .HasOne(gp => gp.User)
-                 .WithMany(g => g.GroupParticipants)
-                 .HasForeignKey(gp => gp.UserId)
-            .OnDelete(DeleteBehavior.Restrict);
+               .HasOne(gp => gp.User)
+               .WithMany(g => g.GroupParticipants)
+               .HasForeignKey(gp => gp.UserId)
+               .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<GroupPost>()
-                 .HasOne(gp => gp.Group)
-                 .WithMany(g => g.GroupPosts)
-                 .HasForeignKey(gp => gp.GroupId)
-                 .OnDelete(DeleteBehavior.Restrict);
+                .HasOne(p => p.Group)
+                .WithMany(g => g.GroupPosts)
+                .HasForeignKey(p => p.GroupId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<GroupPost>()
-                 .HasOne(gp => gp.PostBy)
-                 .WithMany(g => g.GroupPosts)
-                 .HasForeignKey(gp => gp.PostById)
-                 .OnDelete(DeleteBehavior.Restrict);
+                .HasOne(p => p.PostBy)
+                .WithMany(g => g.GroupPosts)
+                .HasForeignKey(p => p.PostById)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<PostComment>()
+                .HasOne(pc => pc.Post)
+                .WithMany(p => p.PostComments)
+                .HasForeignKey(pc => pc.PostId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<PostComment>()
+                .HasOne(pc => pc.CommentedBy)
+                .WithMany(p => p.PostComments)
+                .HasForeignKey(pc => pc.CommentedById)
+                .OnDelete(DeleteBehavior.Restrict);
+
+
+            modelBuilder.Entity<GroupPostPhoto>()
+                .HasOne(pp => pp.Post)
+                .WithMany(p => p.GroupPostPhotos)
+                .HasForeignKey(pp => pp.PostId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             base.OnModelCreating(modelBuilder);
         }

@@ -480,6 +480,25 @@ namespace BusinessObjects.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Reactions",
+                columns: table => new
+                {
+                    ReactionId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ReactedById = table.Column<int>(type: "int", nullable: false),
+                    ReactedByUserId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Reactions", x => x.ReactionId);
+                    table.ForeignKey(
+                        name: "FK_Reactions_AspNetUsers_ReactedByUserId",
+                        column: x => x.ReactedByUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Reports",
                 columns: table => new
                 {
@@ -740,15 +759,17 @@ namespace BusinessObjects.Migrations
                 name: "GroupParticipants",
                 columns: table => new
                 {
-                    GroupId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: false),
+                    GroupParticipantId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    GroupId = table.Column<int>(type: "int", nullable: true),
+                    UserId = table.Column<int>(type: "int", nullable: true),
                     JoinedStatus = table.Column<bool>(type: "bit", nullable: false),
                     RequestAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     JoinAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_GroupParticipants", x => new { x.UserId, x.GroupId });
+                    table.PrimaryKey("PK_GroupParticipants", x => x.GroupParticipantId);
                     table.ForeignKey(
                         name: "FK_GroupParticipants_AspNetUsers_UserId",
                         column: x => x.UserId,
@@ -767,16 +788,16 @@ namespace BusinessObjects.Migrations
                 name: "GroupPosts",
                 columns: table => new
                 {
-                    PostId = table.Column<int>(type: "int", nullable: false)
+                    GroupPostId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    PostById = table.Column<int>(type: "int", nullable: false),
-                    GroupId = table.Column<int>(type: "int", nullable: false)
+                    PostById = table.Column<int>(type: "int", nullable: true),
+                    GroupId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_GroupPosts", x => x.PostId);
+                    table.PrimaryKey("PK_GroupPosts", x => x.GroupPostId);
                     table.ForeignKey(
                         name: "FK_GroupPosts_AspNetUsers_PostById",
                         column: x => x.PostById,
@@ -788,7 +809,7 @@ namespace BusinessObjects.Migrations
                         column: x => x.GroupId,
                         principalTable: "Groups",
                         principalColumn: "GroupId",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -841,19 +862,19 @@ namespace BusinessObjects.Migrations
                 name: "GroupPostPhotos",
                 columns: table => new
                 {
-                    PhotoId = table.Column<int>(type: "int", nullable: false)
+                    GroupPostPhotoId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     PhotoUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PostId = table.Column<int>(type: "int", nullable: false)
+                    PostId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_GroupPostPhotos", x => x.PhotoId);
+                    table.PrimaryKey("PK_GroupPostPhotos", x => x.GroupPostPhotoId);
                     table.ForeignKey(
                         name: "FK_GroupPostPhotos_GroupPosts_PostId",
                         column: x => x.PostId,
                         principalTable: "GroupPosts",
-                        principalColumn: "PostId",
+                        principalColumn: "GroupPostId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -861,52 +882,28 @@ namespace BusinessObjects.Migrations
                 name: "PostComments",
                 columns: table => new
                 {
-                    CommentId = table.Column<int>(type: "int", nullable: false)
+                    PostCommentId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    CommentedById = table.Column<int>(type: "int", nullable: false),
-                    PostId = table.Column<int>(type: "int", nullable: false),
+                    CommentedById = table.Column<int>(type: "int", nullable: true),
+                    PostId = table.Column<int>(type: "int", nullable: true),
                     IsEdited = table.Column<bool>(type: "bit", nullable: false),
                     CommentText = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CommentTime = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PostComments", x => x.CommentId);
+                    table.PrimaryKey("PK_PostComments", x => x.PostCommentId);
                     table.ForeignKey(
                         name: "FK_PostComments_AspNetUsers_CommentedById",
                         column: x => x.CommentedById,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_PostComments_GroupPosts_PostId",
                         column: x => x.PostId,
                         principalTable: "GroupPosts",
-                        principalColumn: "PostId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Reactions",
-                columns: table => new
-                {
-                    ReactedById = table.Column<int>(type: "int", nullable: false),
-                    PostId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Reactions", x => new { x.ReactedById, x.PostId });
-                    table.ForeignKey(
-                        name: "FK_Reactions_AspNetUsers_ReactedById",
-                        column: x => x.ReactedById,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Reactions_GroupPosts_PostId",
-                        column: x => x.PostId,
-                        principalTable: "GroupPosts",
-                        principalColumn: "PostId",
+                        principalColumn: "GroupPostId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -941,13 +938,13 @@ namespace BusinessObjects.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FullName", "LockoutEnabled", "LockoutEnd", "MatchingActivitiesCount", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "RegistrationTime", "SecurityStamp", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { 1, 0, "ff6ad642-3771-47e9-a8bf-a6b587863466", "user1@example.com", false, "User One", false, null, null, null, null, null, null, false, new DateTime(2024, 11, 7, 16, 41, 48, 879, DateTimeKind.Utc).AddTicks(6933), null, false, "user1" },
-                    { 2, 0, "33dbc910-805b-480d-b404-c8993c7e67ec", "user2@example.com", false, "User Two", false, null, null, null, null, null, null, false, new DateTime(2024, 11, 7, 16, 41, 48, 879, DateTimeKind.Utc).AddTicks(6943), null, false, "user2" },
-                    { 3, 0, "a80aae01-be70-40bc-924a-79d9c06a3810", "user3@example.com", false, "User Three", false, null, null, null, null, null, null, false, new DateTime(2024, 11, 7, 16, 41, 48, 879, DateTimeKind.Utc).AddTicks(6950), null, false, "user3" },
-                    { 4, 0, "97072e8a-1f59-48b1-9367-dc57f94b9449", "user4@example.com", false, "User Four", false, null, null, null, null, null, null, false, new DateTime(2024, 11, 7, 16, 41, 48, 879, DateTimeKind.Utc).AddTicks(6956), null, false, "user4" },
-                    { 5, 0, "9fc7012d-e5f6-4bb8-b67a-9ddde2dca1cd", "user5@example.com", false, "User Five", false, null, null, null, null, null, null, false, new DateTime(2024, 11, 7, 16, 41, 48, 879, DateTimeKind.Utc).AddTicks(6961), null, false, "user5" },
-                    { 6, 0, "7e7cdf90-ee06-4c46-86a9-7f40e60b8e20", "userSystem1@example.com", false, "User System", false, null, null, null, null, null, null, false, new DateTime(2024, 11, 7, 16, 41, 48, 879, DateTimeKind.Utc).AddTicks(6967), null, false, "userSystem1" },
-                    { 7, 0, "6a20e3fa-a689-44c7-ad78-4fe3248dfcbc", "Admin1@example.com", false, "Admin 1", false, null, null, null, null, null, null, false, new DateTime(2024, 11, 7, 16, 41, 48, 879, DateTimeKind.Utc).AddTicks(7001), null, false, "Admin1" }
+                    { 1, 0, "e2263cc9-e8dc-4afa-b472-dd240186fb73", "user1@example.com", false, "User One", false, null, null, null, null, null, null, false, new DateTime(2024, 11, 8, 11, 32, 26, 343, DateTimeKind.Utc).AddTicks(4452), null, false, "user1" },
+                    { 2, 0, "0b13ce41-3e4b-4fb0-85cb-4310b9fa4e3d", "user2@example.com", false, "User Two", false, null, null, null, null, null, null, false, new DateTime(2024, 11, 8, 11, 32, 26, 343, DateTimeKind.Utc).AddTicks(4461), null, false, "user2" },
+                    { 3, 0, "8e618e12-1081-432a-901c-102fc62b6963", "user3@example.com", false, "User Three", false, null, null, null, null, null, null, false, new DateTime(2024, 11, 8, 11, 32, 26, 343, DateTimeKind.Utc).AddTicks(4485), null, false, "user3" },
+                    { 4, 0, "8ffa9fe3-7573-4061-a564-1e58c8b04466", "user4@example.com", false, "User Four", false, null, null, null, null, null, null, false, new DateTime(2024, 11, 8, 11, 32, 26, 343, DateTimeKind.Utc).AddTicks(4491), null, false, "user4" },
+                    { 5, 0, "62c5159f-ab84-488e-bcdc-1187ad36bc28", "user5@example.com", false, "User Five", false, null, null, null, null, null, null, false, new DateTime(2024, 11, 8, 11, 32, 26, 343, DateTimeKind.Utc).AddTicks(4497), null, false, "user5" },
+                    { 6, 0, "530d97d5-51b6-4c40-b125-a68cab8a91c2", "userSystem1@example.com", false, "User System", false, null, null, null, null, null, null, false, new DateTime(2024, 11, 8, 11, 32, 26, 343, DateTimeKind.Utc).AddTicks(4503), null, false, "userSystem1" },
+                    { 7, 0, "7e23cb7c-e2f9-48f9-9e2c-55b2fb3c9779", "Admin1@example.com", false, "Admin 1", false, null, null, null, null, null, null, false, new DateTime(2024, 11, 8, 11, 32, 26, 343, DateTimeKind.Utc).AddTicks(4508), null, false, "Admin1" }
                 });
 
             migrationBuilder.InsertData(
@@ -984,11 +981,11 @@ namespace BusinessObjects.Migrations
                 columns: new[] { "ProfileId", "Address", "Birthdate", "City", "Description", "FirstName", "FullName", "Gender", "HostingAvailability", "ImageUser", "LastName", "MusicMoviesBooks", "Phone", "UserId", "WhatToShare", "WhyUseTravelMate" },
                 values: new object[,]
                 {
-                    { 1, "123 Main St, Hanoi", new DateTime(2024, 11, 7, 16, 41, 48, 879, DateTimeKind.Utc).AddTicks(7378), null, null, null, "User One", "Male", null, "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png", null, null, "0123456789", 1, null, null },
-                    { 2, "456 Secondary St, Ho Chi Minh", new DateTime(2024, 11, 7, 16, 41, 48, 879, DateTimeKind.Utc).AddTicks(7390), null, null, null, "User Two", "Male", null, "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png", null, null, "0987654321", 2, null, null },
-                    { 3, "789 Tertiary St, Da Nang", new DateTime(2024, 11, 7, 16, 41, 48, 879, DateTimeKind.Utc).AddTicks(7394), null, null, null, "User Three", "Male", null, "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png", null, null, "0912345678", 3, null, null },
-                    { 4, "101 Eleventh St, Hue", new DateTime(2024, 11, 7, 16, 41, 48, 879, DateTimeKind.Utc).AddTicks(7397), null, null, null, "User Four", "Male", null, "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png", null, null, "0998765432", 4, null, null },
-                    { 5, "202 Twelfth St, Phu Quoc", new DateTime(2024, 11, 7, 16, 41, 48, 879, DateTimeKind.Utc).AddTicks(7400), null, null, null, "User Five", "Male", null, "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png", null, null, "0923456789", 5, null, null }
+                    { 1, "123 Main St, Hanoi", new DateTime(2024, 11, 8, 11, 32, 26, 343, DateTimeKind.Utc).AddTicks(4682), null, null, null, "User One", "Male", null, "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png", null, null, "0123456789", 1, null, null },
+                    { 2, "456 Secondary St, Ho Chi Minh", new DateTime(2024, 11, 8, 11, 32, 26, 343, DateTimeKind.Utc).AddTicks(4691), null, null, null, "User Two", "Male", null, "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png", null, null, "0987654321", 2, null, null },
+                    { 3, "789 Tertiary St, Da Nang", new DateTime(2024, 11, 8, 11, 32, 26, 343, DateTimeKind.Utc).AddTicks(4695), null, null, null, "User Three", "Male", null, "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png", null, null, "0912345678", 3, null, null },
+                    { 4, "101 Eleventh St, Hue", new DateTime(2024, 11, 8, 11, 32, 26, 343, DateTimeKind.Utc).AddTicks(4698), null, null, null, "User Four", "Male", null, "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png", null, null, "0998765432", 4, null, null },
+                    { 5, "202 Twelfth St, Phu Quoc", new DateTime(2024, 11, 8, 11, 32, 26, 343, DateTimeKind.Utc).AddTicks(4701), null, null, null, "User Five", "Male", null, "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png", null, null, "0923456789", 5, null, null }
                 });
 
             migrationBuilder.InsertData(
@@ -1108,6 +1105,11 @@ namespace BusinessObjects.Migrations
                 column: "GroupId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_GroupParticipants_UserId",
+                table: "GroupParticipants",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_GroupPostPhotos_PostId",
                 table: "GroupPostPhotos",
                 column: "PostId");
@@ -1189,9 +1191,9 @@ namespace BusinessObjects.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Reactions_PostId",
+                name: "IX_Reactions_ReactedByUserId",
                 table: "Reactions",
-                column: "PostId");
+                column: "ReactedByUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Reports_ReportToId",
@@ -1353,10 +1355,10 @@ namespace BusinessObjects.Migrations
                 name: "Destinations");
 
             migrationBuilder.DropTable(
-                name: "PastTripPosts");
+                name: "GroupPosts");
 
             migrationBuilder.DropTable(
-                name: "GroupPosts");
+                name: "PastTripPosts");
 
             migrationBuilder.DropTable(
                 name: "Languages");
