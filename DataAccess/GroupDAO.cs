@@ -83,6 +83,12 @@ namespace DataAccess
                 .OrderByDescending(g => g.JoinAt);
         }
 
+        public async Task<GroupParticipant> GetGroupMember(int userId, int groupId)
+        {
+            return await _dbContext.GroupParticipants
+                .Include(g => g.Group)
+                .FirstOrDefaultAsync(g => g.UserId == userId && g.GroupId == groupId);
+        }
         //Ask to join a group
         public async Task JoinGroup(int userId, int groupId)
         {
@@ -99,38 +105,35 @@ namespace DataAccess
         }
 
         //Leave a group
-        public async Task LeaveGroup(int userId, int groupId)
+        public async Task LeaveGroup(GroupParticipant groupParticipant)
         {
-            var findGroupParticipant = await _dbContext.GroupParticipants.FindAsync(userId, groupId);
-            if (findGroupParticipant != null)
+            if (groupParticipant == null)
             {
-                _dbContext.GroupParticipants.Remove(findGroupParticipant);
-                var group = await _dbContext.Groups.FindAsync(groupId);
-                group.NumberOfParticipants -= 1;
-                await _dbContext.SaveChangesAsync();
+                throw new ArgumentNullException(nameof(groupParticipant));
             }
+            _dbContext.GroupParticipants.Remove(groupParticipant);
+            await _dbContext.SaveChangesAsync();
         }
 
 
         //Group creator accept join 
-        public async Task AcceptJoinGroup(int userId, int groupId)
+        public async Task AcceptJoinGroup(GroupParticipant groupParticipant)
         {
-            var group = await _dbContext.Groups.FindAsync(groupId);
-            var getGroupParticipant = await _dbContext.GroupParticipants.FindAsync(groupId, userId);
-            var updateParticipantStatus = new GroupParticipant()
+            if (groupParticipant == null)
             {
-                UserId = userId,
-                GroupId = groupId,
-                JoinedStatus = true,
-                RequestAt = getGroupParticipant.RequestAt,
-                JoinAt = DateTime.UtcNow
-            };
-
-            _dbContext.GroupParticipants.Update(updateParticipantStatus);
-
-            group.NumberOfParticipants += 1;
+                throw new ArgumentNullException(nameof(groupParticipant));
+            }
+            _dbContext.GroupParticipants.Update(groupParticipant);
             await _dbContext.SaveChangesAsync();
         }
+
+        public async Task<GroupParticipant> GetJoinRequestParticipant(int userId, int groupId)
+        {
+            return await _dbContext.GroupParticipants
+                .Include(g => g.Group)
+                .FirstOrDefaultAsync(g => g.UserId == userId && g.GroupId == groupId && !g.JoinedStatus);
+        }
+
 
         //create a group
         public async Task<Group> AddAsync(Group group)

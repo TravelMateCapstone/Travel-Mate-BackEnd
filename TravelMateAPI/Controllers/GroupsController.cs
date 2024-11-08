@@ -228,7 +228,17 @@ namespace TravelMateAPI.Controllers
             if (isGroupCreator == null)
                 return NotFound(new { Message = "Access denied. You are not a group admin" });
 
-            await _groupRepository.AcceptJoinGroup(requesterId, groupId);
+            //update new data for group participant
+            var updateMember = await _groupRepository.GetJoinRequestParticipant(requesterId, groupId);
+            if (updateMember != null)
+            {
+                updateMember.JoinedStatus = true;
+                updateMember.JoinAt = DateTime.Now;
+                updateMember.Group.NumberOfParticipants += 1;
+            }
+
+            await _groupRepository.AcceptJoinGroup(updateMember);
+
             return Ok("Join request accepted.");
         }
 
@@ -240,11 +250,19 @@ namespace TravelMateAPI.Controllers
             if (userId == -1)
                 return Unauthorized(new { Message = "Unauthorized access." });
 
+            //check if you are admin or member
+            var isAdmin = await _groupRepository.GetCreatedGroupByIdAsync(userId, groupId);
+            if (isAdmin != null)
+                return BadRequest("Can not leave! You are admin of this group");
+
             var isMember = await _groupRepository.GetJoinedGroupByIdAsync(userId, groupId);
-            if (isMember != null)
+            if (isMember == null)
                 return BadRequest(new { Message = "You are not a member of this group" });
 
-            await _groupRepository.LeaveGroup(userId, groupId);
+            var getGroupParticipant = await _groupRepository.GetGroupMember(userId, groupId);
+            getGroupParticipant.Group.NumberOfParticipants -= 1;
+            await _groupRepository.LeaveGroup(getGroupParticipant);
+
             return Ok("Left group successfully.");
         }
 
