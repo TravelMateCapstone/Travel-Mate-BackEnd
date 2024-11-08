@@ -28,9 +28,9 @@ namespace TravelMateAPI.Models
 
 
             CreateMap<GroupParticipant, GroupMemberDTO>()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.User.Id))
                 .ForMember(dest => dest.MemberName, opt => opt.MapFrom(src => src.User.FullName))
-                .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.User.Profiles.City));
+                .ForMember(dest => dest.MemberAvatar, opt => opt.MapFrom(src => src.User.Profiles.ImageUser))
+                .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.User.Profiles.City));
         }
     }
 }

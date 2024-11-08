@@ -23,10 +23,12 @@
         Task LeaveGroup(int userId, int groupId);
 
         // Accept a user's request to join the group
-        Task AcceptJoinGroup(int userId, int groupId);
+        Task AcceptJoinGroup(GroupParticipant groupParticipant);
 
         Task<IEnumerable<GroupParticipant>> ListJoinGroupRequests(int groupId);
         Task<IEnumerable<GroupParticipant>> GetGroupMembers(int groupId);
+
+        Task<GroupParticipant> GetJoinRequestParticipant(int userId, int groupId);
 
         Task<bool> DoesRequestSend(int groupId, int userId);
     }

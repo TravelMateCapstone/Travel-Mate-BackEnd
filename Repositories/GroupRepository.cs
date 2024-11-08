@@ -13,9 +13,9 @@ namespace Repositories
             _groupDAO = groupDAO;
         }
 
-        public async Task AcceptJoinGroup(int userId, int groupId)
+        public async Task AcceptJoinGroup(GroupParticipant groupParticipant)
         {
-            await _groupDAO.AcceptJoinGroup(userId, groupId);
+            await _groupDAO.AcceptJoinGroup(groupParticipant);
         }
 
         public async Task AddAsync(Group group)
@@ -92,6 +92,11 @@ namespace Repositories
         public async Task<IQueryable<Group>> GetUnjoinedGroupsAsync(int userId)
         {
             return await _groupDAO.GetUnjoinedGroupsAsync(userId);
+        }
+
+        public async Task<GroupParticipant> GetJoinRequestParticipant(int userId, int groupId)
+        {
+            return await _groupDAO.GetJoinRequestParticipant(userId, groupId);
         }
     }
 }
