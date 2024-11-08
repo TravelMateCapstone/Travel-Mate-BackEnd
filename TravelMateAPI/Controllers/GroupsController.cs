@@ -228,7 +228,17 @@ namespace TravelMateAPI.Controllers
             if (isGroupCreator == null)
                 return NotFound(new { Message = "Access denied. You are not a group admin" });
 
-            await _groupRepository.AcceptJoinGroup(requesterId, groupId);
+            //update new data for group participant
+            var updateMember = await _groupRepository.GetJoinRequestParticipant(requesterId, groupId);
+            if (updateMember != null)
+            {
+                updateMember.JoinedStatus = true;
+                updateMember.JoinAt = DateTime.Now;
+                updateMember.Group.NumberOfParticipants += 1;
+            }
+
+            await _groupRepository.AcceptJoinGroup(updateMember);
+
             return Ok("Join request accepted.");
         }
 

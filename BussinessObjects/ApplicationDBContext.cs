@@ -537,7 +537,7 @@ namespace BusinessObjects
                 .HasKey(ud => ud.UserId);
 
             modelBuilder.Entity<GroupParticipant>()
-       .HasKey(g => new { g.UserId, g.GroupId });
+            .HasKey(g => new { g.UserId, g.GroupId });
 
             modelBuilder.Entity<GroupParticipant>()
                  .HasOne(gp => gp.Group)
