@@ -127,6 +127,17 @@ namespace DataAccess
             await _dbContext.SaveChangesAsync();
         }
 
+        public async Task RejectJoinGroupRequest(GroupParticipant groupParticipant)
+        {
+            if (groupParticipant == null)
+            {
+                throw new ArgumentNullException(nameof(groupParticipant));
+            }
+            _dbContext.GroupParticipants.Remove(groupParticipant);
+            await _dbContext.SaveChangesAsync();
+        }
+
+
         public async Task<GroupParticipant> GetJoinRequestParticipant(int userId, int groupId)
         {
             return await _dbContext.GroupParticipants
