@@ -12,7 +12,6 @@ namespace BusinessObjects.Utils.Response
         public DateTime CreatedTime { get; set; }
         public List<GroupPostPhoto> GroupPostPhotos { get; set; }
 
-        //public List<PostCommentDTO> Comments { get; set; }
     }
 
 }
