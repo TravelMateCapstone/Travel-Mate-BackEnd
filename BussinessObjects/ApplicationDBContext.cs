@@ -75,10 +75,20 @@ namespace BusinessObjects
 
             // Thiết lập cascade delete cho quan hệ giữa AspNetUsers và Profiles
             modelBuilder.Entity<ApplicationUser>()
-          .HasOne(u => u.Profiles) // Mối quan hệ giữa ApplicationUser và Profile
-          .WithOne(p => p.User) // Mỗi Profile liên kết với một ApplicationUser
-          .HasForeignKey<Profile>(p => p.UserId) // Khóa ngoại trong Profile
-          .OnDelete(DeleteBehavior.Cascade); // Xóa theo chuỗi
+              .HasOne(u => u.Profiles) // Mối quan hệ giữa ApplicationUser và Profile
+              .WithOne(p => p.User) // Mỗi Profile liên kết với một ApplicationUser
+              .HasForeignKey<Profile>(p => p.UserId) // Khóa ngoại trong Profile
+              .OnDelete(DeleteBehavior.Cascade); // Xóa theo chuỗi
+
+
+
+            // Thiết lập quan hệ 1-1 giữa ApplicationUser và UserHome
+            modelBuilder.Entity<ApplicationUser>()
+                .HasOne(a => a.UserHome) // Mỗi ApplicationUser có một UserHome
+                .WithOne(uh => uh.ApplicationUser) // Mỗi UserHome có một ApplicationUser
+                .HasForeignKey<UserHome>(uh => uh.UserId) // Khóa ngoại trong UserHome
+                .OnDelete(DeleteBehavior.Cascade); // Xóa theo chuỗi
+
 
             //Cấu hình cho UserLocation/Activity
             modelBuilder.Entity<UserLocation>()
