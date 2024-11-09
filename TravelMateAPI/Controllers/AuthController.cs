@@ -108,18 +108,19 @@ namespace TravelMateAPI.Controllers
             var defaultProfile = new Profile
             {
                 UserId = user.Id,
-                FullName = "Không có dữ liệu",
-                FirstName = "Không có dữ liệu",
-                LastName = "Không có dữ liệu",
-                Address = "Không có dữ liệu",
-                Phone = "Không có dữ liệu",
-                Gender = "Không có dữ liệu",
-                City = "Không có dữ liệu",
-                Description = "Không có dữ liệu",
-                HostingAvailability = "Không có dữ liệu",
-                WhyUseTravelMate = "Không có dữ liệu",
-                MusicMoviesBooks = "Không có dữ liệu",
-                WhatToShare = "Không có dữ liệu"
+                FullName = "",
+                FirstName = "",
+                LastName = "",
+                Address = "",
+                Phone = "",
+                Gender = "",
+                City = "",
+                Description = "",
+                HostingAvailability = "",
+                WhyUseTravelMate = "",
+                MusicMoviesBooks = "",
+                WhatToShare = "",
+                ImageUser= "https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3467.jpg"
             };
             _context.Profiles.Add(defaultProfile);
 
@@ -128,14 +129,14 @@ namespace TravelMateAPI.Controllers
             {
                 UserId = user.Id,
                 MaxGuests = 0,
-                GuestPreferences = "Không có dữ liệu",
-                AllowedSmoking = "Không có dữ liệu",
-                RoomDescription = "Không có dữ liệu",
-                RoomType = "Không có dữ liệu",
-                RoomMateInfo = "Không có dữ liệu",
-                Amenities = "Không có dữ liệu",
-                Transportation = "Không có dữ liệu",
-                OverallDescription = "Không có dữ liệu"
+                GuestPreferences = "",
+                AllowedSmoking = "",
+                RoomDescription = "",
+                RoomType = "",
+                RoomMateInfo = "",
+                Amenities = "",
+                Transportation = "",
+                OverallDescription = ""
             };
             _context.UserHomes.Add(defaultUserHome);
 
