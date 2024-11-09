@@ -129,6 +129,23 @@ namespace TravelMateAPI.Controllers
             return Ok(new { EventId = eventId, ParticipantCount = participantCount });
         }
 
+        // GET: api/EventParticipants/current-user/has-joined/{eventId}
+        [HttpGet("check-current-user-joined/{eventId}")]
+        public async Task<IActionResult> HasCurrentUserJoinedEvent(int eventId)
+        {
+            // Lấy UserId từ token
+            var userId = GetUserId();
+            if (userId == -1)
+            {
+                return Unauthorized("Invalid token or user not found.");
+            }
+
+            // Kiểm tra xem người dùng hiện tại đã tham gia sự kiện hay chưa
+            var hasJoined = await _eventParticipantsRepository.HasUserJoinedEventAsync(eventId, userId);
+
+            return Ok(hasJoined);
+        }
+
     }
 
 }

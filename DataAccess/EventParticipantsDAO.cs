@@ -111,6 +111,12 @@ namespace DataAccess
                 .Where(ep => ep.EventId == eventId)
                 .CountAsync();
         }
+
+        public async Task<bool> HasUserJoinedEventAsync(int eventId, int userId)
+        {
+            return await _dbContext.EventParticipants
+                                   .AnyAsync(ep => ep.EventId == eventId && ep.UserId == userId);
+        }
     }
 
 

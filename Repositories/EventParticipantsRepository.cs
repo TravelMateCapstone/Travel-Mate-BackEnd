@@ -43,6 +43,11 @@ namespace Repositories
         {
             return await _eventParticipantsDAO.GetParticipantCountByEventIdAsync(eventId);
         }
+        public async Task<bool> HasUserJoinedEventAsync(int eventId, int userId)
+        {
+            return await _eventParticipantsDAO.HasUserJoinedEventAsync(eventId, userId);
+        }
+
     }
 
 

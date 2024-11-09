@@ -233,8 +233,21 @@ namespace TravelMateAPI.Controllers
                     ConfirmedAt = f.ConfirmedAt
                 })
                 .ToListAsync();
-
-            return Ok(friends);
+            // Lấy profile của từng bạn bè dựa vào FriendId
+            var friendsWithProfiles = new List<object>();
+            foreach (var friend in friends)
+            {
+                var profile = await _context.Profiles.FirstOrDefaultAsync(p => p.UserId == friend.FriendId);
+                friendsWithProfiles.Add(new
+                {
+                    FriendId = friend.FriendId,
+                    FriendName = friend.FriendName,
+                    FriendshipId = friend.FriendshipId,
+                    ConfirmedAt = friend.ConfirmedAt,
+                    Profile = profile
+                });
+            }
+            return Ok(friendsWithProfiles);
         }
 
         // Xem danh sách bạn bè
