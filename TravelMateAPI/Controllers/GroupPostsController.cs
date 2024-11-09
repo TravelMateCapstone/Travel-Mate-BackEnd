@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Repositories.Interface;
 using System.Security.Claims;
+using TravelMateAPI.Services;
 
 namespace TravelMateAPI.Controllers
 {
@@ -88,7 +89,7 @@ namespace TravelMateAPI.Controllers
                 return BadRequest("Access Denied, You are not member of group");
 
             newGroupPost.GroupId = groupId;
-            newGroupPost.CreatedTime = DateTime.UtcNow;
+            newGroupPost.CreatedTime = GetTimeZone.GetVNTimeZoneNow();
             newGroupPost.PostById = userId;
 
             if (newGroupPost.GroupPostPhotos != null && newGroupPost.GroupPostPhotos.Any())

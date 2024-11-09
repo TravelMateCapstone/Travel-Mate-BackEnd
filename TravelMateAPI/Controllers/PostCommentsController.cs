@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Repositories;
 using System.Security.Claims;
+using TravelMateAPI.Services;
 
 namespace TravelMateAPI.Controllers
 {
@@ -84,7 +85,7 @@ namespace TravelMateAPI.Controllers
             // Set group and post identifiers for the new comment
             newComment.PostId = postId;
             newComment.CommentedById = userId;
-            newComment.CommentTime = DateTime.Now;
+            newComment.CommentTime = GetTimeZone.GetVNTimeZoneNow();
             var createdComment = await _postCommentRepository.AddAsync(newComment);
             return Ok(createdComment);
         }

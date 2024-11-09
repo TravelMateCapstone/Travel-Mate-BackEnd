@@ -59,9 +59,9 @@ namespace Repositories
             return await _groupDAO.GetJoinedGroupsAsync(userId);
         }
 
-        public async Task JoinGroup(int userId, int groupId)
+        public async Task JoinGroup(GroupParticipant groupParticipant)
         {
-            await _groupDAO.JoinGroup(userId, groupId);
+            await _groupDAO.JoinGroup(groupParticipant);
         }
 
         public async Task LeaveGroup(GroupParticipant groupParticipant)

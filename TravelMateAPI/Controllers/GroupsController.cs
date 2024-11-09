@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Repositories.Interface;
 using System.Security.Claims;
+using TravelMateAPI.Services;
 
 namespace TravelMateAPI.Controllers
 {
@@ -213,7 +214,15 @@ namespace TravelMateAPI.Controllers
             if (isMember != null)
                 return BadRequest(new { Message = "You have already joined this group." });
 
-            await _groupRepository.JoinGroup(userId, groupId);
+            var newParticipant = new GroupParticipant
+            {
+                UserId = userId,
+                GroupId = groupId,
+                JoinedStatus = false,
+                RequestAt = GetTimeZone.GetVNTimeZoneNow()
+            };
+
+            await _groupRepository.JoinGroup(newParticipant);
             return Ok("Join request sent.");
         }
 
@@ -233,7 +242,7 @@ namespace TravelMateAPI.Controllers
             if (updateMember != null)
             {
                 updateMember.JoinedStatus = true;
-                updateMember.JoinAt = DateTime.Now;
+                updateMember.JoinAt = GetTimeZone.GetVNTimeZoneNow();
                 updateMember.Group.NumberOfParticipants += 1;
             }
 
@@ -295,7 +304,7 @@ namespace TravelMateAPI.Controllers
                 return Unauthorized(new { Message = "Unauthorized access." });
 
             newGroup.CreatedById = userId;
-            newGroup.CreateAt = DateTime.Now;
+            newGroup.CreateAt = GetTimeZone.GetVNTimeZoneNow();
 
             await _groupRepository.AddAsync(newGroup);
             return Ok(newGroup);
