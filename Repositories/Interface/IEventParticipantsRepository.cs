@@ -15,6 +15,7 @@ namespace Repositories.Interface
         Task AddEventParticipantAsync(EventParticipants eventParticipant);
         Task RemoveEventParticipantAsync(int eventId, int userId);
         Task<int> GetParticipantCountByEventIdAsync(int eventId);
+        Task<bool> HasUserJoinedEventAsync(int eventId, int userId);
     }
 
 }
