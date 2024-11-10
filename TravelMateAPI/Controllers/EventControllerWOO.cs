@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Repositories;
 using Repositories.Interface;
 using System.Security.Claims;
+using TravelMateAPI.Services;
 
 namespace TravelMateAPI.Controllers
 {
@@ -162,7 +163,7 @@ namespace TravelMateAPI.Controllers
             {
                 EventId = createdEvent.EventId,
                 UserId = userId,
-                JoinedAt = DateTime.Now,
+                JoinedAt = GetTimeZone.GetVNTimeZoneNow(),
                 Notification = true
             };
             await _eventParticipantsRepository.AddEventParticipantAsync(newParticipant);

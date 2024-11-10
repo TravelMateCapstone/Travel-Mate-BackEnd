@@ -6,6 +6,7 @@ using BusinessObjects.Utils.Request;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using TravelMateAPI.Services;
 using TravelMateAPI.Services.Email;
 
 namespace TravelMateAPI.Controllers
@@ -98,7 +99,7 @@ namespace TravelMateAPI.Controllers
                 Email = registerDto.Email,
                 FullName = registerDto.FullName,
                 EmailConfirmed = true,
-                RegistrationTime = DateTime.UtcNow // Lưu thời gian đăng ký
+                RegistrationTime = GetTimeZone.GetVNTimeZoneNow() // Lưu thời gian đăng ký
             };
 
             // Tạo người dùng nhưng chưa kích hoạt
@@ -436,7 +437,7 @@ namespace TravelMateAPI.Controllers
                 Email = registerDto.Email,
                 FullName = registerDto.FullName,
                 EmailConfirmed = false,
-                RegistrationTime = DateTime.UtcNow // Lưu thời gian đăng ký
+                RegistrationTime = GetTimeZone.GetVNTimeZoneNow() // Lưu thời gian đăng ký
             };
 
             // Tạo người dùng nhưng chưa kích hoạt

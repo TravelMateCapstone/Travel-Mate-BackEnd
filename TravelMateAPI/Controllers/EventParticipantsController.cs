@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.OData.Routing.Controllers;
 using Repositories;
 using Repositories.Interface;
 using System.Security.Claims;
+using TravelMateAPI.Services;
 
 namespace TravelMateAPI.Controllers
 {
@@ -77,7 +78,7 @@ namespace TravelMateAPI.Controllers
             newParticipant.UserId = userId;
 
             // Gán giá trị mặc định cho JoinedAt và Notification
-            newParticipant.JoinedAt = DateTime.Now;
+            newParticipant.JoinedAt = GetTimeZone.GetVNTimeZoneNow();
             newParticipant.Notification = true;
 
 

@@ -19,7 +19,7 @@ namespace TravelMateAPI.Services.Notification
                 UserId = userId,
                 Message = message,
                 IsRead = false,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = GetTimeZone.GetVNTimeZoneNow()
             };
 
             _context.Notifications.Add(notification);
