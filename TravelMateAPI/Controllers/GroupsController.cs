@@ -160,13 +160,29 @@ namespace TravelMateAPI.Controllers
             if (userId == -1)
                 return Unauthorized(new { Message = "Unauthorized access." });
 
+            var existingGroup = await _groupRepository.GetGroupByIdAsync(groupId);
+            if (existingGroup == null)
+                return NotFound("Group does not exist");
+
+            var JoinedStatus = "Unjoin";
+
+            var DoesRequestSend = await _groupRepository.DoesRequestSend(groupId, userId);
+            if (DoesRequestSend)
+                JoinedStatus = "Pending";
+
+            //get join group
             var joinedGroup = await _groupRepository.GetJoinedGroupByIdAsync(userId, groupId);
-            if (joinedGroup == null)
-                return NotFound(new { Message = "Joined group not found." });
+            if (joinedGroup != null)
+                JoinedStatus = "Joined";
 
-            var groupDTOs = _mapper.Map<GroupDTO>(joinedGroup);
+            var groupDTO = _mapper.Map<GroupDTO>(existingGroup);
 
-            return Ok(groupDTOs);
+            return Ok(new
+            {
+                UserJoinedStatus = JoinedStatus,
+                Group = groupDTO
+            }
+            );
         }
 
         [HttpGet("{groupId}/Members")]
