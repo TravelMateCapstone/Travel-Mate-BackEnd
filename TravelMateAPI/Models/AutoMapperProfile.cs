@@ -31,6 +31,11 @@ namespace TravelMateAPI.Models
                 .ForMember(dest => dest.MemberAvatar, opt => opt.MapFrom(src => src.User.Profiles.ImageUser))
                 .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.User.Profiles.City));
 
+            CreateMap<PastTripPost, PastTripPostDTO>()
+           .ForMember(dest => dest.TravelerName, opt => opt.MapFrom(src => src.Traveler.FullName))
+           .ForMember(dest => dest.TravelerAvatar, opt => opt.MapFrom(src => src.Traveler.Profiles.ImageUser))
+           .ForMember(dest => dest.LocalName, opt => opt.MapFrom(src => src.Local.FullName))
+           .ForMember(dest => dest.LocalAvatar, opt => opt.MapFrom(src => src.Local.Profiles.ImageUser));
         }
     }
 }
