@@ -19,14 +19,19 @@
 
 
         // User actions related to groups
-        Task JoinGroup(int userId, int groupId);
-        Task LeaveGroup(int userId, int groupId);
+        Task JoinGroup(GroupParticipant groupParticipant);
+        Task LeaveGroup(GroupParticipant groupParticipant);
 
         // Accept a user's request to join the group
-        Task AcceptJoinGroup(int userId, int groupId);
+        Task AcceptJoinGroup(GroupParticipant groupParticipant);
+        Task RejectJoinGroupRequest(GroupParticipant groupParticipant);
 
         Task<IEnumerable<GroupParticipant>> ListJoinGroupRequests(int groupId);
         Task<IEnumerable<GroupParticipant>> GetGroupMembers(int groupId);
+
+        Task<GroupParticipant> GetGroupMember(int userId, int groupId);
+
+        Task<GroupParticipant> GetJoinRequestParticipant(int userId, int groupId);
 
         Task<bool> DoesRequestSend(int groupId, int userId);
     }

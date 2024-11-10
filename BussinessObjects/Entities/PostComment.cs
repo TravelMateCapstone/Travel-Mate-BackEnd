@@ -6,13 +6,13 @@ namespace BusinessObjects.Entities
 {
     public class PostComment
     {
-        [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int CommentId { get; set; }
-        public int CommentedById { get; set; }
+        public int PostCommentId { get; set; }
+
+        public int? CommentedById { get; set; }
         [JsonIgnore]
         public ApplicationUser? CommentedBy { get; set; }
-        public int PostId { get; set; }
+        public int? PostId { get; set; }
         [JsonIgnore]
         public GroupPost? Post { get; set; }
         public bool IsEdited { get; set; }

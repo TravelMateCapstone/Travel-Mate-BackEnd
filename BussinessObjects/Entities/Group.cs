@@ -1,11 +1,12 @@
 ﻿using BusinessObjects.Entities;
+
+
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 public class Group
 {
-    [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int GroupId { get; set; }
 
@@ -27,10 +28,10 @@ public class Group
 
     public int NumberOfParticipants { get; set; }
 
-    //[Required]
+    [Required]
     public int CreatedById { get; set; }
-    [JsonIgnore]
-    public ApplicationUser? CreatedByUser { get; set; }
+    //[JsonIgnore]
+    public ApplicationUser? CreatedBy { get; set; }
     [JsonIgnore]
     public ICollection<GroupParticipant>? GroupParticipants { get; set; }
     public ICollection<GroupPost>? GroupPosts { get; set; }

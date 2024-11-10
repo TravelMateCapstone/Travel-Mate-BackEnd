@@ -16,13 +16,17 @@ namespace DataAccess
         public async Task<IEnumerable<PostComment>> GetAll(int postId)
         {
             return _dbContext.PostComments
+                .Include(p => p.CommentedBy)
+                .ThenInclude(p => p.Profiles)
                 .Where(p => p.PostId == postId).ToList();
         }
 
         public async Task<PostComment> GetGroupPostCommentById(int commentId)
         {
             return await _dbContext.PostComments
-                .FirstOrDefaultAsync(p => p.CommentId == commentId);
+                .Include(p => p.CommentedBy)
+                .ThenInclude(p => p.Profiles)
+                .FirstOrDefaultAsync(p => p.PostCommentId == commentId);
         }
 
         public async Task<PostComment> AddGroupPostCommentAsync(PostComment postComment)
@@ -48,16 +52,16 @@ namespace DataAccess
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<bool> IsGroupMember(int groupId, int userId)
+        public async Task<bool> IsGroupMemberOrAdmin(int groupId, int userId)
         {
-            return await _dbContext.GroupParticipants
-                .AnyAsync(p => p.GroupId == groupId && p.UserId == userId);
+            return await _dbContext.Groups
+                .AnyAsync(g => g.GroupId == groupId && (g.CreatedById == userId || g.GroupParticipants.Any(p => p.UserId == userId && p.GroupId == groupId && p.JoinedStatus)));
         }
 
         public async Task<bool> IsCommentCreator(int commentId, int userId)
         {
             return await _dbContext.PostComments
-                .AnyAsync(p => p.CommentId == commentId && p.CommentedById == userId);
+                .AnyAsync(p => p.PostCommentId == commentId && p.CommentedById == userId);
         }
     }
 }

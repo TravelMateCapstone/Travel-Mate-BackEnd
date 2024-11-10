@@ -44,6 +44,8 @@ namespace BusinessObjects.Entities
         public ICollection<OnTravelling>? OnTravel { get; set; }
         public ICollection<Reaction>? Reactions { get; set; }
         public ICollection<UserEducation>? UserEducations { get; set; }
-
+        public ICollection<GroupPost>? GroupPosts { get; set; }
+        public ICollection<Group>? Groups { get; set; }
+        public ICollection<PostComment>? PostComments { get; set; }
     }
 }
