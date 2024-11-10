@@ -67,7 +67,36 @@ namespace TravelMateAPI.Controllers
             if (groups == null || !groups.Any())
                 return NotFound(new { Message = "No groups found." });
 
-            return await PaginateAndRespondAsync(groups, pageNumber);
+            var totalCount = groups.Count();
+            var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+            var paginatedGroups = groups.Skip((pageNumber - 1) * pageSize).Take(pageSize);
+
+            var listUnjoinedGroups = new List<object>();
+
+            // Add join status for each group in the list
+            foreach (var group in paginatedGroups)
+            {
+                // Check if the user has sent a join request to this group
+                var joinedStatus = await _groupRepository.DoesRequestSend(group.GroupId, userId) ? "Pending" : "Unjoin";
+
+                listUnjoinedGroups.Add(new
+                {
+                    UserJoinedStatus = joinedStatus,
+                    Group = group
+                });
+            }
+
+            return Ok(
+                new
+                {
+                    TotalPages = totalPages,
+                    TotalCount = totalCount,
+                    CurrentPage = pageNumber,
+                    PageSize = pageSize,
+                    listUnjoinedGroups
+                }
+                );
+
         }
 
         [AllowAnonymous]
