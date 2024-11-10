@@ -217,7 +217,7 @@ namespace BusinessObjects
                 {
                     ProfileId = 1,
                     UserId = 1,
-                    FullName = "User One",
+                    FirstName = "User One",
                     Address = "123 Main St, Hanoi",
                     Phone = "0123456789",
                     Gender = "Male",
@@ -228,7 +228,7 @@ namespace BusinessObjects
                 {
                     ProfileId = 2,
                     UserId = 2,
-                    FullName = "User Two",
+                    FirstName = "User Two",
                     Address = "456 Secondary St, Ho Chi Minh",
                     Phone = "0987654321",
                     Gender = "Male",
@@ -239,7 +239,7 @@ namespace BusinessObjects
                 {
                     ProfileId = 3,
                     UserId = 3,
-                    FullName = "User Three",
+                    FirstName = "User Three",
                     Address = "789 Tertiary St, Da Nang",
                     Phone = "0912345678",
                     Gender = "Male",
@@ -250,7 +250,7 @@ namespace BusinessObjects
                 {
                     ProfileId = 4,
                     UserId = 4,
-                    FullName = "User Four",
+                    FirstName = "User Four",
                     Address = "101 Eleventh St, Hue",
                     Phone = "0998765432",
                     Gender = "Male",
@@ -261,7 +261,7 @@ namespace BusinessObjects
                 {
                     ProfileId = 5,
                     UserId = 5,
-                    FullName = "User Five",
+                    FirstName = "User Five",
                     Address = "202 Twelfth St, Phu Quoc",
                     Phone = "0923456789",
                     Gender = "Male",

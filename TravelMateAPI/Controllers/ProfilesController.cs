@@ -319,7 +319,7 @@ namespace TravelMateAPI.Controllers
             }
 
             // Cập nhật các thuộc tính của profile hiện tại
-            existingProfile.FullName = updatedProfile.FullName;
+
             existingProfile.FirstName = updatedProfile.FirstName;
             existingProfile.LastName = updatedProfile.LastName;
             existingProfile.Address = updatedProfile.Address;

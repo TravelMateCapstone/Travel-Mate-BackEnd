@@ -34,7 +34,8 @@ namespace BusinessObjects.Utils.Request
                 //new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.UserName)
+                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim("FullName", user.FullName ?? string.Empty)  // Thêm FullName vào claim
             };
 
             // Add role claims

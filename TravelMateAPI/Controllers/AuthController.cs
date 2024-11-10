@@ -85,6 +85,12 @@ namespace TravelMateAPI.Controllers
             {
                 return BadRequest("Mật khẩu và xác nhận mật khẩu không khớp.");
             }
+            // Kiểm tra nếu dữ liệu không hợp lệ
+            if (!ModelState.IsValid)
+            {
+                // Trả về lỗi xác thực với chi tiết lỗi trong ModelState
+                return BadRequest(ModelState);
+            }
             // Tạo đối tượng ApplicationUser nhưng chưa lưu vào hệ thống
             var user = new ApplicationUser
             {
@@ -106,8 +112,7 @@ namespace TravelMateAPI.Controllers
             // Tạo bản ghi Profile mặc định
             var defaultProfile = new Profile
             {
-                UserId = user.Id,
-                FullName = "",
+                UserId = user.Id, 
                 FirstName = "",
                 LastName = "",
                 Address = "",
@@ -332,6 +337,19 @@ namespace TravelMateAPI.Controllers
             {
                 return BadRequest($"Invalid UserId format.Value: {userIdString}");
             }
+        }
+        [HttpGet("Get-fullname")]
+        public IActionResult GetFullName()
+        {
+            // Lấy giá trị của claim "FullName" từ token
+            var fullName = User.Claims.FirstOrDefault(c => c.Type == "FullName")?.Value;
+
+            if (string.IsNullOrEmpty(fullName))
+            {
+                return NotFound("FullName không tồn tại trong token.");
+            }
+
+            return Ok(new { FullName = fullName });
         }
         [HttpGet("claims")]
         public IActionResult GetClaims()
