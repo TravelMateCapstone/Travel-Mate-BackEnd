@@ -1,6 +1,7 @@
 ﻿using BusinessObjects.Configuration;
 using BusinessObjects.Entities;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -12,11 +13,13 @@ namespace BusinessObjects.Utils.Request
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly AppSettings _appSettings;
+        private readonly ApplicationDBContext _context;
 
-        public TokenService(UserManager<ApplicationUser> userManager, AppSettings appSettings)
+        public TokenService(UserManager<ApplicationUser> userManager, AppSettings appSettings, ApplicationDBContext context)
         {
             _userManager = userManager;
             _appSettings = appSettings;
+            _context = context;
         }
 
         public async Task<string> GenerateToken(ApplicationUser user)
@@ -28,6 +31,10 @@ namespace BusinessObjects.Utils.Request
             // Get user roles from UserManager
             var roles = await _userManager.GetRolesAsync(user);
 
+
+            // Lấy thông tin Profile từ UserId
+            var profile = await _context.Profiles.FirstOrDefaultAsync(p => p.UserId == user.Id);
+
             // Create claims
             var claims = new List<Claim>
             {
@@ -35,7 +42,8 @@ namespace BusinessObjects.Utils.Request
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Name, user.UserName),
-                new Claim("FullName", user.FullName ?? string.Empty)  // Thêm FullName vào claim
+                new Claim("FullName", user.FullName ?? string.Empty) , // Thêm FullName vào claim
+                 new Claim("ImageUser", profile.ImageUser ?? string.Empty)
             };
 
             // Add role claims

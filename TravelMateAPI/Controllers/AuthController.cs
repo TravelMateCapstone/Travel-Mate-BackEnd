@@ -339,18 +339,17 @@ namespace TravelMateAPI.Controllers
                 return BadRequest($"Invalid UserId format.Value: {userIdString}");
             }
         }
-        [HttpGet("Get-fullname")]
+        [HttpGet("Get-fullname-Image")]
         public IActionResult GetFullName()
         {
             // Lấy giá trị của claim "FullName" từ token
             var fullName = User.Claims.FirstOrDefault(c => c.Type == "FullName")?.Value;
-
+            var image =User.Claims.FirstOrDefault(c => c.Type == "ImageUser")?.Value;
             if (string.IsNullOrEmpty(fullName))
             {
                 return NotFound("FullName không tồn tại trong token.");
             }
-
-            return Ok(new { FullName = fullName });
+            return Ok(new { FullName = fullName, ImageUser= image });
         }
         [HttpGet("claims")]
         public IActionResult GetClaims()
