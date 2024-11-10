@@ -19,7 +19,7 @@
 
 
         // User actions related to groups
-        Task JoinGroup(int userId, int groupId);
+        Task JoinGroup(GroupParticipant groupParticipant);
         Task LeaveGroup(GroupParticipant groupParticipant);
 
         // Accept a user's request to join the group

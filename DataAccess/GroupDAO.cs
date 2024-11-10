@@ -90,16 +90,12 @@ namespace DataAccess
                 .FirstOrDefaultAsync(g => g.UserId == userId && g.GroupId == groupId);
         }
         //Ask to join a group
-        public async Task JoinGroup(int userId, int groupId)
+        public async Task JoinGroup(GroupParticipant newParticipant)
         {
-            var newParticipant = new GroupParticipant
+            if (newParticipant == null)
             {
-                UserId = userId,
-                GroupId = groupId,
-                JoinedStatus = false,
-                RequestAt = DateTime.UtcNow
-            };
-
+                throw new ArgumentNullException(nameof(newParticipant));
+            }
             await _dbContext.GroupParticipants.AddAsync(newParticipant);
             await _dbContext.SaveChangesAsync();
         }
