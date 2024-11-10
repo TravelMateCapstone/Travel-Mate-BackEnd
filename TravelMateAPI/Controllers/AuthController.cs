@@ -6,6 +6,7 @@ using BusinessObjects.Utils.Request;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using TravelMateAPI.Services;
 using TravelMateAPI.Services.Email;
 
 namespace TravelMateAPI.Controllers
@@ -98,7 +99,7 @@ namespace TravelMateAPI.Controllers
                 Email = registerDto.Email,
                 FullName = registerDto.FullName,
                 EmailConfirmed = true,
-                RegistrationTime = DateTime.UtcNow // Lưu thời gian đăng ký
+                RegistrationTime = GetTimeZone.GetVNTimeZoneNow() // Lưu thời gian đăng ký
             };
 
             // Tạo người dùng nhưng chưa kích hoạt
@@ -338,18 +339,17 @@ namespace TravelMateAPI.Controllers
                 return BadRequest($"Invalid UserId format.Value: {userIdString}");
             }
         }
-        [HttpGet("Get-fullname")]
+        [HttpGet("Get-fullname-Image")]
         public IActionResult GetFullName()
         {
             // Lấy giá trị của claim "FullName" từ token
             var fullName = User.Claims.FirstOrDefault(c => c.Type == "FullName")?.Value;
-
+            var image =User.Claims.FirstOrDefault(c => c.Type == "ImageUser")?.Value;
             if (string.IsNullOrEmpty(fullName))
             {
                 return NotFound("FullName không tồn tại trong token.");
             }
-
-            return Ok(new { FullName = fullName });
+            return Ok(new { FullName = fullName, ImageUser= image });
         }
         [HttpGet("claims")]
         public IActionResult GetClaims()
@@ -437,7 +437,7 @@ namespace TravelMateAPI.Controllers
                 Email = registerDto.Email,
                 FullName = registerDto.FullName,
                 EmailConfirmed = false,
-                RegistrationTime = DateTime.UtcNow // Lưu thời gian đăng ký
+                RegistrationTime = GetTimeZone.GetVNTimeZoneNow() // Lưu thời gian đăng ký
             };
 
             // Tạo người dùng nhưng chưa kích hoạt

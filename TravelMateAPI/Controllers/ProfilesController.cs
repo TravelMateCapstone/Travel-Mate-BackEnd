@@ -344,6 +344,44 @@ namespace TravelMateAPI.Controllers
                 Data = existingProfile
             });
         }
+        // PUT: api/Profile/current-user/update-image
+        [HttpPut("current-user/update-image")]
+        public async Task<IActionResult> UpdateProfileImageForCurrentUser([FromBody] string imageUser)
+        {
+            // Lấy UserId từ token
+            var userId = GetUserId();
+            if (userId == -1)
+            {
+                return Unauthorized("Invalid token or user not found.");
+            }
+
+            // Lấy profile hiện tại của người dùng từ database
+            var existingProfile = await _profileRepository.GetProfileByIdAsync(userId);
+            if (existingProfile == null)
+            {
+                return NotFound(new { Message = $"Profile with UserId {userId} not found." });
+            }
+
+            // Kiểm tra nếu profile không thuộc về người dùng hiện tại
+            if (existingProfile.UserId != userId)
+            {
+                return Forbid("You do not have permission to edit this profile.");
+            }
+
+            // Cập nhật chỉ thuộc tính ImageUser
+            existingProfile.ImageUser = imageUser;
+
+            // Lưu thay đổi
+            await _profileRepository.UpdateProfileAsync(existingProfile);
+
+            return Ok(new
+            {
+                Success = true,
+                Message = "Profile image updated successfully!",
+                Data = existingProfile
+            });
+        }
+
 
         // DELETE: api/Profile/1
         [HttpDelete("{profileId}")]
