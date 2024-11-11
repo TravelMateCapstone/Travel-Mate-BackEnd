@@ -13,6 +13,8 @@ using Microsoft.OData.ModelBuilder;
 using Microsoft.OpenApi.Models;
 using Repositories;
 using Repositories.Interface;
+using Repository;
+using Repository.Interfaces;
 using System.Text;
 using TravelMateAPI.Models;
 using TravelMateAPI.Services.Email;
@@ -210,6 +212,9 @@ namespace TravelMateAPI
             builder.Services.AddScoped<IGroupPostRepository, GroupPostRepository>();
             builder.Services.AddScoped<PostCommentDAO>();
             builder.Services.AddScoped<IPostCommentRepository, PostCommentRepository>();
+            builder.Services.AddScoped<PastTripPostDAO>();
+            builder.Services.AddScoped<IPastTripPostRepository, PastTripPostRepository>();
+
             builder.Services.AddControllers().AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
