@@ -219,13 +219,13 @@ namespace BusinessObjects.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "e2263cc9-e8dc-4afa-b472-dd240186fb73",
+                            ConcurrencyStamp = "4580620c-1844-44dd-afeb-4d9422f0646c",
                             Email = "user1@example.com",
                             EmailConfirmed = false,
                             FullName = "User One",
                             LockoutEnabled = false,
                             PhoneNumberConfirmed = false,
-                            RegistrationTime = new DateTime(2024, 11, 8, 11, 32, 26, 343, DateTimeKind.Utc).AddTicks(4452),
+                            RegistrationTime = new DateTime(2024, 11, 9, 15, 51, 41, 296, DateTimeKind.Utc).AddTicks(726),
                             TwoFactorEnabled = false,
                             UserName = "user1"
                         },
@@ -233,13 +233,13 @@ namespace BusinessObjects.Migrations
                         {
                             Id = 2,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "0b13ce41-3e4b-4fb0-85cb-4310b9fa4e3d",
+                            ConcurrencyStamp = "4c18d991-810b-4d9c-b5d9-0301a2b1fb12",
                             Email = "user2@example.com",
                             EmailConfirmed = false,
                             FullName = "User Two",
                             LockoutEnabled = false,
                             PhoneNumberConfirmed = false,
-                            RegistrationTime = new DateTime(2024, 11, 8, 11, 32, 26, 343, DateTimeKind.Utc).AddTicks(4461),
+                            RegistrationTime = new DateTime(2024, 11, 9, 15, 51, 41, 296, DateTimeKind.Utc).AddTicks(736),
                             TwoFactorEnabled = false,
                             UserName = "user2"
                         },
@@ -247,13 +247,13 @@ namespace BusinessObjects.Migrations
                         {
                             Id = 3,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "8e618e12-1081-432a-901c-102fc62b6963",
+                            ConcurrencyStamp = "48dad330-c94c-402a-babd-1272ecb83989",
                             Email = "user3@example.com",
                             EmailConfirmed = false,
                             FullName = "User Three",
                             LockoutEnabled = false,
                             PhoneNumberConfirmed = false,
-                            RegistrationTime = new DateTime(2024, 11, 8, 11, 32, 26, 343, DateTimeKind.Utc).AddTicks(4485),
+                            RegistrationTime = new DateTime(2024, 11, 9, 15, 51, 41, 296, DateTimeKind.Utc).AddTicks(741),
                             TwoFactorEnabled = false,
                             UserName = "user3"
                         },
@@ -261,13 +261,13 @@ namespace BusinessObjects.Migrations
                         {
                             Id = 4,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "8ffa9fe3-7573-4061-a564-1e58c8b04466",
+                            ConcurrencyStamp = "97c0af26-4724-47e9-90ac-db82fd777223",
                             Email = "user4@example.com",
                             EmailConfirmed = false,
                             FullName = "User Four",
                             LockoutEnabled = false,
                             PhoneNumberConfirmed = false,
-                            RegistrationTime = new DateTime(2024, 11, 8, 11, 32, 26, 343, DateTimeKind.Utc).AddTicks(4491),
+                            RegistrationTime = new DateTime(2024, 11, 9, 15, 51, 41, 296, DateTimeKind.Utc).AddTicks(746),
                             TwoFactorEnabled = false,
                             UserName = "user4"
                         },
@@ -275,13 +275,13 @@ namespace BusinessObjects.Migrations
                         {
                             Id = 5,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "62c5159f-ab84-488e-bcdc-1187ad36bc28",
+                            ConcurrencyStamp = "663d1f19-0436-44fa-b9e4-825c53dc51dd",
                             Email = "user5@example.com",
                             EmailConfirmed = false,
                             FullName = "User Five",
                             LockoutEnabled = false,
                             PhoneNumberConfirmed = false,
-                            RegistrationTime = new DateTime(2024, 11, 8, 11, 32, 26, 343, DateTimeKind.Utc).AddTicks(4497),
+                            RegistrationTime = new DateTime(2024, 11, 9, 15, 51, 41, 296, DateTimeKind.Utc).AddTicks(751),
                             TwoFactorEnabled = false,
                             UserName = "user5"
                         },
@@ -289,13 +289,13 @@ namespace BusinessObjects.Migrations
                         {
                             Id = 6,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "530d97d5-51b6-4c40-b125-a68cab8a91c2",
+                            ConcurrencyStamp = "7a1770e0-ae87-48ee-a452-9ee997cc6e7b",
                             Email = "userSystem1@example.com",
                             EmailConfirmed = false,
                             FullName = "User System",
                             LockoutEnabled = false,
                             PhoneNumberConfirmed = false,
-                            RegistrationTime = new DateTime(2024, 11, 8, 11, 32, 26, 343, DateTimeKind.Utc).AddTicks(4503),
+                            RegistrationTime = new DateTime(2024, 11, 9, 15, 51, 41, 296, DateTimeKind.Utc).AddTicks(765),
                             TwoFactorEnabled = false,
                             UserName = "userSystem1"
                         },
@@ -303,13 +303,13 @@ namespace BusinessObjects.Migrations
                         {
                             Id = 7,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "7e23cb7c-e2f9-48f9-9e2c-55b2fb3c9779",
+                            ConcurrencyStamp = "7e9b652e-d810-4a76-8c53-f3db84c12a75",
                             Email = "Admin1@example.com",
                             EmailConfirmed = false,
                             FullName = "Admin 1",
                             LockoutEnabled = false,
                             PhoneNumberConfirmed = false,
-                            RegistrationTime = new DateTime(2024, 11, 8, 11, 32, 26, 343, DateTimeKind.Utc).AddTicks(4508),
+                            RegistrationTime = new DateTime(2024, 11, 9, 15, 51, 41, 296, DateTimeKind.Utc).AddTicks(770),
                             TwoFactorEnabled = false,
                             UserName = "Admin1"
                         });
@@ -749,11 +749,11 @@ namespace BusinessObjects.Migrations
 
             modelBuilder.Entity("BusinessObjects.Entities.PastTripPost", b =>
                 {
-                    b.Property<int>("PostId")
+                    b.Property<int>("PastTripPostId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PostId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PastTripPostId"));
 
                     b.Property<string>("Caption")
                         .HasColumnType("nvarchar(max)");
@@ -761,30 +761,36 @@ namespace BusinessObjects.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Privacy")
+                    b.Property<bool>("IsCaptionEdit")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsPublic")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsReviewEdited")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("LocalId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Location")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Review")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ReviewById")
-                        .HasColumnType("int");
-
                     b.Property<int>("Star")
                         .HasColumnType("int");
 
-                    b.Property<string>("Title")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("UserId")
+                    b.Property<int>("TravelerId")
                         .HasColumnType("int");
 
-                    b.HasKey("PostId");
+                    b.HasKey("PastTripPostId");
 
-                    b.HasIndex("ReviewById");
+                    b.HasIndex("LocalId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("TravelerId");
 
                     b.ToTable("PastTripPosts");
                 });
@@ -824,22 +830,22 @@ namespace BusinessObjects.Migrations
 
             modelBuilder.Entity("BusinessObjects.Entities.PostPhoto", b =>
                 {
-                    b.Property<int>("PhotoId")
+                    b.Property<int>("PostPhotoId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PhotoId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PostPhotoId"));
+
+                    b.Property<int?>("PastTripPostId")
+                        .HasColumnType("int");
 
                     b.Property<string>("PhotoUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("PostId")
-                        .HasColumnType("int");
+                    b.HasKey("PostPhotoId");
 
-                    b.HasKey("PhotoId");
-
-                    b.HasIndex("PostId");
+                    b.HasIndex("PastTripPostId");
 
                     b.ToTable("PostPhotos");
                 });
@@ -909,7 +915,7 @@ namespace BusinessObjects.Migrations
                         {
                             ProfileId = 1,
                             Address = "123 Main St, Hanoi",
-                            Birthdate = new DateTime(2024, 11, 8, 11, 32, 26, 343, DateTimeKind.Utc).AddTicks(4682),
+                            Birthdate = new DateTime(2024, 11, 9, 15, 51, 41, 296, DateTimeKind.Utc).AddTicks(948),
                             FullName = "User One",
                             Gender = "Male",
                             ImageUser = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png",
@@ -920,7 +926,7 @@ namespace BusinessObjects.Migrations
                         {
                             ProfileId = 2,
                             Address = "456 Secondary St, Ho Chi Minh",
-                            Birthdate = new DateTime(2024, 11, 8, 11, 32, 26, 343, DateTimeKind.Utc).AddTicks(4691),
+                            Birthdate = new DateTime(2024, 11, 9, 15, 51, 41, 296, DateTimeKind.Utc).AddTicks(972),
                             FullName = "User Two",
                             Gender = "Male",
                             ImageUser = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png",
@@ -931,7 +937,7 @@ namespace BusinessObjects.Migrations
                         {
                             ProfileId = 3,
                             Address = "789 Tertiary St, Da Nang",
-                            Birthdate = new DateTime(2024, 11, 8, 11, 32, 26, 343, DateTimeKind.Utc).AddTicks(4695),
+                            Birthdate = new DateTime(2024, 11, 9, 15, 51, 41, 296, DateTimeKind.Utc).AddTicks(975),
                             FullName = "User Three",
                             Gender = "Male",
                             ImageUser = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png",
@@ -942,7 +948,7 @@ namespace BusinessObjects.Migrations
                         {
                             ProfileId = 4,
                             Address = "101 Eleventh St, Hue",
-                            Birthdate = new DateTime(2024, 11, 8, 11, 32, 26, 343, DateTimeKind.Utc).AddTicks(4698),
+                            Birthdate = new DateTime(2024, 11, 9, 15, 51, 41, 296, DateTimeKind.Utc).AddTicks(979),
                             FullName = "User Four",
                             Gender = "Male",
                             ImageUser = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png",
@@ -953,7 +959,7 @@ namespace BusinessObjects.Migrations
                         {
                             ProfileId = 5,
                             Address = "202 Twelfth St, Phu Quoc",
-                            Birthdate = new DateTime(2024, 11, 8, 11, 32, 26, 343, DateTimeKind.Utc).AddTicks(4701),
+                            Birthdate = new DateTime(2024, 11, 9, 15, 51, 41, 296, DateTimeKind.Utc).AddTicks(986),
                             FullName = "User Five",
                             Gender = "Male",
                             ImageUser = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png",
@@ -1233,9 +1239,6 @@ namespace BusinessObjects.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ApplicationUserId")
-                        .HasColumnType("int");
-
                     b.Property<string>("GuestPreferences")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -1268,7 +1271,8 @@ namespace BusinessObjects.Migrations
 
                     b.HasKey("UserHomeId");
 
-                    b.HasIndex("ApplicationUserId");
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("UserHomes");
                 });
@@ -1707,21 +1711,21 @@ namespace BusinessObjects.Migrations
 
             modelBuilder.Entity("BusinessObjects.Entities.PastTripPost", b =>
                 {
-                    b.HasOne("BusinessObjects.Entities.ApplicationUser", "ReviewByUser")
+                    b.HasOne("BusinessObjects.Entities.ApplicationUser", "Local")
                         .WithMany("PastTripPostReviews")
-                        .HasForeignKey("ReviewById")
+                        .HasForeignKey("LocalId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("BusinessObjects.Entities.ApplicationUser", "UserPastTrip")
+                    b.HasOne("BusinessObjects.Entities.ApplicationUser", "Traveler")
                         .WithMany("PastTripPosts")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("TravelerId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("ReviewByUser");
+                    b.Navigation("Local");
 
-                    b.Navigation("UserPastTrip");
+                    b.Navigation("Traveler");
                 });
 
             modelBuilder.Entity("BusinessObjects.Entities.PostComment", b =>
@@ -1743,13 +1747,11 @@ namespace BusinessObjects.Migrations
 
             modelBuilder.Entity("BusinessObjects.Entities.PostPhoto", b =>
                 {
-                    b.HasOne("BusinessObjects.Entities.PastTripPost", "Post")
-                        .WithMany("Photos")
-                        .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasOne("BusinessObjects.Entities.PastTripPost", "PastTripPost")
+                        .WithMany("PostPhotos")
+                        .HasForeignKey("PastTripPostId");
 
-                    b.Navigation("Post");
+                    b.Navigation("PastTripPost");
                 });
 
             modelBuilder.Entity("BusinessObjects.Entities.Profile", b =>
@@ -1875,8 +1877,10 @@ namespace BusinessObjects.Migrations
             modelBuilder.Entity("BusinessObjects.Entities.UserHome", b =>
                 {
                     b.HasOne("BusinessObjects.Entities.ApplicationUser", "ApplicationUser")
-                        .WithMany("UserHome")
-                        .HasForeignKey("ApplicationUserId");
+                        .WithOne("UserHome")
+                        .HasForeignKey("BusinessObjects.Entities.UserHome", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("ApplicationUser");
                 });
@@ -2034,7 +2038,8 @@ namespace BusinessObjects.Migrations
 
                     b.Navigation("UserEducations");
 
-                    b.Navigation("UserHome");
+                    b.Navigation("UserHome")
+                        .IsRequired();
 
                     b.Navigation("UserLocations");
                 });
@@ -2058,7 +2063,7 @@ namespace BusinessObjects.Migrations
 
             modelBuilder.Entity("BusinessObjects.Entities.PastTripPost", b =>
                 {
-                    b.Navigation("Photos");
+                    b.Navigation("PostPhotos");
                 });
 
             modelBuilder.Entity("BusinessObjects.Entities.UserHome", b =>

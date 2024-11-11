@@ -482,15 +482,15 @@ namespace BusinessObjects
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<PastTripPost>()
-       .HasOne(m => m.UserPastTrip)
+       .HasOne(m => m.Traveler)
        .WithMany(u => u.PastTripPosts)
-       .HasForeignKey(m => m.UserId)
+       .HasForeignKey(m => m.TravelerId)
        .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<PastTripPost>()
-                .HasOne(m => m.ReviewByUser)
+                .HasOne(m => m.Local)
                 .WithMany(u => u.PastTripPostReviews)
-                .HasForeignKey(m => m.ReviewById)
+                .HasForeignKey(m => m.LocalId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Report>()
