@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
 using BusinessObjects.Entities;
+using BusinessObjects.Utils.Request;
 using BusinessObjects.Utils.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Repository.Interfaces;
 using System.Security.Claims;
+using TravelMateAPI.Services;
 
 namespace TravelMateAPI.Controllers
 {
@@ -39,112 +41,158 @@ namespace TravelMateAPI.Controllers
             //check post exist
             var posts = await _repository.GetAllAsync();
             if (posts == null || !posts.Any())
-                return NotFound(new { Message = "No groups found." });
+                return NotFound(new { Message = "No posts found." });
 
             var PastTripPostDTOs = _mapper.Map<IEnumerable<PastTripPostDTO>>(posts);
 
             return Ok(PastTripPostDTOs);
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<PastTripPost>>> GetAllPostOfUserAsync()
+        [HttpGet("UserTrips")]
+        public async Task<ActionResult<IEnumerable<PastTripPostDTO>>> GetAllPostOfUserAsync()
         {
-            //check author
             var userId = GetUserId();
             if (userId == -1)
                 return Unauthorized(new { Message = "Unauthorized access." });
+
             //check post exist
-            //check if traveler or local
-            var posts = await _repository.GetAllAsync();
-            return Ok(posts);
+            var posts = await _repository.GetAllPostOfUserAsync(userId);
+            if (posts == null || !posts.Any())
+                return NotFound(new { Message = "No posts found." });
+
+            var postDTOs = _mapper.Map<IEnumerable<PastTripPostDTO>>(posts);
+
+            return Ok(postDTOs);
         }
 
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<PastTripPost>> GetById(int id)
+        [HttpGet("{pastTripPostId}")]
+        public async Task<ActionResult<PastTripPostDTO>> GetById(int pastTripPostId)
         {
             //check author
             var userId = GetUserId();
             if (userId == -1)
                 return Unauthorized(new { Message = "Unauthorized access." });
-            //check post exist
-            //check if traveler or local
-            var post = await _repository.GetByIdAsync(id);
+
+            var post = await _repository.GetByIdAsync(pastTripPostId);
             if (post == null)
-            {
-                return NotFound();
-            }
-            return Ok(post);
+                return NotFound("No post exist");
+
+            var postDTO = _mapper.Map<PastTripPostDTO>(post);
+
+            return Ok(postDTO);
         }
 
         [HttpPost]
-        public async Task<ActionResult> Create(PastTripPost post)
+        public async Task<ActionResult> Create([FromQuery] int travelerId, [FromQuery] int localId, PastTripPostInputDTO postDTO)
         {
             var userId = GetUserId();
             if (userId == -1)
                 return Unauthorized(new { Message = "Unauthorized access." });
 
-            //check if traveler and local
-            var IsTraveler = _repository.IsTraveler(userId);
-            if (IsTraveler == null)
-                return NotFound("You are not traveler");
+            if (travelerId != userId)
+                return BadRequest("You are not traveler of this trip");
+
+            var post = _mapper.Map<PastTripPost>(postDTO);
+
+            post.TravelerId = travelerId;
+            post.LocalId = localId;
+            post.IsCaptionEdit = false;
+            post.IsReviewEdited = false;
+            post.CreatedAt = GetTimeZone.GetVNTimeZoneNow();
 
             await _repository.AddAsync(post);
-
             return Ok(post);
         }
 
-        [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateTravelerPartAsync(int id, PastTripPost post)
+        [HttpPut("{pastTripPostId}/TravelerUpdate")]
+        public async Task<ActionResult> UpdateTravelerPartAsync(int pastTripPostId, TravelerPastTripPostDTO postDTO)
         {
             var userId = GetUserId();
             if (userId == -1)
                 return Unauthorized(new { Message = "Unauthorized access." });
 
-            //check post exist
-            //check if traveler and local
+            var existingPost = await _repository.GetByIdAsync(pastTripPostId);
+            if (existingPost == null)
+                return NotFound(new { Message = "No posts found." });
 
-            if (id != post.PastTripPostId)
+
+            if (existingPost.TravelerId != userId)
+                return BadRequest("Access Denied! You are not traveler of this trip");
+
+            var travelerUpdatePost = _mapper.Map<PastTripPost>(postDTO);
+
+            existingPost.Location = travelerUpdatePost.Location;
+            existingPost.IsPublic = travelerUpdatePost.IsPublic;
+            existingPost.Caption = travelerUpdatePost.Caption;
+            existingPost.Star = travelerUpdatePost.Star;
+            existingPost.IsCaptionEdit = true;
+
+            if (existingPost.PostPhotos != null && existingPost.PostPhotos.Any())
             {
-                return BadRequest();
+                foreach (var photo in existingPost.PostPhotos)
+                {
+                    existingPost.PostPhotos.Remove(photo);
+                }
             }
-            //await _repository.UpdateAsync(post);
+
+            if (travelerUpdatePost.PostPhotos != null && travelerUpdatePost.PostPhotos.Any())
+            {
+                foreach (var photo in travelerUpdatePost.PostPhotos)
+                {
+                    existingPost.PostPhotos.Add(photo);
+                }
+            }
+
+            await _repository.UpdateTravelerPartAsync(existingPost);
+
             return NoContent();
         }
 
 
-
-
-        [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateLocalPartAsync(int id, PastTripPost post)
+        [HttpPut("{pastTripPostId}/LocalUpdate")]
+        public async Task<ActionResult> UpdateLocalPartAsync(int pastTripPostId, LocalPastTripPostDTO postDTO)
         {
             var userId = GetUserId();
             if (userId == -1)
                 return Unauthorized(new { Message = "Unauthorized access." });
 
-            //check post exist
-            //check if traveler and local
+            var existingPost = await _repository.GetByIdAsync(pastTripPostId);
+            if (existingPost == null)
+                return NotFound(new { Message = "No posts found." });
 
-            if (id != post.PastTripPostId)
-            {
-                return BadRequest();
-            }
-            //await _repository.UpdateAsync(post);
+
+            if (existingPost.LocalId != userId)
+                return BadRequest("Access Denied! You are not local of this trip");
+
+            var localUpdatePost = _mapper.Map<PastTripPost>(postDTO);
+
+            existingPost.Review = localUpdatePost.Review;
+            existingPost.IsReviewEdited = true;
+
+            await _repository.UpdateLocalPartAsync(existingPost);
+
             return NoContent();
         }
 
 
-        [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(int id)
+        [HttpDelete("{pastTripPostId}")]
+        public async Task<ActionResult> Delete(int pastTripPostId)
         {
             var userId = GetUserId();
             if (userId == -1)
                 return Unauthorized(new { Message = "Unauthorized access." });
 
             //check post exist
-            //check if traveler and local
+            var existingPost = await _repository.GetByIdAsync(pastTripPostId);
+            if (existingPost == null)
+                return NotFound(new { Message = "No posts found." });
 
-            await _repository.DeleteAsync(id);
+            //check if traveler and local
+            if (existingPost.TravelerId != userId)
+                return BadRequest("Access Denied! You are not traveler of this trip");
+
+            await _repository.DeleteAsync(pastTripPostId);
             return NoContent();
         }
     }

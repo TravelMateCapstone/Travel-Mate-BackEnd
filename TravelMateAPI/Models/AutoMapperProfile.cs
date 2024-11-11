@@ -1,4 +1,5 @@
 ﻿using BusinessObjects.Entities;
+using BusinessObjects.Utils.Request;
 using BusinessObjects.Utils.Response;
 
 namespace TravelMateAPI.Models
@@ -36,6 +37,15 @@ namespace TravelMateAPI.Models
            .ForMember(dest => dest.TravelerAvatar, opt => opt.MapFrom(src => src.Traveler.Profiles.ImageUser))
            .ForMember(dest => dest.LocalName, opt => opt.MapFrom(src => src.Local.FullName))
            .ForMember(dest => dest.LocalAvatar, opt => opt.MapFrom(src => src.Local.Profiles.ImageUser));
+
+            CreateMap<PastTripPostInputDTO, PastTripPost>();
+
+            CreateMap<TravelerPastTripPostDTO, PastTripPost>();
+
+            CreateMap<LocalPastTripPostDTO, PastTripPost>();
+
+            CreateMap<PostPhotoInputDTO, PostPhoto>();
+
         }
     }
 }
