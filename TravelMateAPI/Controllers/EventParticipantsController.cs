@@ -45,7 +45,19 @@ namespace TravelMateAPI.Controllers
             }
             return Ok(participants);
         }
+        [HttpGet("top-events")]
+        public async Task<IActionResult> GetTopEvents(int topCount)
+        {
+           // const int topCount = 5; // Số lượng sự kiện cần lấy
+            var topEvents = await _eventParticipantsRepository.GetTopEventsByParticipantCountAsync(topCount);
 
+            if (topEvents == null || !topEvents.Any())
+            {
+                return NotFound(new { Message = "Không tìm thấy sự kiện nào có người tham gia." });
+            }
+
+            return Ok(topEvents);
+        }   
         // POST: api/EventParticipants
         [HttpPost]
         public async Task<IActionResult> Add([FromBody] EventParticipants newParticipant)

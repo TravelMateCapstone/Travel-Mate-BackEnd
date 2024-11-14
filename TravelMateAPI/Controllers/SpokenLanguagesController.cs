@@ -35,10 +35,10 @@ namespace TravelMateAPI.Controllers
         public async Task<IActionResult> GetByUserId(int userId)
         {
             var spokenLanguages = await _spokenLanguagesRepository.GetSpokenLanguagesByUserIdAsync(userId);
-            if (spokenLanguages == null || !spokenLanguages.Any())
-            {
-                return NotFound(new { Message = $"No spoken languages found for UserId {userId}." });
-            }
+            //if (spokenLanguages == null || !spokenLanguages.Any())
+            //{
+            //    return NotFound(new { Message = $"No spoken languages found for UserId {userId}." });
+            //}
             return Ok(spokenLanguages);
         }
         // GET: api/SpokenLanguages/user/current
@@ -48,10 +48,10 @@ namespace TravelMateAPI.Controllers
             var userId = GetUserId(); // Giả sử bạn đã có phương thức này để lấy UserId từ token.
 
             var spokenLanguages = await _spokenLanguagesRepository.GetSpokenLanguagesByUserIdAsync(userId);
-            if (spokenLanguages == null || !spokenLanguages.Any())
-            {
-                return NotFound(new { Message = $"No spoken languages found for UserId {userId}." });
-            }
+            //if (spokenLanguages == null || !spokenLanguages.Any())
+            //{
+            //    return NotFound(new { Message = $"No spoken languages found for UserId {userId}." });
+            //}
             return Ok(spokenLanguages);
         }
         // GET: api/SpokenLanguages/1/1

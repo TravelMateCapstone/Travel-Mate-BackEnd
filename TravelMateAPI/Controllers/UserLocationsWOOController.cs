@@ -38,10 +38,10 @@ namespace TravelMateAPI.Controllers
         public async Task<IActionResult> GetByUserId(int userId)
         {
             var userLocations = await _userLocationRepository.GetUserLocationsByUserIdAsync(userId);
-            if (userLocations == null || !userLocations.Any())
-            {
-                return NotFound(new { Message = $"No locations found for UserId {userId}." });
-            }
+            //if (userLocations == null || !userLocations.Any())
+            //{
+            //    return NotFound(new { Message = $"No locations found for UserId {userId}." });
+            //}
             return Ok(userLocations);
         }
         // GET: api/UserLocation
@@ -58,10 +58,10 @@ namespace TravelMateAPI.Controllers
             var userId = GetUserId(); // Giả sử bạn đã có phương thức này để lấy UserId từ token.
 
             var userLocations = await _userLocationRepository.GetUserLocationsByUserIdAsync(userId);
-            if (userLocations == null || !userLocations.Any())
-            {
-                return NotFound(new { Message = $"No locations found for UserId {userId}." });
-            }
+            //if (userLocations == null || !userLocations.Any())
+            //{
+            //    return NotFound(new { Message = $"No locations found for UserId {userId}." });
+            //}
             return Ok(userLocations);
         }
         // GET: api/UserLocation/1/1

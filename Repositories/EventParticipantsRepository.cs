@@ -47,6 +47,10 @@ namespace Repositories
         {
             return await _eventParticipantsDAO.HasUserJoinedEventAsync(eventId, userId);
         }
+        public async Task<List<EventParticipants>> GetTopEventsByParticipantCountAsync(int topCount)
+        {
+            return await _eventParticipantsDAO.GetTopEventsByParticipantCountAsync(topCount);
+        }
 
     }
 
