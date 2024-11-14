@@ -40,10 +40,10 @@ namespace TravelMateAPI.Controllers
             }
 
             var userEducations = await _userEducationRepository.GetUserEducationByUserIdAsync(userId);
-            if (userEducations == null || !userEducations.Any())
-            {
-                return NotFound(new { Message = $"No education found for UserId {userId}." });
-            }
+            //if (userEducations == null || !userEducations.Any())
+            //{
+            //    return NotFound(new { Message = $"No education found for UserId {userId}." });
+            //}
             return Ok(userEducations);
         }
         // GET: api/UserEducation/user/1
@@ -51,10 +51,10 @@ namespace TravelMateAPI.Controllers
         public async Task<IActionResult> GetByUserId(int userId)
         {
             var userEducation = await _userEducationRepository.GetUserEducationByUserIdAsync(userId);
-            if (userEducation == null || !userEducation.Any())
-            {
-                return NotFound(new { Message = $"No education found for UserId {userId}." });
-            }
+            //if (userEducation == null || !userEducation.Any())
+            //{
+            //    return NotFound(new { Message = $"No education found for UserId {userId}." });
+            //}
             return Ok(userEducation);
         }
         // GET: api/UserEducation/1/1

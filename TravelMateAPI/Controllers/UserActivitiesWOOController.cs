@@ -57,10 +57,10 @@ namespace TravelMateAPI.Controllers
         public async Task<IActionResult> GetByUserId(int userId)
         {
             var userActivities = await _userActivityRepository.GetUserActivitiesByUserIdAsync(userId);
-            if (userActivities == null || !userActivities.Any())
-            {
-                return NotFound(new { Message = $"No activities found for UserId {userId}." });
-            }
+            //if (userActivities == null || !userActivities.Any())
+            //{
+            //    return NotFound(new { Message = $"No activities found for UserId {userId}." });
+            //}
             return Ok(userActivities);
         }
         // GET: api/UserActivities
