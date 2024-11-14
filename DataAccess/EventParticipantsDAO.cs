@@ -117,6 +117,34 @@ namespace DataAccess
             return await _dbContext.EventParticipants
                                    .AnyAsync(ep => ep.EventId == eventId && ep.UserId == userId);
         }
+
+        public async Task<List<EventParticipants>> GetTopEventsByParticipantCountAsync(int topCount)
+        {
+            var result = _dbContext.EventParticipants
+                .GroupBy(ep => ep.EventId)
+                .Select(g => new
+                {
+                    EventId = g.Key,
+                    ParticipantCount = g.Count(),
+                    Event = g.FirstOrDefault().Event
+                })
+                .OrderByDescending(e => e.ParticipantCount)
+                .Take(topCount)
+                .AsEnumerable() // Chuyển truy vấn sang client-side
+                .Select(e => new EventParticipants
+                {
+                    EventId = e.EventId,
+                    JoinedAt = DateTime.Now, // Giá trị mặc định hoặc có thể bỏ qua
+                    Notification = null, // Giá trị mặc định hoặc có thể bỏ qua
+                    Event = e.Event
+                })
+                .ToList(); // Sử dụng ToList() thay cho ToListAsync()
+
+            return result;
+        }
+
+
+
     }
 
 

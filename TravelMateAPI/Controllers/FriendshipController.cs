@@ -51,7 +51,7 @@ namespace TravelMateAPI.Controllers
             await _context.SaveChangesAsync();
 
             // Tạo thông báo
-            await _notificationService.CreateNotificationAsync(toUserId, $"Bạn đã nhận được một lời mời kết bạn từ {fromUser.UserName}");
+            await _notificationService.CreateNotificationAsync(toUserId, $"Bạn đã nhận được một lời mời kết bạn từ {fromUser.FullName}");
 
             return Ok("Lời mời kết bạn đã được gửi");
         }
@@ -78,7 +78,7 @@ namespace TravelMateAPI.Controllers
             await _context.SaveChangesAsync();
 
             // Tạo thông báo
-            await _notificationService.CreateNotificationAsync(fromUserId, $"Lời mời kết bạn của bạn với {toUser.UserName} đã được chấp nhận");
+            await _notificationService.CreateNotificationAsync(fromUserId, $"Lời mời kết bạn của bạn với {toUser.FullName} đã được chấp nhận");
 
             return Ok("Bạn đã chấp nhận lời mời kết bạn");
         }
@@ -104,7 +104,7 @@ namespace TravelMateAPI.Controllers
             await _context.SaveChangesAsync();
 
             // Tạo thông báo
-            await _notificationService.CreateNotificationAsync(fromUserId, $"Lời mời kết bạn của bạn với {toUser.UserName} đã bị từ chối");
+            await _notificationService.CreateNotificationAsync(fromUserId, $"Lời mời kết bạn của bạn với {toUser.FullName} đã bị từ chối");
 
             return Ok("Bạn đã từ chối lời mời kết bạn");
         }
@@ -133,7 +133,7 @@ namespace TravelMateAPI.Controllers
             await _context.SaveChangesAsync();
 
             // Gửi thông báo đến người dùng đã bị xóa (nếu cần)
-            await _notificationService.CreateNotificationAsync(friendUserId, $"Bạn đã bị {currentUser.UserName} xóa khỏi danh sách bạn bè.");
+            await _notificationService.CreateNotificationAsync(friendUserId, $"Bạn đã bị {currentUser.FullName} xóa khỏi danh sách bạn bè.");
 
             return Ok("Bạn đã xóa bạn bè thành công.");
         }
@@ -262,6 +262,31 @@ namespace TravelMateAPI.Controllers
                 .ToListAsync();
 
             return Ok(friends);
+        }
+
+        [HttpGet("check-friendship")]
+        public async Task<IActionResult> CheckFriendshipStatus( int otherUserId)
+        {
+            // Lấy thông tin người dùng hiện tại từ JWT token
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null) return Unauthorized("Không tìm thấy người dùng hiện tại.");
+
+            int userId = currentUser.Id;
+            // Kiểm tra xem userId có tồn tại không
+            //var user = await _userManager.FindByIdAsync(userId.ToString());
+            //if (user == null) return NotFound("Người dùng không tồn tại.");
+
+            // Kiểm tra xem otherUserId có tồn tại không
+            var otherUser = await _userManager.FindByIdAsync(otherUserId.ToString());
+            if (otherUser == null) return NotFound("Người dùng kia không tồn tại.");
+
+            // Kiểm tra xem đã kết bạn chưa
+            var isFriend = await _context.Friendships.AnyAsync(f =>
+                ((f.UserId1 == userId && f.UserId2 == otherUserId) ||
+                 (f.UserId1 == otherUserId && f.UserId2 == userId)) &&
+                f.Status == FriendshipStatus.Accepted);
+
+            return Ok(new { AreFriends = isFriend });
         }
     }
 }
