@@ -216,7 +216,32 @@ namespace TravelMateAPI.Controllers
             // Trả về giá trị ImageUser hoặc ảnh mặc định
             return Ok(new { imageUser });
         }
+        // GET: api/Profile/current-user/image
+        [HttpGet("image/{userId}")]
+        public async Task<IActionResult> GetUserImage(int userId)
+        {
+            // Lấy UserId của người dùng hiện tại từ token
+            //var userId = GetUserId();
+            //if (userId == -1)
+            //{
+            //    return Unauthorized("Token không hợp lệ hoặc người dùng không tìm thấy.");
+            //}
 
+            // Truy vấn để lấy ảnh Profile theo UserId
+            var imageUser = await _context.Profiles
+                .Where(p => p.UserId == userId)
+                .Select(p => p.ImageUser)
+                .FirstOrDefaultAsync();
+
+            // Kiểm tra nếu không tìm thấy ảnh
+            if (string.IsNullOrEmpty(imageUser))
+            {
+                imageUser = "https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3467.jpg";
+            }
+
+            // Trả về giá trị ImageUser hoặc ảnh mặc định
+            return Ok(new { imageUser });
+        }
         // POST: api/Profile
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] Profile newProfile)
