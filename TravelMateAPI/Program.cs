@@ -18,6 +18,7 @@ using TravelMateAPI.Models;
 using TravelMateAPI.Services.Email;
 using TravelMateAPI.Services.FindLocal;
 using TravelMateAPI.Services.Notification;
+using TravelMateAPI.Services.Notification.Event;
 
 namespace TravelMateAPI
 {
@@ -184,6 +185,8 @@ namespace TravelMateAPI
             builder.Services.AddScoped<IEventRepository, EventRepository>();
             builder.Services.AddScoped<EventParticipantsDAO>();
             builder.Services.AddScoped<IEventParticipantsRepository, EventParticipantsRepository>();
+            builder.Services.AddScoped<EventNotificationService>();
+            builder.Services.AddHostedService<BackgroundNotificationWorker>();
             builder.Services.AddScoped<ActivitiesDAO>();
             builder.Services.AddScoped<IActivityRepository, ActivityRepository>();
             builder.Services.AddScoped<LocationsDAO>();

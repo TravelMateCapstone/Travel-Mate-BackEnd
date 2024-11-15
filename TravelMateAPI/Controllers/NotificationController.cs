@@ -105,6 +105,40 @@ namespace TravelMateAPI.Controllers
 
             return Ok("Thông báo đã được đánh dấu là đã đọc");
         }
+
+        // PUT: api/Notifications/{notificationId}/message
+        [HttpPut("{notificationId}/message")]
+        public async Task<IActionResult> UpdateNotificationMessage(int notificationId, [FromBody] string newMessage)
+        {
+            if (string.IsNullOrWhiteSpace(newMessage))
+            {
+                return BadRequest("Nội dung thông báo không được để trống.");
+            }
+
+            // Tìm thông báo trong cơ sở dữ liệu
+            var existingNotification = await _context.Notifications.FindAsync(notificationId);
+
+            if (existingNotification == null)
+            {
+                return NotFound("Không tìm thấy thông báo.");
+            }
+
+            // Cập nhật trường Message
+            existingNotification.Message = newMessage;
+
+            // Lưu thay đổi vào cơ sở dữ liệu
+            _context.Notifications.Update(existingNotification);
+            await _context.SaveChangesAsync();
+
+            return Ok(new
+            {
+                Success = true,
+                //Message = "Thông báo đã được cập nhật thành công.",
+                Data = existingNotification
+            });
+        }
+
+
     }
 
 }
