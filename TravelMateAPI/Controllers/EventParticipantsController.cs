@@ -1,8 +1,10 @@
-﻿using BusinessObjects.Entities;
+﻿using BusinessObjects;
+using BusinessObjects.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Formatter;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
+using Microsoft.EntityFrameworkCore;
 using Repositories;
 using Repositories.Interface;
 using System.Security.Claims;
@@ -17,11 +19,13 @@ namespace TravelMateAPI.Controllers
     {
         private readonly IEventParticipantsRepository _eventParticipantsRepository;
         private readonly INotificationService _notificationService;
+        private readonly ApplicationDBContext _context;
 
-        public EventParticipantsController(IEventParticipantsRepository eventParticipantsRepository,INotificationService notificationService)
+        public EventParticipantsController(IEventParticipantsRepository eventParticipantsRepository,INotificationService notificationService,ApplicationDBContext context)
         {
             _eventParticipantsRepository = eventParticipantsRepository;
             _notificationService = notificationService;
+            _context = context;
         }
         private int GetUserId()
         {
@@ -89,9 +93,15 @@ namespace TravelMateAPI.Controllers
                 return Unauthorized("Invalid token or user not found.");
             }
 
+            // Lấy thông tin sự kiện để kiểm tra hoặc lấy thêm dữ liệu
+            var eventDetails = await _context.Events
+                .FirstOrDefaultAsync(e => e.EventId == newParticipant.EventId);
+            int toUserId = eventDetails.CreaterUserId;
+
+            var userDetail = await _context.Users.FindAsync(userId);
+
             // Gán UserId của người dùng hiện tại cho participant
             newParticipant.UserId = userId;
-
             // Gán giá trị mặc định cho JoinedAt và Notification
             newParticipant.JoinedAt = GetTimeZone.GetVNTimeZoneNow();
             newParticipant.Notification = true;
@@ -99,6 +109,8 @@ namespace TravelMateAPI.Controllers
 
             // Thêm người tham gia vào sự kiện
             await _eventParticipantsRepository.AddEventParticipantAsync(newParticipant);
+
+            await _notificationService.CreateNotificationFullAsync(toUserId, $"{userDetail.FullName} đã tham gia sự kiện [{eventDetails.EventName}] của bạn.", userId, 3);
 
             return Ok(new
             {

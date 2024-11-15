@@ -124,7 +124,7 @@ namespace TravelMateAPI.Controllers
             var friendship = await _context.Friendships
                 .FirstOrDefaultAsync(f => (f.UserId1 == currentUser.Id && f.UserId2 == friendUserId) ||
                                           (f.UserId1 == friendUserId && f.UserId2 == currentUser.Id) &&
-                                          f.Status == FriendshipStatus.Accepted);
+                                         ( f.Status == FriendshipStatus.Accepted || f.Status == FriendshipStatus.Pending) );
 
             if (friendship == null)
             {
@@ -269,7 +269,7 @@ namespace TravelMateAPI.Controllers
         }
 
         [HttpGet("check-friendship")]
-        public async Task<IActionResult> CheckFriendshipStatus( int otherUserId)
+        public async Task<IActionResult> CheckFriendship( int otherUserId)
         {
             // Lấy thông tin người dùng hiện tại từ JWT token
             var currentUser = await _userManager.GetUserAsync(User);
@@ -292,6 +292,56 @@ namespace TravelMateAPI.Controllers
 
             return Ok(new { AreFriends = isFriend });
         }
+
+        [HttpGet("check-friendship-status")]
+        public async Task<IActionResult> CheckFriendshipStatus(int otherUserId)
+        {
+            // Lấy thông tin người dùng hiện tại từ JWT token
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null) return Unauthorized("Không tìm thấy người dùng hiện tại.");
+
+            int userId = currentUser.Id;
+
+            // Kiểm tra otherUserId có tồn tại không
+            var otherUser = await _userManager.FindByIdAsync(otherUserId.ToString());
+            if (otherUser == null) return NotFound("Người dùng kia không tồn tại.");
+
+            // Lấy thông tin mối quan hệ
+            var friendship = await _context.Friendships.FirstOrDefaultAsync(f =>
+                (f.UserId1 == userId && f.UserId2 == otherUserId) ||
+                (f.UserId1 == otherUserId && f.UserId2 == userId));
+
+            //// Xử lý các trường hợp:
+            //if (friendship == null)
+            //{
+            //    // Không phải bạn bè
+            //    return Ok(2);
+            //}
+
+            if (friendship.Status == FriendshipStatus.Accepted)
+            {
+                // Là bạn bè
+                return Ok(1);
+            }
+
+            if (friendship.Status == FriendshipStatus.Pending)
+            {
+                if (friendship.UserId1 == userId)
+                {
+                    // Người dùng hiện tại đã gửi lời mời
+                    return Ok(3);
+                }
+                else if (friendship.UserId1 == otherUserId)
+                {
+                    // Người dùng khác đã gửi lời mời cho mình nhưng đang pending
+                    return Ok(4);
+                }
+            }
+
+            // Trường hợp mặc định (nếu có trạng thái khác không xác định)
+            return Ok(2);
+        }
+
     }
 }
 
