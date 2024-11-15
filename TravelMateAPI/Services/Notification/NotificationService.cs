@@ -25,6 +25,22 @@ namespace TravelMateAPI.Services.Notification
             _context.Notifications.Add(notification);
             await _context.SaveChangesAsync();
         }
+
+        public async Task CreateNotificationFullAsync(int userId, string message, int senderId, int typeNotification)
+        {
+            var notification = new BusinessObjects.Entities.Notification
+            {
+                UserId = userId,
+                Message = message,
+                SenderId = senderId,
+                TypeNotification = typeNotification,
+                IsRead = false,
+                CreatedAt = GetTimeZone.GetVNTimeZoneNow()
+            };
+
+            _context.Notifications.Add(notification);
+            await _context.SaveChangesAsync();
+        }
     }
 
 }

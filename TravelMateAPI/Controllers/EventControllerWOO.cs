@@ -106,7 +106,8 @@ namespace TravelMateAPI.Controllers
             // Lấy các sự kiện mà người dùng đã tham gia
             var joinedEvents = await _context.Events
                 .Where(e => _context.EventParticipants
-                    .Any(ep => ep.EventId == e.EventId && ep.UserId == userId))
+                    .Any(ep => ep.EventId == e.EventId && ep.UserId == userId) &&
+            e.CreaterUserId != userId)
                 .ToListAsync();
 
             return Ok(joinedEvents);
@@ -125,7 +126,7 @@ namespace TravelMateAPI.Controllers
             // Lấy các sự kiện mà người dùng chưa tham gia
             var notJoinedEvents = await _context.Events
                 .Where(e => !_context.EventParticipants
-                    .Any(ep => ep.EventId == e.EventId && ep.UserId == userId))
+                    .Any(ep => ep.EventId == e.EventId && ep.UserId == userId) )
                 .ToListAsync();
             //// Lấy các sự kiện mà người dùng chưa tham gia và cũng không phải là người tạo ra sự kiện
             //var notJoinedEvents = await _context.Events

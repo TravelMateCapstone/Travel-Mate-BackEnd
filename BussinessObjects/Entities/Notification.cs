@@ -20,6 +20,10 @@ namespace BusinessObjects.Entities
 
         public string Message { get; set; }
 
+        public int? SenderId { get; set; }
+
+        public int? TypeNotification { get; set;}
+
         public bool IsRead { get; set; }
 
         public DateTime CreatedAt { get; set; }
