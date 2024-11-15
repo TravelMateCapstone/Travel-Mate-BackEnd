@@ -40,6 +40,18 @@ namespace TravelMateAPI.Controllers
             var currentUser = await _userManager.GetUserAsync(User);
             if (currentUser == null) return Unauthorized("Không tìm thấy người dùng hiện tại.");
 
+            //// Lấy danh sách thông báo và sắp xếp theo thời gian giảm dần (mới nhất lên đầu)
+            //var notifications = await _context.Notifications
+            //    .Where(n => n.UserId == currentUser.Id)
+            //    .OrderByDescending(n => n.CreatedAt) // Sắp xếp thông báo mới nhất lên đầu
+            //    .Select(n => new
+            //    {
+            //        n.NotificationId,
+            //        n.Message,
+            //        n.CreatedAt,
+            //        n.IsRead
+            //    })
+            //    .ToListAsync();
             // Lấy danh sách thông báo và sắp xếp theo thời gian giảm dần (mới nhất lên đầu)
             var notifications = await _context.Notifications
                 .Where(n => n.UserId == currentUser.Id)
@@ -48,6 +60,8 @@ namespace TravelMateAPI.Controllers
                 {
                     n.NotificationId,
                     n.Message,
+                    n.SenderId,
+                    n.TypeNotification,
                     n.CreatedAt,
                     n.IsRead
                 })

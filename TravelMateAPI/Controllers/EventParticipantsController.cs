@@ -7,6 +7,7 @@ using Repositories;
 using Repositories.Interface;
 using System.Security.Claims;
 using TravelMateAPI.Services;
+using TravelMateAPI.Services.Notification;
 
 namespace TravelMateAPI.Controllers
 {
@@ -15,10 +16,12 @@ namespace TravelMateAPI.Controllers
     public class EventParticipantsController : ControllerBase
     {
         private readonly IEventParticipantsRepository _eventParticipantsRepository;
+        private readonly INotificationService _notificationService;
 
-        public EventParticipantsController(IEventParticipantsRepository eventParticipantsRepository)
+        public EventParticipantsController(IEventParticipantsRepository eventParticipantsRepository,INotificationService notificationService)
         {
             _eventParticipantsRepository = eventParticipantsRepository;
+            _notificationService = notificationService;
         }
         private int GetUserId()
         {

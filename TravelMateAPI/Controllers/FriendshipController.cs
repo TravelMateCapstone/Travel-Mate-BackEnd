@@ -51,7 +51,8 @@ namespace TravelMateAPI.Controllers
             await _context.SaveChangesAsync();
 
             // Tạo thông báo
-            await _notificationService.CreateNotificationAsync(toUserId, $"Bạn đã nhận được một lời mời kết bạn từ {fromUser.FullName}");
+            //await _notificationService.CreateNotificationAsync(toUserId, $"Bạn đã nhận được một lời mời kết bạn từ {fromUser.FullName}");
+            await _notificationService.CreateNotificationFullAsync(toUserId, $"Bạn đã nhận được một lời mời kết bạn từ {fromUser.FullName}",fromUser.Id,2);
 
             return Ok("Lời mời kết bạn đã được gửi");
         }
@@ -78,7 +79,8 @@ namespace TravelMateAPI.Controllers
             await _context.SaveChangesAsync();
 
             // Tạo thông báo
-            await _notificationService.CreateNotificationAsync(fromUserId, $"Lời mời kết bạn của bạn với {toUser.FullName} đã được chấp nhận");
+            //await _notificationService.CreateNotificationAsync(fromUserId, $"Lời mời kết bạn của bạn với {toUser.FullName} đã được chấp nhận");
+            await _notificationService.CreateNotificationFullAsync(fromUserId, $"Lời mời kết bạn của bạn với {toUser.FullName} đã được chấp nhận",toUser.Id,2);
 
             return Ok("Bạn đã chấp nhận lời mời kết bạn");
         }
@@ -104,7 +106,8 @@ namespace TravelMateAPI.Controllers
             await _context.SaveChangesAsync();
 
             // Tạo thông báo
-            await _notificationService.CreateNotificationAsync(fromUserId, $"Lời mời kết bạn của bạn với {toUser.FullName} đã bị từ chối");
+            //await _notificationService.CreateNotificationAsync(fromUserId, $"Lời mời kết bạn của bạn với {toUser.FullName} đã bị từ chối");
+            await _notificationService.CreateNotificationFullAsync(fromUserId, $"Lời mời kết bạn của bạn với {toUser.FullName} đã bị từ chối", toUser.Id, 2);
 
             return Ok("Bạn đã từ chối lời mời kết bạn");
         }
@@ -133,7 +136,8 @@ namespace TravelMateAPI.Controllers
             await _context.SaveChangesAsync();
 
             // Gửi thông báo đến người dùng đã bị xóa (nếu cần)
-            await _notificationService.CreateNotificationAsync(friendUserId, $"Bạn đã bị {currentUser.FullName} xóa khỏi danh sách bạn bè.");
+            //await _notificationService.CreateNotificationAsync(friendUserId, $"Bạn đã bị {currentUser.FullName} xóa khỏi danh sách bạn bè.");
+            await _notificationService.CreateNotificationFullAsync(friendUserId, $"Bạn đã bị {currentUser.FullName} xóa khỏi danh sách bạn bè.", currentUser.Id, 2);
 
             return Ok("Bạn đã xóa bạn bè thành công.");
         }
