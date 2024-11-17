@@ -1,18 +1,20 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BusinessObjects.Entities
 {
     public class DetailForm
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int FormId { get; set; }
-        public int UserId { get; set; }
-        public ApplicationUser? User { get; set; }
+        public int DetailFormId { get; set; }
+
+        public int LocalId { get; set; }
+        public ApplicationUser? Local { get; set; }
+
+        public int? TravelerId { get; set; }
+        public ICollection<ApplicationUser>? Travelers { get; set; }
+
         public int Version { get; set; }
         public DateTime CreatedAt { get; set; }
-        public bool IsCurrent { get; set; }
-        public string? Description { get; set; }
+
     }
 }
