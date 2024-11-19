@@ -67,10 +67,28 @@ namespace TravelMateAPI.Services.FindLocal
                 // Tính toán số lượng bản ghi để bỏ qua
                 var offset = (pageNumber - 1) * pageSize;
 
+                //// Tạo câu truy vấn SQL với phân trang
+                //var sql = @"
+                //    SELECT u.Id, u.FullName, u.Email, u.RegistrationTime, 
+                //           p.UserId, p.FullName, p.Address, p.Phone, p.ImageUser, 
+                //           COUNT(ua.ActivityId) AS MatchingActivitiesCount
+                //    FROM AspNetUsers u
+                //    INNER JOIN AspNetUserRoles ur ON u.Id = ur.UserId
+                //    INNER JOIN AspNetRoles r ON ur.RoleId = r.Id
+                //    INNER JOIN UserLocations ul ON u.Id = ul.UserId
+                //    INNER JOIN UserActivities ua ON u.Id = ua.UserId
+                //    LEFT JOIN Profiles p ON u.Id = p.UserId  -- Thêm JOIN bảng Profile
+                //    WHERE r.Name = @RoleName
+                //      AND ul.LocationId = @LocationId
+                //      AND ua.ActivityId IN @ActivityIds
+                //    GROUP BY u.Id, u.FullName, u.Email, u.RegistrationTime, p.UserId, p.FullName, p.Address, p.Phone, p.ImageUser
+                //    ORDER BY COUNT(ua.ActivityId) DESC
+                //    OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;";  // Phân trang
+
                 // Tạo câu truy vấn SQL với phân trang
                 var sql = @"
                     SELECT u.Id, u.FullName, u.Email, u.RegistrationTime, 
-                           p.UserId, p.FullName, p.Address, p.Phone, p.ImageUser, 
+                           p.UserId, p.Address, p.Phone, p.ImageUser, 
                            COUNT(ua.ActivityId) AS MatchingActivitiesCount
                     FROM AspNetUsers u
                     INNER JOIN AspNetUserRoles ur ON u.Id = ur.UserId
@@ -81,7 +99,7 @@ namespace TravelMateAPI.Services.FindLocal
                     WHERE r.Name = @RoleName
                       AND ul.LocationId = @LocationId
                       AND ua.ActivityId IN @ActivityIds
-                    GROUP BY u.Id, u.FullName, u.Email, u.RegistrationTime, p.UserId, p.FullName, p.Address, p.Phone, p.ImageUser
+                    GROUP BY u.Id, u.FullName, u.Email, u.RegistrationTime, p.UserId, p.Address, p.Phone, p.ImageUser
                     ORDER BY COUNT(ua.ActivityId) DESC
                     OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;";  // Phân trang
 
@@ -140,10 +158,26 @@ namespace TravelMateAPI.Services.FindLocal
                 // Tính toán số lượng bản ghi để bỏ qua
                 var offset = (pageNumber - 1) * pageSize;
 
+                //    // Tạo câu truy vấn SQL với phân trang
+                //    var sql = @"
+                //SELECT u.Id, u.FullName, u.Email, u.RegistrationTime, 
+                //       p.UserId, p.FullName AS ProfileFullName, p.Address, p.Phone, p.ImageUser, 
+                //       COUNT(ua.ActivityId) AS MatchingActivitiesCount
+                //FROM AspNetUsers u
+                //INNER JOIN AspNetUserRoles ur ON u.Id = ur.UserId
+                //INNER JOIN AspNetRoles r ON ur.RoleId = r.Id
+                //INNER JOIN UserLocations ul ON u.Id = ul.UserId
+                //LEFT JOIN UserActivities ua ON u.Id = ua.UserId AND ua.ActivityId IN @ActivityIds  -- LEFT JOIN với điều kiện cho ActivityIds
+                //LEFT JOIN Profiles p ON u.Id = p.UserId  -- Thêm JOIN bảng Profile
+                //WHERE r.Name = @RoleName
+                //  AND ul.LocationId = @LocationId
+                //GROUP BY u.Id, u.FullName, u.Email, u.RegistrationTime, p.UserId, p.FullName, p.Address, p.Phone, p.ImageUser
+                //ORDER BY MatchingActivitiesCount DESC  -- Sắp xếp theo số lượng hoạt động matching
+                //OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;";  // Phân trang
                 // Tạo câu truy vấn SQL với phân trang
                 var sql = @"
             SELECT u.Id, u.FullName, u.Email, u.RegistrationTime, 
-                   p.UserId, p.FullName AS ProfileFullName, p.Address, p.Phone, p.ImageUser, 
+                   p.UserId AS ProfileFullName, p.Address, p.Phone, p.ImageUser, 
                    COUNT(ua.ActivityId) AS MatchingActivitiesCount
             FROM AspNetUsers u
             INNER JOIN AspNetUserRoles ur ON u.Id = ur.UserId
@@ -153,7 +187,7 @@ namespace TravelMateAPI.Services.FindLocal
             LEFT JOIN Profiles p ON u.Id = p.UserId  -- Thêm JOIN bảng Profile
             WHERE r.Name = @RoleName
               AND ul.LocationId = @LocationId
-            GROUP BY u.Id, u.FullName, u.Email, u.RegistrationTime, p.UserId, p.FullName, p.Address, p.Phone, p.ImageUser
+            GROUP BY u.Id, u.FullName, u.Email, u.RegistrationTime, p.UserId, p.Address, p.Phone, p.ImageUser
             ORDER BY MatchingActivitiesCount DESC  -- Sắp xếp theo số lượng hoạt động matching
             OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;";  // Phân trang
 
