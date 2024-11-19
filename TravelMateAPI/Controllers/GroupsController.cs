@@ -338,6 +338,25 @@ namespace TravelMateAPI.Controllers
             return Ok("Left group successfully.");
         }
 
+        [HttpDelete("CancelJoinRequest/{groupId}")]
+        public async Task<IActionResult> CancelJoinRequest(int groupId)
+        {
+            var userId = GetUserId();
+            if (userId == -1)
+                return Unauthorized(new { Message = "Unauthorized access." });
+
+            var DoesRequestSend = await _groupRepository.DoesRequestSend(groupId, userId);
+            if (!DoesRequestSend)
+                return NotFound("No request was sent!");
+
+            var getGroupParticipant = await _groupRepository.GetJoinRequestParticipant(userId, groupId);
+
+            await _groupRepository.LeaveGroup(getGroupParticipant);
+
+            return Ok("Cancel join request successfully.");
+        }
+
+
         [HttpPost]
         public async Task<ActionResult<Group>> CreateGroup([FromBody] Group newGroup)
         {
