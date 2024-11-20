@@ -118,8 +118,8 @@ namespace TravelMateAPI.Controllers
         }
 
         // PUT: api/TravelerForm/{FormId}
-        [HttpPut("TravelerForm/{FormId}")]
-        public async Task<IActionResult> UpdateTravelerForm(string FormId, [FromQuery] int localId, [FromBody] TravelerExtraDetailForm updatedForm)
+        [HttpPut("TravelerForm")]
+        public async Task<IActionResult> UpdateTravelerForm([FromQuery] int localId, [FromBody] TravelerExtraDetailForm updatedForm)
         {
             try
             {
@@ -134,7 +134,6 @@ namespace TravelMateAPI.Controllers
 
                 if (form == null)
                 {
-                    updatedForm.FormId = FormId;
                     updatedForm.TravelerId = userId;
                     updatedForm.CreateById = localId;
                     updatedForm.SendAt = GetTimeZone.GetVNTimeZoneNow();
@@ -151,7 +150,8 @@ namespace TravelMateAPI.Controllers
                 form.StartDate = updatedForm.StartDate;
                 form.EndDate = updatedForm.EndDate;
 
-                await _travelerRepository.UpdateAsync(FormId, form);
+                //update form of local and user
+                await _travelerRepository.UpdateAsync(localId, userId, form);
 
                 return Ok("Update form request successfully!");
             }
@@ -164,8 +164,8 @@ namespace TravelMateAPI.Controllers
 
 
         // DELETE: api/TravelerForm/{FormId}
-        [HttpDelete("TravelerForm/{FormId}")]
-        public async Task<IActionResult> DeleteTravelerForm(string FormId, [FromQuery] int localId)
+        [HttpDelete("TravelerForm")]
+        public async Task<IActionResult> DeleteTravelerForm([FromQuery] int localId)
         {
             try
             {
@@ -186,8 +186,8 @@ namespace TravelMateAPI.Controllers
                     return BadRequest("Request was processed! You cannot delete.");
                 }
 
-                // Delete the form
-                await _travelerRepository.DeleteAsync(FormId);
+                // Delete the form of local and traveler
+                await _travelerRepository.DeleteAsync(localId, userId);
                 return Ok("Form deleted successfully!");
             }
             catch (Exception ex)

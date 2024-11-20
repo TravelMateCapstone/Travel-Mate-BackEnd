@@ -74,19 +74,27 @@ namespace DataAccess
             await collection.InsertOneAsync(form);
         }
 
-        public async Task UpdateTravelerFormAsync(string formId, TravelerExtraDetailForm updatedForm)
+        public async Task UpdateTravelerFormAsync(int localId, int travelerId, TravelerExtraDetailForm updatedForm)
         {
             var collection = _mongoContext.GetCollection<TravelerExtraDetailForm>("TravelerExtraDetailForms");
-            var filter = Builders<TravelerExtraDetailForm>.Filter.Eq(f => f.FormId, formId);
 
-            await collection.ReplaceOneAsync(filter, updatedForm);
+            // Construct the filter to match the specific form
+            var filter = Builders<TravelerExtraDetailForm>.Filter.And(
+                Builders<TravelerExtraDetailForm>.Filter.Eq(form => form.CreateById, localId),
+                Builders<TravelerExtraDetailForm>.Filter.Eq(form => form.TravelerId, travelerId)
+            );
+
+            // Replace the matched document with the updated form
+            var result = await collection.ReplaceOneAsync(filter, updatedForm);
         }
 
-        public async Task DeleteTravelerFormAsync(string formId)
+        public async Task DeleteTravelerFormAsync(int localId, int travelerId)
         {
             var collection = _mongoContext.GetCollection<TravelerExtraDetailForm>("TravelerExtraDetailForms");
-            var filter = Builders<TravelerExtraDetailForm>.Filter.Eq(f => f.FormId, formId);
-
+            var filter = Builders<TravelerExtraDetailForm>.Filter.And(
+                Builders<TravelerExtraDetailForm>.Filter.Eq(form => form.CreateById, localId),
+                Builders<TravelerExtraDetailForm>.Filter.Eq(form => form.TravelerId, travelerId)
+            );
             await collection.DeleteOneAsync(filter);
         }
 

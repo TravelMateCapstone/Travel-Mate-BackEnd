@@ -8,9 +8,9 @@ namespace Repositories.Interface
         Task<TravelerExtraDetailForm> GetByIdAsync(int localId, int travelerId);
         Task<IEnumerable<TravelerExtraDetailForm>> GetByTravelerIdAsync(int travelerId);
         Task AddAsync(TravelerExtraDetailForm form);
-        Task UpdateAsync(string formId, TravelerExtraDetailForm updatedForm);
+        Task UpdateAsync(int localId, int travelerId, TravelerExtraDetailForm updatedForm);
 
-        Task DeleteAsync(string formId);
+        Task DeleteAsync(int localId, int travelerId);
 
     }
 }
