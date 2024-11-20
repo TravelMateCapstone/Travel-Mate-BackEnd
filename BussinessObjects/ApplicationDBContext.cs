@@ -58,6 +58,11 @@ namespace BusinessObjects
             optionsBuilder.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
         }
 
+        [DbFunction(name: "SOUNDEX", IsBuiltIn = true)]
+        public string FuzzySearch(string query)
+        {
+            throw new NotImplementedException();
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
