@@ -101,11 +101,15 @@ namespace TravelMateAPI.Controllers
                 if (userId == localId)
                     return BadRequest("You can not request yourself!");
 
+                var localForm = await _localRepository.GetByUserIdAsync(localId);
+
                 var existingFormRequest = await _travelerRepository.GetByIdAsync(localId, userId);
                 if (existingFormRequest != null)
+                {
+                    existingFormRequest = _mapper.Map<TravelerExtraDetailForm>(localForm);
                     return Ok(existingFormRequest);
+                }
 
-                var localForm = await _localRepository.GetByUserIdAsync(localId);
                 var formRequest = _mapper.Map<TravelerExtraDetailForm>(localForm);
 
                 return Ok(formRequest);
