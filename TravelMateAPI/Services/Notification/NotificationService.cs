@@ -1,15 +1,19 @@
 ﻿using BusinessObjects;
 using BusinessObjects.Entities;
+using Microsoft.AspNetCore.SignalR;
+using TravelMateAPI.Services.Hubs;
 
 namespace TravelMateAPI.Services.Notification
 {
     public class NotificationService : INotificationService
     {
         private readonly ApplicationDBContext _context;
+        private readonly IHubContext<ServiceHub> _hubContext;
 
-        public NotificationService(ApplicationDBContext context)
+        public NotificationService(ApplicationDBContext context, IHubContext<ServiceHub> hubContext)
         {
             _context = context;
+            _hubContext = hubContext;
         }
 
         public async Task CreateNotificationAsync(int userId, string message)
@@ -40,6 +44,7 @@ namespace TravelMateAPI.Services.Notification
 
             _context.Notifications.Add(notification);
             await _context.SaveChangesAsync();
+            await _hubContext.Clients.All.SendAsync("NotificationCreated", notification);  // Gửi sự kiện NotificationCreated đến tất cả client
         }
     }
 
