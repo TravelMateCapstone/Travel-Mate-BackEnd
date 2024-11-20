@@ -17,6 +17,7 @@ using System.Text;
 using TravelMateAPI.Models;
 using TravelMateAPI.Services.Email;
 using TravelMateAPI.Services.FindLocal;
+using TravelMateAPI.Services.Hubs;
 using TravelMateAPI.Services.Notification;
 using TravelMateAPI.Services.Notification.Event;
 
@@ -171,7 +172,8 @@ namespace TravelMateAPI
             // Cấu hình Mail và Firebase
             builder.Services.AddScoped<IMailServiceSystem, SendMailService>();
             //builder.Services.AddSingleton<FirebaseService>();
-
+            //real time
+            builder.Services.AddSignalR();
             // Đăng ký các repository
             builder.Services.AddScoped<ProfileDAO>();
             builder.Services.AddScoped<IProfileRepository, ProfileRepository>();
@@ -252,11 +254,19 @@ namespace TravelMateAPI
             // Cấu hình CORS
             builder.Services.AddCors(options =>
             {
+                //options.AddPolicy("AllowAll",
+                //    builder => builder
+                //        .AllowAnyOrigin()
+                //        .AllowAnyMethod()
+                //        .AllowAnyHeader());
                 options.AddPolicy("AllowAll",
-                    builder => builder
-                        .AllowAnyOrigin()
-                        .AllowAnyMethod()
-                        .AllowAnyHeader());
+                policyBuilder =>
+                {
+                    policyBuilder.WithOrigins("http://localhost:5173", "https://travelmatefe.netlify.app/") // Địa chỉ của ứng dụng React của bạn
+                                 .AllowAnyMethod()
+                                 .AllowAnyHeader()
+                                 .AllowCredentials(); // Quan trọng khi sử dụng cookies hoặc thông tin xác thực
+                });
             });
 
             var app = builder.Build();
@@ -277,6 +287,8 @@ namespace TravelMateAPI
             app.UseAuthentication();
             app.UseAuthorization();
             app.MapControllers();
+            // real time
+            app.MapHub<ServiceHub>("/serviceHub");
             app.Run();
         }
     }
