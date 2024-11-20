@@ -7,7 +7,7 @@ namespace BusinessObjects.Entities
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string? FormId { get; set; } // MongoDB will generate an ID if this is null
+        public string? TravelerFormId { get; set; } // MongoDB will generate an ID if this is null
 
         [BsonElement("createById")]
         public int? CreateById { get; set; }

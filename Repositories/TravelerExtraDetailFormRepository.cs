@@ -33,14 +33,14 @@ namespace Repositories
             await _travelerFormDAO.AddTravelerFormAsync(form);
         }
 
-        public async Task UpdateAsync(string formId, TravelerExtraDetailForm updatedForm)
+        public async Task UpdateAsync(int localId, int travelerId, TravelerExtraDetailForm updatedForm)
         {
-            await _travelerFormDAO.UpdateTravelerFormAsync(formId, updatedForm);
+            await _travelerFormDAO.UpdateTravelerFormAsync(localId, travelerId, updatedForm);
         }
 
-        public async Task DeleteAsync(string formId)
+        public async Task DeleteAsync(int localId, int travelerId)
         {
-            await _travelerFormDAO.DeleteTravelerFormAsync(formId);
+            await _travelerFormDAO.DeleteTravelerFormAsync(localId, travelerId);
         }
     }
 }
