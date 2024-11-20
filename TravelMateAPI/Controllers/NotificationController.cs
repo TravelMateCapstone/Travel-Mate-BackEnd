@@ -3,6 +3,8 @@ using BusinessObjects;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.SignalR;
+using TravelMateAPI.Services.Hubs;
 
 namespace TravelMateAPI.Controllers
 {
@@ -12,11 +14,13 @@ namespace TravelMateAPI.Controllers
     {
         private readonly ApplicationDBContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IHubContext<ServiceHub> _hubContext;
 
-        public NotificationController(ApplicationDBContext context, UserManager<ApplicationUser> userManager)
+        public NotificationController(ApplicationDBContext context, UserManager<ApplicationUser> userManager, IHubContext<ServiceHub> hubContext)
         {
             _context = context;
             _userManager = userManager;
+            _hubContext = hubContext;
         }
 
         // Lấy danh sách thông báo của người dùng
@@ -102,6 +106,7 @@ namespace TravelMateAPI.Controllers
             notification.IsRead = true;
             _context.Notifications.Update(notification);
             await _context.SaveChangesAsync();
+            await _hubContext.Clients.All.SendAsync("ReadNotification", notification);
 
             return Ok("Thông báo đã được đánh dấu là đã đọc");
         }
@@ -129,6 +134,7 @@ namespace TravelMateAPI.Controllers
             // Lưu thay đổi vào cơ sở dữ liệu
             _context.Notifications.Update(existingNotification);
             await _context.SaveChangesAsync();
+            await _hubContext.Clients.All.SendAsync("EditNotification", existingNotification);
 
             return Ok(new
             {
