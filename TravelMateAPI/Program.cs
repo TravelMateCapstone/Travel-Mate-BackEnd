@@ -13,7 +13,6 @@ using Microsoft.OData.ModelBuilder;
 using Microsoft.OpenApi.Models;
 using Repositories;
 using Repositories.Interface;
-using Repository;
 using Repository.Interfaces;
 using System.Text;
 using TravelMateAPI.Models;
@@ -125,6 +124,8 @@ namespace TravelMateAPI
             .AddEntityFrameworkStores<ApplicationDBContext>()
             .AddDefaultTokenProviders();
 
+            builder.Services.AddSingleton<MongoDbContext>();
+
             // Cấu hình Authentication
             builder.Services.AddAuthentication(options =>
             {
@@ -217,6 +218,9 @@ namespace TravelMateAPI
             builder.Services.AddScoped<IPostCommentRepository, PostCommentRepository>();
             builder.Services.AddScoped<PastTripPostDAO>();
             builder.Services.AddScoped<IPastTripPostRepository, PastTripPostRepository>();
+            builder.Services.AddScoped<ExtraFormDetailDAO>();
+            builder.Services.AddScoped<ILocalExtraDetailFormRepository, LocalExtraDetailFormRepository>();
+            builder.Services.AddScoped<ITravelerFormRepository, TravelerFormRepository>();
 
             builder.Services.AddControllers().AddJsonOptions(options =>
             {

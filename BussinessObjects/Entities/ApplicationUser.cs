@@ -39,8 +39,7 @@ namespace BusinessObjects.Entities
         public ICollection<Report>? Reports { get; set; }
         public ICollection<Report>? ReceivedReports { get; set; }
         public UserDescription? UserDescription { get; set; }
-       
-        public DetailForm? DetailForm { get; set; }
+
         public ICollection<OnTravelling>? OnTravel { get; set; }
         public ICollection<Reaction>? Reactions { get; set; }
         public ICollection<UserEducation>? UserEducations { get; set; }

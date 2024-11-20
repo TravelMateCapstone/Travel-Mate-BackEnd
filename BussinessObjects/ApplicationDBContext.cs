@@ -23,7 +23,6 @@ namespace BusinessObjects
         public DbSet<UserActivity> UserActivities { get; set; }
         public DbSet<Contract> Contracts { get; set; }
         public DbSet<Destination> Destinations { get; set; }
-        public DbSet<DetailForm> DetailForms { get; set; }
         public DbSet<Event> Events { get; set; }
         public DbSet<EventParticipants> EventParticipants { get; set; }
         public DbSet<Notification> Notifications { get; set; }
