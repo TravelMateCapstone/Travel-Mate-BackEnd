@@ -560,7 +560,7 @@ namespace BusinessObjects
                .HasOne(gp => gp.User)
                .WithMany(g => g.GroupParticipants)
                .HasForeignKey(gp => gp.UserId)
-               .OnDelete(DeleteBehavior.Restrict);
+               .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<GroupPost>()
                 .HasOne(p => p.Group)
