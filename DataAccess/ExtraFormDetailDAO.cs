@@ -24,7 +24,7 @@ namespace DataAccess
         public async Task<LocalExtraDetailForm> GetById(string formId)
         {
             var collection = _mongoContext.GetCollection<LocalExtraDetailForm>("ExtraDetailForms");
-            return collection.Find(form => form.FormId == formId).FirstOrDefault();
+            return collection.Find(form => form.Id == formId).FirstOrDefault();
         }
 
         public async Task<LocalExtraDetailForm> GetByUserId(int userId)
@@ -43,7 +43,7 @@ namespace DataAccess
         public async Task UpdateAsync(string formId, LocalExtraDetailForm updatedForm)
         {
             var collection = _mongoContext.GetCollection<LocalExtraDetailForm>("ExtraDetailForms");
-            var filter = Builders<LocalExtraDetailForm>.Filter.Eq(f => f.FormId, formId);
+            var filter = Builders<LocalExtraDetailForm>.Filter.Eq(f => f.Id, formId);
 
             await collection.ReplaceOneAsync(filter, updatedForm);
         }
