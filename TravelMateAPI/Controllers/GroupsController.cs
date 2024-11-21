@@ -68,17 +68,17 @@ namespace TravelMateAPI.Controllers
             //group type
             var groups = new List<Group>();
 
-            if (groupType == "Unjoined")
-            {
-                var unjoinedGroups = await _groupRepository.GetUnjoinedGroupsAsync(userId);
-                groups = await _groupRepository.GetUnjoinedGroupsByName(keyword, unjoinedGroups);
-            }
+            //if (groupType == "Unjoined")
+            //{
+            //    var unjoinedGroups = await _groupRepository.GetUnjoinedGroupsAsync(userId);
+            //    groups = await _groupRepository.GetUnjoinedGroupsByName(keyword, unjoinedGroups);
+            //}
 
-            if (groupType == "Created")
-                groups = await _groupRepository.GetCreatedGroupsByName(keyword);
+            //if (groupType == "Created")
+            //    groups = await _groupRepository.GetCreatedGroupsByName(keyword);
 
-            if (groupType == "Joined")
-                groups = await _groupRepository.GetJoinedGroupsByName(keyword);
+            //if (groupType == "Joined")
+            //    groups = await _groupRepository.GetJoinedGroupsByName(keyword);
 
             if (groups == null || !groups.Any())
                 return NotFound(new { Message = "No groups found." });
