@@ -36,7 +36,7 @@ namespace TravelMateAPI.Services.Notification.Event
                     if (participant.Notification == true) // Chỉ thông báo nếu người tham gia bật chế độ nhận thông báo
                     {
                         await _notificationService.CreateNotificationFullAsync(participant.UserId,
-                        $"Sự kiện '{eventDetails.EventName}' sẽ bắt đầu sau 30 phút tại {eventDetails.EventLocation}!",0,1);
+                        $"Sự kiện '{eventDetails.EventName}' sẽ bắt đầu sau 30 phút tại {eventDetails.EventLocation}!",eventDetails.EventId,1);
                     }
                 }
             }

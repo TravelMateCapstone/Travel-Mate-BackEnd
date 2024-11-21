@@ -110,7 +110,7 @@ namespace TravelMateAPI.Controllers
             // Thêm người tham gia vào sự kiện
             await _eventParticipantsRepository.AddEventParticipantAsync(newParticipant);
 
-            await _notificationService.CreateNotificationFullAsync(toUserId, $"{userDetail.FullName} đã tham gia sự kiện [{eventDetails.EventName}] của bạn.", userId, 3);
+            await _notificationService.CreateNotificationFullAsync(toUserId, $"{userDetail.FullName} đã tham gia sự kiện [{eventDetails.EventName}] của bạn.", eventDetails.EventId, 3);
 
             return Ok(new
             {
