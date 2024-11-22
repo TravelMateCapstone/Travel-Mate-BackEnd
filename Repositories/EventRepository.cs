@@ -1,4 +1,4 @@
-﻿using BussinessObjects.Entities;
+﻿using BusinessObjects.Entities;
 using DataAccess;
 using System;
 using System.Collections.Generic;
@@ -14,9 +14,9 @@ namespace Repositories
     {
         private readonly EventDAO _eventDAO;
 
-        public EventRepository()
+        public EventRepository(EventDAO eventDAO)
         {
-            _eventDAO = EventDAO.Instance;
+            _eventDAO = eventDAO;
         }
 
         public async Task<List<Event>> GetAllEventsAsync()
@@ -27,6 +27,11 @@ namespace Repositories
         public async Task<Event> GetEventByIdAsync(int eventId)
         {
             return await _eventDAO.GetEventByIdAsync(eventId);
+        }
+
+        public async Task<List<Event>> GetEventsByCreaterUserIdAsync(int createrUserId)
+        {
+            return await _eventDAO.GetEventsByCreaterUserIdAsync(createrUserId);
         }
 
         public async Task<Event> AddEventAsync(Event newEvent)
@@ -44,5 +49,6 @@ namespace Repositories
             await _eventDAO.DeleteEventAsync(eventId);
         }
     }
+
 
 }

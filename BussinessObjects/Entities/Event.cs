@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BussinessObjects.Entities
+namespace BusinessObjects.Entities
 {
     public class Event
     {
@@ -14,8 +14,10 @@ namespace BussinessObjects.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int EventId { get; set; }
         public int CreaterUserId { get; set; }
+        
         public string EventName { get; set; }
-        public string? Description { get; set; }
+        public string Description { get; set; }
+        public string? EventImageUrl { get; set; }
         public DateTime CreateAt { get; set; }
         public DateTime StartAt { get; set; }
         public DateTime? EndAt { get; set; }

@@ -3,7 +3,8 @@ using Microsoft.AspNetCore.OData.Formatter;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
 using Repositories.Interface;
-using BussinessObjects.Entities;
+using BusinessObjects.Entities;
+using BusinessObjects;
 
 namespace TravelMateAPI.Controllers
 {
@@ -86,11 +87,6 @@ namespace TravelMateAPI.Controllers
             var activities = await _activityRepository.GetAllActivitiesAsync();
             return Ok(activities);
         }
-        //public IActionResult GetAll()
-        //{
-        //    var activities = _activityRepository.GetAllActivitiesAsync().Result.AsQueryable();
-        //    return Ok(activities);
-        //}
 
         // GET: api/Activity/1
         [HttpGet("{id}")]
@@ -109,7 +105,7 @@ namespace TravelMateAPI.Controllers
         public async Task<IActionResult> Create([FromBody] Activity newActivity)
         {
             if (newActivity == null)
-        {
+            {
                 return BadRequest("Activity is null.");
             }
 
@@ -122,14 +118,8 @@ namespace TravelMateAPI.Controllers
         public async Task<IActionResult> Update(int id, [FromBody] Activity updatedActivity)
         {
             if (id != updatedActivity.ActivityId)
-        {
-                return BadRequest("Activity ID mismatch.");
-            }
-
-            var activity = await _activityRepository.GetActivityByIdAsync(id);
-            if (activity == null)
             {
-                return NotFound(new { Message = $"Activity with id {id} not found." });
+                return BadRequest("Activity ID mismatch.");
             }
 
             await _activityRepository.UpdateActivityAsync(updatedActivity);
@@ -142,7 +132,7 @@ namespace TravelMateAPI.Controllers
         {
             var activity = await _activityRepository.GetActivityByIdAsync(id);
             if (activity == null)
-        {
+            {
                 return NotFound(new { Message = $"Activity with id {id} not found." });
             }
 
@@ -150,4 +140,5 @@ namespace TravelMateAPI.Controllers
             return NoContent();
         }
     }
+
 }

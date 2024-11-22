@@ -1,4 +1,5 @@
-﻿using BussinessObjects.Entities;
+﻿using BusinessObjects.Entities;
+using BusinessObjects.Utils.Response;
 using DataAccess;
 using Repositories.Interface;
 using System;
@@ -13,9 +14,9 @@ namespace Repositories
     {
         private readonly UserActivitiesDAO _userActivitiesDAO;
 
-        public UserActivitiesRepository()
+        public UserActivitiesRepository(UserActivitiesDAO userActivitiesDAO)
         {
-            _userActivitiesDAO = UserActivitiesDAO.Instance;
+            _userActivitiesDAO = userActivitiesDAO;
         }
 
         public async Task<List<UserActivity>> GetAllUserActivitiesAsync()
@@ -23,11 +24,14 @@ namespace Repositories
             return await _userActivitiesDAO.GetAllUserActivitiesAsync();
         }
 
-        public async Task<UserActivity> GetUserActivityByIdAsync(int userId, int ActivityId)
+        public async Task<UserActivity> GetUserActivityByIdAsync(int userId, int activityId)
         {
-            return await _userActivitiesDAO.GetUserActivityByIdAsync(userId, ActivityId);
+            return await _userActivitiesDAO.GetUserActivityByIdAsync(userId, activityId);
         }
-
+        public async Task<List<UserActivity>> GetUserActivitiesByUserIdAsync(int userId)
+        {
+            return await _userActivitiesDAO.GetUserActivitiesByUserIdAsync(userId);
+        }
         public async Task<UserActivity> AddUserActivityAsync(UserActivity newUserActivity)
         {
             return await _userActivitiesDAO.AddUserActivityAsync(newUserActivity);
@@ -38,9 +42,9 @@ namespace Repositories
             await _userActivitiesDAO.UpdateUserActivityAsync(updatedUserActivity);
         }
 
-        public async Task DeleteUserActivityAsync(int userId, int ActivityId)
+        public async Task DeleteUserActivityAsync(int userId, int activityId)
         {
-            await _userActivitiesDAO.DeleteUserActivityAsync(userId, ActivityId);
+            await _userActivitiesDAO.DeleteUserActivityAsync(userId, activityId);
         }
     }
 }

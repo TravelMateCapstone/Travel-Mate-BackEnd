@@ -1,13 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using BusinessObjects.Entities;
+using BusinessObjects.Utils.Response;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Formatter;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
 using Repositories.Interface;
-using BussinessObjects.Entities;
-using Repositories;
-using AutoMapper;
-using BussinessObjects.Utils.Reponse;
-using Sprache;
 
 namespace TravelMateAPI.Controllers
 {
@@ -31,6 +29,17 @@ namespace TravelMateAPI.Controllers
             var userActivityDTOs = _mapper.Map<List<UserActivityDTO>>(userActivities);
             //return Ok(userActivities);
             return Ok(userActivityDTOs.AsQueryable());
+        }
+        // GET: api/UserActivity/user/1
+        [HttpGet("user/{userId}")]
+        public async Task<IActionResult> GetByUserId(int userId)
+        {
+            var userActivities = await _userActivitiesRepository.GetUserActivitiesByUserIdAsync(userId);
+            if (userActivities == null || !userActivities.Any())
+            {
+                return NotFound(new { Message = $"No activities found for UserId {userId}." });
+            }
+            return Ok(userActivities);
         }
 
         /*public IActionResult GetAll()

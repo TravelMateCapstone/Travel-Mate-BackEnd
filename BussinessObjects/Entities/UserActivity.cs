@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BussinessObjects.Entities
+namespace BusinessObjects.Entities
 {
     public class UserActivity
     {

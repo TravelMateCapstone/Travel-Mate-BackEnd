@@ -1,4 +1,4 @@
-﻿using BussinessObjects.Entities;
+﻿using BusinessObjects.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,5 +15,6 @@ namespace Repositories.Interface
         Task UpdateLocationAsync(Location updatedLocation);
         Task DeleteLocationAsync(int locationId);
     }
+
 
 }

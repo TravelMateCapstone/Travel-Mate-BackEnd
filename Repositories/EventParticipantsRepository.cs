@@ -1,11 +1,7 @@
-﻿using BussinessObjects.Entities;
+﻿using BusinessObjects.Entities;
 using DataAccess;
+using Microsoft.EntityFrameworkCore;
 using Repositories.Interface;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Repositories
 {
@@ -13,35 +9,50 @@ namespace Repositories
     {
         private readonly EventParticipantsDAO _eventParticipantsDAO;
 
-        public EventParticipantsRepository()
+        public EventParticipantsRepository(EventParticipantsDAO eventParticipantsDAO)
         {
-            _eventParticipantsDAO = EventParticipantsDAO.Instance;
+            _eventParticipantsDAO = eventParticipantsDAO;
         }
 
-        public async Task<List<EventParticipants>> GetAllParticipantsAsync()
+        public async Task<List<EventParticipants>> GetAllEventParticipantsAsync()
         {
-            return await _eventParticipantsDAO.GetAllParticipantsAsync();
+            return await _eventParticipantsDAO.GetAllEventParticipantsAsync();
         }
 
-        public async Task<EventParticipants> GetParticipantByIdAsync(int participantId)
+        public async Task<EventParticipants> GetEventParticipantByIdAsync(int eventId, int userId)
         {
-            return await _eventParticipantsDAO.GetParticipantByIdAsync(participantId);
+            return await _eventParticipantsDAO.GetEventParticipantByIdAsync(eventId, userId);
         }
 
-        public async Task<EventParticipants> AddParticipantAsync(EventParticipants newParticipant)
+        public async Task<List<EventParticipants>> GetEventParticipantsByEventIdAsync(int eventId)
         {
-            return await _eventParticipantsDAO.AddParticipantAsync(newParticipant);
+            return await _eventParticipantsDAO.GetEventParticipantsByEventIdAsync(eventId);
         }
 
-        public async Task UpdateParticipantAsync(EventParticipants updatedParticipant)
+        public async Task AddEventParticipantAsync(EventParticipants eventParticipant)
         {
-            await _eventParticipantsDAO.UpdateParticipantAsync(updatedParticipant);
+            await _eventParticipantsDAO.AddEventParticipantAsync(eventParticipant);
         }
 
-        public async Task DeleteParticipantAsync(int participantId)
+        public async Task RemoveEventParticipantAsync(int eventId, int userId)
         {
-            await _eventParticipantsDAO.DeleteParticipantAsync(participantId);
+            await _eventParticipantsDAO.RemoveEventParticipantAsync(eventId, userId);
         }
+        // Đếm số lượng người tham gia cho một sự kiện
+        public async Task<int> GetParticipantCountByEventIdAsync(int eventId)
+        {
+            return await _eventParticipantsDAO.GetParticipantCountByEventIdAsync(eventId);
+        }
+        public async Task<bool> HasUserJoinedEventAsync(int eventId, int userId)
+        {
+            return await _eventParticipantsDAO.HasUserJoinedEventAsync(eventId, userId);
+        }
+        public async Task<List<EventParticipants>> GetTopEventsByParticipantCountAsync(int topCount)
+        {
+            return await _eventParticipantsDAO.GetTopEventsByParticipantCountAsync(topCount);
+        }
+
     }
+
 
 }

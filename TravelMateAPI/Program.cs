@@ -1,9 +1,9 @@
 ﻿using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
-using BussinessObjects;
-using BussinessObjects.Configuration;
-using BussinessObjects.Entities;
-using BussinessObjects.Utils.Request;
+using BusinessObjects;
+using BusinessObjects.Configuration;
+using BusinessObjects.Entities;
+using BusinessObjects.Utils.Request;
 using DataAccess;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -13,11 +13,14 @@ using Microsoft.OData.ModelBuilder;
 using Microsoft.OpenApi.Models;
 using Repositories;
 using Repositories.Interface;
+using Repository.Interfaces;
 using System.Text;
 using TravelMateAPI.Models;
 using TravelMateAPI.Services.Email;
 using TravelMateAPI.Services.FindLocal;
+using TravelMateAPI.Services.Hubs;
 using TravelMateAPI.Services.Notification;
+using TravelMateAPI.Services.Notification.Event;
 
 namespace TravelMateAPI
 {
@@ -122,6 +125,8 @@ namespace TravelMateAPI
             .AddEntityFrameworkStores<ApplicationDBContext>()
             .AddDefaultTokenProviders();
 
+            builder.Services.AddSingleton<MongoDbContext>();
+
             // Cấu hình Authentication
             builder.Services.AddAuthentication(options =>
             {
@@ -152,7 +157,7 @@ namespace TravelMateAPI
             // OData configuration
             ODataConventionModelBuilder modelBuilder = new ODataConventionModelBuilder();
             modelBuilder.EntitySet<ApplicationUser>("ApplicationUsers");
-            //modelBuilder.EntitySet<UserProfile>("UserProfiles");
+            modelBuilder.EntitySet<Profile>("Profiles");
             modelBuilder.EntitySet<Friendship>("Friends");
             modelBuilder.EntitySet<Event>("Events");
             modelBuilder.EntitySet<EventParticipants>("EventParticipants");
@@ -170,22 +175,61 @@ namespace TravelMateAPI
             // Cấu hình Mail và Firebase
             builder.Services.AddScoped<IMailServiceSystem, SendMailService>();
             //builder.Services.AddSingleton<FirebaseService>();
-
+            //real time
+            builder.Services.AddSignalR();
             // Đăng ký các repository
-            builder.Services.AddScoped<IUserProfileRepository, UserProfileRepository>();
+            builder.Services.AddScoped<ProfileDAO>();
+            builder.Services.AddScoped<IProfileRepository, ProfileRepository>();
             builder.Services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
             builder.Services.AddScoped<IFindLocalService, FindLocalService>();
+            builder.Services.AddScoped<ISearchLocationService, SearchLocationService>();
+            builder.Services.AddScoped<SearchLocationFuzzyService>();
             builder.Services.AddScoped<IFindLocalByFeedbackService, FindLocalByFeedbackService>();
             builder.Services.AddScoped<INotificationService, NotificationService>();
+            builder.Services.AddScoped<EventDAO>();
             builder.Services.AddScoped<IEventRepository, EventRepository>();
+            builder.Services.AddScoped<EventParticipantsDAO>();
             builder.Services.AddScoped<IEventParticipantsRepository, EventParticipantsRepository>();
+            builder.Services.AddScoped<EventNotificationService>();
+            builder.Services.AddHostedService<BackgroundNotificationWorker>();
             builder.Services.AddScoped<ActivitiesDAO>();
             builder.Services.AddScoped<IActivityRepository, ActivityRepository>();
+            builder.Services.AddScoped<LocationsDAO>();
             builder.Services.AddScoped<ILocationRepository, LocationRepository>();
+            builder.Services.AddScoped<UserActivitiesDAO>();
             builder.Services.AddScoped<IUserActivitiesRepository, UserActivitiesRepository>();
+            builder.Services.AddScoped<UserLocationsDAO>();
             builder.Services.AddScoped<IUserLocationsRepository, UserLocationsRepository>();
+            builder.Services.AddScoped<LanguagesDAO>();
+            builder.Services.AddScoped<ILanguagesRepository, LanguagesRepository>();
+            builder.Services.AddScoped<SpokenLanguagesDAO>();
+            builder.Services.AddScoped<ISpokenLanguagesRepository, SpokenLanguagesRepository>();
+            builder.Services.AddScoped<UniversityDAO>();
+            builder.Services.AddScoped<IUniversityRepository, UniversityRepository>();
+            builder.Services.AddScoped<UserEducationDAO>();
+            builder.Services.AddScoped<IUserEducationRepository, UserEducationRepository>();
+            builder.Services.AddScoped<UserHomeDAO>();
+            builder.Services.AddScoped<IUserHomeRepository, UserHomeRepository>();
+            builder.Services.AddScoped<HomePhotoDAO>();
+            builder.Services.AddScoped<IHomePhotoRepository, HomePhotoRepository>();
+            builder.Services.AddScoped<GroupDAO>();
+            builder.Services.AddScoped<IGroupRepository, GroupRepository>();
+            builder.Services.AddScoped<GroupPostDAO>();
+            builder.Services.AddScoped<IGroupPostRepository, GroupPostRepository>();
+            builder.Services.AddScoped<PostCommentDAO>();
+            builder.Services.AddScoped<IPostCommentRepository, PostCommentRepository>();
+            builder.Services.AddScoped<PastTripPostDAO>();
+            builder.Services.AddScoped<IPastTripPostRepository, PastTripPostRepository>();
+            builder.Services.AddScoped<ExtraFormDetailDAO>();
+            builder.Services.AddScoped<ILocalExtraDetailFormRepository, LocalExtraDetailFormRepository>();
+            builder.Services.AddScoped<ITravelerFormRepository, TravelerFormRepository>();
 
-            builder.Services.AddControllers();
+            builder.Services.AddControllers().AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+                options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
+            });
+
 
             // Cấu hình Swagger
             builder.Services.AddSwaggerGen(c =>
@@ -219,11 +263,19 @@ namespace TravelMateAPI
             // Cấu hình CORS
             builder.Services.AddCors(options =>
             {
+                //options.AddPolicy("AllowAll",
+                //    builder => builder
+                //        .AllowAnyOrigin()
+                //        .AllowAnyMethod()
+                //        .AllowAnyHeader());
                 options.AddPolicy("AllowAll",
-                    builder => builder
-                        .AllowAnyOrigin()
-                        .AllowAnyMethod()
-                        .AllowAnyHeader());
+                policyBuilder =>
+                {
+                    policyBuilder.WithOrigins("http://localhost:5173", "https://travelmatefe.netlify.app/") // Địa chỉ của ứng dụng React của bạn
+                                 .AllowAnyMethod()
+                                 .AllowAnyHeader()
+                                 .AllowCredentials(); // Quan trọng khi sử dụng cookies hoặc thông tin xác thực
+                });
             });
 
             builder.Services.AddSignalR();
@@ -247,6 +299,8 @@ namespace TravelMateAPI
             app.UseAuthentication();
             app.UseAuthorization();
             app.MapControllers();
+            // real time
+            app.MapHub<ServiceHub>("/serviceHub");
             app.Run();
         }
     }

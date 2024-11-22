@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace BussinessObjects.Entities
+namespace BusinessObjects.Entities
 {
     /// <summary>
     /// IdentityUser<int> tức là cấu hình cho userid là int nếu muốn string thì thay bằng string
@@ -11,7 +11,8 @@ namespace BussinessObjects.Entities
         public string FullName { get; set; }
         public DateTime RegistrationTime { get; set; } // Thời gian đăng ký
         public int? MatchingActivitiesCount { get; set; }
-        public UserProfile? UserProfiles { get; set; }
+        public Profile Profiles { get; set; }
+        public UserHome UserHome { get; set; }
         public ICollection<Friendship>? Friendships { get; set; }
         public ICollection<UserActivity>? UserActivities { get; set; }
         public ICollection<UserLocation>? UserLocations { get; set; }
@@ -28,7 +29,7 @@ namespace BussinessObjects.Entities
         public ICollection<PastTripPost>? PastTripPosts { get; set; }
         public ICollection<PastTripPost>? PastTripPostReviews { get; set; }
         public ICollection<Notification>? Notifications { get; set; }
-        public ICollection<SpokenLanguage>? SpokenLanguages { get; set; }
+        public ICollection<SpokenLanguages>? SpokenLanguages { get; set; }
         public ICollection<Request>? Requests { get; set; }
         public ICollection<Request>? ReceivedRequests { get; set; }
         public ICollection<Contract>? CreatedContracts { get; set; }
@@ -38,11 +39,12 @@ namespace BussinessObjects.Entities
         public ICollection<Report>? Reports { get; set; }
         public ICollection<Report>? ReceivedReports { get; set; }
         public UserDescription? UserDescription { get; set; }
-        public UserHome? UserHome { get; set; }
-        public DetailForm? DetailForm { get; set; }
+
         public ICollection<OnTravelling>? OnTravel { get; set; }
         public ICollection<Reaction>? Reactions { get; set; }
         public ICollection<UserEducation>? UserEducations { get; set; }
-
+        public ICollection<GroupPost>? GroupPosts { get; set; }
+        public ICollection<Group>? Groups { get; set; }
+        public ICollection<PostComment>? PostComments { get; set; }
     }
 }

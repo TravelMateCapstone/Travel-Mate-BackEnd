@@ -1,4 +1,4 @@
-﻿using BussinessObjects.Entities;
+﻿using BusinessObjects.Entities;
 using Microsoft.AspNetCore.Identity;
 
 namespace TravelMateAPI.Services.Auth

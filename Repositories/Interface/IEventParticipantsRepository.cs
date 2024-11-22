@@ -1,4 +1,4 @@
-﻿using BussinessObjects.Entities;
+﻿using BusinessObjects.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,10 +9,14 @@ namespace Repositories.Interface
 {
     public interface IEventParticipantsRepository
     {
-        Task<List<EventParticipants>> GetAllParticipantsAsync();
-        Task<EventParticipants> GetParticipantByIdAsync(int participantId);
-        Task<EventParticipants> AddParticipantAsync(EventParticipants newParticipant);
-        Task UpdateParticipantAsync(EventParticipants updatedParticipant);
-        Task DeleteParticipantAsync(int participantId);
+        Task<List<EventParticipants>> GetAllEventParticipantsAsync();
+        Task<EventParticipants> GetEventParticipantByIdAsync(int eventId, int userId);
+        Task<List<EventParticipants>> GetEventParticipantsByEventIdAsync(int eventId); // Thêm phương thức mới
+        Task AddEventParticipantAsync(EventParticipants eventParticipant);
+        Task RemoveEventParticipantAsync(int eventId, int userId);
+        Task<int> GetParticipantCountByEventIdAsync(int eventId);
+        Task<bool> HasUserJoinedEventAsync(int eventId, int userId);
+        Task<List<EventParticipants>> GetTopEventsByParticipantCountAsync(int topCount);
     }
+
 }

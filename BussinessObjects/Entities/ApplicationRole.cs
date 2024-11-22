@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace BussinessObjects.Entities
+namespace BusinessObjects.Entities
 {
     public class ApplicationRole : IdentityRole<int>
     {

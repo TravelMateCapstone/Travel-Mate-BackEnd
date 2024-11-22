@@ -1,39 +1,36 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace BussinessObjects.Entities
+namespace BusinessObjects.Entities
 {
     public class PastTripPost
     {
-        [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int PostId { get; set; }
+        public int PastTripPostId { get; set; }
 
-        public int UserId { get; set; }
+        public int TravelerId { get; set; }
 
-        public ApplicationUser? UserPastTrip { get; set; }
+        public ApplicationUser? Traveler { get; set; }
 
-        public string Privacy { get; set; }
+        public bool IsPublic { get; set; }
 
-        public string? Title { get; set; }
+        public bool IsCaptionEdit { get; set; }
 
         public string? Caption { get; set; }
 
-        public int ReviewById { get; set; }
-        public ApplicationUser? ReviewByUser { get; set; }
+        public int LocalId { get; set; }
+        public ApplicationUser? Local { get; set; }
         public string? Review { get; set; }
 
-        //[StringLength(30)]
-
-        //public decimal Longitude { get; set; }
-        //[StringLength(30)]
-        //public decimal Latitude { get; set; }
+        public bool IsReviewEdited { get; set; }
 
         [Range(1, 5)]
         public int Star { get; set; }
 
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public string Location { get; set; }
 
-        public ICollection<PostPhoto>? Photos { get; set; }
+        public DateTime CreatedAt { get; set; }
+
+        public ICollection<PostPhoto>? PostPhotos { get; set; }
     }
 }

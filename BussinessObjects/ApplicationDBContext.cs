@@ -1,10 +1,10 @@
-﻿using BussinessObjects.Entities;
+﻿using BusinessObjects.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
-namespace BussinessObjects
+namespace BusinessObjects
 {
     public class ApplicationDBContext : IdentityDbContext<ApplicationUser, ApplicationRole, int>
     {
@@ -15,6 +15,7 @@ namespace BussinessObjects
         public ApplicationDBContext(DbContextOptions<ApplicationDBContext> options) : base(options) { }
 
 
+        public DbSet<Profile> Profiles { get; set; }
         public DbSet<Friendship> Friendships { get; set; }
         public DbSet<Location> Locations { get; set; }
         public DbSet<Activity> Activities { get; set; }
@@ -22,7 +23,6 @@ namespace BussinessObjects
         public DbSet<UserActivity> UserActivities { get; set; }
         public DbSet<Contract> Contracts { get; set; }
         public DbSet<Destination> Destinations { get; set; }
-        public DbSet<DetailForm> DetailForms { get; set; }
         public DbSet<Event> Events { get; set; }
         public DbSet<EventParticipants> EventParticipants { get; set; }
         public DbSet<Notification> Notifications { get; set; }
@@ -31,7 +31,7 @@ namespace BussinessObjects
         public DbSet<GroupPost> GroupPosts { get; set; }
         public DbSet<GroupPostPhoto> GroupPostPhotos { get; set; }
         public DbSet<HomePhoto> HomePhotos { get; set; }
-        public DbSet<Language> Languages { get; set; }
+        public DbSet<Languages> Languages { get; set; }
         public DbSet<Message> Messages { get; set; }
 
         public DbSet<OnTravelling> OnTravellings { get; set; }
@@ -41,12 +41,12 @@ namespace BussinessObjects
         public DbSet<Reaction> Reactions { get; set; }
         public DbSet<Report> Reports { get; set; }
         public DbSet<Request> Requests { get; set; }
-        public DbSet<SpokenLanguage> SpokenLanguages { get; set; }
+        public DbSet<SpokenLanguages> SpokenLanguages { get; set; }
         public DbSet<University> Universities { get; set; }
         public DbSet<UserDescription> UserDescriptions { get; set; }
         public DbSet<UserEducation> UserEducations { get; set; }
         public DbSet<UserHome> UserHomes { get; set; }
-        public DbSet<UserProfile> Profiles { get; set; }
+
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -58,6 +58,11 @@ namespace BussinessObjects
             optionsBuilder.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
         }
 
+        [DbFunction(name: "SOUNDEX", IsBuiltIn = true)]
+        public string FuzzySearch(string query)
+        {
+            throw new NotImplementedException();
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -71,6 +76,23 @@ namespace BussinessObjects
 
                 }
             }
+
+            // Thiết lập cascade delete cho quan hệ giữa AspNetUsers và Profiles
+            modelBuilder.Entity<ApplicationUser>()
+              .HasOne(u => u.Profiles) // Mối quan hệ giữa ApplicationUser và Profile
+              .WithOne(p => p.User) // Mỗi Profile liên kết với một ApplicationUser
+              .HasForeignKey<Profile>(p => p.UserId) // Khóa ngoại trong Profile
+              .OnDelete(DeleteBehavior.Cascade); // Xóa theo chuỗi
+
+
+
+            // Thiết lập quan hệ 1-1 giữa ApplicationUser và UserHome
+            modelBuilder.Entity<ApplicationUser>()
+                .HasOne(a => a.UserHome) // Mỗi ApplicationUser có một UserHome
+                .WithOne(uh => uh.ApplicationUser) // Mỗi UserHome có một ApplicationUser
+                .HasForeignKey<UserHome>(uh => uh.UserId) // Khóa ngoại trong UserHome
+                .OnDelete(DeleteBehavior.Cascade); // Xóa theo chuỗi
+
 
             //Cấu hình cho UserLocation/Activity
             modelBuilder.Entity<UserLocation>()
@@ -90,6 +112,13 @@ namespace BussinessObjects
                 .WithOne(f => f.User2)
                 .HasForeignKey(f => f.UserId2)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<SpokenLanguages>()
+            .HasKey(ul => new { ul.UserId, ul.LanguagesId });
+            modelBuilder.Entity<UserEducation>()
+                .HasKey(ua => new { ua.UserId, ua.UniversityId });
+            modelBuilder.Entity<EventParticipants>()
+                .HasKey(ua => new { ua.UserId, ua.EventId });
 
             // Cấu hình khóa chính và quan hệ cho bảng Friendship
             // modelBuilder.Entity<Friendship>()
@@ -187,48 +216,63 @@ namespace BussinessObjects
                 new IdentityUserRole<int> { UserId = 5, RoleId = 4 }  // user5 là user
             );
             // Seed data cho profiles
-            //modelBuilder.Entity<UserProfile>().HasData(
-            //    new UserProfile
-            //    {
-            //        UserId = 1,
-            //        FullName = "User One",
-            //        Address = "123 Main St, Hanoi",
-            //        Phone = "0123456789",
-            //        ImageUser = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png"
-            //    },
-            //    new UserProfile
-            //    {
-            //        UserId = 2,
-            //        FullName = "User Two",
-            //        Address = "456 Secondary St, Ho Chi Minh",
-            //        Phone = "0987654321",
-            //        ImageUser = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png"
-            //    },
-            //    new UserProfile
-            //    {
-            //        UserId = 3,
-            //        FullName = "User Three",
-            //        Address = "789 Tertiary St, Da Nang",
-            //        Phone = "0912345678",
-            //        ImageUser = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png"
-            //    },
-            //    new UserProfile
-            //    {
-            //        UserId = 4,
-            //        FullName = "User Four",
-            //        Address = "101 Eleventh St, Hue",
-            //        Phone = "0998765432",
-            //        ImageUser = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png"
-            //    },
-            //    new UserProfile
-            //    {
-            //        UserId = 5,
-            //        FullName = "User Five",
-            //        Address = "202 Twelfth St, Phu Quoc",
-            //        Phone = "0923456789",
-            //        ImageUser = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png"
-            //    }
-            //);
+            modelBuilder.Entity<Profile>().HasData(
+                new Profile
+                {
+                    ProfileId = 1,
+                    UserId = 1,
+                    FirstName = "User One",
+                    Address = "123 Main St, Hanoi",
+                    Phone = "0123456789",
+                    Gender = "Male",
+                    Birthdate = DateTime.UtcNow,
+                    ImageUser = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png"
+                },
+                new Profile
+                {
+                    ProfileId = 2,
+                    UserId = 2,
+                    FirstName = "User Two",
+                    Address = "456 Secondary St, Ho Chi Minh",
+                    Phone = "0987654321",
+                    Gender = "Male",
+                    Birthdate = DateTime.UtcNow,
+                    ImageUser = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png"
+                },
+                new Profile
+                {
+                    ProfileId = 3,
+                    UserId = 3,
+                    FirstName = "User Three",
+                    Address = "789 Tertiary St, Da Nang",
+                    Phone = "0912345678",
+                    Gender = "Male",
+                    Birthdate = DateTime.UtcNow,
+                    ImageUser = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png"
+                },
+                new Profile
+                {
+                    ProfileId = 4,
+                    UserId = 4,
+                    FirstName = "User Four",
+                    Address = "101 Eleventh St, Hue",
+                    Phone = "0998765432",
+                    Gender = "Male",
+                    Birthdate = DateTime.UtcNow,
+                    ImageUser = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png"
+                },
+                new Profile
+                {
+                    ProfileId = 5,
+                    UserId = 5,
+                    FirstName = "User Five",
+                    Address = "202 Twelfth St, Phu Quoc",
+                    Phone = "0923456789",
+                    Gender = "Male",
+                    Birthdate = DateTime.UtcNow,
+                    ImageUser = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png"
+                }
+            );
             // Seed data cho Locations (địa điểm trên lãnh thổ Việt Nam)
             modelBuilder.Entity<Location>().HasData(
                 new Location { LocationId = 1, LocationName = "Hà Nội" },
@@ -442,15 +486,15 @@ namespace BussinessObjects
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<PastTripPost>()
-       .HasOne(m => m.UserPastTrip)
+       .HasOne(m => m.Traveler)
        .WithMany(u => u.PastTripPosts)
-       .HasForeignKey(m => m.UserId)
+       .HasForeignKey(m => m.TravelerId)
        .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<PastTripPost>()
-                .HasOne(m => m.ReviewByUser)
+                .HasOne(m => m.Local)
                 .WithMany(u => u.PastTripPostReviews)
-                .HasForeignKey(m => m.ReviewById)
+                .HasForeignKey(m => m.LocalId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Report>()
@@ -490,52 +534,64 @@ namespace BussinessObjects
                 .WithMany(u => u.Travellers)
                 .HasForeignKey(ep => ep.DestinationId);
 
-            modelBuilder.Entity<Reaction>()
-       .HasKey(ot => new { ot.ReactedById, ot.PostId });
+            //     modelBuilder.Entity<Reaction>()
+            //.HasKey(ot => new { ot.ReactedById, ot.PostId });
 
-            modelBuilder.Entity<Reaction>()
-                .HasOne(ot => ot.ReactedByUser)
-                .WithMany(e => e.Reactions)
-                .HasForeignKey(ep => ep.ReactedById);
+            //modelBuilder.Entity<Reaction>()
+            //    .HasOne(ot => ot.ReactedByUser)
+            //    .WithMany(e => e.Reactions)
+            //    .HasForeignKey(ep => ep.ReactedById);
 
-            modelBuilder.Entity<Reaction>()
-                .HasOne(ep => ep.GroupPost)
-                .WithMany(u => u.Reactions)
-                .HasForeignKey(ep => ep.PostId);
-
-            modelBuilder.Entity<SpokenLanguage>()
-       .HasKey(ot => new { ot.UserId, ot.LanguageId });
-
-            modelBuilder.Entity<SpokenLanguage>()
-                .HasOne(ot => ot.User)
-                .WithMany(e => e.SpokenLanguages)
-                .HasForeignKey(ep => ep.UserId);
-
-            modelBuilder.Entity<SpokenLanguage>()
-                .HasOne(ep => ep.Language)
-                .WithMany(u => u.SpokenLanguages);
+            //modelBuilder.Entity<Reaction>()
+            //    .HasOne(ep => ep.GroupPost)
+            //    .WithMany(u => u.Reactions)
+            //    .HasForeignKey(ep => ep.PostId);
 
             modelBuilder.Entity<UserDescription>()
                 .HasKey(ud => ud.UserId);
-            modelBuilder.Entity<UserHome>()
-                .HasKey(ud => ud.UserId);
-            modelBuilder.Entity<UserProfile>()
-                .HasKey(ud => ud.UserId);
-
-            modelBuilder.Entity<UserEducation>()
-       .HasKey(ot => new { ot.UserId, ot.UniversityId });
-
-            modelBuilder.Entity<UserEducation>()
-                .HasOne(ot => ot.User)
-                .WithMany(e => e.UserEducations)
-                .HasForeignKey(ep => ep.UserId);
-
-            modelBuilder.Entity<UserEducation>()
-                .HasOne(ep => ep.University)
-                .WithMany(u => u.Users);
 
             modelBuilder.Entity<GroupParticipant>()
-       .HasKey(ot => new { ot.UserId, ot.GroupId });
+               .HasOne(gp => gp.Group)
+               .WithMany(g => g.GroupParticipants)
+               .HasForeignKey(gp => gp.GroupId)
+               .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<GroupParticipant>()
+               .HasOne(gp => gp.User)
+               .WithMany(g => g.GroupParticipants)
+               .HasForeignKey(gp => gp.UserId)
+               .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<GroupPost>()
+                .HasOne(p => p.Group)
+                .WithMany(g => g.GroupPosts)
+                .HasForeignKey(p => p.GroupId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<GroupPost>()
+                .HasOne(p => p.PostBy)
+                .WithMany(g => g.GroupPosts)
+                .HasForeignKey(p => p.PostById)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<PostComment>()
+                .HasOne(pc => pc.Post)
+                .WithMany(p => p.PostComments)
+                .HasForeignKey(pc => pc.PostId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<PostComment>()
+                .HasOne(pc => pc.CommentedBy)
+                .WithMany(p => p.PostComments)
+                .HasForeignKey(pc => pc.CommentedById)
+                .OnDelete(DeleteBehavior.Restrict);
+
+
+            modelBuilder.Entity<GroupPostPhoto>()
+                .HasOne(pp => pp.Post)
+                .WithMany(p => p.GroupPostPhotos)
+                .HasForeignKey(pp => pp.PostId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             base.OnModelCreating(modelBuilder);
         }

@@ -1,10 +1,10 @@
-﻿namespace BussinessObjects.Entities
+﻿namespace BusinessObjects.Entities
 {
     public class UserDescription
     {
 
         public int UserId { get; set; }
-        public ApplicationUser? User { get; set; }
+        public virtual ApplicationUser? User { get; set; }
 
         public string? Description { get; set; }
 

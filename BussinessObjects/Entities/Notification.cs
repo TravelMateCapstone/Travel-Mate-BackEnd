@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BussinessObjects.Entities
+namespace BusinessObjects.Entities
 {
     public class Notification
     {
@@ -19,6 +19,10 @@ namespace BussinessObjects.Entities
         public virtual ApplicationUser? ApplicationUser { get; set; }
 
         public string Message { get; set; }
+
+        public int? SenderId { get; set; }
+
+        public int? TypeNotification { get; set;}
 
         public bool IsRead { get; set; }
 

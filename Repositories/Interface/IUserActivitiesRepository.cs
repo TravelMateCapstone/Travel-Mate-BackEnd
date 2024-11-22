@@ -1,4 +1,4 @@
-﻿using BussinessObjects.Entities;
+﻿using BusinessObjects.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +11,7 @@ namespace Repositories.Interface
     {
         Task<List<UserActivity>> GetAllUserActivitiesAsync();
         Task<UserActivity> GetUserActivityByIdAsync(int userId, int activityId);
+        Task<List<UserActivity>> GetUserActivitiesByUserIdAsync(int userId);
         Task<UserActivity> AddUserActivityAsync(UserActivity newUserActivity);
         Task UpdateUserActivityAsync(UserActivity updatedUserActivity);
         Task DeleteUserActivityAsync(int userId, int activityId);
