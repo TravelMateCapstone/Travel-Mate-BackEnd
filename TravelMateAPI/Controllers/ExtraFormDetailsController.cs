@@ -138,8 +138,8 @@ namespace TravelMateAPI.Controllers
                             existingFormRequest.AnsweredServices.Add(answer);
                         }
 
-                        return Ok(existingFormRequest);
                     }
+                    return Ok(existingFormRequest);
                 }
 
                 var newForm = _mapper.Map<TravelerExtraDetailForm>(localForm);
@@ -187,7 +187,7 @@ namespace TravelMateAPI.Controllers
                     return BadRequest(ModelState);
 
                 var form = await _travelerRepository.GetByIdAsync(localId, userId);
-
+                var localForm = await _localRepository.GetByUserIdAsync(localId);
                 if (userId == localId)
                     return BadRequest("You can not request yourself!");
 
@@ -197,6 +197,8 @@ namespace TravelMateAPI.Controllers
                     updatedForm.TravelerId = userId;
                     updatedForm.CreateById = localId;
                     updatedForm.SendAt = GetTimeZone.GetVNTimeZoneNow();
+                    updatedForm.Questions = localForm.Questions;
+                    updatedForm.Services = localForm.Services;
                     await _travelerRepository.AddAsync(updatedForm);
                     return Ok("Created successfully!");
                 }
@@ -207,6 +209,8 @@ namespace TravelMateAPI.Controllers
                 form.LatestUpdateAt = GetTimeZone.GetVNTimeZoneNow();
                 form.StartDate = updatedForm.StartDate;
                 form.EndDate = updatedForm.EndDate;
+                form.Questions = localForm.Questions;
+                form.Services = localForm.Services;
                 form.AnsweredQuestions = updatedForm.AnsweredQuestions;
                 form.AnsweredServices = updatedForm.AnsweredServices;
 
