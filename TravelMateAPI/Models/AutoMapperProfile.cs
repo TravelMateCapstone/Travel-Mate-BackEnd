@@ -47,30 +47,8 @@ namespace TravelMateAPI.Models
             CreateMap<PostPhotoInputDTO, PostPhoto>();
 
             CreateMap<LocalExtraDetailForm, TravelerExtraDetailForm>()
-            .ForMember(dest => dest.Questions, opt => opt.MapFrom(src => MapQuestions(src.Questions)))
-            .ForMember(dest => dest.Services, opt => opt.MapFrom(src => MapServices(src.Services)));
-        }
-
-
-        private List<AnsweredQuestion> MapQuestions(List<Question> localQuestions)
-        {
-            return localQuestions.Select(localQuestion => new AnsweredQuestion
-            {
-                Type = localQuestion.Type,
-                Text = localQuestion.Text,
-                Options = localQuestion.Options,
-                Answer = new List<string>()
-            }).ToList();
-        }
-
-        private List<AnsweredService> MapServices(List<Service> localServices)
-        {
-            return localServices.Select(localService => new AnsweredService
-            {
-                ServiceName = localService.ServiceName,
-                Amount = localService.Amount,
-                Total = 0
-            }).ToList();
+            .ForMember(dest => dest.Questions, opt => opt.MapFrom(src => src.Questions))
+            .ForMember(dest => dest.Services, opt => opt.MapFrom(src => src.Services));
         }
 
     }

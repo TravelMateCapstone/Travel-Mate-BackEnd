@@ -49,11 +49,18 @@ namespace TravelMateAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<GroupDTO>>> GetGroupsAsync([FromQuery] int pageNumber = 1)
         {
-            var groups = await _groupRepository.GetGroupsAsync();
-            if (groups == null || !groups.Any())
-                return NotFound(new { Message = "No groups found." });
+            try
+            {
+                var groups = await _groupRepository.GetGroupsAsync();
+                if (groups == null || !groups.Any())
+                    return NotFound(new { Message = "No groups found." });
 
-            return await PaginateAndRespondAsync(groups, pageNumber);
+                return await PaginateAndRespondAsync(groups, pageNumber);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "An error occurred while retrieving groups.", Details = ex.Message });
+            }
         }
 
         [HttpGet("UnjoinedGroups")]

@@ -74,9 +74,9 @@ namespace TravelMateAPI.Controllers
 
                 existingForm.Services = updatedForm.Services;
                 existingForm.Questions = updatedForm.Questions;
-                existingForm.LatestUpdate = GetTimeZone.GetVNTimeZoneNow();
+                existingForm.LatestUpdateAt = GetTimeZone.GetVNTimeZoneNow();
 
-                await _localRepository.UpdateAsync(existingForm.FormId, existingForm);
+                await _localRepository.UpdateAsync(existingForm.Id, existingForm);
                 return Ok("Update successfully");
             }
             catch (Exception ex)
@@ -86,9 +86,8 @@ namespace TravelMateAPI.Controllers
             }
         }
 
-        //TRAVELER
+        //----------------------------------TRAVELER
 
-        // GET: api/TravelerForm
         [HttpGet("TravelerForm")]
         public async Task<IActionResult> GetFormRequest([FromQuery] int localId)
         {
@@ -101,18 +100,71 @@ namespace TravelMateAPI.Controllers
                 if (userId == localId)
                     return BadRequest("You can not request yourself!");
 
+                // Retrieve the LocalExtraDetailForm
                 var localForm = await _localRepository.GetByUserIdAsync(localId);
 
+                // Retrieve the existing TravelerExtraDetailForm
                 var existingFormRequest = await _travelerRepository.GetByIdAsync(localId, userId);
                 if (existingFormRequest != null)
                 {
-                    existingFormRequest = _mapper.Map<TravelerExtraDetailForm>(localForm);
+                    if (localForm.LatestUpdateAt > existingFormRequest.SendAt)
+                    {
+                        //mapping cau hoi
+                        existingFormRequest = _mapper.Map<TravelerExtraDetailForm>(localForm);
+                        //kiem tra su thay doi o cac cau hoi
+
+                        foreach (var item in existingFormRequest.AnsweredQuestions)
+                        {
+                            existingFormRequest.AnsweredQuestions.Remove(item);
+                        }
+
+                        foreach (var item in localForm.Questions)
+                        {
+                            var answer = new AnsweredQuestion()
+                            {
+                                QuestionId = item.Id,
+                                Answer = new List<string>()
+                            };
+                            existingFormRequest.AnsweredQuestions.Add(answer);
+                        }
+
+                        foreach (var item in localForm.Services)
+                        {
+                            var answer = new AnsweredService()
+                            {
+                                ServiceId = item.Id,
+                                Total = 0
+                            };
+                            existingFormRequest.AnsweredServices.Add(answer);
+                        }
+
+                    }
                     return Ok(existingFormRequest);
                 }
 
-                var formRequest = _mapper.Map<TravelerExtraDetailForm>(localForm);
+                var newForm = _mapper.Map<TravelerExtraDetailForm>(localForm);
 
-                return Ok(formRequest);
+                foreach (var item in localForm.Questions)
+                {
+                    var answer = new AnsweredQuestion()
+                    {
+                        QuestionId = item.Id,
+                        Answer = new List<string>()
+                    };
+                    newForm.AnsweredQuestions.Add(answer);
+                }
+
+                foreach (var item in localForm.Services)
+                {
+                    var answer = new AnsweredService()
+                    {
+                        ServiceId = item.Id,
+                        Total = 0
+                    };
+                    newForm.AnsweredServices.Add(answer);
+                }
+
+                return Ok(newForm);
             }
             catch (Exception ex)
             {
@@ -135,12 +187,18 @@ namespace TravelMateAPI.Controllers
                     return BadRequest(ModelState);
 
                 var form = await _travelerRepository.GetByIdAsync(localId, userId);
+                var localForm = await _localRepository.GetByUserIdAsync(localId);
+                if (userId == localId)
+                    return BadRequest("You can not request yourself!");
 
+                //gan cau tra loi tuong ung voi cau hoi (gan questionId, serviceId)
                 if (form == null)
                 {
                     updatedForm.TravelerId = userId;
                     updatedForm.CreateById = localId;
                     updatedForm.SendAt = GetTimeZone.GetVNTimeZoneNow();
+                    updatedForm.Questions = localForm.Questions;
+                    updatedForm.Services = localForm.Services;
                     await _travelerRepository.AddAsync(updatedForm);
                     return Ok("Created successfully!");
                 }
@@ -149,10 +207,12 @@ namespace TravelMateAPI.Controllers
                     return BadRequest("Request was processed! You can not update");
 
                 form.LatestUpdateAt = GetTimeZone.GetVNTimeZoneNow();
-                form.Services = updatedForm.Services;
-                form.Questions = updatedForm.Questions;
                 form.StartDate = updatedForm.StartDate;
                 form.EndDate = updatedForm.EndDate;
+                form.Questions = localForm.Questions;
+                form.Services = localForm.Services;
+                form.AnsweredQuestions = updatedForm.AnsweredQuestions;
+                form.AnsweredServices = updatedForm.AnsweredServices;
 
                 //update form of local and user
                 await _travelerRepository.UpdateAsync(localId, userId, form);
@@ -179,6 +239,9 @@ namespace TravelMateAPI.Controllers
 
                 // Retrieve the form using FormId and associated localId & travelerId (userId)
                 var form = await _travelerRepository.GetByIdAsync(localId, userId);
+
+                if (userId == form.CreateById)
+                    return BadRequest("You can not delete request form of other");
 
                 if (form == null)
                 {
