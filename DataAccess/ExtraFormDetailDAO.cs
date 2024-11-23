@@ -25,13 +25,19 @@ namespace DataAccess
         {
             var collection = _mongoContext.GetCollection<TravelerExtraDetailForm>("TravelerExtraDetailForms");
             var filter = Builders<TravelerExtraDetailForm>.Filter.And(
-        Builders<TravelerExtraDetailForm>.Filter.Or(
-            Builders<TravelerExtraDetailForm>.Filter.Eq(form => form.CreateById, userId),
-            Builders<TravelerExtraDetailForm>.Filter.Eq(form => form.TravelerId, userId)
-        ),
-        Builders<TravelerExtraDetailForm>.Filter.Eq(form => form.RequestStatus, false));
+                Builders<TravelerExtraDetailForm>.Filter.Or(
+                    Builders<TravelerExtraDetailForm>.Filter.Eq(form => form.CreateById, userId),
+                    Builders<TravelerExtraDetailForm>.Filter.Eq(form => form.TravelerId, userId)
+                ),
+                Builders<TravelerExtraDetailForm>.Filter.Or(
+                    Builders<TravelerExtraDetailForm>.Filter.Eq(form => form.RequestStatus, null),
+                    Builders<TravelerExtraDetailForm>.Filter.Eq(form => form.RequestStatus, false)
+                )
+            );
+
             return await collection.Find(filter).ToListAsync();
         }
+
 
         public async Task<IEnumerable<TravelerExtraDetailForm>> GetAllChats(int userId)
         {

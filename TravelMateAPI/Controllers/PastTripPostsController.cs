@@ -48,11 +48,11 @@ namespace TravelMateAPI.Controllers
             return Ok(PastTripPostDTOs);
         }
 
-        [HttpGet("UserTrips")]
-        public async Task<ActionResult<IEnumerable<PastTripPostDTO>>> GetAllPostOfUserAsync()
+        [HttpGet("UserTrips/{userId}")]
+        public async Task<ActionResult<IEnumerable<PastTripPostDTO>>> GetAllPostOfUserAsync(int userId)
         {
-            var userId = GetUserId();
-            if (userId == -1)
+            var currentUserId = GetUserId();
+            if (currentUserId == -1)
                 return Unauthorized(new { Message = "Unauthorized access." });
 
             //check post exist

@@ -234,7 +234,6 @@ namespace TravelMateAPI.Controllers
                 updatedForm.SendAt = GetTimeZone.GetVNTimeZoneNow();
                 updatedForm.Questions = localForm.Questions;
                 updatedForm.Services = localForm.Services;
-
                 await _travelerRepository.AddAsync(updatedForm);
                 return Ok("Created successfully!");
             }
