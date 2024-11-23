@@ -15,6 +15,7 @@ using Repositories;
 using Repositories.Interface;
 using Repository.Interfaces;
 using System.Text;
+using TravelMateAPI.Hubs;
 using TravelMateAPI.Middleware;
 using TravelMateAPI.Models;
 using TravelMateAPI.Services.Email;
@@ -292,7 +293,7 @@ namespace TravelMateAPI
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
                 });
             }
-            app.MapHub<ChatHub>("/Chat");
+
 
             app.UseMiddleware<ExceptionMiddleware>();
 
@@ -304,6 +305,7 @@ namespace TravelMateAPI
             app.MapControllers();
             // real time
             app.MapHub<ServiceHub>("/serviceHub");
+            app.MapHub<ChatHub>("/chatHub");
             app.Run();
         }
     }
