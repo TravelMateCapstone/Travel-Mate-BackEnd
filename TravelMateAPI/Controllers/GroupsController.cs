@@ -49,44 +49,19 @@ namespace TravelMateAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<GroupDTO>>> GetGroupsAsync([FromQuery] int pageNumber = 1)
         {
-            var groups = await _groupRepository.GetGroupsAsync();
-            if (groups == null || !groups.Any())
-                return NotFound(new { Message = "No groups found." });
+            try
+            {
+                var groups = await _groupRepository.GetGroupsAsync();
+                if (groups == null || !groups.Any())
+                    return NotFound(new { Message = "No groups found." });
 
-            return await PaginateAndRespondAsync(groups, pageNumber);
+                return await PaginateAndRespondAsync(groups, pageNumber);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "An error occurred while retrieving groups.", Details = ex.Message });
+            }
         }
-
-
-        [HttpGet()]
-        public async Task<ActionResult<IEnumerable<GroupDTO>>> GetUnjoinedGroupsByName(string keyword, string groupType, [FromQuery] int pageNumber = 1)
-        {
-
-            var userId = GetUserId();
-            if (userId == -1)
-                return Unauthorized(new { Message = "Unauthorized access." });
-
-            //group type
-            var groups = new List<Group>();
-
-            //if (groupType == "Unjoined")
-            //{
-            //    var unjoinedGroups = await _groupRepository.GetUnjoinedGroupsAsync(userId);
-            //    groups = await _groupRepository.GetUnjoinedGroupsByName(keyword, unjoinedGroups);
-            //}
-
-            //if (groupType == "Created")
-            //    groups = await _groupRepository.GetCreatedGroupsByName(keyword);
-
-            //if (groupType == "Joined")
-            //    groups = await _groupRepository.GetJoinedGroupsByName(keyword);
-
-            if (groups == null || !groups.Any())
-                return NotFound(new { Message = "No groups found." });
-
-            return await PaginateAndRespondAsync(groups, pageNumber);
-        }
-
-
 
         [HttpGet("UnjoinedGroups")]
         public async Task<ActionResult<IEnumerable<GroupDTO>>> GetUnjoinedGroupsAsync([FromQuery] int pageNumber = 1)
