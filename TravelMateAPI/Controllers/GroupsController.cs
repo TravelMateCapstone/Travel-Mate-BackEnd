@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Repositories.Interface;
 using TravelMateAPI.Services;
+using TravelMateAPI.Services.Notification;
 
 namespace TravelMateAPI.Controllers
 {
@@ -17,13 +18,15 @@ namespace TravelMateAPI.Controllers
         private readonly IGroupRepository _groupRepository;
         private readonly IMapper _mapper;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly INotificationService _notificationService;
         private const int pageSize = 6;
 
-        public GroupsController(UserManager<ApplicationUser> userManager, IGroupRepository groupRepository, IMapper mapper)
+        public GroupsController(UserManager<ApplicationUser> userManager, IGroupRepository groupRepository, IMapper mapper, INotificationService notificationService)
         {
             _groupRepository = groupRepository;
             _mapper = mapper;
             _userManager = userManager;
+            _notificationService = notificationService;
         }
 
         private async Task<ActionResult<IEnumerable<GroupDTO>>> PaginateAndRespondAsync(IEnumerable<Group> groups, int pageNumber)
@@ -42,7 +45,6 @@ namespace TravelMateAPI.Controllers
             });
         }
 
-        [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<GroupDTO>>> GetGroupsAsync([FromQuery] int pageNumber = 1)
         {
@@ -97,7 +99,6 @@ namespace TravelMateAPI.Controllers
                 );
         }
 
-        [AllowAnonymous]
         [HttpGet("{groupId}")]
         public async Task<ActionResult<GroupDTO>> GetGroupByIdAsync(int groupId)
         {
@@ -279,6 +280,8 @@ namespace TravelMateAPI.Controllers
             };
 
             await _groupRepository.JoinGroup(newParticipant);
+            var group = await _groupRepository.GetGroupByIdAsync(groupId);
+            await _notificationService.CreateNotificationFullAsync(group.CreatedById, $"{user.FullName} đã gửi yêu cầu vào nhóm {group.GroupName} của bạn.", user.Id, 4);
             return Ok("Join request sent.");
         }
 
@@ -306,6 +309,8 @@ namespace TravelMateAPI.Controllers
 
             await _groupRepository.AcceptJoinGroup(updateMember);
 
+            var group = await _groupRepository.GetGroupByIdAsync(groupId);
+            await _notificationService.CreateNotificationFullAsync(requesterId, $"{user.FullName} đã chấp nhận yêu cầu vào nhóm {group.GroupName}.", user.Id, 4);
             return Ok("Join request accepted.");
         }
 
@@ -325,6 +330,9 @@ namespace TravelMateAPI.Controllers
             var removeRequest = await _groupRepository.GetJoinRequestParticipant(requesterId, groupId);
 
             await _groupRepository.RejectJoinGroupRequest(removeRequest);
+
+            var group = await _groupRepository.GetGroupByIdAsync(groupId);
+            await _notificationService.CreateNotificationFullAsync(requesterId, $"{user.FullName} đã từ chối yêu cầu vào nhóm {group.GroupName}.", user.Id, 4);
 
             return Ok("Reject request successful.");
         }
