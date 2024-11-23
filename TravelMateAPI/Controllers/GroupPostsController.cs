@@ -32,23 +32,31 @@ namespace TravelMateAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<GroupPostDTO>>> GetGroupPostsAsync(int groupId)
         {
-            var userId = GetUserId();
-            if (userId == -1)
-                return Unauthorized(new { Message = "Unauthorized access." });
+            try
+            {
+                var userId = GetUserId();
+                if (userId == -1)
+                    return Unauthorized(new { Message = "Unauthorized access." });
 
-            var groupPosts = await _groupPostRepository.GetGroupPostsAsync(groupId);
-            if (groupPosts == null || !groupPosts.Any())
-                return NotFound(new { Message = "No post found." });
+                //check if you are a member of admin of 
+                var IsMemberOrAdmin = await _groupPostRepository.IsMemberOrAdmin(userId, groupId);
+                if (!IsMemberOrAdmin)
+                    return BadRequest("Access Denied, You are not member of group");
 
-            //check if you are a member of admin of 
-            var IsMemberOrAdmin = await _groupPostRepository.IsMemberOrAdmin(userId, groupId);
-            if (!IsMemberOrAdmin)
-                return BadRequest("Access Denied, You are not member of group");
 
-            // Map the list of GroupPost to a list of GroupPostDTO
-            var groupPostDTOs = _mapper.Map<IEnumerable<GroupPostDTO>>(groupPosts);
+                var groupPosts = await _groupPostRepository.GetGroupPostsAsync(groupId);
+                //if (groupPosts == null || !groupPosts.Any())
+                //    return NotFound(new { Message = "No post found." });
 
-            return Ok(groupPostDTOs);
+                // Map the list of GroupPost to a list of GroupPostDTO
+                var groupPostDTOs = _mapper.Map<IEnumerable<GroupPostDTO>>(groupPosts);
+
+                return Ok(groupPostDTOs);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "An error occurred while retrieving the group post list.", Details = ex.Message });
+            }
         }
 
 
@@ -59,14 +67,14 @@ namespace TravelMateAPI.Controllers
             if (userId == -1)
                 return Unauthorized(new { Message = "Unauthorized access." });
 
-            var groupPost = await _groupPostRepository.GetGroupPostByIdAsync(postId);
-            if (groupPost == null || groupPost.GroupId != groupId)
-                return NotFound(new { Message = "No post found." });
-
             //check if you are a member of admin of 
             var IsMemberOrAdmin = await _groupPostRepository.IsMemberOrAdmin(userId, groupId);
             if (!IsMemberOrAdmin)
                 return BadRequest("Access Denied, You are not member of group");
+
+            var groupPost = await _groupPostRepository.GetGroupPostByIdAsync(postId);
+            //if (groupPost == null || groupPost.GroupId != groupId)
+            //    return NotFound(new { Message = "No post found." });
 
             var groupPostDTO = _mapper.Map<GroupPostDTO>(groupPost);
 

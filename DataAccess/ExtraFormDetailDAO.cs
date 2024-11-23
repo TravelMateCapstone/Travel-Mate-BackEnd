@@ -21,10 +21,34 @@ namespace DataAccess
             return collection.Find(_ => true).ToList();
         }
 
+        public async Task<IEnumerable<TravelerExtraDetailForm>> GetAllRequests(int userId)
+        {
+            var collection = _mongoContext.GetCollection<TravelerExtraDetailForm>("TravelerExtraDetailForms");
+            var filter = Builders<TravelerExtraDetailForm>.Filter.And(
+        Builders<TravelerExtraDetailForm>.Filter.Or(
+            Builders<TravelerExtraDetailForm>.Filter.Eq(form => form.CreateById, userId),
+            Builders<TravelerExtraDetailForm>.Filter.Eq(form => form.TravelerId, userId)
+        ),
+        Builders<TravelerExtraDetailForm>.Filter.Eq(form => form.RequestStatus, false));
+            return await collection.Find(filter).ToListAsync();
+        }
+
+        public async Task<IEnumerable<TravelerExtraDetailForm>> GetAllChats(int userId)
+        {
+            var collection = _mongoContext.GetCollection<TravelerExtraDetailForm>("TravelerExtraDetailForms");
+            var filter = Builders<TravelerExtraDetailForm>.Filter.And(
+        Builders<TravelerExtraDetailForm>.Filter.Or(
+            Builders<TravelerExtraDetailForm>.Filter.Eq(form => form.CreateById, userId),
+            Builders<TravelerExtraDetailForm>.Filter.Eq(form => form.TravelerId, userId)
+        ),
+        Builders<TravelerExtraDetailForm>.Filter.Eq(form => form.RequestStatus, true));
+            return await collection.Find(filter).ToListAsync();
+        }
+
         public async Task<LocalExtraDetailForm> GetById(string formId)
         {
             var collection = _mongoContext.GetCollection<LocalExtraDetailForm>("ExtraDetailForms");
-            return collection.Find(form => form.FormId == formId).FirstOrDefault();
+            return collection.Find(form => form.Id == formId).FirstOrDefault();
         }
 
         public async Task<LocalExtraDetailForm> GetByUserId(int userId)
@@ -33,6 +57,13 @@ namespace DataAccess
             return collection.Find(form => form.CreateById == userId).FirstOrDefault();
         }
 
+        public async Task ProcessRequest(TravelerExtraDetailForm form)
+        {
+            var collection = _mongoContext.GetCollection<TravelerExtraDetailForm>("TravelerExtraDetailForms");
+            var filter = Builders<TravelerExtraDetailForm>.Filter.Eq(f => f.Id, form.Id);
+
+            await collection.ReplaceOneAsync(filter, form);
+        }
 
         public async Task AddAsync(LocalExtraDetailForm form)
         {
@@ -43,7 +74,7 @@ namespace DataAccess
         public async Task UpdateAsync(string formId, LocalExtraDetailForm updatedForm)
         {
             var collection = _mongoContext.GetCollection<LocalExtraDetailForm>("ExtraDetailForms");
-            var filter = Builders<LocalExtraDetailForm>.Filter.Eq(f => f.FormId, formId);
+            var filter = Builders<LocalExtraDetailForm>.Filter.Eq(f => f.Id, formId);
 
             await collection.ReplaceOneAsync(filter, updatedForm);
         }

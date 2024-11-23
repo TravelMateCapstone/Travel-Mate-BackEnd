@@ -15,6 +15,7 @@ using Repositories;
 using Repositories.Interface;
 using Repository.Interfaces;
 using System.Text;
+using TravelMateAPI.Middleware;
 using TravelMateAPI.Models;
 using TravelMateAPI.Services.Email;
 using TravelMateAPI.Services.FindLocal;
@@ -289,6 +290,8 @@ namespace TravelMateAPI
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
                 });
             }
+
+            app.UseMiddleware<ExceptionMiddleware>();
 
             app.UseHttpsRedirection();
             app.UseRouting();

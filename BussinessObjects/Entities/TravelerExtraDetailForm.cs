@@ -7,7 +7,7 @@ namespace BusinessObjects.Entities
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string? TravelerFormId { get; set; } // MongoDB will generate an ID if this is null
+        public string? Id { get; set; }
 
         [BsonElement("createById")]
         public int? CreateById { get; set; }
@@ -21,14 +21,8 @@ namespace BusinessObjects.Entities
         [BsonElement("endDate")]
         public DateTime EndDate { get; set; }
 
-        [BsonElement("questions")]
-        public List<AnsweredQuestion> Questions { get; set; } = new List<AnsweredQuestion>();
-
-        [BsonElement("services")]
-        public List<AnsweredService> Services { get; set; } = new List<AnsweredService>();
-
         [BsonElement("requestStatus")]
-        public bool RequestStatus { get; set; }
+        public bool? RequestStatus { get; set; }
 
         [BsonElement("sendAt")]
         public DateTime? SendAt { get; set; }
@@ -36,18 +30,27 @@ namespace BusinessObjects.Entities
         [BsonElement("latestUpdateAt")]
         public DateTime? LatestUpdateAt { get; set; }
 
+        [BsonElement("questions")]
+        public List<Question>? Questions { get; set; } = new List<Question>();
+
+        [BsonElement("services")]
+        public List<Service>? Services { get; set; } = new List<Service>();
+
+        [BsonElement("answeredQuestions")]
+        public List<AnsweredQuestion> AnsweredQuestions { get; set; } = new List<AnsweredQuestion>();
+
+        [BsonElement("answeredServices")]
+        public List<AnsweredService> AnsweredServices { get; set; } = new List<AnsweredService>();
     }
 
     public class AnsweredQuestion
     {
-        [BsonElement("type")]
-        public string Type { get; set; }
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string? Id { get; set; }
 
-        [BsonElement("text")]
-        public string Text { get; set; }
-
-        [BsonElement("options")]
-        public List<string> Options { get; set; } = new List<string>();
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string? QuestionId { get; set; }
 
         [BsonElement("answer")]
         public List<string>? Answer { get; set; }
@@ -55,15 +58,14 @@ namespace BusinessObjects.Entities
 
     public class AnsweredService
     {
-        [BsonElement("serviceName")]
-        public string ServiceName { get; set; }
 
-        [BsonElement("amount")]
-        [BsonRepresentation(BsonType.Decimal128)]
-        public decimal Amount { get; set; }
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string? Id { get; set; }
 
-        [BsonElement("total")]
-        [BsonRepresentation(BsonType.Decimal128)]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string? ServiceId { get; set; }
+
         public decimal Total { get; set; }
     }
 

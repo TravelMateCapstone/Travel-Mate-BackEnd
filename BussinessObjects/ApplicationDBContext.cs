@@ -58,6 +58,11 @@ namespace BusinessObjects
             optionsBuilder.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
         }
 
+        [DbFunction(name: "SOUNDEX", IsBuiltIn = true)]
+        public string FuzzySearch(string query)
+        {
+            throw new NotImplementedException();
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -555,7 +560,7 @@ namespace BusinessObjects
                .HasOne(gp => gp.User)
                .WithMany(g => g.GroupParticipants)
                .HasForeignKey(gp => gp.UserId)
-               .OnDelete(DeleteBehavior.Restrict);
+               .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<GroupPost>()
                 .HasOne(p => p.Group)

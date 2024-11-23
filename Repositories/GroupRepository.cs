@@ -108,5 +108,10 @@ namespace Repositories
         {
             await _groupDAO.RejectJoinGroupRequest(groupParticipant);
         }
+
+        public async Task<IQueryable<Group>> GetUnjoinedGroupsByName(string keyword, IQueryable<Group> unjoinedGroups)
+        {
+            return await _groupDAO.GetUnjoinedGroupsByName(keyword, unjoinedGroups);
+        }
     }
 }

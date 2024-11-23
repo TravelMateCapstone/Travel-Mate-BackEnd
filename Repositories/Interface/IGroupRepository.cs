@@ -2,6 +2,7 @@
 {
     public interface IGroupRepository
     {
+        Task<IQueryable<Group>> GetUnjoinedGroupsByName(string keyword, IQueryable<Group> unjoinedGroups);
         Task<IQueryable<Group>> GetCreatedGroupsAsync(int createdById);
         Task<Group> GetCreatedGroupByIdAsync(int userId, int groupId);
 
