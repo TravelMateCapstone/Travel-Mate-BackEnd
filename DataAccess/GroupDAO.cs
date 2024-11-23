@@ -1,6 +1,7 @@
 ﻿using BusinessObjects;
 using Microsoft.EntityFrameworkCore;
 
+
 namespace DataAccess
 {
     public class GroupDAO
@@ -14,6 +15,11 @@ namespace DataAccess
 
         //Get UnJoin Group
         public async Task<IQueryable<Group>> GetGroupsAsync()
+        {
+            return _dbContext.Groups.Include(g => g.GroupParticipants).OrderByDescending(g => g.CreateAt);
+        }
+
+        public async Task<IQueryable<Group>> GetUnjoinedGroupsByName(string keyword, IQueryable<Group> unjoinedGroups)
         {
             return _dbContext.Groups.Include(g => g.GroupParticipants).OrderByDescending(g => g.CreateAt);
         }

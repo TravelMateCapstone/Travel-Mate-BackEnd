@@ -81,7 +81,8 @@ namespace TravelMateAPI.Controllers
                     ep.UserId,
                     ep.EventId,
                     ep.JoinedAt,
-                    Profile = _context.Profiles.FirstOrDefault(p => p.UserId == ep.UserId) // Lấy thông tin Profile từ UserId
+                    Profile = _context.Profiles.FirstOrDefault(p => p.UserId == ep.UserId), // Lấy thông tin Profile từ UserId
+                     UserDetail = _context.Users.FirstOrDefault(u => u.Id == ep.UserId)
                 })
                 .ToListAsync();
 

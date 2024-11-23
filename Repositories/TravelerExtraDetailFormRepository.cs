@@ -42,5 +42,19 @@ namespace Repositories
         {
             await _travelerFormDAO.DeleteTravelerFormAsync(localId, travelerId);
         }
+
+        public async Task<IEnumerable<TravelerExtraDetailForm>> GetAllRequests(int userId)
+        {
+            return await _travelerFormDAO.GetAllRequests(userId);
+        }
+        public async Task<IEnumerable<TravelerExtraDetailForm>> GetAllChats(int userId)
+        {
+            return await _travelerFormDAO.GetAllChats(userId);
+        }
+
+        public async Task ProcessRequest(TravelerExtraDetailForm form)
+        {
+            await _travelerFormDAO.ProcessRequest(form);
+        }
     }
 }
