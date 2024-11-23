@@ -30,6 +30,32 @@ namespace TravelMateAPI.Controllers
             return int.TryParse(userIdString, out var userId) ? userId : -1;
         }
 
+        //get request and form
+        [HttpGet("Request")]
+        public async Task<IActionResult> GetListRequests()
+        {
+            try
+            {
+                var userId = GetUserId();
+                if (userId == -1)
+                    return Unauthorized(new { Message = "Unauthorized access." });
+
+                var form = await _localRepository.GetByUserIdAsync(userId);
+
+
+
+
+
+                //tra ve form va thong tin nguoi dung
+                return Ok(form);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (optional)
+                return StatusCode(500, new { Message = "An error occurred while retrieving the form.", Details = ex.Message });
+            }
+        }
+
         [HttpGet("LocalForm")]
         public async Task<IActionResult> GetFormByUserId()
         {
