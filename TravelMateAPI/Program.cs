@@ -15,6 +15,7 @@ using Repositories;
 using Repositories.Interface;
 using Repository.Interfaces;
 using System.Text;
+using TravelMateAPI.Middleware;
 using TravelMateAPI.Models;
 using TravelMateAPI.Services.Email;
 using TravelMateAPI.Services.FindLocal;
@@ -292,6 +293,8 @@ namespace TravelMateAPI
                 });
             }
             app.MapHub<ChatHub>("/Chat");
+
+            app.UseMiddleware<ExceptionMiddleware>();
 
             app.UseHttpsRedirection();
             app.UseRouting();

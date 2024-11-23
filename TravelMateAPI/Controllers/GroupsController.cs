@@ -1,9 +1,10 @@
 ﻿using AutoMapper;
+using BusinessObjects.Entities;
 using BusinessObjects.Utils.Response;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Repositories.Interface;
-using System.Security.Claims;
 using TravelMateAPI.Services;
 
 namespace TravelMateAPI.Controllers
@@ -15,18 +16,14 @@ namespace TravelMateAPI.Controllers
     {
         private readonly IGroupRepository _groupRepository;
         private readonly IMapper _mapper;
+        private readonly UserManager<ApplicationUser> _userManager;
         private const int pageSize = 6;
 
-        public GroupsController(IGroupRepository groupRepository, IMapper mapper)
+        public GroupsController(UserManager<ApplicationUser> userManager, IGroupRepository groupRepository, IMapper mapper)
         {
             _groupRepository = groupRepository;
             _mapper = mapper;
-        }
-
-        private int GetUserId()
-        {
-            var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            return int.TryParse(userIdString, out var userId) ? userId : -1;
+            _userManager = userManager;
         }
 
         private async Task<ActionResult<IEnumerable<GroupDTO>>> PaginateAndRespondAsync(IEnumerable<Group> groups, int pageNumber)
@@ -49,55 +46,26 @@ namespace TravelMateAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<GroupDTO>>> GetGroupsAsync([FromQuery] int pageNumber = 1)
         {
+
             var groups = await _groupRepository.GetGroupsAsync();
-            if (groups == null || !groups.Any())
-                return NotFound(new { Message = "No groups found." });
+            //if (groups == null || !groups.Any())
+            //    return NotFound(new { Message = "No groups found." });
 
             return await PaginateAndRespondAsync(groups, pageNumber);
         }
-
-
-        [HttpGet()]
-        public async Task<ActionResult<IEnumerable<GroupDTO>>> GetUnjoinedGroupsByName(string keyword, string groupType, [FromQuery] int pageNumber = 1)
-        {
-
-            var userId = GetUserId();
-            if (userId == -1)
-                return Unauthorized(new { Message = "Unauthorized access." });
-
-            //group type
-            var groups = new List<Group>();
-
-            //if (groupType == "Unjoined")
-            //{
-            //    var unjoinedGroups = await _groupRepository.GetUnjoinedGroupsAsync(userId);
-            //    groups = await _groupRepository.GetUnjoinedGroupsByName(keyword, unjoinedGroups);
-            //}
-
-            //if (groupType == "Created")
-            //    groups = await _groupRepository.GetCreatedGroupsByName(keyword);
-
-            //if (groupType == "Joined")
-            //    groups = await _groupRepository.GetJoinedGroupsByName(keyword);
-
-            if (groups == null || !groups.Any())
-                return NotFound(new { Message = "No groups found." });
-
-            return await PaginateAndRespondAsync(groups, pageNumber);
-        }
-
-
 
         [HttpGet("UnjoinedGroups")]
         public async Task<ActionResult<IEnumerable<GroupDTO>>> GetUnjoinedGroupsAsync([FromQuery] int pageNumber = 1)
         {
-            var userId = GetUserId();
-            if (userId == -1)
-                return Unauthorized(new { Message = "Unauthorized access." });
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
 
-            var groups = await _groupRepository.GetUnjoinedGroupsAsync(userId);
-            if (groups == null || !groups.Any())
-                return NotFound(new { Message = "No groups found." });
+            var groups = await _groupRepository.GetUnjoinedGroupsAsync(user.Id);
+            //if (groups == null || !groups.Any())
+            //    return NotFound(new { Message = "No groups found." });
 
             var totalCount = groups.Count();
             var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
@@ -109,7 +77,7 @@ namespace TravelMateAPI.Controllers
             foreach (var group in paginatedGroups)
             {
                 // Check if the user has sent a join request to this group
-                var joinedStatus = await _groupRepository.DoesRequestSend(group.GroupId, userId) ? "Pending" : "Unjoin";
+                var joinedStatus = await _groupRepository.DoesRequestSend(group.GroupId, user.Id) ? "Pending" : "Unjoin";
 
                 listUnjoinedGroups.Add(new
                 {
@@ -118,17 +86,15 @@ namespace TravelMateAPI.Controllers
                 });
             }
 
-            return Ok(
-                new
-                {
-                    TotalPages = totalPages,
-                    TotalCount = totalCount,
-                    CurrentPage = pageNumber,
-                    PageSize = pageSize,
-                    listUnjoinedGroups
-                }
+            return Ok(new
+            {
+                TotalPages = totalPages,
+                TotalCount = totalCount,
+                CurrentPage = pageNumber,
+                PageSize = pageSize,
+                listUnjoinedGroups
+            }
                 );
-
         }
 
         [AllowAnonymous]
@@ -136,8 +102,8 @@ namespace TravelMateAPI.Controllers
         public async Task<ActionResult<GroupDTO>> GetGroupByIdAsync(int groupId)
         {
             var group = await _groupRepository.GetGroupByIdAsync(groupId);
-            if (group == null)
-                return NotFound(new { Message = "Group not found." });
+            //if (group == null)
+            //    return NotFound(new { Message = "Group not found." });
 
             var groupDTOs = _mapper.Map<GroupDTO>(group);
 
@@ -147,13 +113,15 @@ namespace TravelMateAPI.Controllers
         [HttpGet("CreatedGroups")]
         public async Task<ActionResult<IEnumerable<GroupDTO>>> GetCreatedGroups([FromQuery] int pageNumber = 1)
         {
-            var userId = GetUserId();
-            if (userId == -1)
-                return Unauthorized(new { Message = "Unauthorized access." });
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
 
-            var groups = await _groupRepository.GetCreatedGroupsAsync(userId);
-            if (groups == null || !groups.Any())
-                return NotFound(new { Message = "No created groups found." });
+            var groups = await _groupRepository.GetCreatedGroupsAsync(user.Id);
+            //if (groups == null || !groups.Any())
+            //    return NotFound(new { Message = "No created groups found." });
 
             return await PaginateAndRespondAsync(groups, pageNumber);
         }
@@ -161,39 +129,42 @@ namespace TravelMateAPI.Controllers
         [HttpGet("ListJoinGroupRequest/{groupId}")]
         public async Task<ActionResult<IEnumerable<GroupMemberDTO>>> ListJoinGroupRequest(int groupId)
         {
-            var userId = GetUserId();
-            if (userId == -1)
-                return Unauthorized(new { Message = "Unauthorized access." });
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
 
             var groups = await _groupRepository.GetGroupByIdAsync(groupId);
             if (groups == null)
                 return NotFound(new { Message = "No created groups found." });
 
             //check if you are group creator
-            var isGroupCreator = await _groupRepository.GetCreatedGroupByIdAsync(userId, groupId);
+            var isGroupCreator = await _groupRepository.GetCreatedGroupByIdAsync(user.Id, groupId);
             if (isGroupCreator == null)
                 return NotFound(new { Message = "Group not found or access denied." });
 
             var listParticipants = await _groupRepository.ListJoinGroupRequests(groupId);
-            if (listParticipants == null)
-                return NotFound("No request found");
+            //if (listParticipants == null)
+            //    return NotFound("No request found");
 
             var groupMemberDTOs = _mapper.Map<IEnumerable<GroupMemberDTO>>(listParticipants);
 
             return Ok(groupMemberDTOs);
-
         }
 
         [HttpGet("CreatedGroups/{groupId}")]
         public async Task<ActionResult<GroupDTO>> GetCreatedGroupByIdAsync(int groupId)
         {
-            var userId = GetUserId();
-            if (userId == -1)
-                return Unauthorized(new { Message = "Unauthorized access." });
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
 
-            var group = await _groupRepository.GetCreatedGroupByIdAsync(userId, groupId);
-            if (group == null)
-                return NotFound(new { Message = "Group not found." });
+            var group = await _groupRepository.GetCreatedGroupByIdAsync(user.Id, groupId);
+            //if (group == null)
+            //    return NotFound(new { Message = "Group not found." });
 
             var groupDTOs = _mapper.Map<GroupDTO>(group);
 
@@ -203,13 +174,15 @@ namespace TravelMateAPI.Controllers
         [HttpGet("JoinedGroups")]
         public async Task<ActionResult<IEnumerable<GroupDTO>>> GetJoinedGroupsAsync([FromQuery] int pageNumber = 1)
         {
-            var userId = GetUserId();
-            if (userId == -1)
-                return Unauthorized(new { Message = "Unauthorized access." });
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
 
-            var joinedGroups = await _groupRepository.GetJoinedGroupsAsync(userId);
-            if (joinedGroups == null || !joinedGroups.Any())
-                return NotFound(new { Message = "No joined groups found." });
+            var joinedGroups = await _groupRepository.GetJoinedGroupsAsync(user.Id);
+            //if (joinedGroups == null || !joinedGroups.Any())
+            //    return NotFound(new { Message = "No joined groups found." });
 
             return await PaginateAndRespondAsync(joinedGroups, pageNumber);
         }
@@ -217,9 +190,11 @@ namespace TravelMateAPI.Controllers
         [HttpGet("JoinedGroups/{groupId}")]
         public async Task<ActionResult<GroupDTO>> GetJoinedGroupByIdAsync(int groupId)
         {
-            var userId = GetUserId();
-            if (userId == -1)
-                return Unauthorized(new { Message = "Unauthorized access." });
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
 
             var existingGroup = await _groupRepository.GetGroupByIdAsync(groupId);
             if (existingGroup == null)
@@ -227,12 +202,12 @@ namespace TravelMateAPI.Controllers
 
             var JoinedStatus = "Unjoin";
 
-            var DoesRequestSend = await _groupRepository.DoesRequestSend(groupId, userId);
+            var DoesRequestSend = await _groupRepository.DoesRequestSend(groupId, user.Id);
             if (DoesRequestSend)
                 JoinedStatus = "Pending";
 
             //get join group
-            var joinedGroup = await _groupRepository.GetJoinedGroupByIdAsync(userId, groupId);
+            var joinedGroup = await _groupRepository.GetJoinedGroupByIdAsync(user.Id, groupId);
             if (joinedGroup != null)
                 JoinedStatus = "Joined";
 
@@ -249,13 +224,15 @@ namespace TravelMateAPI.Controllers
         [HttpGet("{groupId}/Members")]
         public async Task<ActionResult<IEnumerable<GroupMemberDTO>>> GetGroupMembers(int groupId)
         {
-            var userId = GetUserId();
-            if (userId == -1)
-                return Unauthorized(new { Message = "Unauthorized access." });
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
 
             //check if you are group member
-            var isMember = await _groupRepository.GetJoinedGroupByIdAsync(userId, groupId);
-            var isCreator = await _groupRepository.GetCreatedGroupByIdAsync(userId, groupId);
+            var isMember = await _groupRepository.GetJoinedGroupByIdAsync(user.Id, groupId);
+            var isCreator = await _groupRepository.GetCreatedGroupByIdAsync(user.Id, groupId);
             if (isMember == null && isCreator == null)
                 return BadRequest(new { Message = "You are not member of this group." });
 
@@ -264,8 +241,8 @@ namespace TravelMateAPI.Controllers
                 return NotFound(new { Message = "Group not found." });
 
             var listGroupMembers = await _groupRepository.GetGroupMembers(groupId);
-            if (listGroupMembers == null)
-                return NotFound("No members were found in the group.");
+            //if (listGroupMembers == null)
+            //    return NotFound("No members were found in the group.");
 
             var groupMemberDTOs = _mapper.Map<IEnumerable<GroupMemberDTO>>(listGroupMembers);
 
@@ -275,25 +252,27 @@ namespace TravelMateAPI.Controllers
         [HttpPost("JoinedGroups/Join/{groupId}")]
         public async Task<IActionResult> JoinGroup(int groupId)
         {
-            var userId = GetUserId();
-            if (userId == -1)
-                return Unauthorized(new { Message = "Unauthorized access." });
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
 
-            var isCreator = await _groupRepository.GetCreatedGroupByIdAsync(userId, groupId);
+            var isCreator = await _groupRepository.GetCreatedGroupByIdAsync(user.Id, groupId);
             if (isCreator != null)
                 return BadRequest(new { Message = "You are creator of the group" });
 
-            var isRequestSent = await _groupRepository.DoesRequestSend(groupId, userId);
+            var isRequestSent = await _groupRepository.DoesRequestSend(groupId, user.Id);
             if (isRequestSent)
                 return NotFound("You have sent join request!");
 
-            var isMember = await _groupRepository.GetJoinedGroupByIdAsync(userId, groupId);
+            var isMember = await _groupRepository.GetJoinedGroupByIdAsync(user.Id, groupId);
             if (isMember != null)
                 return BadRequest(new { Message = "You have already joined this group." });
 
             var newParticipant = new GroupParticipant
             {
-                UserId = userId,
+                UserId = user.Id,
                 GroupId = groupId,
                 JoinedStatus = false,
                 RequestAt = GetTimeZone.GetVNTimeZoneNow()
@@ -306,11 +285,13 @@ namespace TravelMateAPI.Controllers
         [HttpPost("JoinedGroups/{groupId}/AcceptJoin")]
         public async Task<IActionResult> AcceptJoinGroup([FromQuery] int requesterId, int groupId)
         {
-            var userId = GetUserId();
-            if (userId == -1)
-                return Unauthorized(new { Message = "Unauthorized access." });
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
 
-            var isGroupCreator = await _groupRepository.GetCreatedGroupByIdAsync(userId, groupId);
+            var isGroupCreator = await _groupRepository.GetCreatedGroupByIdAsync(user.Id, groupId);
             if (isGroupCreator == null)
                 return NotFound(new { Message = "Access denied. You are not a group admin" });
 
@@ -331,11 +312,13 @@ namespace TravelMateAPI.Controllers
         [HttpPost("JoinedGroups/{groupId}/RejectJoinGroup")]
         public async Task<IActionResult> RejectJoinGroup([FromQuery] int requesterId, int groupId)
         {
-            var userId = GetUserId();
-            if (userId == -1)
-                return Unauthorized(new { Message = "Unauthorized access." });
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
 
-            var isGroupCreator = await _groupRepository.GetCreatedGroupByIdAsync(userId, groupId);
+            var isGroupCreator = await _groupRepository.GetCreatedGroupByIdAsync(user.Id, groupId);
             if (isGroupCreator == null)
                 return NotFound(new { Message = "Access denied. You are not a group admin" });
 
@@ -350,20 +333,22 @@ namespace TravelMateAPI.Controllers
         [HttpDelete("LeaveGroup/{groupId}")]
         public async Task<IActionResult> LeaveGroup(int groupId)
         {
-            var userId = GetUserId();
-            if (userId == -1)
-                return Unauthorized(new { Message = "Unauthorized access." });
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
 
             //check if you are admin or member
-            var isAdmin = await _groupRepository.GetCreatedGroupByIdAsync(userId, groupId);
+            var isAdmin = await _groupRepository.GetCreatedGroupByIdAsync(user.Id, groupId);
             if (isAdmin != null)
                 return BadRequest("Can not leave! You are admin of this group");
 
-            var isMember = await _groupRepository.GetJoinedGroupByIdAsync(userId, groupId);
+            var isMember = await _groupRepository.GetJoinedGroupByIdAsync(user.Id, groupId);
             if (isMember == null)
                 return BadRequest(new { Message = "You are not a member of this group" });
 
-            var getGroupParticipant = await _groupRepository.GetGroupMember(userId, groupId);
+            var getGroupParticipant = await _groupRepository.GetGroupMember(user.Id, groupId);
             getGroupParticipant.Group.NumberOfParticipants -= 1;
             await _groupRepository.LeaveGroup(getGroupParticipant);
 
@@ -373,15 +358,17 @@ namespace TravelMateAPI.Controllers
         [HttpDelete("CancelJoinRequest/{groupId}")]
         public async Task<IActionResult> CancelJoinRequest(int groupId)
         {
-            var userId = GetUserId();
-            if (userId == -1)
-                return Unauthorized(new { Message = "Unauthorized access." });
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
 
-            var DoesRequestSend = await _groupRepository.DoesRequestSend(groupId, userId);
+            var DoesRequestSend = await _groupRepository.DoesRequestSend(groupId, user.Id);
             if (!DoesRequestSend)
                 return NotFound("No request was sent!");
 
-            var getGroupParticipant = await _groupRepository.GetJoinRequestParticipant(userId, groupId);
+            var getGroupParticipant = await _groupRepository.GetJoinRequestParticipant(user.Id, groupId);
 
             await _groupRepository.LeaveGroup(getGroupParticipant);
 
@@ -395,11 +382,13 @@ namespace TravelMateAPI.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var userId = GetUserId();
-            if (userId == -1)
-                return Unauthorized(new { Message = "Unauthorized access." });
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
 
-            newGroup.CreatedById = userId;
+            newGroup.CreatedById = user.Id;
             newGroup.CreateAt = GetTimeZone.GetVNTimeZoneNow();
 
             await _groupRepository.AddAsync(newGroup);
@@ -412,11 +401,13 @@ namespace TravelMateAPI.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var userId = GetUserId();
-            if (userId == -1)
-                return Unauthorized(new { Message = "Unauthorized access." });
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
 
-            var existingGroup = await _groupRepository.GetCreatedGroupByIdAsync(userId, groupId);
+            var existingGroup = await _groupRepository.GetCreatedGroupByIdAsync(user.Id, groupId);
             if (existingGroup == null)
                 return NotFound(new { Message = "Group not found or access denied." });
 
@@ -432,11 +423,13 @@ namespace TravelMateAPI.Controllers
         [HttpDelete("{groupId}")]
         public async Task<IActionResult> DeleteGroup(int groupId)
         {
-            var userId = GetUserId();
-            if (userId == -1)
-                return Unauthorized(new { Message = "Unauthorized access." });
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
 
-            var existingGroup = await _groupRepository.GetCreatedGroupByIdAsync(userId, groupId);
+            var existingGroup = await _groupRepository.GetCreatedGroupByIdAsync(user.Id, groupId);
             if (existingGroup == null)
                 return NotFound(new { Message = "Group not found or access denied." });
 

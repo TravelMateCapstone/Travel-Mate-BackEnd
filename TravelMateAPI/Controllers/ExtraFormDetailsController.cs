@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using BusinessObjects.Entities;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Repositories.Interface;
-using System.Security.Claims;
 using TravelMateAPI.Services;
 
 namespace TravelMateAPI.Controllers
@@ -16,252 +16,272 @@ namespace TravelMateAPI.Controllers
         private readonly ILocalExtraDetailFormRepository _localRepository;
         private readonly ITravelerFormRepository _travelerRepository;
         private readonly IMapper _mapper;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public ExtraFormDetailsController(ILocalExtraDetailFormRepository localExtraDetailFormRepository, ITravelerFormRepository travelerRepository, IMapper mapper)
+        public ExtraFormDetailsController(UserManager<ApplicationUser> userManager, ILocalExtraDetailFormRepository localExtraDetailFormRepository, ITravelerFormRepository travelerRepository, IMapper mapper)
         {
+            _userManager = userManager;
             _localRepository = localExtraDetailFormRepository;
             _travelerRepository = travelerRepository;
             _mapper = mapper;
         }
 
-        private int GetUserId()
+        [HttpGet("Request")]
+        public async Task<IActionResult> GetListRequests()
         {
-            var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            return int.TryParse(userIdString, out var userId) ? userId : -1;
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            var form = await _travelerRepository.GetAllRequests(user.Id);
+            return Ok(form);
+        }
+
+        [HttpPost("AcceptRequest")]
+        public async Task<IActionResult> AcceptRequest([FromQuery] int travelerId)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            if (travelerId == user.Id)
+                return BadRequest("Access Denied! You can not process your request to other");
+
+            var existingForm = await _travelerRepository.GetByIdAsync(user.Id, travelerId);
+            existingForm.RequestStatus = true;
+            await _travelerRepository.ProcessRequest(existingForm);
+
+            return Ok("Accepting request");
+        }
+
+        [HttpPost("RejectRequest")]
+        public async Task<IActionResult> RejectRequest([FromQuery] int travelerId)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            if (travelerId == user.Id)
+                return BadRequest("Access Denied! You can not process your request to other");
+
+            var existingForm = await _travelerRepository.GetByIdAsync(user.Id, travelerId);
+            existingForm.RequestStatus = false;
+            await _travelerRepository.ProcessRequest(existingForm);
+
+            return Ok("Accepting request");
+        }
+
+        [HttpGet("Chats")]
+        public async Task<IActionResult> GetListChats()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            var form = await _travelerRepository.GetAllChats(user.Id);
+
+            return Ok(form);
         }
 
         [HttpGet("LocalForm")]
         public async Task<IActionResult> GetFormByUserId()
         {
-            try
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
             {
-                var userId = GetUserId();
-                if (userId == -1)
-                    return Unauthorized(new { Message = "Unauthorized access." });
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
 
-                var form = await _localRepository.GetByUserIdAsync(userId);
-                return Ok(form);
-            }
-            catch (Exception ex)
-            {
-                // Log the exception (optional)
-                return StatusCode(500, new { Message = "An error occurred while retrieving the form.", Details = ex.Message });
-            }
+            var form = await _localRepository.GetByUserIdAsync(user.Id);
+            return Ok(form);
         }
 
-        // PUT: api/ExtraFormDetails/LocalForm
         [HttpPut("LocalForm")]
         public async Task<IActionResult> UpdateForm([FromBody] LocalExtraDetailForm updatedForm)
         {
-            try
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
             {
-                var userId = GetUserId();
-                if (userId == -1)
-                    return Unauthorized(new { Message = "Unauthorized access." });
-
-                if (!ModelState.IsValid)
-                    return BadRequest(ModelState);
-
-                var existingForm = await _localRepository.GetByUserIdAsync(userId);
-
-                if (existingForm == null)
-                {
-                    updatedForm.CreateById = userId;
-                    updatedForm.CreatedAt = GetTimeZone.GetVNTimeZoneNow();
-                    await _localRepository.CreateAsync(updatedForm);
-                    return Ok("First time created successfully!");
-                }
-
-                existingForm.Services = updatedForm.Services;
-                existingForm.Questions = updatedForm.Questions;
-                existingForm.LatestUpdateAt = GetTimeZone.GetVNTimeZoneNow();
-
-                await _localRepository.UpdateAsync(existingForm.Id, existingForm);
-                return Ok("Update successfully");
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
-            catch (Exception ex)
+
+            var existingForm = await _localRepository.GetByUserIdAsync(user.Id);
+            if (existingForm == null)
             {
-                // Log the exception (optional)
-                return StatusCode(500, new { Message = "An error occurred while updating the form.", Details = ex.Message });
+                updatedForm.CreateById = user.Id;
+                updatedForm.CreatedAt = GetTimeZone.GetVNTimeZoneNow();
+                await _localRepository.CreateAsync(updatedForm);
+                return Ok("First time created successfully!");
             }
+
+            existingForm.Services = updatedForm.Services;
+            existingForm.Questions = updatedForm.Questions;
+            existingForm.LatestUpdateAt = GetTimeZone.GetVNTimeZoneNow();
+
+            await _localRepository.UpdateAsync(existingForm.Id, existingForm);
+            return Ok("Update successfully");
         }
 
-        //----------------------------------TRAVELER
+        //TRAVELER
 
         [HttpGet("TravelerForm")]
         public async Task<IActionResult> GetFormRequest([FromQuery] int localId)
         {
-            try
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
             {
-                var userId = GetUserId();
-                if (userId == -1)
-                    return Unauthorized(new { Message = "Unauthorized access." });
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
 
-                if (userId == localId)
-                    return BadRequest("You can not request yourself!");
+            if (user.Id == localId)
+                return BadRequest("You can not request yourself!");
 
-                // Retrieve the LocalExtraDetailForm
-                var localForm = await _localRepository.GetByUserIdAsync(localId);
+            var localForm = await _localRepository.GetByUserIdAsync(localId);
 
-                // Retrieve the existing TravelerExtraDetailForm
-                var existingFormRequest = await _travelerRepository.GetByIdAsync(localId, userId);
-                if (existingFormRequest != null)
+            var existingFormRequest = await _travelerRepository.GetByIdAsync(localId, user.Id);
+            if (existingFormRequest != null)
+            {
+                if (localForm.LatestUpdateAt > existingFormRequest.SendAt)
                 {
-                    if (localForm.LatestUpdateAt > existingFormRequest.SendAt)
+                    existingFormRequest = _mapper.Map<TravelerExtraDetailForm>(localForm);
+                    foreach (var item in existingFormRequest.AnsweredQuestions)
                     {
-                        //mapping cau hoi
-                        existingFormRequest = _mapper.Map<TravelerExtraDetailForm>(localForm);
-                        //kiem tra su thay doi o cac cau hoi
-
-                        foreach (var item in existingFormRequest.AnsweredQuestions)
-                        {
-                            existingFormRequest.AnsweredQuestions.Remove(item);
-                        }
-
-                        foreach (var item in localForm.Questions)
-                        {
-                            var answer = new AnsweredQuestion()
-                            {
-                                QuestionId = item.Id,
-                                Answer = new List<string>()
-                            };
-                            existingFormRequest.AnsweredQuestions.Add(answer);
-                        }
-
-                        foreach (var item in localForm.Services)
-                        {
-                            var answer = new AnsweredService()
-                            {
-                                ServiceId = item.Id,
-                                Total = 0
-                            };
-                            existingFormRequest.AnsweredServices.Add(answer);
-                        }
-
+                        existingFormRequest.AnsweredQuestions.Remove(item);
                     }
-                    return Ok(existingFormRequest);
-                }
 
-                var newForm = _mapper.Map<TravelerExtraDetailForm>(localForm);
-
-                foreach (var item in localForm.Questions)
-                {
-                    var answer = new AnsweredQuestion()
+                    foreach (var item in localForm.Questions)
                     {
-                        QuestionId = item.Id,
-                        Answer = new List<string>()
-                    };
-                    newForm.AnsweredQuestions.Add(answer);
-                }
+                        var answer = new AnsweredQuestion()
+                        {
+                            QuestionId = item.Id,
+                            Answer = new List<string>()
+                        };
+                        existingFormRequest.AnsweredQuestions.Add(answer);
+                    }
 
-                foreach (var item in localForm.Services)
-                {
-                    var answer = new AnsweredService()
+                    foreach (var item in localForm.Services)
                     {
-                        ServiceId = item.Id,
-                        Total = 0
-                    };
-                    newForm.AnsweredServices.Add(answer);
+                        var answer = new AnsweredService()
+                        {
+                            ServiceId = item.Id,
+                            Total = 0
+                        };
+                        existingFormRequest.AnsweredServices.Add(answer);
+                    }
+
                 }
 
-                return Ok(newForm);
+                return Ok(existingFormRequest);
             }
-            catch (Exception ex)
+
+            var newForm = _mapper.Map<TravelerExtraDetailForm>(localForm);
+
+            foreach (var item in localForm.Questions)
             {
-                // Log the exception (optional)
-                return StatusCode(500, new { Message = "An error occurred while processing the form request.", Details = ex.Message });
+                var answer = new AnsweredQuestion()
+                {
+                    QuestionId = item.Id,
+                    Answer = new List<string>()
+                };
+                newForm.AnsweredQuestions.Add(answer);
             }
+
+            foreach (var item in localForm.Services)
+            {
+                var answer = new AnsweredService()
+                {
+                    ServiceId = item.Id,
+                    Total = 0
+                };
+                newForm.AnsweredServices.Add(answer);
+            }
+
+            return Ok(newForm);
         }
 
-        // PUT: api/TravelerForm/{FormId}
         [HttpPut("TravelerForm")]
         public async Task<IActionResult> UpdateTravelerForm([FromQuery] int localId, [FromBody] TravelerExtraDetailForm updatedForm)
         {
-            try
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
             {
-                var userId = GetUserId();
-                if (userId == -1)
-                    return Unauthorized(new { Message = "Unauthorized access." });
-
-                if (!ModelState.IsValid)
-                    return BadRequest(ModelState);
-
-                var form = await _travelerRepository.GetByIdAsync(localId, userId);
-                var localForm = await _localRepository.GetByUserIdAsync(localId);
-                if (userId == localId)
-                    return BadRequest("You can not request yourself!");
-
-                //gan cau tra loi tuong ung voi cau hoi (gan questionId, serviceId)
-                if (form == null)
-                {
-                    updatedForm.TravelerId = userId;
-                    updatedForm.CreateById = localId;
-                    updatedForm.SendAt = GetTimeZone.GetVNTimeZoneNow();
-                    updatedForm.Questions = localForm.Questions;
-                    updatedForm.Services = localForm.Services;
-                    await _travelerRepository.AddAsync(updatedForm);
-                    return Ok("Created successfully!");
-                }
-
-                if (form != null && form.RequestStatus)
-                    return BadRequest("Request was processed! You can not update");
-
-                form.LatestUpdateAt = GetTimeZone.GetVNTimeZoneNow();
-                form.StartDate = updatedForm.StartDate;
-                form.EndDate = updatedForm.EndDate;
-                form.Questions = localForm.Questions;
-                form.Services = localForm.Services;
-                form.AnsweredQuestions = updatedForm.AnsweredQuestions;
-                form.AnsweredServices = updatedForm.AnsweredServices;
-
-                //update form of local and user
-                await _travelerRepository.UpdateAsync(localId, userId, form);
-
-                return Ok("Update form request successfully!");
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
-            catch (Exception ex)
+
+            var form = await _travelerRepository.GetByIdAsync(localId, user.Id);
+            var localForm = await _localRepository.GetByUserIdAsync(localId);
+            if (user.Id == localId)
+                return BadRequest("You can not request yourself!");
+
+            if (form == null)
             {
-                // Log the exception (optional)
-                return StatusCode(500, new { Message = "An error occurred while updating the traveler form.", Details = ex.Message });
+                updatedForm.TravelerId = user.Id;
+                updatedForm.CreateById = localId;
+                updatedForm.SendAt = GetTimeZone.GetVNTimeZoneNow();
+                updatedForm.Questions = localForm.Questions;
+                updatedForm.Services = localForm.Services;
+
+                await _travelerRepository.AddAsync(updatedForm);
+                return Ok("Created successfully!");
             }
+
+            if (form != null && form.RequestStatus == true)
+                return BadRequest("Request was processed! You can not update");
+
+            form.LatestUpdateAt = GetTimeZone.GetVNTimeZoneNow();
+            form.StartDate = updatedForm.StartDate;
+            form.EndDate = updatedForm.EndDate;
+            form.Questions = localForm.Questions;
+            form.Services = localForm.Services;
+            form.AnsweredQuestions = updatedForm.AnsweredQuestions;
+            form.AnsweredServices = updatedForm.AnsweredServices;
+
+            await _travelerRepository.UpdateAsync(localId, user.Id, form);
+
+            return Ok("Update form request successfully!");
         }
 
-
-        // DELETE: api/TravelerForm/{FormId}
         [HttpDelete("TravelerForm")]
         public async Task<IActionResult> DeleteTravelerForm([FromQuery] int localId)
         {
-            try
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
             {
-                var userId = GetUserId();
-                if (userId == -1)
-                    return Unauthorized(new { Message = "Unauthorized access." });
-
-                // Retrieve the form using FormId and associated localId & travelerId (userId)
-                var form = await _travelerRepository.GetByIdAsync(localId, userId);
-
-                if (userId == form.CreateById)
-                    return BadRequest("You can not delete request form of other");
-
-                if (form == null)
-                {
-                    return NotFound(new { Message = "Form not found." });
-                }
-
-                if (form.RequestStatus)
-                {
-                    return BadRequest("Request was processed! You cannot delete.");
-                }
-
-                // Delete the form of local and traveler
-                await _travelerRepository.DeleteAsync(localId, userId);
-                return Ok("Form deleted successfully!");
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
-            catch (Exception ex)
+
+            var form = await _travelerRepository.GetByIdAsync(localId, user.Id);
+
+            if (user.Id == form.CreateById)
+                return BadRequest("You can not delete request form of other");
+
+            if (form == null)
             {
-                // Log the exception (optional)
-                return StatusCode(500, new { Message = "An error occurred while deleting the traveler form.", Details = ex.Message });
+                return NotFound(new { Message = "Form not found." });
             }
+
+            if (form.RequestStatus == true)
+            {
+                return BadRequest("Request was processed! You cannot delete.");
+            }
+
+            await _travelerRepository.DeleteAsync(localId, user.Id);
+
+            return Ok("Form deleted successfully!");
         }
 
     }
