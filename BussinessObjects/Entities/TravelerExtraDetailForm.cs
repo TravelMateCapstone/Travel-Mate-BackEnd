@@ -22,7 +22,7 @@ namespace BusinessObjects.Entities
         public DateTime EndDate { get; set; }
 
         [BsonElement("requestStatus")]
-        public bool RequestStatus { get; set; }
+        public bool? RequestStatus { get; set; }
 
         [BsonElement("sendAt")]
         public DateTime? SendAt { get; set; }
