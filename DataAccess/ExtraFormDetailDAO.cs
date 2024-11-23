@@ -38,6 +38,29 @@ namespace DataAccess
             return await collection.Find(filter).ToListAsync();
         }
 
+        public async Task<TravelerExtraDetailForm> GetRequest(string formId)
+        {
+            var collection = _mongoContext.GetCollection<TravelerExtraDetailForm>("TravelerExtraDetailForms");
+            var filter = Builders<TravelerExtraDetailForm>.Filter.And(
+                Builders<TravelerExtraDetailForm>.Filter.Eq(form => form.Id, formId), // Filter by formId
+                Builders<TravelerExtraDetailForm>.Filter.Or(
+                    Builders<TravelerExtraDetailForm>.Filter.Eq(form => form.RequestStatus, null),
+                    Builders<TravelerExtraDetailForm>.Filter.Eq(form => form.RequestStatus, false)
+                )
+            );
+
+            return await collection.Find(filter).FirstOrDefaultAsync(); // Use FirstOrDefaultAsync for a single item
+        }
+
+        public async Task<TravelerExtraDetailForm> GetChat(string formId)
+        {
+            var collection = _mongoContext.GetCollection<TravelerExtraDetailForm>("TravelerExtraDetailForms");
+            var filter = Builders<TravelerExtraDetailForm>.Filter.And(
+                Builders<TravelerExtraDetailForm>.Filter.Eq(form => form.Id, formId), // Filter by formId
+                Builders<TravelerExtraDetailForm>.Filter.Eq(form => form.RequestStatus, true));
+
+            return await collection.Find(filter).FirstOrDefaultAsync(); // Use FirstOrDefaultAsync for a single item
+        }
 
         public async Task<IEnumerable<TravelerExtraDetailForm>> GetAllChats(int userId)
         {

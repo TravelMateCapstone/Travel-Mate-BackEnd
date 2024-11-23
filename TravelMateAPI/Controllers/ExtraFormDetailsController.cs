@@ -39,6 +39,20 @@ namespace TravelMateAPI.Controllers
             return Ok(form);
         }
 
+        [HttpGet("Request/{formId}")]
+        public async Task<IActionResult> GetRequest(string formId)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            var form = await _travelerRepository.GetRequest(formId);
+            return Ok(form);
+        }
+
+
         [HttpPost("AcceptRequest")]
         public async Task<IActionResult> AcceptRequest([FromQuery] int travelerId)
         {
@@ -87,6 +101,20 @@ namespace TravelMateAPI.Controllers
             }
 
             var form = await _travelerRepository.GetAllChats(user.Id);
+
+            return Ok(form);
+        }
+
+        [HttpGet("Chats/{formId}")]
+        public async Task<IActionResult> GetChat(string formId)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            var form = await _travelerRepository.GetChat(formId);
 
             return Ok(form);
         }
