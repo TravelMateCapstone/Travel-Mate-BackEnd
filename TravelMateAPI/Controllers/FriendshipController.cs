@@ -166,13 +166,15 @@ namespace TravelMateAPI.Controllers
             foreach (var friend in friends)
             {
                 var profile = await _context.Profiles.FirstOrDefaultAsync(p => p.UserId == friend.FriendId);
+                var userDetail = await _context.Users.FirstOrDefaultAsync(p => p.Id == friend.FriendId);
                 friendsWithProfiles.Add(new
                 {
                     FriendId = friend.FriendId,
                     FriendName = friend.FriendName,
                     FriendshipId = friend.FriendshipId,
                     ConfirmedAt = friend.ConfirmedAt,
-                    Profile = profile
+                    Profile = profile,
+                    UserDetail = userDetail
                 });
             }
             // Nếu không có bạn bè nào
@@ -242,13 +244,15 @@ namespace TravelMateAPI.Controllers
             foreach (var friend in friends)
             {
                 var profile = await _context.Profiles.FirstOrDefaultAsync(p => p.UserId == friend.FriendId);
+                var userDetail = await _context.Users.FirstOrDefaultAsync(p => p.Id == friend.FriendId);
                 friendsWithProfiles.Add(new
                 {
                     FriendId = friend.FriendId,
                     FriendName = friend.FriendName,
                     FriendshipId = friend.FriendshipId,
                     ConfirmedAt = friend.ConfirmedAt,
-                    Profile = profile
+                    Profile = profile,
+                    UserDetail = userDetail
                 });
             }
             return Ok(friendsWithProfiles);
