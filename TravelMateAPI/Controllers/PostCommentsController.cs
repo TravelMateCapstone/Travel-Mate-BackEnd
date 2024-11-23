@@ -60,8 +60,8 @@ namespace TravelMateAPI.Controllers
             if (!isGroupMemberOrAdmin) return NotFound("Access Denied");
 
             var comment = await _postCommentRepository.GetByIdAsync(commentId);
-            if (comment == null)
-                return NotFound("Comment not found");
+            //if (comment == null)
+            //    return NotFound("Comment not found");
 
             var commentDTO = _mapper.Map<PostCommentDTO>(comment);
             return Ok(commentDTO);

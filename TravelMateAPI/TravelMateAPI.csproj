@@ -24,6 +24,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.8" />
     <PackageReference Include="Microsoft.AspNetCore.OData" Version="9.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.8" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
