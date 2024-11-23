@@ -52,8 +52,8 @@ namespace TravelMateAPI.Controllers
             try
             {
                 var groups = await _groupRepository.GetGroupsAsync();
-                if (groups == null || !groups.Any())
-                    return NotFound(new { Message = "No groups found." });
+                //if (groups == null || !groups.Any())
+                //    return NotFound(new { Message = "No groups found." });
 
                 return await PaginateAndRespondAsync(groups, pageNumber);
             }
@@ -71,8 +71,8 @@ namespace TravelMateAPI.Controllers
                 return Unauthorized(new { Message = "Unauthorized access." });
 
             var groups = await _groupRepository.GetUnjoinedGroupsAsync(userId);
-            if (groups == null || !groups.Any())
-                return NotFound(new { Message = "No groups found." });
+            //if (groups == null || !groups.Any())
+            //    return NotFound(new { Message = "No groups found." });
 
             var totalCount = groups.Count();
             var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
@@ -111,8 +111,8 @@ namespace TravelMateAPI.Controllers
         public async Task<ActionResult<GroupDTO>> GetGroupByIdAsync(int groupId)
         {
             var group = await _groupRepository.GetGroupByIdAsync(groupId);
-            if (group == null)
-                return NotFound(new { Message = "Group not found." });
+            //if (group == null)
+            //    return NotFound(new { Message = "Group not found." });
 
             var groupDTOs = _mapper.Map<GroupDTO>(group);
 
@@ -127,8 +127,8 @@ namespace TravelMateAPI.Controllers
                 return Unauthorized(new { Message = "Unauthorized access." });
 
             var groups = await _groupRepository.GetCreatedGroupsAsync(userId);
-            if (groups == null || !groups.Any())
-                return NotFound(new { Message = "No created groups found." });
+            //if (groups == null || !groups.Any())
+            //    return NotFound(new { Message = "No created groups found." });
 
             return await PaginateAndRespondAsync(groups, pageNumber);
         }
@@ -150,8 +150,8 @@ namespace TravelMateAPI.Controllers
                 return NotFound(new { Message = "Group not found or access denied." });
 
             var listParticipants = await _groupRepository.ListJoinGroupRequests(groupId);
-            if (listParticipants == null)
-                return NotFound("No request found");
+            //if (listParticipants == null)
+            //    return NotFound("No request found");
 
             var groupMemberDTOs = _mapper.Map<IEnumerable<GroupMemberDTO>>(listParticipants);
 
@@ -167,8 +167,8 @@ namespace TravelMateAPI.Controllers
                 return Unauthorized(new { Message = "Unauthorized access." });
 
             var group = await _groupRepository.GetCreatedGroupByIdAsync(userId, groupId);
-            if (group == null)
-                return NotFound(new { Message = "Group not found." });
+            //if (group == null)
+            //    return NotFound(new { Message = "Group not found." });
 
             var groupDTOs = _mapper.Map<GroupDTO>(group);
 
@@ -183,8 +183,8 @@ namespace TravelMateAPI.Controllers
                 return Unauthorized(new { Message = "Unauthorized access." });
 
             var joinedGroups = await _groupRepository.GetJoinedGroupsAsync(userId);
-            if (joinedGroups == null || !joinedGroups.Any())
-                return NotFound(new { Message = "No joined groups found." });
+            //if (joinedGroups == null || !joinedGroups.Any())
+            //    return NotFound(new { Message = "No joined groups found." });
 
             return await PaginateAndRespondAsync(joinedGroups, pageNumber);
         }
@@ -239,8 +239,8 @@ namespace TravelMateAPI.Controllers
                 return NotFound(new { Message = "Group not found." });
 
             var listGroupMembers = await _groupRepository.GetGroupMembers(groupId);
-            if (listGroupMembers == null)
-                return NotFound("No members were found in the group.");
+            //if (listGroupMembers == null)
+            //    return NotFound("No members were found in the group.");
 
             var groupMemberDTOs = _mapper.Map<IEnumerable<GroupMemberDTO>>(listGroupMembers);
 
