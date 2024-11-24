@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BusinessObjects.Entities;
+using BusinessObjects.Utils.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -36,7 +37,46 @@ namespace TravelMateAPI.Controllers
             }
 
             var form = await _travelerRepository.GetAllRequests(user.Id);
-            return Ok(form);
+            var listUserIds = new List<int?>();
+            var listFormIds = new List<string?>();
+            //get all userid 
+            foreach (var item in form)
+            {
+                if (item.CreateById == user.Id)
+                    listUserIds.Add(item.TravelerId);
+                else listUserIds.Add(item.CreateById);
+
+                listFormIds.Add(item.Id);
+            }
+
+            //get list application user
+
+            var listUserInfo = new List<ApplicationUser>();
+
+            foreach (var item in listUserIds)
+            {
+                var userInfo = await _travelerRepository.GetUserInfo(item);
+                listUserInfo.Add(userInfo);
+            }
+
+            //map to dto
+            var listRequestUser = _mapper.Map<List<UserInformationDto>>(listUserInfo);
+
+            if (listRequestUser.Count == listFormIds.Count)
+            {
+                // Iterate over the lists and assign FormId to each UserInformationDto
+                for (int i = 0; i < listFormIds.Count; i++)
+                {
+                    listRequestUser[i].FormId = listFormIds[i];
+                }
+            }
+            else
+            {
+                // Handle mismatch if necessary, e.g., log an error
+                return BadRequest("The count of users and form IDs does not match.");
+            }
+
+            return Ok(listRequestUser);
         }
 
         [HttpGet("Request/{formId}")]
@@ -101,8 +141,45 @@ namespace TravelMateAPI.Controllers
             }
 
             var form = await _travelerRepository.GetAllChats(user.Id);
+            var listUserIds = new List<int?>();
+            var listFormIds = new List<string?>();
+            //get all userid 
+            foreach (var item in form)
+            {
+                if (item.CreateById == user.Id)
+                    listUserIds.Add(item.TravelerId);
+                else listUserIds.Add(item.CreateById);
 
-            return Ok(form);
+                listFormIds.Add(item.Id);
+            }
+
+            //get list application user
+
+            var listUserInfo = new List<ApplicationUser>();
+
+            foreach (var item in listUserIds)
+            {
+                var userInfo = await _travelerRepository.GetUserInfo(item);
+                listUserInfo.Add(userInfo);
+            }
+
+            //map to dto
+            var listChatUser = _mapper.Map<List<UserInformationDto>>(listUserInfo);
+
+            if (listChatUser.Count == listFormIds.Count)
+            {
+                // Iterate over the lists and assign FormId to each UserInformationDto
+                for (int i = 0; i < listFormIds.Count; i++)
+                {
+                    listChatUser[i].FormId = listFormIds[i];
+                }
+            }
+            else
+            {
+                // Handle mismatch if necessary, e.g., log an error
+                return BadRequest("The count of users and form IDs does not match.");
+            }
+            return Ok(listChatUser);
         }
 
         [HttpGet("Chats/{formId}")]
