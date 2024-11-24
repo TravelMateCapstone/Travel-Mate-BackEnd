@@ -66,5 +66,10 @@ namespace Repositories
         {
             return await _travelerFormDAO.GetChat(formId);
         }
+
+        public async Task<ApplicationUser> GetUserInfo(int? userId)
+        {
+            return await _travelerFormDAO.GetUserInfo(userId);
+        }
     }
 }

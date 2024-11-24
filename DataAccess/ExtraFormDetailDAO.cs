@@ -1,5 +1,6 @@
 ﻿using BusinessObjects;
 using BusinessObjects.Entities;
+using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
 
 namespace DataAccess
@@ -36,6 +37,11 @@ namespace DataAccess
             );
 
             return await collection.Find(filter).ToListAsync();
+        }
+
+        public async Task<ApplicationUser> GetUserInfo(int? userId)
+        {
+            return await _sqlContext.Users.Include(u => u.Profiles).FirstOrDefaultAsync(u => u.Id == userId);
         }
 
         public async Task<TravelerExtraDetailForm> GetRequest(string formId)

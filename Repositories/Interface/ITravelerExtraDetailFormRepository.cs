@@ -20,7 +20,7 @@ namespace Repositories.Interface
 
         Task DeleteAsync(int localId, int travelerId);
 
-
+        Task<ApplicationUser> GetUserInfo(int? userId);
 
     }
 }
