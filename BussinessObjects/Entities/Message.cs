@@ -7,7 +7,7 @@ namespace BusinessObjects.Entities
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public int MessageId { get; set; }
+        public int? MessageId { get; set; }
 
         [BsonElement("senderId")]
         public int SenderId { get; set; }

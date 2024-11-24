@@ -280,6 +280,7 @@ namespace TravelMateAPI.Controllers
             };
 
             await _groupRepository.JoinGroup(newParticipant);
+
             var group = await _groupRepository.GetGroupByIdAsync(groupId);
             await _notificationService.CreateNotificationFullAsync(group.CreatedById, $"{user.FullName} đã gửi yêu cầu vào nhóm {group.GroupName} của bạn.", user.Id, 4);
             return Ok("Join request sent.");
