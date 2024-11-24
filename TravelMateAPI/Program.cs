@@ -15,6 +15,7 @@ using Repositories;
 using Repositories.Interface;
 using Repository.Interfaces;
 using System.Text;
+using TravelMateAPI.Hubs;
 using TravelMateAPI.Middleware;
 using TravelMateAPI.Models;
 using TravelMateAPI.Services.Email;
@@ -279,6 +280,8 @@ namespace TravelMateAPI
                 });
             });
 
+            builder.Services.AddSignalR();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline
@@ -291,6 +294,7 @@ namespace TravelMateAPI
                 });
             }
 
+
             app.UseMiddleware<ExceptionMiddleware>();
 
             app.UseHttpsRedirection();
@@ -301,6 +305,7 @@ namespace TravelMateAPI
             app.MapControllers();
             // real time
             app.MapHub<ServiceHub>("/serviceHub");
+            app.MapHub<ChatHub>("/chatHub");
             app.Run();
         }
     }

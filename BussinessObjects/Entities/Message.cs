@@ -1,18 +1,23 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace BusinessObjects.Entities
 {
     public class Message
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int MessageId { get; set; }
-        public int CreatedById { get; set; }
-        public ApplicationUser? CreatedByUser { get; set; }
-        public int SendToId { get; set; }
-        public ApplicationUser? SendToUser { get; set; }
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public int? MessageId { get; set; }
+
+        [BsonElement("senderId")]
+        public int SenderId { get; set; }
+        [BsonElement("receiverId")]
+        public int ReceiverId { get; set; }
+
+        [BsonElement("text")]
         public string Text { get; set; }
-        public DateTime CreatedTime { get; set; } = DateTime.UtcNow;
+
+        [BsonElement("sentAt")]
+        public DateTime? SentAt { get; set; }
     }
 }
