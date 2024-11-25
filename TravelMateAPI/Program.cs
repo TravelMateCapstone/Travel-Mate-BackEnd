@@ -184,6 +184,8 @@ namespace TravelMateAPI
             builder.Services.AddScoped<IProfileRepository, ProfileRepository>();
             builder.Services.AddScoped<ApplicationUserDAO>();
             builder.Services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
+            builder.Services.AddScoped<CCCDDAO>();
+            builder.Services.AddScoped<ICCCDRepository, CCCDRepository>();
             builder.Services.AddScoped<IFindLocalService, FindLocalService>();
             builder.Services.AddScoped<ISearchLocationService, SearchLocationService>();
             builder.Services.AddScoped<SearchLocationFuzzyService>();
