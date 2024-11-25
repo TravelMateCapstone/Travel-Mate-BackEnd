@@ -1,4 +1,5 @@
-﻿using BusinessObjects.Entities;
+﻿using BusinessObjects;
+using BusinessObjects.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -8,13 +9,24 @@ using System.Threading.Tasks;
 
 namespace DataAccess
 {
-    public class ApplicationUserDAO : SingletonBase<ApplicationUserDAO>
+    public class ApplicationUserDAO 
     {
-        // Lấy tất cả người dùng
+        private readonly ApplicationDBContext _context;
+
+        public ApplicationUserDAO(ApplicationDBContext context)
+        {
+            _context = context;
+        }
+        //// Lấy tất cả người dùng
         public async Task<List<ApplicationUser>> GetAllUsersAsync()
         {
-            return await _context.Users.ToListAsync();
+            return await _context.Users.Include(e => e.Profiles).ToListAsync();
+            //return await _dbContext.Events.Include(e => e.EventParticipants).ToListAsync();
         }
+        //public async Task<IQueryable<ApplicationUser>> GetAllUsersAsync()
+        //{
+        //    return _context.Users.Include(u => u.Profiles);
+        //}
 
         // Tìm người dùng theo ID
         public async Task<ApplicationUser> GetUserByIdAsync(int id)
