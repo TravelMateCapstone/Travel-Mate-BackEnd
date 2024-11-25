@@ -12,6 +12,7 @@ namespace BusinessObjects.Entities
         public DateTime RegistrationTime { get; set; } // Thời gian đăng ký
         public int? MatchingActivitiesCount { get; set; }
         public Profile Profiles { get; set; }
+        public CCCD CCCDs { get; set; }
         public UserHome UserHome { get; set; }
         public ICollection<Friendship>? Friendships { get; set; }
         public ICollection<UserActivity>? UserActivities { get; set; }
