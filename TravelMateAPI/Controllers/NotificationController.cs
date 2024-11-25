@@ -145,6 +145,34 @@ namespace TravelMateAPI.Controllers
         }
 
 
+        // Xóa thông báo theo NotificationId
+        [HttpDelete("{notificationId}")]
+        public async Task<IActionResult> DeleteNotification(int notificationId)
+        {
+            // Tìm thông báo trong cơ sở dữ liệu
+            var notification = await _context.Notifications.FindAsync(notificationId);
+
+            if (notification == null)
+            {
+                return NotFound("Không tìm thấy thông báo.");
+            }
+
+            // Xóa thông báo
+            _context.Notifications.Remove(notification);
+            await _context.SaveChangesAsync();
+
+            // Gửi thông báo qua SignalR nếu cần thiết
+            await _hubContext.Clients.All.SendAsync("DeleteNotification", notificationId);
+
+            return Ok(new
+            {
+                Success = true,
+                Message = "Thông báo đã được xóa thành công.",
+                NotificationId = notificationId
+            });
+        }
+
+
     }
 
 }

@@ -56,5 +56,20 @@ namespace Repositories
         {
             await _travelerFormDAO.ProcessRequest(form);
         }
+
+        public async Task<TravelerExtraDetailForm> GetRequest(string formId)
+        {
+            return await _travelerFormDAO.GetRequest(formId);
+        }
+
+        public async Task<TravelerExtraDetailForm> GetChat(string formId)
+        {
+            return await _travelerFormDAO.GetChat(formId);
+        }
+
+        public async Task<ApplicationUser> GetUserInfo(int? userId)
+        {
+            return await _travelerFormDAO.GetUserInfo(userId);
+        }
     }
 }

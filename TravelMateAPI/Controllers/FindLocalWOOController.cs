@@ -128,12 +128,12 @@ namespace TravelMateAPI.Controllers
 
                 case 2:
                     // Thực hiện logic khi option = 2
-                    matchingUsers = await _findLocalService.GetMatchingUsersAndWoMcAsync(locationId, travelerActivities, "Local", pageNumber, pageSize);
+                    matchingUsers = await _findLocalService.GetMatchingUsersAsync(locationId, travelerActivities, "Local", pageNumber, pageSize);
                     break;
 
                 default:
                     // Thực hiện logic mặc định (khi option không phải 1 hoặc 2)
-                    matchingUsers = await _findLocalService.GetMatchingUsersAndWoMcAsync(locationId, travelerActivities, "Local", pageNumber, pageSize);
+                    matchingUsers = await _findLocalService.GetMatchingUsersAsync(locationId, travelerActivities, "Local", pageNumber, pageSize);
                     break;
             }
 

@@ -473,18 +473,6 @@ namespace BusinessObjects
                 .HasForeignKey(c => c.PaidById)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<Message>()
-       .HasOne(m => m.CreatedByUser)
-       .WithMany(u => u.Messages)
-       .HasForeignKey(m => m.CreatedById)
-       .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Message>()
-                .HasOne(m => m.SendToUser)
-                .WithMany(u => u.ReceivedMessages)
-                .HasForeignKey(m => m.SendToId)
-                .OnDelete(DeleteBehavior.Restrict);
-
             modelBuilder.Entity<PastTripPost>()
        .HasOne(m => m.Traveler)
        .WithMany(u => u.PastTripPosts)
@@ -533,19 +521,6 @@ namespace BusinessObjects
                 .HasOne(ep => ep.Destination)
                 .WithMany(u => u.Travellers)
                 .HasForeignKey(ep => ep.DestinationId);
-
-            //     modelBuilder.Entity<Reaction>()
-            //.HasKey(ot => new { ot.ReactedById, ot.PostId });
-
-            //modelBuilder.Entity<Reaction>()
-            //    .HasOne(ot => ot.ReactedByUser)
-            //    .WithMany(e => e.Reactions)
-            //    .HasForeignKey(ep => ep.ReactedById);
-
-            //modelBuilder.Entity<Reaction>()
-            //    .HasOne(ep => ep.GroupPost)
-            //    .WithMany(u => u.Reactions)
-            //    .HasForeignKey(ep => ep.PostId);
 
             modelBuilder.Entity<UserDescription>()
                 .HasKey(ud => ud.UserId);
