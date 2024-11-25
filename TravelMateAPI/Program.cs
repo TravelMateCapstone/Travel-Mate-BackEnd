@@ -177,6 +177,7 @@ namespace TravelMateAPI
             // Đăng ký các repository
             builder.Services.AddScoped<ProfileDAO>();
             builder.Services.AddScoped<IProfileRepository, ProfileRepository>();
+            builder.Services.AddScoped<ApplicationUserDAO>();
             builder.Services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
             builder.Services.AddScoped<IFindLocalService, FindLocalService>();
             builder.Services.AddScoped<ISearchLocationService, SearchLocationService>();

@@ -10,6 +10,7 @@ namespace Repositories.Interface
     public interface IApplicationUserRepository
     {
         Task<List<ApplicationUser>> GetAllUsersAsync();
+        //Task<IQueryable<ApplicationUser>> GetAllUsersAsync();
         Task<ApplicationUser> GetUserByIdAsync(int id);
         Task<ApplicationUser> GetUserByEmailAsync(string email);
         Task AddUserAsync(ApplicationUser user);
