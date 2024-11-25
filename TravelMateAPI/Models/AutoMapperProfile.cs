@@ -46,9 +46,15 @@ namespace TravelMateAPI.Models
 
             CreateMap<PostPhotoInputDTO, PostPhoto>();
 
+            CreateMap<ApplicationUser, UserInformationDto>()
+            .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.FullName))
+             .ForMember(dest => dest.UserAvatarUrl, opt => opt.MapFrom(src => src.Profiles.ImageUser))
+            .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Profiles.City));
+
             CreateMap<LocalExtraDetailForm, TravelerExtraDetailForm>()
-            .ForMember(dest => dest.Questions, opt => opt.MapFrom(src => src.Questions))
-            .ForMember(dest => dest.Services, opt => opt.MapFrom(src => src.Services));
+           .ForMember(dest => dest.Questions, opt => opt.MapFrom(src => src.Questions))
+           .ForMember(dest => dest.Services, opt => opt.MapFrom(src => src.Services));
         }
 
     }

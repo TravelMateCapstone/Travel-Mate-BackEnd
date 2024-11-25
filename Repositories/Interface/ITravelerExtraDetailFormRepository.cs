@@ -7,7 +7,11 @@ namespace Repositories.Interface
         Task<IEnumerable<TravelerExtraDetailForm>> GetAllAsync();
 
         Task<IEnumerable<TravelerExtraDetailForm>> GetAllRequests(int userId);
+        Task<TravelerExtraDetailForm> GetRequest(string formId);
         Task<IEnumerable<TravelerExtraDetailForm>> GetAllChats(int userId);
+
+        Task<TravelerExtraDetailForm> GetChat(string formId);
+
         Task<TravelerExtraDetailForm> GetByIdAsync(int localId, int travelerId);
         Task<IEnumerable<TravelerExtraDetailForm>> GetByTravelerIdAsync(int travelerId);
         Task AddAsync(TravelerExtraDetailForm form);
@@ -15,6 +19,8 @@ namespace Repositories.Interface
         Task UpdateAsync(int localId, int travelerId, TravelerExtraDetailForm updatedForm);
 
         Task DeleteAsync(int localId, int travelerId);
+
+        Task<ApplicationUser> GetUserInfo(int? userId);
 
     }
 }
