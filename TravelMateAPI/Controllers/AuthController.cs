@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using TravelMateAPI.Services;
 using TravelMateAPI.Services.Email;
+using Google.Apis.Auth;
 
 namespace TravelMateAPI.Controllers
 {
@@ -174,57 +175,159 @@ namespace TravelMateAPI.Controllers
             return Ok("Đăng ký thành công. Vui lòng kiểm tra email để xác nhận tài khoản.");
         }
 
-        //Link đăng nhập bằng google :  URL/api/auth/externallogin?provider=Google
-        [HttpGet("external-login")]
-        public IActionResult ExternalLogin(string provider)
-        {
-            var redirectUrl = Url.Action("ExternalLoginCallback", "Auth");
-            var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
-            return Challenge(properties, provider);
-        }
+        ////Link đăng nhập bằng google :  URL/api/auth/externallogin?provider=Google
+        //[HttpGet("external-login")]
+        //public IActionResult ExternalLogin(string provider)
+        //{
+        //    var redirectUrl = Url.Action("ExternalLoginCallback", "Auth");
+        //    var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
+        //    return Challenge(properties, provider);
+        //}
 
-        [HttpGet("external-login-callback")]
-        public async Task<IActionResult> ExternalLoginCallback()
+        //[HttpGet("external-login-callback")]
+        //public async Task<IActionResult> ExternalLoginCallback()
+        //{
+        //    var info = await _signInManager.GetExternalLoginInfoAsync();
+        //    if (info == null)
+        //    {
+        //        return BadRequest("Lỗi khi đăng nhập bằng tài khoản Google.");
+        //    }
+
+        //    // Tìm kiếm người dùng trong hệ thống
+        //    var email = info.Principal.FindFirstValue(ClaimTypes.Email);
+        //    var user = await _userManager.FindByEmailAsync(email);
+
+        //    if (user == null)
+        //    {
+        //        // Nếu người dùng chưa tồn tại, tạo mới và thêm vào vai trò "User"
+        //        user = new ApplicationUser
+        //        {
+        //            UserName = info.Principal.FindFirstValue(ClaimTypes.Email),
+        //            Email = info.Principal.FindFirstValue(ClaimTypes.Email),
+        //            FullName = info.Principal.FindFirstValue(ClaimTypes.Name)
+        //        };
+
+        //        var result = await _userManager.CreateAsync(user);
+        //        if (!result.Succeeded) return BadRequest("Không thể tạo người dùng.");
+
+        //        // Thêm người dùng vào vai trò "User"
+        //        await _userManager.AddToRoleAsync(user, "User");
+
+        //        // Thêm thông tin xác thực bên ngoài
+        //        await _userManager.AddLoginAsync(user, info);
+        //    }
+
+        //    // Đăng nhập người dùng
+        //    await _signInManager.SignInAsync(user, isPersistent: false);
+
+        //    // Tạo và trả về JWT token
+        //    var token = _tokenService.GenerateToken(user);
+
+        //    return Ok(new { Token = token });
+        //}
+
+        [HttpPost("google-login")]
+        public async Task<IActionResult> GoogleLogin([FromBody] string idToken)
         {
-            var info = await _signInManager.GetExternalLoginInfoAsync();
-            if (info == null)
+            // 1. Xác thực ID token với Google để lấy thông tin người dùng
+            //var payload = await VerifyGoogleTokenAsync(idToken);
+            // Xác thực token và lấy payload
+            var payload = await GoogleJsonWebSignature.ValidateAsync(idToken);
+            if (payload is null)
             {
-                return BadRequest("Lỗi khi đăng nhập bằng tài khoản Google.");
+                return Unauthorized("Invalid Google token.");
             }
 
-            // Tìm kiếm người dùng trong hệ thống
-            var email = info.Principal.FindFirstValue(ClaimTypes.Email);
-            var user = await _userManager.FindByEmailAsync(email);
-
+            // 2. Kiểm tra xem người dùng đã có trong hệ thống chưa
+            var user = await _userManager.FindByEmailAsync(payload.Email);
             if (user == null)
             {
-                // Nếu người dùng chưa tồn tại, tạo mới và thêm vào vai trò "User"
+                // Nếu chưa có, tạo người dùng mới
                 user = new ApplicationUser
                 {
-                    UserName = info.Principal.FindFirstValue(ClaimTypes.Email),
-                    Email = info.Principal.FindFirstValue(ClaimTypes.Email),
-                    FullName = info.Principal.FindFirstValue(ClaimTypes.Name)
+                    UserName = payload.Email,
+                    Email = payload.Email,
+                    FullName = payload.Name, // Lưu tên người dùng nếu cần
+                    EmailConfirmed = true,
+                    RegistrationTime = GetTimeZone.GetVNTimeZoneNow()
                 };
-
+                //var result = await _userManager.CreateAsync(user);
+                //if (!result.Succeeded)
+                //{
+                //    return BadRequest(result.Errors);
+                //}
+                // Tạo người dùng nhưng chưa kích hoạt
                 var result = await _userManager.CreateAsync(user);
-                if (!result.Succeeded) return BadRequest("Không thể tạo người dùng.");
+                if (!result.Succeeded) return BadRequest(result.Errors);
 
                 // Thêm người dùng vào vai trò "User"
-                await _userManager.AddToRoleAsync(user, "User");
+                var roleResult = await _userManager.AddToRoleAsync(user, "User");
+                if (!roleResult.Succeeded) return BadRequest(roleResult.Errors);
 
-                // Thêm thông tin xác thực bên ngoài
-                await _userManager.AddLoginAsync(user, info);
+                // Tạo bản ghi Profile mặc định
+                var defaultProfile = new Profile
+                {
+                    UserId = user.Id,
+                    FirstName = "",
+                    LastName = "",
+                    Address = "",
+                    Phone = "",
+                    Gender = "",
+                    City = "",
+                    Description = "",
+                    HostingAvailability = "",
+                    WhyUseTravelMate = "",
+                    MusicMoviesBooks = "",
+                    WhatToShare = "",
+                    ImageUser = "https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3467.jpg"
+                };
+                _context.Profiles.Add(defaultProfile);
+
+                // Tạo bản ghi UserHome mặc định
+                var defaultUserHome = new UserHome
+                {
+                    UserId = user.Id,
+                    MaxGuests = 0,
+                    GuestPreferences = "",
+                    AllowedSmoking = "",
+                    RoomDescription = "",
+                    RoomType = "",
+                    RoomMateInfo = "",
+                    Amenities = "",
+                    Transportation = "",
+                    OverallDescription = ""
+                };
+                _context.UserHomes.Add(defaultUserHome);
+
+                // Lưu thay đổi vào cơ sở dữ liệu
+                await _context.SaveChangesAsync();
+
+                // Tạo token xác thực email
+                var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+
+                // Tạo liên kết xác nhận email
+                var confirmationLink = Url.Action("ConfirmEmail", "Auth", new { userId = user.Id, token = token }, Request.Scheme);
+
+                // Gửi email xác nhận
+                MailContent content = new MailContent
+                {
+                    To = user.Email,
+                    Subject = "Xác nhận tài khoản - Travel Mate",
+                    //Body = $"<p>Xin chào, vui lòng xác nhận email của bạn bằng cách nhấp vào liên kết bên dưới:</p><a href='{confirmationLink}'>Xác nhận email</a>"
+                    Body = $"<p>Xin chào, chào mừng bạn đến với Travel Mate ♥</a>"
+                };
+
+                await _mailService.SendMail(content);
+
             }
 
-            // Đăng nhập người dùng
+            // 3. Đăng nhập người dùng
             await _signInManager.SignInAsync(user, isPersistent: false);
 
-            // Tạo và trả về JWT token
-            var token = _tokenService.GenerateToken(user);
-
-            return Ok(new { Token = token });
+            return Ok(new { message = "Login successful" });
         }
 
+        
 
         [HttpPost("forgot-password")]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDTO forgotPasswordDto)
