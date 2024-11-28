@@ -105,8 +105,15 @@ namespace TravelMateAPI.Controllers
                 return BadRequest("Location is null.");
             }
 
-            var createdLocation = await _locationRepository.AddLocationAsync(newLocation);
-            return CreatedAtAction(nameof(GetById), new { id = createdLocation.LocationId }, createdLocation);
+            //var createdLocation = await _locationRepository.AddLocationAsync(newLocation);
+            //return CreatedAtAction(nameof(GetById), new { id = createdLocation.LocationId }, createdLocation);
+             await _locationRepository.AddLocationAsync(newLocation);
+            return Ok(new
+            {
+                Success = true,
+                Message = "Location created successfully!"
+             
+            });
         }
 
         // PUT: api/Location/1

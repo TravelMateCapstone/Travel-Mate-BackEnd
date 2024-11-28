@@ -28,9 +28,9 @@ namespace Repositories
             return await _locationsDAO.GetLocationByIdAsync(locationId);
         }
 
-        public async Task<Location> AddLocationAsync(Location newLocation)
+        public async Task AddLocationAsync(Location newLocation)
         {
-            return await _locationsDAO.AddLocationAsync(newLocation);
+            await _locationsDAO.AddLocationAsync(newLocation);
         }
 
         public async Task UpdateLocationAsync(Location updatedLocation)

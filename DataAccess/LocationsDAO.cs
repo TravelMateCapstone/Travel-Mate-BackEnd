@@ -99,11 +99,17 @@ namespace DataAccess
             return await _dbContext.Locations.FindAsync(locationId);
         }
 
-        public async Task<Location> AddLocationAsync(Location newLocation)
+        //public async Task<Location> AddLocationAsync(Location newLocation)
+        //{
+        //    _dbContext.Locations.Add(newLocation);
+        //    await _dbContext.SaveChangesAsync();
+        //    return newLocation;
+        //}
+        public async Task AddLocationAsync(Location newLocation)
         {
-            _dbContext.Locations.Add(newLocation);
+            _dbContext.Locations.AddAsync(newLocation);
             await _dbContext.SaveChangesAsync();
-            return newLocation;
+    
         }
 
         public async Task UpdateLocationAsync(Location updatedLocation)
