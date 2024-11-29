@@ -55,6 +55,9 @@ namespace TravelMateAPI.Models
             CreateMap<LocalExtraDetailForm, TravelerExtraDetailForm>()
            .ForMember(dest => dest.Questions, opt => opt.MapFrom(src => src.Questions))
            .ForMember(dest => dest.Services, opt => opt.MapFrom(src => src.Services));
+
+            CreateMap<TourDto, Tour>();
+            CreateMap<Tour, TourDto>();
         }
 
     }

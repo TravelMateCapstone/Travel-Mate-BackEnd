@@ -1,4 +1,4 @@
-﻿namespace TravelMateAPI.Services
+﻿namespace BusinessObjects
 {
     public class GetTimeZone
     {

@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
+using BusinessObjects;
 using BusinessObjects.Entities;
 using BusinessObjects.Utils.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Repositories.Interface;
-using TravelMateAPI.Services;
 
 namespace TravelMateAPI.Controllers
 {

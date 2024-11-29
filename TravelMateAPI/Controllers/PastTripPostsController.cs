@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BusinessObjects;
 using BusinessObjects.Entities;
 using BusinessObjects.Utils.Request;
 using BusinessObjects.Utils.Response;
@@ -6,7 +7,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Repository.Interfaces;
 using System.Security.Claims;
-using TravelMateAPI.Services;
 
 namespace TravelMateAPI.Controllers
 {
