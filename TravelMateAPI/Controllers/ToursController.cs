@@ -13,13 +13,13 @@ namespace TravelMate.Controllers
         private readonly ITourRepository _tourRepository;
         private readonly IMapper _mapper;
         public int userId = 8;
+        public int travelerId = 9;
 
         public TourController(IMapper mapper, ITourRepository tourRepository)
         {
             _tourRepository = tourRepository;
             _mapper = mapper;
         }
-
 
         // GET: api/tour
         //GET all tour in db
@@ -74,8 +74,19 @@ namespace TravelMate.Controllers
                 return NotFound();
             }
 
+            var getUserInfo = await _tourRepository.GetUserInfo(userId);
+
+            //map tour creator with user
+            tour.Creator.Fullname = getUserInfo.FullName;
+            tour.Creator.AvatarUrl = getUserInfo.Profiles.ImageUser;
+            tour.Creator.Address = getUserInfo.Profiles.City;
+            tour.Creator.Rating = 4;
+            tour.Creator.TotalTrips = 10;
+            tour.Creator.JoinedAt = getUserInfo.RegistrationTime;
+
             var tourDto = _mapper.Map<TourDto>(tour);
 
+            //return local info
             return Ok(tourDto);
         }
 
@@ -123,28 +134,58 @@ namespace TravelMate.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteTour(string id)
         {
+            var existingTour = await _tourRepository.GetTourById(id);
+
+            if (existingTour == null)
+                return NotFound();
+
+            if (existingTour.Creator.Id != userId)
+                return BadRequest("Access Denied! You are not tour creator");
+
             await _tourRepository.DeleteTour(id);
             return NoContent();
         }
 
         // POST: api/tour/join/{tourId}
         [HttpPost("join/{tourId}")]
-        public async Task<ActionResult> JoinTour(string tourId, [FromBody] Participants participant)
+        public async Task<ActionResult> JoinTour(string tourId)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            await _tourRepository.JoinTour(tourId, participant);
-            return NoContent();
+            var existingTour = await _tourRepository.GetTourById(tourId);
+            if (existingTour == null)
+                return NotFound();
+
+            if (existingTour.Creator.Id == travelerId)
+                return BadRequest("Access Denied! You are creator of this tour");
+
+            await _tourRepository.JoinTour(tourId, travelerId);
+            return Ok("Join tour successful");
         }
 
         // POST: api/tour/accept/{tourId}
         [HttpPost("accept/{tourId}")]
         public async Task<ActionResult> AcceptTour(string tourId)
         {
+            var existingTour = await _tourRepository.GetTourById(tourId);
+            if (existingTour == null)
+                return NotFound();
+
             await _tourRepository.AcceptTour(tourId);
+            return NoContent();
+        }
+
+        [HttpPost("ban/{tourId}")]
+        public async Task<ActionResult> BanTour(string tourId)
+        {
+            var existingTour = await _tourRepository.GetTourById(tourId);
+            if (existingTour == null)
+                return NotFound();
+
+            await _tourRepository.BanTour(tourId);
             return NoContent();
         }
 
@@ -152,10 +193,18 @@ namespace TravelMate.Controllers
         [HttpPost("review/{tourId}")]
         public async Task<ActionResult> AddReview(string tourId, [FromBody] TourReview tourReview)
         {
-            if (!ModelState.IsValid) // Check if the model state is valid
+            if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState); // Return a BadRequest with validation errors
+                return BadRequest(ModelState);
             }
+            //user thuoc trong participant
+            var existingTour = await _tourRepository.GetTourById(tourId);
+            if (existingTour == null)
+                return NotFound();
+            var existingParticipant = await _tourRepository.DoesParticipantExist(userId);
+
+            if (!existingParticipant)
+                return BadRequest("You are not in this tour");
 
             await _tourRepository.AddReview(tourId, tourReview);
             return NoContent();

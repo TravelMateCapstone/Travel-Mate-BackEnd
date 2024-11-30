@@ -48,7 +48,7 @@ namespace BusinessObjects.Entities
         public CreatorInfo Creator { get; set; } // Information about the tour creator
 
         [BsonElement("participants")]
-        public List<Participants>? Participants { get; set; }
+        public List<Participants>? Participants { get; set; } = new List<Participants>();
 
         [BsonElement("itinerary")]
         public List<Itinerary> Itinerary { get; set; }
@@ -59,7 +59,8 @@ namespace BusinessObjects.Entities
         [BsonElement("additionalInfo")]
         public string AdditionalInfo { get; set; }
 
-        public List<TourReview>? Reviews { get; set; }
+        [BsonElement("reviews")]
+        public List<TourReview>? Reviews { get; set; } = new List<TourReview>();
 
         [BsonElement("createdAt")]
         public DateTime? CreatedAt { get; set; }
@@ -106,8 +107,8 @@ namespace BusinessObjects.Entities
 
     public class Participants
     {
-        [BsonElement("travelerId")]
-        public int? Id { get; set; } // Unique ID of the traveler
+        [BsonElement("participantId")]
+        public int? participantId { get; set; } // Unique ID of the traveler
 
         [BsonElement("registeredAt")]
         public DateTime RegisteredAt { get; set; }
