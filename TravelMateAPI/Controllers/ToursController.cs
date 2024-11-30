@@ -114,15 +114,12 @@ namespace TravelMate.Controllers
                 return BadRequest(ModelState);
             }
 
-            //check if user was creator
-
-            if (userId != tourDto.Creator.Id)
-                return BadRequest("You are not creator of this tour!");
-
             var existingTour = await _tourRepository.GetTourById(id);
-
             if (existingTour == null)
                 return NotFound();
+
+            if (userId != existingTour.Creator.Id)
+                return BadRequest("You are not creator of this tour!");
 
             var tour = _mapper.Map<Tour>(tourDto);
 
