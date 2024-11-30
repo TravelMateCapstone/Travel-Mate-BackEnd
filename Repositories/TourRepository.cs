@@ -1,6 +1,7 @@
 ﻿using BusinessObjects;
 using BusinessObjects.Entities;
 using DataAccess;
+using MongoDB.Driver;
 using Repositories.Interface;
 
 namespace Repositories
@@ -35,12 +36,15 @@ namespace Repositories
 
         public async Task AddTour(int userId, Tour tour)
         {
-            //xu ly logic o dayfac
+            //xu ly logic o day
             tour.Creator = new CreatorInfo();
             tour.Creator.Id = userId;
             tour.CreatedAt = GetTimeZone.GetVNTimeZoneNow();
-
             await _tourDAO.AddTour(tour);
+        }
+        public async Task<bool> DoesParticipantExist(int userId)
+        {
+            return await _tourDAO.DoesParticipantExist(userId);
         }
 
         public async Task UpdateTour(string id, Tour updatedTour)
@@ -75,14 +79,31 @@ namespace Repositories
             await _tourDAO.DeleteTour(id);
         }
 
-        public async Task JoinTour(string tourId, Participants participant)
+        public async Task JoinTour(string tourId, int travelerId)
         {
-            await _tourDAO.JoinTour(tourId, participant);
+            var newParticipant = new Participants()
+            {
+                participantId = travelerId,
+                RegisteredAt = GetTimeZone.GetVNTimeZoneNow(),
+                PaymentStatus = false
+            };
+            var existingTour = await _tourDAO.GetTourById(tourId);
+            if (existingTour.Participants == null)
+                existingTour.Participants = new List<Participants>();
+
+            await _tourDAO.JoinTour(tourId, newParticipant);
+
+            existingTour.RegisteredGuests = existingTour.Participants.Count();
         }
 
         public async Task AcceptTour(string tourId)
         {
-            await _tourDAO.AcceptTour(tourId);
+            await _tourDAO.ProcessTourAdmin(tourId, true);
+        }
+
+        public async Task BanTour(string tourId)
+        {
+            await _tourDAO.ProcessTourAdmin(tourId, false);
         }
 
         public async Task AddReview(string tourId, TourReview tourReview)
@@ -98,6 +119,11 @@ namespace Repositories
         public async Task CancelTour(string tourId)
         {
             await _tourDAO.CancelTour(tourId);
+        }
+
+        public async Task<ApplicationUser> GetUserInfo(int userId)
+        {
+            return await _tourDAO.GetLocalInfor(userId);
         }
     }
 }
