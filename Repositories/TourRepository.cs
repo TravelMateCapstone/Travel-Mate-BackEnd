@@ -1,5 +1,6 @@
 ﻿using BusinessObjects;
 using BusinessObjects.Entities;
+using BusinessObjects.EnumClass;
 using DataAccess;
 using MongoDB.Driver;
 using Repositories.Interface;
@@ -24,7 +25,7 @@ namespace Repositories
             return _tourDAO.GetAllToursOfLocal(userId);
         }
 
-        public async Task<IEnumerable<Tour>> GetToursByStatus(int userId, bool? approvalStatus)
+        public async Task<IEnumerable<Tour>> GetToursByStatus(int userId, ApprovalStatus? approvalStatus)
         {
             return await _tourDAO.GetToursByStatus(userId, approvalStatus);
         }
@@ -40,6 +41,7 @@ namespace Repositories
             tour.Creator = new CreatorInfo();
             tour.Creator.Id = userId;
             tour.CreatedAt = GetTimeZone.GetVNTimeZoneNow();
+            tour.ApprovalStatus = ApprovalStatus.Pending;
             await _tourDAO.AddTour(tour);
         }
         public async Task<bool> DoesParticipantExist(int userId)
@@ -98,12 +100,12 @@ namespace Repositories
 
         public async Task AcceptTour(string tourId)
         {
-            await _tourDAO.ProcessTourAdmin(tourId, true);
+            await _tourDAO.ProcessTourAdmin(tourId, ApprovalStatus.Accepted);
         }
 
         public async Task BanTour(string tourId)
         {
-            await _tourDAO.ProcessTourAdmin(tourId, false);
+            await _tourDAO.ProcessTourAdmin(tourId, ApprovalStatus.Rejected);
         }
 
         public async Task AddReview(string tourId, TourReview tourReview)

@@ -1,4 +1,5 @@
 ﻿using BusinessObjects.Entities;
+using BusinessObjects.EnumClass;
 
 namespace Repositories.Interface
 {
@@ -6,7 +7,7 @@ namespace Repositories.Interface
     {
         Task<IEnumerable<Tour>> GetAllTours();
         Task<IEnumerable<Tour>> GetAllToursOfLocal(int userId);
-        Task<IEnumerable<Tour>> GetToursByStatus(int userId, bool? approvalStatus);
+        Task<IEnumerable<Tour>> GetToursByStatus(int userId, ApprovalStatus? approvalStatus);
         Task<Tour> GetTourById(string id);
         Task AddTour(int userId, Tour tour);
         Task UpdateTour(string id, Tour tour);
