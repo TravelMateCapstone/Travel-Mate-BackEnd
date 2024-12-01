@@ -1,5 +1,6 @@
 ﻿using BusinessObjects;
 using BusinessObjects.Entities;
+using BusinessObjects.EnumClass;
 using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
 
@@ -36,7 +37,7 @@ namespace DataAccess
             return _mongoContext.Find(t => t.Creator.Id == userId).ToList();
         }
 
-        public async Task<IEnumerable<Tour>> GetToursByStatus(int userId, bool? approvalStatus)
+        public async Task<IEnumerable<Tour>> GetToursByStatus(int userId, ApprovalStatus? approvalStatus)
         {
             return _mongoContext.Find(t => t.Creator.Id == userId && t.ApprovalStatus == approvalStatus).ToList();
         }
@@ -87,7 +88,7 @@ namespace DataAccess
         }
 
         // Admin accepts a tour
-        public async Task ProcessTourAdmin(string tourId, bool processStatus)
+        public async Task ProcessTourAdmin(string tourId, ApprovalStatus processStatus)
         {
             var filter = Builders<Tour>.Filter.Eq(f => f.TourId, tourId);
 

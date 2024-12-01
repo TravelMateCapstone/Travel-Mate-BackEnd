@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BusinessObjects.Entities;
+using BusinessObjects.EnumClass;
 using BusinessObjects.Utils.Request;
 using Microsoft.AspNetCore.Mvc;
 using Repositories.Interface;
@@ -47,13 +48,10 @@ namespace TravelMate.Controllers
         [HttpGet("toursStatus/{approvalStatus}")]
         public async Task<ActionResult<IEnumerable<TourDto>>> GetToursByStatus(string approvalStatus)
         {
-            bool? status = approvalStatus.ToLower() switch
+            if (!Enum.TryParse<ApprovalStatus>(approvalStatus, true, out var status))
             {
-                "pending" => null,
-                "accepted" => true,
-                "rejected" => false,
-                _ => throw new ArgumentException("Invalid status")
-            };
+                return BadRequest("Invalid status");
+            }
 
             var tours = await _tourRepository.GetToursByStatus(userId, status);
 
@@ -61,6 +59,7 @@ namespace TravelMate.Controllers
 
             return Ok(tourDto);
         }
+
 
         //get all tour of a participant
 

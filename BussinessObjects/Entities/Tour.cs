@@ -1,4 +1,5 @@
-﻿using MongoDB.Bson;
+﻿using BusinessObjects.EnumClass;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace BusinessObjects.Entities
@@ -39,7 +40,7 @@ namespace BusinessObjects.Entities
         public int RegisteredGuests { get; set; } = 0;
 
         [BsonElement("approvalStatus")]
-        public bool? ApprovalStatus { get; set; } // Status: pending, approved, rejected
+        public ApprovalStatus? ApprovalStatus { get; set; } // Status: pending, approved, rejected
 
         [BsonElement("tourImage")]
         public string TourImage { get; set; }
