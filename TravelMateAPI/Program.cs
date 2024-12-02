@@ -275,7 +275,7 @@ namespace TravelMateAPI
                 options.AddPolicy("AllowAll",
                 policyBuilder =>
                 {
-                    policyBuilder.WithOrigins("http://localhost:5173", "https://travelmatefe.netlify.app/") // Địa chỉ của ứng dụng React của bạn
+                    policyBuilder.WithOrigins("https://travelmatefe.netlify.app/", "http://localhost:5173", "http://localhost:5174", "http://127.0.0.1:5500") // Địa chỉ của ứng dụng React của bạn
                                  .AllowAnyMethod()
                                  .AllowAnyHeader()
                                  .AllowCredentials(); // Quan trọng khi sử dụng cookies hoặc thông tin xác thực
