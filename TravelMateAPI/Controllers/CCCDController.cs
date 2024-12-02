@@ -41,6 +41,50 @@ namespace TravelMateAPI.Controllers
             }
             return Ok(cccd);
         }
+        // GET: api/CCCD/by-user/{userId}
+        [HttpGet("By-User/{userId}")]
+        public async Task<IActionResult> GetCCCDByUserId(int userId)
+        {
+            // Lấy thông tin CCCD từ Repository dựa trên UserId
+            var cccd = await _repository.GetByUserIdAsync(userId);
+
+            if (cccd == null)
+            {
+                return NotFound(new { Message = $"CCCD not found for user with ID {userId}." });
+            }
+
+            return Ok(new
+            {
+                Success = true,
+                Data = cccd
+            });
+        }
+
+        // GET: api/CCCD/by-user/{userId}
+        [HttpGet("Current-User")]
+        public async Task<IActionResult> GetCCCDCurrentUserId()
+        {
+            // Lấy UserId từ token của người dùng hiện tại
+            var userId = GetUserId();
+            if (userId == -1)
+            {
+                return Unauthorized("Invalid token or user not found.");
+            }
+
+            // Lấy thông tin CCCD từ Repository dựa trên UserId
+            var cccd = await _repository.GetByUserIdAsync(userId);
+
+            if (cccd == null)
+            {
+                return NotFound(new { Message = $"CCCD not found for user with ID {userId}." });
+            }
+
+            return Ok(new
+            {
+                Success = true,
+                Data = cccd
+            });
+        }
 
         // POST: api/CCCD/update-imageFront
         [HttpPost("create-imageFront")]
