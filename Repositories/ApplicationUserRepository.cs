@@ -1,4 +1,5 @@
 ﻿using BusinessObjects.Entities;
+using BusinessObjects.Utils.Response;
 using DataAccess;
 using Repositories.Interface;
 using System;
@@ -19,7 +20,7 @@ namespace Repositories
             _userDAO = userDAO;
         }
 
-        public async Task<List<ApplicationUser>> GetAllUsersAsync()
+        public async Task<List<ApplicationUserDTO>> GetAllUsersAsync()
         {
             return await _userDAO.GetAllUsersAsync();
         }

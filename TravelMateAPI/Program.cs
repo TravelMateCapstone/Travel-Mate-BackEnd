@@ -4,6 +4,7 @@ using BusinessObjects;
 using BusinessObjects.Configuration;
 using BusinessObjects.Entities;
 using BusinessObjects.Utils.Request;
+using BusinessObjects.Utils.Response;
 using DataAccess;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -16,6 +17,7 @@ using Repositories.Interface;
 using System.Text;
 using TravelMateAPI.Models;
 using TravelMateAPI.Services.Email;
+using TravelMateAPI.Services.FilterLocal;
 using TravelMateAPI.Services.FindLocal;
 using TravelMateAPI.Services.Hubs;
 using TravelMateAPI.Services.Notification;
@@ -153,7 +155,24 @@ namespace TravelMateAPI
 
             // OData configuration
             ODataConventionModelBuilder modelBuilder = new ODataConventionModelBuilder();
-            modelBuilder.EntitySet<ApplicationUser>("ApplicationUsers");
+            //var userSet = modelBuilder.EntitySet<ApplicationUserDTO>("ApplicationUsers");
+            //userSet.EntityType.HasKey(u => u.UserId);
+            //userSet.EntityType.Property(u => u.FullName);
+            //userSet.EntityType.Property(u => u.Email);
+            //userSet.EntityType.CollectionProperty(u => u.Roles);
+            //userSet.EntityType.ComplexProperty(u => u.Profile);
+            var userSet = modelBuilder.EntitySet<UserWithDetailsDTO>("ApplicationUsers");
+            userSet.EntityType.HasKey(u => u.UserId);
+            userSet.EntityType.Property(u => u.FullName);
+            userSet.EntityType.Property(u => u.Email);
+            userSet.EntityType.CollectionProperty(u => u.LocationIds);
+            userSet.EntityType.ComplexProperty(u => u.Profile);
+            userSet.EntityType.CollectionProperty(u => u.Roles);
+            userSet.EntityType.ComplexProperty(u => u.CCCD);
+            //userSet.EntityType.ComplexProperty(u => u.UserActivities);
+            userSet.EntityType.CollectionProperty(u => u.ActivityIds);
+            //userSet.EntityType.Property(u => u.SimilarityScore);
+
             modelBuilder.EntitySet<Profile>("Profiles");
             modelBuilder.EntitySet<Friendship>("Friends");
             modelBuilder.EntitySet<Event>("Events");
@@ -174,6 +193,7 @@ namespace TravelMateAPI
             //builder.Services.AddSingleton<FirebaseService>();
             //real time
             builder.Services.AddSignalR();
+            builder.Services.AddHttpClient();
             // Đăng ký các repository
             builder.Services.AddScoped<ProfileDAO>();
             builder.Services.AddScoped<IProfileRepository, ProfileRepository>();
@@ -181,6 +201,8 @@ namespace TravelMateAPI
             builder.Services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
             builder.Services.AddScoped<CCCDDAO>();
             builder.Services.AddScoped<ICCCDRepository, CCCDRepository>();
+            builder.Services.AddScoped<FilterUserService>();
+            builder.Services.AddScoped<LocationService>();
             builder.Services.AddScoped<IFindLocalService, FindLocalService>();
             builder.Services.AddScoped<ISearchLocationService, SearchLocationService>();
             builder.Services.AddScoped<SearchLocationFuzzyService>();
