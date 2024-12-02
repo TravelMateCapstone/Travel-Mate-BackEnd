@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using MailKit;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using TravelMateAPI.Services.FilterLocal;
 using TravelMateAPI.Services.FindLocal;
 
 namespace TravelMateAPI.Controllers
@@ -8,13 +11,15 @@ namespace TravelMateAPI.Controllers
     [ApiController]
     public class SearchLocationController : ControllerBase
     {
-        private readonly ISearchLocationService _locationService;
+        private readonly ISearchLocationService _slocationService;
         private readonly SearchLocationFuzzyService _searchLocationFuzzyService;
-
-        public SearchLocationController(ISearchLocationService locationService, SearchLocationFuzzyService searchLocationFuzzyService)
+        private readonly LocationService _locationService;
+      
+        public SearchLocationController(ISearchLocationService slocationService, SearchLocationFuzzyService searchLocationFuzzyService,LocationService locationService)
         {
-            _locationService = locationService;
+            _slocationService = slocationService;
             _searchLocationFuzzyService = searchLocationFuzzyService;
+            _locationService = locationService;
         }
 
         [HttpGet("search")]
@@ -25,7 +30,7 @@ namespace TravelMateAPI.Controllers
                 return BadRequest("Query cannot be empty.");
             }
 
-            var results = await _locationService.SearchLocationsAsync(query);
+            var results = await _slocationService.SearchLocationsAsync(query);
 
             if (results == null || results.Count == 0)
             {
@@ -51,6 +56,27 @@ namespace TravelMateAPI.Controllers
 
             return Ok(results);
         }
+
+        [HttpGet("search-location")]
+        public async Task<IActionResult> SearchLocation([FromQuery] string keyword)
+        {
+            if (string.IsNullOrEmpty(keyword))
+                return BadRequest("Keyword is required.");
+
+            try
+            {
+                var result = await _locationService.SearchLocationAsync(keyword);
+                if (result.LocationId == null)
+                    return NotFound("Location not found.");
+
+                return Ok(new { LocationId = result.LocationId, LocationName = result.LocationName });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = ex.Message });
+            }
+        }
+
     }
 }
 // ví dụ : GET /api/location/search?query=ha noi
