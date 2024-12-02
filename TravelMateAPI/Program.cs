@@ -250,6 +250,8 @@ namespace TravelMateAPI
             builder.Services.AddScoped<ExtraFormDetailDAO>();
             builder.Services.AddScoped<ILocalExtraDetailFormRepository, LocalExtraDetailFormRepository>();
             builder.Services.AddScoped<ITravelerFormRepository, TravelerFormRepository>();
+            builder.Services.AddScoped<TourDAO>();
+            builder.Services.AddScoped<ITourRepository, TourRepository>();
 
             builder.Services.AddControllers().AddJsonOptions(options =>
             {
