@@ -15,7 +15,7 @@ namespace BusinessObjects.Entities
 
         public int TravelerId { get; set; } // ID của người đi du lịch.
         public int LocalId { get; set; } // ID của người địa phương.
-        public int TourId { get; set; } // ID của Tour du lịch.
+        public string TourId { get; set; } // ID của Tour du lịch.
         public string Details { get; set; } // Chi tiết hợp đồng (ví dụ: nội dung thỏa thuận, điều khoản).
         public string Status { get; set; } // Trạng thái của hợp đồng: Created, Signed, Completed, Cancelled.
         public string TravelerSignature { get; set; } // Chữ ký số của người đi du lịch (RSA).

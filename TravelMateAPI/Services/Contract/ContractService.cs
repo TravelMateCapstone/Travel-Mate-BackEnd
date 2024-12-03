@@ -21,7 +21,7 @@ using Microsoft.Extensions.Caching.Memory;
             _memoryCache = memoryCache;
         }
 
-        public async Task<ContractDTO> CreateContract(int travelerId, int localId, int tourId, string details, string status, string travelerSignature, string localSignature)
+        public async Task<ContractDTO> CreateContract(int travelerId, int localId, string tourId, string details, string status, string travelerSignature, string localSignature)
         {
             var newContract = new ContractDTO
             {
@@ -53,7 +53,7 @@ using Microsoft.Extensions.Caching.Memory;
             //return newContract;
         }
 
-        public ContractDTO FindContractInMemory(int travelerId, int localId, int tourId)
+        public ContractDTO FindContractInMemory(int travelerId, int localId, string tourId)
         {
             //return _contractsInMemory.FirstOrDefault(c =>
             //    c.TravelerId == travelerId && c.LocalId == localId && c.TourId == tourId);
@@ -66,7 +66,7 @@ using Microsoft.Extensions.Caching.Memory;
             return null;
         }
 
-        public void UpdateStatusToCompleted(int travelerId, int localId, int tourId)
+        public void UpdateStatusToCompleted(int travelerId, int localId, string tourId)
         {
             var contract = FindContractInMemory(travelerId, localId, tourId);
             if (contract == null)
@@ -84,7 +84,7 @@ using Microsoft.Extensions.Caching.Memory;
             }
         }
 
-        public void UpdateStatusToCancelled(int travelerId, int localId, int tourId)
+        public void UpdateStatusToCancelled(int travelerId, int localId, string tourId)
         {
             var contract = FindContractInMemory(travelerId, localId, tourId);
             if (contract == null)
@@ -102,7 +102,7 @@ using Microsoft.Extensions.Caching.Memory;
             }
         }
 
-        public async Task SaveContractToDatabase(int travelerId, int localId, int tourId)
+        public async Task SaveContractToDatabase(int travelerId, int localId, string tourId)
         {
             // Tìm hợp đồng trong bộ nhớ
             var dto = FindContractInMemory(travelerId, localId, tourId);
@@ -171,7 +171,7 @@ using Microsoft.Extensions.Caching.Memory;
             return Convert.ToBase64String(hashedBytes);
         }
 
-        public async Task<bool> VerifyContractIntegrityAsync(int travelerId, int localId, int tourId)
+        public async Task<bool> VerifyContractIntegrityAsync(int travelerId, int localId, string tourId)
         {
             // Tìm hợp đồng dựa trên các thông tin đầu vào
             var contract = await _dbContext.BlockContracts

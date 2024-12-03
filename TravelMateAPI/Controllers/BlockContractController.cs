@@ -74,7 +74,7 @@ namespace TravelMateAPI.Controllers
 
 
         [HttpPost("update-status-completed")]
-        public async Task<IActionResult> UpdateStatusToCompleted(int travelerId, int localId, int tourId)
+        public async Task<IActionResult> UpdateStatusToCompleted(int travelerId, int localId, string tourId)
         {
             try
             {
@@ -88,7 +88,7 @@ namespace TravelMateAPI.Controllers
         }
 
         [HttpPost("update-status-cancelled")]
-        public async Task<IActionResult> UpdateStatusToCancelled(int travelerId, int localId, int tourId)
+        public async Task<IActionResult> UpdateStatusToCancelled(int travelerId, int localId, string tourId)
         {
             try
             {
@@ -102,7 +102,7 @@ namespace TravelMateAPI.Controllers
         }
 
         [HttpPost("save-to-database")]
-        public async Task<IActionResult> SaveContractToDatabase(int travelerId, int localId, int tourId)
+        public async Task<IActionResult> SaveContractToDatabase(int travelerId, int localId, string tourId)
         {
             try
             {
@@ -117,7 +117,7 @@ namespace TravelMateAPI.Controllers
 
 
         [HttpGet("verify-contract")]
-        public async Task<IActionResult> VerifyContractIntegrityAsync([FromQuery] int travelerId, [FromQuery] int localId, [FromQuery] int tourId)
+        public async Task<IActionResult> VerifyContractIntegrityAsync([FromQuery] int travelerId, [FromQuery] int localId, [FromQuery] string tourId)
         {
             try
             {
