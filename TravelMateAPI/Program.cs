@@ -6,6 +6,7 @@ using BusinessObjects.Entities;
 using BusinessObjects.Utils.Request;
 using BusinessObjects.Utils.Response;
 using DataAccess;
+using Google.Api;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.OData;
@@ -19,6 +20,8 @@ using System.Text;
 using TravelMateAPI.Hubs;
 using TravelMateAPI.Middleware;
 using TravelMateAPI.Models;
+using TravelMateAPI.Services.CCCDValid;
+using TravelMateAPI.Services.Contract;
 using TravelMateAPI.Services.Email;
 using TravelMateAPI.Services.FilterLocal;
 using TravelMateAPI.Services.FindLocal;
@@ -170,6 +173,7 @@ namespace TravelMateAPI
             userSet.EntityType.HasKey(u => u.UserId);
             userSet.EntityType.Property(u => u.FullName);
             userSet.EntityType.Property(u => u.Email);
+            userSet.EntityType.Property(u => u.Star);
             userSet.EntityType.CollectionProperty(u => u.LocationIds);
             userSet.EntityType.ComplexProperty(u => u.Profile);
             userSet.EntityType.CollectionProperty(u => u.Roles);
@@ -199,6 +203,7 @@ namespace TravelMateAPI
             //real time
             builder.Services.AddSignalR();
             builder.Services.AddHttpClient();
+            builder.Services.AddMemoryCache();
             // Đăng ký các repository
             builder.Services.AddScoped<ProfileDAO>();
             builder.Services.AddScoped<IProfileRepository, ProfileRepository>();
@@ -206,7 +211,9 @@ namespace TravelMateAPI
             builder.Services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
             builder.Services.AddScoped<CCCDDAO>();
             builder.Services.AddScoped<ICCCDRepository, CCCDRepository>();
+            builder.Services.AddScoped<ICCCDService, CCCDService>();
             builder.Services.AddScoped<FilterUserService>();
+            builder.Services.AddScoped<IContractService, ContractService>();
             builder.Services.AddScoped<LocationService>();
             builder.Services.AddScoped<IFindLocalService, FindLocalService>();
             builder.Services.AddScoped<ISearchLocationService, SearchLocationService>();
@@ -300,7 +307,7 @@ namespace TravelMateAPI
                 options.AddPolicy("AllowSpecificOrigins",
                 policyBuilder =>
                 {
-                    policyBuilder.WithOrigins("https://travelmatefe.netlify.app/", "https://travel-mate-fe.vercel.app/", "https://travel-mate-6h6a82vld-trannhon2509s-projects.vercel.app/", "http://localhost:5173", "http://localhost:5174") // Địa chỉ của ứng dụng React của bạn
+                    policyBuilder.WithOrigins("https://travelmatefe.netlify.app/", "http://localhost:5173", "http://localhost:5174", "http://localhost:5500/") // Địa chỉ của ứng dụng React của bạn
                                  .AllowAnyMethod()
                                  .AllowAnyHeader()
                                  .AllowCredentials(); // Quan trọng khi sử dụng cookies hoặc thông tin xác thực

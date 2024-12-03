@@ -27,6 +27,16 @@ namespace DataAccess
                 .FirstOrDefault(t => t.Id == userId);
         }
 
+        public async Task<IEnumerable<PastTripPost>> GetUserAverageStar(int userId)
+        {
+            return _sqlContext.PastTripPosts.Where(t => t.LocalId == userId).ToList();
+        }
+
+        public async Task<IEnumerable<Tour>> GetTourBriefByUserId(int creatorId)
+        {
+            return _mongoContext.Find(t => t.ApprovalStatus == ApprovalStatus.Accepted && t.Creator.Id == creatorId).ToList();
+        }
+
         //get list participants of a tour
 
         //get list tour of a participants

@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Repositories.Interface;
 using System.Security.Claims;
+using TravelMateAPI.Services.CCCDValid;
+using System.Security.Cryptography;
 
 namespace TravelMateAPI.Controllers
 {
@@ -11,10 +13,12 @@ namespace TravelMateAPI.Controllers
     public class CCCDController : ControllerBase
     {
         private readonly ICCCDRepository _repository;
+        private readonly ICCCDService _cccdService;
 
-        public CCCDController(ICCCDRepository repository)
+        public CCCDController(ICCCDRepository repository, ICCCDService cccdService)
         {
             _repository = repository;
+            _cccdService = cccdService;
         }
         // Phương thức để lấy UserId từ JWT token
         private int GetUserId()
@@ -121,7 +125,8 @@ namespace TravelMateAPI.Controllers
                 features = "",
                 issue_date = "",
                 mrz = new List<string>(),
-                issue_loc = ""
+                issue_loc = "",
+                PublicSignature = ""
             };
 
             // Lưu CCCD vào database
@@ -242,6 +247,78 @@ namespace TravelMateAPI.Controllers
                 Data = cccd
             });
         }
+
+        // PUT: api/CCCD/update-imageBack
+        [HttpPut("add-publicKey")]
+        public async Task<IActionResult> UpdatePublicKey([FromBody] CCCD updatedCCCD)
+        {
+            // Lấy UserId từ token của người dùng hiện tại
+            var userId = GetUserId();
+            if (userId == -1)
+            {
+                return Unauthorized("Invalid token or user not found.");
+            }
+
+            // Lấy CCCD của người dùng từ database
+            var cccd = await _repository.GetByUserIdAsync(userId);
+            if (cccd == null)
+            {
+                return NotFound(new { Message = "Hãy cập nhật CCCD trước khi tạo chữ ký số" });
+            }
+
+            //// Cập nhật chỉ trường imageBack (giữ nguyên các trường khác)
+            //cccd.PublicSignature = updatedCCCD.PublicSignature ?? cccd.PublicSignature;
+
+            //// Lưu thay đổi vào database
+            //await _repository.UpdateAsync(cccd);
+
+            //return Ok(new
+            //{
+            //    Success = true,
+            //    Message = "Bạn đã tạo chữ ký số thành công.",
+            //    Data = cccd
+            //});
+            if (string.IsNullOrEmpty(updatedCCCD.PublicSignature))
+            {
+                return BadRequest(new { Message = "Chữ ký số không được để trống." });
+            }
+
+            // Băm PublicSignature với khóa bí mật
+            var hashedSignature = HashWithSecretKey(updatedCCCD.PublicSignature);
+
+            // Cập nhật trường PublicSignature
+            cccd.PublicSignature = hashedSignature;
+
+            // Lưu thay đổi vào database
+            await _repository.UpdateAsync(cccd);
+
+            return Ok(new
+            {
+                Success = true,
+                Message = "Bạn đã tạo chữ ký số thành công.",
+                Data = new
+                {
+                    cccd.PublicSignature, // Trả về chữ ký đã băm
+                }
+            });
+        }
+
+        private string HashWithSecretKey(string data)
+        {
+            var secretKey = "DAcaumongmoidieutotdep8386"; // Lấy khóa bí mật từ file env
+            if (string.IsNullOrEmpty(secretKey))
+            {
+                throw new InvalidOperationException("Secret key is missing from configuration.");
+            }
+
+            using var hmac = new HMACSHA256(System.Text.Encoding.UTF8.GetBytes(secretKey));
+            var hashedBytes = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(data));
+            return Convert.ToBase64String(hashedBytes);
+        }
+
+
+
+
         // POST: api/CCCD
         [HttpPost]
         public async Task<IActionResult> Add([FromBody] CCCD cccd)
@@ -254,6 +331,9 @@ namespace TravelMateAPI.Controllers
             await _repository.AddAsync(cccd);
             return Ok(new { Success = true, Message = "CCCD added successfully.", Data = cccd });
         }
+
+
+
 
         // PUT: api/CCCD/1
         [HttpPut("{id}")]
@@ -326,6 +406,86 @@ namespace TravelMateAPI.Controllers
                 return Ok(new { Success = true, Message = "CCCD does not exist.", Data = false });
             }
         }
+        // API kiểm tra mặt sau
+        [HttpGet("verify-cccd/{userId}")]
+        public async Task<IActionResult> VerifyCCCD(int userId)
+        {
+            var isVerified = await _cccdService.IsVerifiedAsync(userId);
 
+            if (!isVerified)
+            {
+                return Ok(new
+                {
+                    Success = false,
+                    Message = "Bạn chưa xác minh CCCD đầy đủ."
+                });
+            }
+
+            return Ok(new
+            {
+                Success = true,
+                Message = "CCCD đã được xác minh."
+            });
+        }
+
+        // API kiểm tra chữ ký số
+        [HttpGet("verify-public-signature/{userId}")]
+        public async Task<IActionResult> VerifyPublicSignature(int userId)
+        {
+            var isVerified = await _cccdService.IsPublicSignatureVerifiedAsync(userId);
+
+            if (!isVerified)
+            {
+                return Ok(new
+                {
+                    Success = false,
+                    Message = "Bạn chưa xác minh chữ ký số."
+                });
+            }
+
+            return Ok(new
+            {
+                Success = true,
+                Message = "Chữ ký số đã được xác minh."
+            });
+        }
+
+
+        [HttpGet("verify-all/{userId}")]
+        public async Task<IActionResult> VerifyAll(int userId)
+        {
+            var result = await _cccdService.VerifyAllAsync(userId);
+
+            return Ok(new
+            {
+                Success = result.IsFullyVerified,
+                VerificationDetails = result
+            });
+        }
+
+
+        // POST: api/CCCD/verify-signature
+        [HttpPost("verify-signature")]
+        public async Task<IActionResult> VerifySignature([FromBody] VerifySignatureRequest request)
+        {
+            try
+            {
+                // Kiểm tra chữ ký số
+                var isValid = await _cccdService.VerifyDigitalSignatureAsync(request.UserId, request.PublicKey);
+
+                if (isValid)
+                {
+                    return Ok(new { Success = true, Message = "Chữ ký số khớp." });
+                }
+                else
+                {
+                    return BadRequest(new { Success = false, Message = "Chữ ký số không khớp." });
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Success = false, Message = ex.Message });
+            }
+        }
     }
 }

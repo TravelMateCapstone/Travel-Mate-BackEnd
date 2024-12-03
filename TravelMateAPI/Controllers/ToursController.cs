@@ -60,6 +60,20 @@ namespace TravelMate.Controllers
             return Ok(tourDto);
         }
 
+        [HttpGet("brief/{userId}")]
+        public async Task<ActionResult<TourBriefDto>> GetTourBriefInfo(int userId)
+        {
+            var listTour = await _tourRepository.GetTourBriefByUserId(userId);
+            return Ok(listTour);
+        }
+
+        [HttpGet("user-star-average/{userId}")]
+        public async Task<ActionResult<double>> GetUserStarAverage(int userId)
+        {
+            var star = await _tourRepository.GetUserAverageStar(userId);
+            return Ok(star);
+        }
+
 
         //get all tour of a participant
 

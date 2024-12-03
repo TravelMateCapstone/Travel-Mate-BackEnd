@@ -9,6 +9,7 @@ namespace TravelMateAPI.Services.FilterLocal
         public string Email { get; set; }
         public ProfileDTO Profile { get; set; }
         public List<string> Roles { get; set; }
+        public double Star { get; set; }
         public CCCDDTO CCCD { get; set; }
         //public UserActivitiesDTO UserActivities { get; set; }
         public List<int> ActivityIds { get; set; }

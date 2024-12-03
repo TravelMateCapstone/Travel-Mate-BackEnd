@@ -58,6 +58,7 @@ namespace TravelMateAPI.Models
 
             CreateMap<TourDto, Tour>();
             CreateMap<Tour, TourDto>();
+            CreateMap<Tour, TourBriefDto>();
         }
 
     }
