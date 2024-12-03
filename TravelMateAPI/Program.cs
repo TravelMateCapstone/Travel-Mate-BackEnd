@@ -307,7 +307,7 @@ namespace TravelMateAPI
                 options.AddPolicy("AllowSpecificOrigins",
                 policyBuilder =>
                 {
-                    policyBuilder.WithOrigins("https://travelmatefe.netlify.app/", "https://travel-mate-fe.vercel.app/", "https://travel-mate-6h6a82vld-trannhon2509s-projects.vercel.app/", "http://localhost:5173", "http://localhost:5174") // Địa chỉ của ứng dụng React của bạn
+                    policyBuilder.WithOrigins("https://travelmatefe.netlify.app/", "http://localhost:5173", "http://localhost:5174", "http://localhost:5500/") // Địa chỉ của ứng dụng React của bạn
                                  .AllowAnyMethod()
                                  .AllowAnyHeader()
                                  .AllowCredentials(); // Quan trọng khi sử dụng cookies hoặc thông tin xác thực
