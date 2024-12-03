@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Identity;
 using BusinessObjects.Utils.Response;
 using Microsoft.EntityFrameworkCore;
 using Org.BouncyCastle.Utilities.Encoders;
+using Repositories.Interface;
+using DataAccess;
 
 namespace TravelMateAPI.Services.FilterLocal
 {
@@ -11,11 +13,17 @@ namespace TravelMateAPI.Services.FilterLocal
     {
         private readonly ApplicationDBContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ITourRepository _tourRepository;
+        private readonly IContractService _contractService;
+        private readonly TourDAO _tourDAO;
 
-        public FilterUserService(ApplicationDBContext context, UserManager<ApplicationUser> userManager)
+        public FilterUserService(ApplicationDBContext context, UserManager<ApplicationUser> userManager, ITourRepository tourRepository,IContractService contractService, TourDAO tourDAO)
         {
             _context = context;
             _userManager = userManager;
+            _tourRepository = tourRepository;
+            _contractService = contractService;
+            _tourDAO = tourDAO;
         }
 
         //        public async Task<List<UserWithDetailsDTO>> GetAllUsersWithDetailsAsync()
@@ -138,10 +146,12 @@ namespace TravelMateAPI.Services.FilterLocal
 
                 // Lấy CCCD
                 var cccd = user.CCCDs;
-
+                var star = await _tourRepository.GetUserAverageStar(user.Id);
+                var countConnect = await _contractService.GetContractCountAsLocalAsync(user.Id); 
                 // Lấy danh sách ActivityId của người dùng
                 var userActivities = await GetUserActivityIdsAsync(user.Id);
                 var userLocations = await GetUserLocationIdsAsync(user.Id);
+                var tours = await _tourDAO.GetTourBriefByLocalId(user.Id);
                 // Tính tuổi và kiểm tra giới tính
                 //var age = CalculateAge(cccd?.dob);
                 //if (age < minAge || age > maxAge || cccd?.sex != sex)
@@ -159,6 +169,8 @@ namespace TravelMateAPI.Services.FilterLocal
                     Email = user.Email,
                     LocationIds = userLocations.ToList(),
                     Roles = roles.ToList(),
+                    Star = star,
+                    CountConnect = countConnect,
                     Profile = user.Profiles == null ? null : new ProfileDTO
                     {
                         ProfileId = user.Profiles.ProfileId,
@@ -176,8 +188,9 @@ namespace TravelMateAPI.Services.FilterLocal
                     //    ActivityIds = userActivities
                     //}
                     
-                     ActivityIds = userActivities.ToList()
-                     //SimilarityScore = similarityScore // Thêm điểm tương tự
+                     ActivityIds = userActivities.ToList(),
+                    //SimilarityScore = similarityScore // Thêm điểm tương tự
+                    Tours = tours // Gắn danh sách tour vào DTO
                 });
             }
 

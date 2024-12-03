@@ -174,12 +174,14 @@ namespace TravelMateAPI
             userSet.EntityType.Property(u => u.FullName);
             userSet.EntityType.Property(u => u.Email);
             userSet.EntityType.Property(u => u.Star);
+            userSet.EntityType.Property(u => u.CountConnect);
             userSet.EntityType.CollectionProperty(u => u.LocationIds);
             userSet.EntityType.ComplexProperty(u => u.Profile);
             userSet.EntityType.CollectionProperty(u => u.Roles);
             userSet.EntityType.ComplexProperty(u => u.CCCD);
             //userSet.EntityType.ComplexProperty(u => u.UserActivities);
             userSet.EntityType.CollectionProperty(u => u.ActivityIds);
+            userSet.EntityType.CollectionProperty(u => u.Tours);
             //userSet.EntityType.Property(u => u.SimilarityScore);
 
             modelBuilder.EntitySet<Profile>("Profiles");
