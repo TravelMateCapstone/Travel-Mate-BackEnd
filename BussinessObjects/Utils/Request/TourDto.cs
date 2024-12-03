@@ -36,6 +36,9 @@ namespace BusinessObjects.Utils.Request
         [BsonElement("location")]
         public string Location { get; set; } // Location of the tour
 
+        [BsonElement("registeredGuests")]
+        public int RegisteredGuests { get; set; } = 0;
+
         [BsonElement("maxGuests")]
         public int MaxGuests { get; set; } // Maximum number of guests allowed
 
