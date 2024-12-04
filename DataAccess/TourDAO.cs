@@ -1,7 +1,6 @@
 ﻿using BusinessObjects;
 using BusinessObjects.Entities;
 using BusinessObjects.EnumClass;
-using BusinessObjects.Utils.Request;
 using BusinessObjects.Utils.Response;
 using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
@@ -26,6 +25,13 @@ namespace DataAccess
             return _sqlContext.Users
                 .Include(t => t.Profiles)
                 .Include(t => t.PastTripPosts.Where(p => p.LocalId == userId))
+                .FirstOrDefault(t => t.Id == userId);
+        }
+
+        public async Task<ApplicationUser> GetUserInfor(int userId)
+        {
+            return _sqlContext.Users
+                .Include(t => t.Profiles)
                 .FirstOrDefault(t => t.Id == userId);
         }
 
@@ -140,14 +146,6 @@ namespace DataAccess
             await _mongoContext.UpdateOneAsync(filter, update);
         }
 
-        // Update availability of a tour
-        public async Task UpdateAvailability(string tourId, int slots)
-        {
-            var filter = Builders<Tour>.Filter.Eq(f => f.TourId, tourId);
-
-            var update = Builders<Tour>.Update.Set(t => t.RegisteredGuests, slots);
-            await _mongoContext.UpdateOneAsync(filter, update);
-        }
 
         // Cancel a tour
         public async Task CancelTour(string tourId)
@@ -158,19 +156,15 @@ namespace DataAccess
             await _mongoContext.UpdateOneAsync(filter, update);
         }
 
-        public async Task<bool> DoesParticipantExist(int userId)
+        public async Task<bool> DoesParticipantExist(string tourId, int userId)
         {
-
-            // Lọc để tìm các tour có participant với Id khớp userId
-            var filter = Builders<Tour>.Filter.ElemMatch(
-                t => t.Participants,
-                p => p.participantId == userId
-            );
-
-            // Kiểm tra xem có tài liệu nào thỏa mãn filter hay không
-            var count = await _mongoContext.CountDocumentsAsync(filter);
-            return count > 0;
+            var filter = Builders<Tour>.Filter.And(
+          Builders<Tour>.Filter.Eq(t => t.TourId, tourId),
+          Builders<Tour>.Filter.ElemMatch(t => t.Participants, p => p.ParticipantId == userId)
+      );
+            return await _mongoContext.Find(filter).AnyAsync();
         }
+
 
     }
 }
