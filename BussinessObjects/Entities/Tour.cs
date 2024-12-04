@@ -37,7 +37,7 @@ namespace BusinessObjects.Entities
         public bool? TourStatus { get; set; } = true;
 
         [BsonElement("registeredGuests")]
-        public int RegisteredGuests { get; set; } = 0;
+        public int RegisteredGuests => Participants?.Count ?? 0;
 
         [BsonElement("approvalStatus")]
         public ApprovalStatus? ApprovalStatus { get; set; } // Status: pending, approved, rejected
@@ -59,6 +59,9 @@ namespace BusinessObjects.Entities
 
         [BsonElement("additionalInfo")]
         public string AdditionalInfo { get; set; }
+
+        [BsonElement("tourDescription")]
+        public string TourDescription { get; set; }
 
         [BsonElement("reviews")]
         public List<TourReview>? Reviews { get; set; } = new List<TourReview>();
@@ -151,20 +154,17 @@ namespace BusinessObjects.Entities
 
     public class TourActivity
     {
-        [BsonElement("time")]
-        public string Time { get; set; }
+        [BsonElement("startTime")]
+        public TimeOnly StartTime { get; set; }
 
-        //[BsonElement("startTime")]
-        //public TimeOnly StartTime { get; set; }
+        [BsonElement("endTime")]
+        public TimeOnly EndTime { get; set; }
 
-        //[BsonElement("endTime")]
-        //public TimeOnly EndTime { get; set; }
+        [BsonElement("title")]
+        public string Title { get; set; }
 
-        //[BsonElement("title")]
-        //public string Title { get; set; }
-
-        //[BsonElement("note")]
-        //public string? Note { get; set; }
+        [BsonElement("note")]
+        public string? Note { get; set; }
 
         [BsonElement("description")]
         public string? Description { get; set; }
