@@ -55,7 +55,7 @@ namespace DataAccess
             {
                 TourId = t.TourId,
                 LocalId = t.Creator.Id,
-                RegisteredGuests = t.RegisteredGuests,
+                RegisteredGuests = t.Participants.Count,
                 MaxGuests = t.MaxGuests,
                 Location = t.Location,
                 StartDate = t.StartDate,
@@ -68,11 +68,6 @@ namespace DataAccess
             }).ToList();
         }
 
-        //get list participants of a tour
-
-        //get list tour of a participants
-
-        //get list tour of local based on approval status
         public IEnumerable<Tour> GetAllToursOfLocal(int userId)
         {
             return _mongoContext.Find(t => t.Creator.Id == userId).ToList();
