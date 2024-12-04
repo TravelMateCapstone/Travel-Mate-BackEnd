@@ -235,7 +235,7 @@ namespace TravelMate.Controllers
             return NoContent();
         }
 
-        [HttpPost("ban/{tourId}")]
+        [HttpPost("reject/{tourId}")]
         public async Task<ActionResult> RejectTour(string tourId)
         {
             var existingTour = await _tourRepository.GetTourById(tourId);
