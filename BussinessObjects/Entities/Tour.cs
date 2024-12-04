@@ -109,50 +109,80 @@ namespace BusinessObjects.Entities
     public class Participants
     {
         [BsonElement("participantId")]
-        public int? participantId { get; set; } // Unique ID of the traveler
+        public int ParticipantId { get; set; }
+
+        [BsonElement("fullName")]
+        public string? FullName { get; set; }
+
+        [BsonElement("gender")]
+        public string? Gender { get; set; }
+
+        [BsonElement("address")]
+        public string? Address { get; set; }
+
+        [BsonElement("phone")]
+        public string? Phone { get; set; }
 
         [BsonElement("registeredAt")]
         public DateTime RegisteredAt { get; set; }
 
         [BsonElement("paymentStatus")]
-        public bool PaymentStatus { get; set; } // register, cọc, done
+        public bool PaymentStatus { get; set; } = false;
+
+        [BsonElement("discount")]
+        public double Discount { get; set; } = 0;
+
+        [BsonElement("totalAmount")]
+        public decimal TotalAmount { get; set; } = 0;
     }
+
 
     public class Itinerary
     {
         [BsonElement("day")]
-        public int Day { get; set; } // Day of the itinerary
+        public int Day { get; set; }
 
         [BsonElement("date")]
-        public DateTime Date { get; set; } // Date of the day
+        public DateTime Date { get; set; }
 
         [BsonElement("activities")]
-        public List<TourActivity> Activities { get; set; } // List of activities for the day
+        public List<TourActivity> Activities { get; set; }
     }
 
     public class TourActivity
     {
         [BsonElement("time")]
-        public string Time { get; set; } // Time of the activity (e.g., 08:00 - 09:00)
+        public string Time { get; set; }
+
+        //[BsonElement("startTime")]
+        //public TimeOnly StartTime { get; set; }
+
+        //[BsonElement("endTime")]
+        //public TimeOnly EndTime { get; set; }
+
+        //[BsonElement("title")]
+        //public string Title { get; set; }
+
+        //[BsonElement("note")]
+        //public string? Note { get; set; }
 
         [BsonElement("description")]
-        public string Description { get; set; } // Description of the activity
+        public string? Description { get; set; }
 
         [BsonElement("activityAddress")]
-        public string ActivityAddress { get; set; } // Description of the activity
+        public string? ActivityAddress { get; set; }
 
         [BsonElement("activityAmount")]
-        public decimal ActivityAmount { get; set; } // Description of the activity
+        public decimal? ActivityAmount { get; set; }
 
         [BsonElement("activityImage")]
-        public string activityImage { get; set; } // Description of the activity
-
+        public string? activityImage { get; set; }
     }
 
     public class CostDetail
     {
         [BsonElement("title")]
-        public string Title { get; set; } // Cost item title (e.g., Travel Insurance)
+        public string Title { get; set; }
 
         [BsonElement("amount")]
         public double Amount { get; set; }
