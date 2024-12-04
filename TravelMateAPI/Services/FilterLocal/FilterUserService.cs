@@ -174,7 +174,8 @@ namespace TravelMateAPI.Services.FilterLocal
                     Profile = user.Profiles == null ? null : new ProfileDTO
                     {
                         ProfileId = user.Profiles.ProfileId,
-                        Address = user.Profiles.Address
+                        Address = user.Profiles.Address,
+                        ImageUser = user.Profiles.ImageUser
                     },
                     CCCD = cccd == null ? null : new CCCDDTO
                     {
