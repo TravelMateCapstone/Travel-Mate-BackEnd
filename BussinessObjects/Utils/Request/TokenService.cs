@@ -43,7 +43,8 @@ namespace BusinessObjects.Utils.Request
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Name, user.UserName),
                 new Claim("FullName", user.FullName ?? string.Empty) , // Thêm FullName vào claim
-                 new Claim("ImageUser", profile.ImageUser ?? string.Empty)
+                 new Claim("ImageUser", profile.ImageUser ?? string.Empty),
+                 new Claim(ClaimTypes.Email, user.Email ?? string.Empty)
             };
 
             // Add role claims
