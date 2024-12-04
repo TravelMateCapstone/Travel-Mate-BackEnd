@@ -40,8 +40,7 @@ namespace TravelMateAPI.Controllers
 
             //check post exist
             var posts = await _repository.GetAllAsync();
-            if (posts == null || !posts.Any())
-                return NotFound(new { Message = "No posts found." });
+
 
             var PastTripPostDTOs = _mapper.Map<IEnumerable<PastTripPostDTO>>(posts);
 
@@ -57,8 +56,7 @@ namespace TravelMateAPI.Controllers
 
             //check post exist
             var posts = await _repository.GetAllPostOfUserAsync(userId);
-            if (posts == null || !posts.Any())
-                return NotFound(new { Message = "No posts found." });
+
 
             var postDTOs = _mapper.Map<IEnumerable<PastTripPostDTO>>(posts);
 
@@ -75,8 +73,6 @@ namespace TravelMateAPI.Controllers
                 return Unauthorized(new { Message = "Unauthorized access." });
 
             var post = await _repository.GetByIdAsync(pastTripPostId);
-            if (post == null)
-                return NotFound("No post exist");
 
             var postDTO = _mapper.Map<PastTripPostDTO>(post);
 

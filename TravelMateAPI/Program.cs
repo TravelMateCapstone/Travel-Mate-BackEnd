@@ -4,7 +4,6 @@ using BusinessObjects;
 using BusinessObjects.Configuration;
 using BusinessObjects.Entities;
 using BusinessObjects.Utils.Request;
-using BusinessObjects.Utils.Response;
 using DataAccess;
 using Google.Api;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -265,7 +264,8 @@ namespace TravelMateAPI
             builder.Services.AddControllers().AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
-                options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
+                //options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
+                options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.Never;
             });
 
 
@@ -309,7 +309,7 @@ namespace TravelMateAPI
                 options.AddPolicy("AllowSpecificOrigins",
                 policyBuilder =>
                 {
-                    policyBuilder.WithOrigins("https://travelmatefe.netlify.app/", "http://localhost:5173", "http://localhost:5174", "http://localhost:5500/") // Địa chỉ của ứng dụng React của bạn
+                    policyBuilder.WithOrigins("https://travelmatefe.netlify.app/", "http://localhost:5173", "http://localhost:5174", "http://127.0.0.1:5500", "https://pay.payos.vn") // Địa chỉ của ứng dụng React của bạn
                                  .AllowAnyMethod()
                                  .AllowAnyHeader()
                                  .AllowCredentials(); // Quan trọng khi sử dụng cookies hoặc thông tin xác thực
