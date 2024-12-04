@@ -35,5 +35,7 @@ namespace BusinessObjects.Entities
         public List<string>? mrz { get; set; }
         public string? issue_loc { get; set; }
 
+        //chữ ký số
+        public string? PublicSignature { get; set; }
     }
 }

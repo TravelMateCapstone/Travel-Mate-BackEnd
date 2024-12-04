@@ -1,7 +1,9 @@
-﻿using DataAccess;
+﻿using BusinessObjects.Utils.Request;
+using DataAccess;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Repositories.Interface;
+using System.Security.Claims;
 
 namespace TravelMateAPI.Controllers
 {
@@ -15,7 +17,12 @@ namespace TravelMateAPI.Controllers
         {
             _userRepository = userRepository;
         }
-
+        // Phương thức để lấy UserId từ JWT token
+        private int GetUserId()
+        {
+            var userIdString = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+            return int.TryParse(userIdString, out var userId) ? userId : -1;
+        }
         [HttpGet("/GetUsersWithProfilesAndRoles")]
         public async Task<IActionResult> GetUsersWithProfilesAndRoles()
         {
@@ -62,6 +69,48 @@ namespace TravelMateAPI.Controllers
                 Success = true,
                 Message = $"User with ID {id} has been banned."
             });
+        }
+
+        [HttpPut("update-fullname")]
+        public async Task<IActionResult> UpdateFullName( [FromBody] UpdateFullNameRequest request)
+        {
+            try
+            {
+                // Lấy UserId từ token của người dùng hiện tại
+                var userId = GetUserId();
+                if (userId == -1)
+                {
+                    return Unauthorized("Invalid token or user not found.");
+                }
+
+                // Lấy thông tin user theo Id
+                var user = await _userRepository.GetUserByIdAsync(userId);
+                if (user == null)
+                {
+                    return NotFound(new { Message = "Người dùng không tồn tại." });
+                }
+
+                // Cập nhật FullName
+                user.FullName = request.FullName;
+
+                // Lưu thay đổi
+                _userRepository.UpdateUser(user);
+
+                return Ok(new
+                {
+                    Success = true,
+                    Message = "Cập nhật FullName thành công.",
+                    Data = new
+                    {
+                        user.Id,
+                        user.FullName
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
         }
 
     }

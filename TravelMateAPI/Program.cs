@@ -5,6 +5,7 @@ using BusinessObjects.Configuration;
 using BusinessObjects.Entities;
 using BusinessObjects.Utils.Request;
 using DataAccess;
+using Google.Api;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.OData;
@@ -18,6 +19,8 @@ using System.Text;
 using TravelMateAPI.Hubs;
 using TravelMateAPI.Middleware;
 using TravelMateAPI.Models;
+using TravelMateAPI.Services.CCCDValid;
+using TravelMateAPI.Services.Contract;
 using TravelMateAPI.Services.Email;
 using TravelMateAPI.Services.FilterLocal;
 using TravelMateAPI.Services.FindLocal;
@@ -169,12 +172,15 @@ namespace TravelMateAPI
             userSet.EntityType.HasKey(u => u.UserId);
             userSet.EntityType.Property(u => u.FullName);
             userSet.EntityType.Property(u => u.Email);
+            userSet.EntityType.Property(u => u.Star);
+            userSet.EntityType.Property(u => u.CountConnect);
             userSet.EntityType.CollectionProperty(u => u.LocationIds);
             userSet.EntityType.ComplexProperty(u => u.Profile);
             userSet.EntityType.CollectionProperty(u => u.Roles);
             userSet.EntityType.ComplexProperty(u => u.CCCD);
             //userSet.EntityType.ComplexProperty(u => u.UserActivities);
             userSet.EntityType.CollectionProperty(u => u.ActivityIds);
+            userSet.EntityType.CollectionProperty(u => u.Tours);
             //userSet.EntityType.Property(u => u.SimilarityScore);
 
             modelBuilder.EntitySet<Profile>("Profiles");
@@ -198,6 +204,7 @@ namespace TravelMateAPI
             //real time
             builder.Services.AddSignalR();
             builder.Services.AddHttpClient();
+            builder.Services.AddMemoryCache();
             // Đăng ký các repository
             builder.Services.AddScoped<ProfileDAO>();
             builder.Services.AddScoped<IProfileRepository, ProfileRepository>();
@@ -205,7 +212,9 @@ namespace TravelMateAPI
             builder.Services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
             builder.Services.AddScoped<CCCDDAO>();
             builder.Services.AddScoped<ICCCDRepository, CCCDRepository>();
+            builder.Services.AddScoped<ICCCDService, CCCDService>();
             builder.Services.AddScoped<FilterUserService>();
+            builder.Services.AddScoped<IContractService, ContractService>();
             builder.Services.AddScoped<LocationService>();
             builder.Services.AddScoped<IFindLocalService, FindLocalService>();
             builder.Services.AddScoped<ISearchLocationService, SearchLocationService>();
