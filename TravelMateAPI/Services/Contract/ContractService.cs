@@ -4,6 +4,9 @@ using System.Text;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 using Microsoft.Extensions.Caching.Memory;
+using TravelMateAPI.Services.Notification;
+using TravelMateAPI.Services.Email;
+using Google.Api;
 
 //namespace TravelMateAPI.Services.Contract
 //{
@@ -13,21 +16,26 @@ using Microsoft.Extensions.Caching.Memory;
         private readonly ApplicationDBContext _dbContext;
         private readonly IMemoryCache _memoryCache;
         private const string ContractsCacheKey = "ContractsInMemory";
+        private readonly INotificationService _notificationService;
+        private readonly IMailServiceSystem _mailService;
 
-        public ContractService(ApplicationDBContext dbContext, IMemoryCache memoryCache)
+        public ContractService(ApplicationDBContext dbContext, IMemoryCache memoryCache, INotificationService notificationService, IMailServiceSystem mailService)
         {
             //_contractsInMemory = new List<ContractDTO>();
             _dbContext = dbContext;
             _memoryCache = memoryCache;
+            _notificationService = notificationService;
+            _mailService = mailService;
         }
 
-        public async Task<ContractDTO> CreateContract(int travelerId, int localId, string tourId, string details, string status, string travelerSignature, string localSignature)
+        public async Task<ContractDTO> CreateContract(int travelerId, int localId, string tourId,string Location, string details, string status, string travelerSignature, string localSignature)
         {
             var newContract = new ContractDTO
             {
                 TravelerId = travelerId,
                 LocalId = localId,
                 TourId = tourId,
+                Location = Location,
                 Details = details,
                 Status = status,
                 TravelerSignature = HashWithSecretKey(travelerSignature),
@@ -46,7 +54,8 @@ using Microsoft.Extensions.Caching.Memory;
 
             // Cập nhật lại cache
             _memoryCache.Set(ContractsCacheKey, contractsInMemory);
-
+            var traveler = await _dbContext.Users.FindAsync(travelerId);
+            await _notificationService.CreateNotificationFullAsync(localId, $"Hợp đồng của chuyến đi ID:{tourId} của bạn đang được tạo bởi {traveler.FullName}.", travelerId, 5);
             return newContract;
 
             //_contractsInMemory.Add(newContract);
@@ -66,25 +75,48 @@ using Microsoft.Extensions.Caching.Memory;
             return null;
         }
 
-        public void UpdateStatusToCompleted(int travelerId, int localId, string tourId)
+        public async Task UpdateStatusToCompleted(int travelerId, int localId, string tourId)
         {
             var contract = FindContractInMemory(travelerId, localId, tourId);
             if (contract == null)
             {
                 throw new Exception("Hợp đồng không tồn tại trong bộ nhớ.");
             }
-
-            if (contract.Status == "Created")
+            
+        if (contract.Status == "Created")
             {
                 contract.Status = "Completed";
-            }
+                await SaveContractToDatabase(travelerId, localId, tourId);
+                Console.WriteLine("Hợp đồng đã được tạo thành công.");
+                var traveler = await _dbContext.Users.FindAsync(travelerId);
+                var local = await _dbContext.Users.FindAsync(localId);
+                await _notificationService.CreateNotificationFullAsync(localId, $"Hợp đồng của chuyến đi ID:{tourId} đã ký kết thành công cùng với Khách: {traveler.FullName}.", travelerId, 5);
+                await _notificationService.CreateNotificationFullAsync(travelerId, $"Hợp đồng của chuyến đi ID:{tourId} đã ký kết thành công cùng với Người địa phương: {local.FullName}.", localId, 5);
+
+                MailContent content1 = new MailContent
+                {
+                    To = local.Email,
+                    Subject = "Thông báo Hợp Đồng - Travel Mate",
+                    Body = $"Hợp đồng của chuyến đi ID:{tourId} đã ký kết thành công cùng với Khách:{traveler.FullName}."
+                };
+                MailContent content2 = new MailContent
+                {
+                    To = traveler.Email,
+                    Subject = "Thông báo Hợp Đồng - Travel Mate",
+                    Body = $"Hợp đồng của chuyến đi ID:{tourId} đã ký kết thành công cùng với Người địa phương: {local.FullName}."
+                };
+                await _mailService.SendMail(content1);
+                await _mailService.SendMail(content2);
+
+            //await _mailService.SendMail(content);
+        }
             else
             {
                 throw new Exception("Chỉ hợp đồng ở trạng thái 'Created' mới có thể chuyển thành 'Completed'.");
             }
         }
 
-        public void UpdateStatusToCancelled(int travelerId, int localId, string tourId)
+        public async Task UpdateStatusToCancelled(int travelerId, int localId, string tourId)
         {
             var contract = FindContractInMemory(travelerId, localId, tourId);
             if (contract == null)
@@ -128,6 +160,7 @@ using Microsoft.Extensions.Caching.Memory;
                 TravelerId = dto.TravelerId,
                 LocalId = dto.LocalId,
                 TourId = dto.TourId,
+                Location = dto.Location,
                 Details = dto.Details,
                 Status = dto.Status,
                 TravelerSignature = dto.TravelerSignature,
@@ -200,6 +233,13 @@ using Microsoft.Extensions.Caching.Memory;
             return contractCount;
         }
 
+        public async Task<int> GetContractLocationCountAsync(string location)
+        {
+            // Đếm số lượng hợp đồng có LocalId bằng userId
+            var contractCount = await _dbContext.BlockContracts
+                .CountAsync(c => c.Location == location);
 
-    }
+            return contractCount;
+        }
+}
 //}

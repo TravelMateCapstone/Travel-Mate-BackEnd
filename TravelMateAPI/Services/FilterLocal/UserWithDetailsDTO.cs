@@ -26,6 +26,7 @@ namespace TravelMateAPI.Services.FilterLocal
     {
         public int ProfileId { get; set; }
         public string? Address { get; set; }
+        public string? ImageUser { get; set; }
     }
 
     public class CCCDDTO
