@@ -204,7 +204,7 @@ namespace TravelMate.Controllers
             if (existingTour == null)
                 return NotFound();
 
-            if (existingTour.RegisteredGuests == existingTour.MaxGuests)
+            if (existingTour.Participants.Count == existingTour.MaxGuests)
                 return BadRequest("No available slots in this tour");
 
             var doesUserExistInTour = await _tourRepository.DoesParticipantExist(tourId, user.Id);

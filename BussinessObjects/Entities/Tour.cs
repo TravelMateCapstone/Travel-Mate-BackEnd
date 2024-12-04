@@ -36,9 +36,6 @@ namespace BusinessObjects.Entities
         [BsonElement("tourStatus")]
         public bool? TourStatus { get; set; } = true;
 
-        [BsonElement("registeredGuests")]
-        public int RegisteredGuests => Participants?.Count ?? 0;
-
         [BsonElement("approvalStatus")]
         public ApprovalStatus? ApprovalStatus { get; set; } // Status: pending, approved, rejected
 
