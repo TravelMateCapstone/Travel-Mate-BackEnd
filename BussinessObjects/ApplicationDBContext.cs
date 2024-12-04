@@ -16,11 +16,13 @@ namespace BusinessObjects
 
 
         public DbSet<Profile> Profiles { get; set; }
+        public DbSet<CCCD> CCCDs { get; set; }
         public DbSet<Friendship> Friendships { get; set; }
         public DbSet<Location> Locations { get; set; }
         public DbSet<Activity> Activities { get; set; }
         public DbSet<UserLocation> UserLocations { get; set; }
         public DbSet<UserActivity> UserActivities { get; set; }
+        public DbSet<BlockContract> BlockContracts { get; set; }
         public DbSet<Contract> Contracts { get; set; }
         public DbSet<Destination> Destinations { get; set; }
         public DbSet<Event> Events { get; set; }
@@ -93,6 +95,12 @@ namespace BusinessObjects
                 .HasForeignKey<UserHome>(uh => uh.UserId) // Khóa ngoại trong UserHome
                 .OnDelete(DeleteBehavior.Cascade); // Xóa theo chuỗi
 
+            // Thiết lập cho quan hệ giữa AspNetUsers và CCCD
+            modelBuilder.Entity<ApplicationUser>()
+              .HasOne(u => u.CCCDs) // Mối quan hệ giữa ApplicationUser và CCCD
+              .WithOne(p => p.User) // Mỗi CCCD liên kết với một ApplicationUser
+              .HasForeignKey<CCCD>(p => p.UserId) // Khóa ngoại trong Profile
+             .OnDelete(DeleteBehavior.Restrict);
 
             //Cấu hình cho UserLocation/Activity
             modelBuilder.Entity<UserLocation>()

@@ -5,6 +5,7 @@ using BusinessObjects.Configuration;
 using BusinessObjects.Entities;
 using BusinessObjects.Utils.Request;
 using DataAccess;
+using Google.Api;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.OData;
@@ -19,7 +20,9 @@ using TravelMateAPI.Hubs;
 using TravelMateAPI.Middleware;
 using TravelMateAPI.Models;
 using TravelMateAPI.Services.CCCDValid;
+using TravelMateAPI.Services.Contract;
 using TravelMateAPI.Services.Email;
+using TravelMateAPI.Services.FilterLocal;
 using TravelMateAPI.Services.FindLocal;
 using TravelMateAPI.Services.Hubs;
 using TravelMateAPI.Services.Notification;
@@ -159,7 +162,27 @@ namespace TravelMateAPI
 
             // OData configuration
             ODataConventionModelBuilder modelBuilder = new ODataConventionModelBuilder();
-            modelBuilder.EntitySet<ApplicationUser>("ApplicationUsers");
+            //var userSet = modelBuilder.EntitySet<ApplicationUserDTO>("ApplicationUsers");
+            //userSet.EntityType.HasKey(u => u.UserId);
+            //userSet.EntityType.Property(u => u.FullName);
+            //userSet.EntityType.Property(u => u.Email);
+            //userSet.EntityType.CollectionProperty(u => u.Roles);
+            //userSet.EntityType.ComplexProperty(u => u.Profile);
+            var userSet = modelBuilder.EntitySet<UserWithDetailsDTO>("ApplicationUsers");
+            userSet.EntityType.HasKey(u => u.UserId);
+            userSet.EntityType.Property(u => u.FullName);
+            userSet.EntityType.Property(u => u.Email);
+            userSet.EntityType.Property(u => u.Star);
+            userSet.EntityType.Property(u => u.CountConnect);
+            userSet.EntityType.CollectionProperty(u => u.LocationIds);
+            userSet.EntityType.ComplexProperty(u => u.Profile);
+            userSet.EntityType.CollectionProperty(u => u.Roles);
+            userSet.EntityType.ComplexProperty(u => u.CCCD);
+            //userSet.EntityType.ComplexProperty(u => u.UserActivities);
+            userSet.EntityType.CollectionProperty(u => u.ActivityIds);
+            userSet.EntityType.CollectionProperty(u => u.Tours);
+            //userSet.EntityType.Property(u => u.SimilarityScore);
+
             modelBuilder.EntitySet<Profile>("Profiles");
             modelBuilder.EntitySet<Friendship>("Friends");
             modelBuilder.EntitySet<Event>("Events");
@@ -180,10 +203,19 @@ namespace TravelMateAPI
             //builder.Services.AddSingleton<FirebaseService>();
             //real time
             builder.Services.AddSignalR();
+            builder.Services.AddHttpClient();
+            builder.Services.AddMemoryCache();
             // Đăng ký các repository
             builder.Services.AddScoped<ProfileDAO>();
             builder.Services.AddScoped<IProfileRepository, ProfileRepository>();
+            builder.Services.AddScoped<ApplicationUserDAO>();
             builder.Services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
+            builder.Services.AddScoped<CCCDDAO>();
+            builder.Services.AddScoped<ICCCDRepository, CCCDRepository>();
+            builder.Services.AddScoped<ICCCDService, CCCDService>();
+            builder.Services.AddScoped<FilterUserService>();
+            builder.Services.AddScoped<IContractService, ContractService>();
+            builder.Services.AddScoped<LocationService>();
             builder.Services.AddScoped<IFindLocalService, FindLocalService>();
             builder.Services.AddScoped<ISearchLocationService, SearchLocationService>();
             builder.Services.AddScoped<SearchLocationFuzzyService>();
@@ -232,7 +264,8 @@ namespace TravelMateAPI
             builder.Services.AddControllers().AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
-                options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
+                //options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
+                options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.Never;
             });
 
 
@@ -273,17 +306,17 @@ namespace TravelMateAPI
                 //        .AllowAnyOrigin()
                 //        .AllowAnyMethod()
                 //        .AllowAnyHeader());
-                options.AddPolicy("AllowAll",
+                options.AddPolicy("AllowSpecificOrigins",
                 policyBuilder =>
                 {
-                    policyBuilder.WithOrigins("https://travelmatefe.netlify.app/", "http://localhost:5173", "http://localhost:5174", "http://localhost:5500/") // Địa chỉ của ứng dụng React của bạn
+                    policyBuilder.WithOrigins("https://travelmatefe.netlify.app/", "http://localhost:5173", "http://localhost:5174", "http://127.0.0.1:5500", "https://pay.payos.vn") // Địa chỉ của ứng dụng React của bạn
                                  .AllowAnyMethod()
                                  .AllowAnyHeader()
                                  .AllowCredentials(); // Quan trọng khi sử dụng cookies hoặc thông tin xác thực
                 });
             });
 
-            builder.Services.AddSignalR();
+            //builder.Services.AddSignalR();
 
             var app = builder.Build();
 
@@ -302,7 +335,7 @@ namespace TravelMateAPI
 
             app.UseHttpsRedirection();
             app.UseRouting();
-            app.UseCors("AllowAll");
+            app.UseCors("AllowSpecificOrigins");
             app.UseAuthentication();
             app.UseAuthorization();
             app.MapControllers();

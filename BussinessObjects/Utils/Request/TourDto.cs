@@ -1,4 +1,5 @@
 ﻿using BusinessObjects.Entities;
+using BusinessObjects.EnumClass;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace BusinessObjects.Utils.Request
@@ -28,6 +29,9 @@ namespace BusinessObjects.Utils.Request
 
         [BsonElement("numberOfNights")]
         public int NumberOfNights { get; set; }
+
+        [BsonElement("approvalStatus")]
+        public ApprovalStatus? ApprovalStatus { get; set; }
 
         [BsonElement("location")]
         public string Location { get; set; } // Location of the tour

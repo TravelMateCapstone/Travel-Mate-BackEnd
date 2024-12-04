@@ -1,5 +1,8 @@
 ﻿using BusinessObjects;
 using BusinessObjects.Entities;
+using BusinessObjects.EnumClass;
+using BusinessObjects.Utils.Request;
+using BusinessObjects.Utils.Response;
 using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
 
@@ -26,6 +29,46 @@ namespace DataAccess
                 .FirstOrDefault(t => t.Id == userId);
         }
 
+        public async Task<ApplicationUser> GetUserInfor(int userId)
+        {
+            return _sqlContext.Users
+                .Include(t => t.Profiles)
+                .FirstOrDefault(t => t.Id == userId);
+        }
+
+        public async Task<IEnumerable<PastTripPost>> GetUserAverageStar(int userId)
+        {
+            return _sqlContext.PastTripPosts.Where(t => t.LocalId == userId).ToList();
+        }
+
+        public async Task<IEnumerable<Tour>> GetTourBriefByUserId(int creatorId)
+        {
+            return _mongoContext.Find(t => t.ApprovalStatus == ApprovalStatus.Accepted && t.Creator.Id == creatorId).ToList();
+        }
+
+        public async Task<List<TourDTO>> GetTourBriefByLocalId(int creatorId)
+        {
+            var tours = await _mongoContext
+                .Find(t => t.ApprovalStatus == ApprovalStatus.Accepted && t.Creator.Id == creatorId)
+            .ToListAsync();
+
+            return tours.Select(t => new TourDTO
+            {
+                TourId = t.TourId,
+                LocalId = t.Creator.Id,
+                RegisteredGuests = t.RegisteredGuests,
+                MaxGuests = t.MaxGuests,
+                Location = t.Location,
+                StartDate = t.StartDate,
+                EndDate = t.EndDate,
+                NumberOfDays = (t.EndDate - t.StartDate).Days,
+                NumberOfNights = (t.EndDate - t.StartDate).Days - 1,
+                TourName = t.TourName,
+                Price = t.Price,
+                TourImage = t.TourImage
+            }).ToList();
+        }
+
         //get list participants of a tour
 
         //get list tour of a participants
@@ -36,7 +79,7 @@ namespace DataAccess
             return _mongoContext.Find(t => t.Creator.Id == userId).ToList();
         }
 
-        public async Task<IEnumerable<Tour>> GetToursByStatus(int userId, bool? approvalStatus)
+        public async Task<IEnumerable<Tour>> GetToursByStatus(int userId, ApprovalStatus? approvalStatus)
         {
             return _mongoContext.Find(t => t.Creator.Id == userId && t.ApprovalStatus == approvalStatus).ToList();
         }
@@ -87,7 +130,7 @@ namespace DataAccess
         }
 
         // Admin accepts a tour
-        public async Task ProcessTourAdmin(string tourId, bool processStatus)
+        public async Task ProcessTourAdmin(string tourId, ApprovalStatus processStatus)
         {
             var filter = Builders<Tour>.Filter.Eq(f => f.TourId, tourId);
 
@@ -128,7 +171,7 @@ namespace DataAccess
             // Lọc để tìm các tour có participant với Id khớp userId
             var filter = Builders<Tour>.Filter.ElemMatch(
                 t => t.Participants,
-                p => p.participantId == userId
+                p => p.ParticipantId == userId
             );
 
             // Kiểm tra xem có tài liệu nào thỏa mãn filter hay không

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BusinessObjects.Entities;
+using BusinessObjects.EnumClass;
 using BusinessObjects.Utils.Request;
 using Microsoft.AspNetCore.Mvc;
 using Repositories.Interface;
@@ -33,6 +34,14 @@ namespace TravelMate.Controllers
             return Ok(tourDto);
         }
 
+        [HttpGet("tourParticipants")]
+        public async Task<ActionResult<IEnumerable<ParticipantDto>>> GetListParticipantsAsync(string tourId)
+        {
+            var listParticipants = await _tourRepository.GetListParticipantsAsync(tourId);
+
+            return Ok(listParticipants);
+        }
+
         //get all tour of a local
         [HttpGet("local")]
         public async Task<ActionResult<IEnumerable<TourDto>>> GetAllToursOfLocal()
@@ -47,19 +56,30 @@ namespace TravelMate.Controllers
         [HttpGet("toursStatus/{approvalStatus}")]
         public async Task<ActionResult<IEnumerable<TourDto>>> GetToursByStatus(string approvalStatus)
         {
-            bool? status = approvalStatus.ToLower() switch
+            if (!Enum.TryParse<ApprovalStatus>(approvalStatus, true, out var status))
             {
-                "pending" => null,
-                "accepted" => true,
-                "rejected" => false,
-                _ => throw new ArgumentException("Invalid status")
-            };
+                return BadRequest("Invalid status");
+            }
 
             var tours = await _tourRepository.GetToursByStatus(userId, status);
 
             var tourDto = _mapper.Map<IEnumerable<TourDto>>(tours);
 
             return Ok(tourDto);
+        }
+
+        [HttpGet("brief/{userId}")]
+        public async Task<ActionResult<TourBriefDto>> GetTourBriefInfo(int userId)
+        {
+            var listTour = await _tourRepository.GetTourBriefByUserId(userId);
+            return Ok(listTour);
+        }
+
+        [HttpGet("user-star-average/{userId}")]
+        public async Task<ActionResult<double>> GetUserStarAverage(int userId)
+        {
+            var star = await _tourRepository.GetUserAverageStar(userId);
+            return Ok(star);
         }
 
         //get all tour of a participant
@@ -114,15 +134,12 @@ namespace TravelMate.Controllers
                 return BadRequest(ModelState);
             }
 
-            //check if user was creator
-
-            if (userId != tourDto.Creator.Id)
-                return BadRequest("You are not creator of this tour!");
-
             var existingTour = await _tourRepository.GetTourById(id);
-
             if (existingTour == null)
                 return NotFound();
+
+            if (userId != existingTour.Creator.Id)
+                return BadRequest("You are not creator of this tour!");
 
             var tour = _mapper.Map<Tour>(tourDto);
 

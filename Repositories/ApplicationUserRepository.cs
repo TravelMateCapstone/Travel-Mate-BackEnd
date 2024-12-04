@@ -1,4 +1,5 @@
 ﻿using BusinessObjects.Entities;
+using BusinessObjects.Utils.Response;
 using DataAccess;
 using Repositories.Interface;
 using System;
@@ -13,15 +14,21 @@ namespace Repositories
     {
         private readonly ApplicationUserDAO _userDAO;
 
-        public ApplicationUserRepository()
+
+        public ApplicationUserRepository(ApplicationUserDAO userDAO)
         {
-            _userDAO = ApplicationUserDAO.Instance;  // Sử dụng DAO thông qua Singleton
+            _userDAO = userDAO;
         }
 
-        public async Task<List<ApplicationUser>> GetAllUsersAsync()
+        public async Task<List<ApplicationUserDTO>> GetAllUsersAsync()
         {
             return await _userDAO.GetAllUsersAsync();
         }
+        //public async Task<IQueryable<ApplicationUser>> GetAllUsersAsync()
+        //{
+        //    return await _userDAO.GetAllUsersAsync();
+        //}
+
 
         public async Task<ApplicationUser> GetUserByIdAsync(int id)
         {

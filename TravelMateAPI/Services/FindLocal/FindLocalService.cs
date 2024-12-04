@@ -88,18 +88,20 @@ namespace TravelMateAPI.Services.FindLocal
                 // Tạo câu truy vấn SQL với phân trang
                 var sql = @"
                     SELECT u.Id, u.FullName, u.Email, u.RegistrationTime, 
-                           p.UserId, p.Address, p.Phone, p.ImageUser, 
-                           COUNT(ua.ActivityId) AS MatchingActivitiesCount
+                           p.UserId, p.Phone, p.ImageUser, p.Description,
+                           COUNT(ua.ActivityId) AS MatchingActivitiesCount,
+                           l.LocationName  -- Thêm LocationName
                     FROM AspNetUsers u
                     INNER JOIN AspNetUserRoles ur ON u.Id = ur.UserId
                     INNER JOIN AspNetRoles r ON ur.RoleId = r.Id
                     INNER JOIN UserLocations ul ON u.Id = ul.UserId
                     INNER JOIN UserActivities ua ON u.Id = ua.UserId
                     LEFT JOIN Profiles p ON u.Id = p.UserId  -- Thêm JOIN bảng Profile
+                    LEFT JOIN Locations l ON ul.LocationId = l.LocationId  -- JOIN với bảng Location
                     WHERE r.Name = @RoleName
                       AND ul.LocationId = @LocationId
                       AND ua.ActivityId IN @ActivityIds
-                    GROUP BY u.Id, u.FullName, u.Email, u.RegistrationTime, p.UserId, p.Address, p.Phone, p.ImageUser
+                    GROUP BY u.Id, u.FullName, u.Email, u.RegistrationTime, p.UserId, p.Phone, p.ImageUser, p.Description, l.LocationName
                     ORDER BY COUNT(ua.ActivityId) DESC
                     OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;";  // Phân trang
 
@@ -122,9 +124,9 @@ namespace TravelMateAPI.Services.FindLocal
                 //    splitOn: "MatchingActivitiesCount"
                 //);
                 // Thực thi truy vấn bằng Dapper, thêm ánh xạ (mapping) cho Profile
-                var users = await connection.QueryAsync<ApplicationUser, Profile, int, ApplicationUser>(
+                var users = await connection.QueryAsync<ApplicationUser, Profile, int, string,ApplicationUser>(
                     sql,
-                    (user, profile, matchingActivitiesCount) =>
+                    (user, profile, matchingActivitiesCount, locationName) =>
                     {
                         // Gán Profile cho User
                         user.Profiles = profile;
@@ -132,6 +134,10 @@ namespace TravelMateAPI.Services.FindLocal
                         //user.Profiles = new List<Profile> { profile };
                         // Gán MatchingActivitiesCount
                         user.MatchingActivitiesCount = matchingActivitiesCount;
+                        user.UserLocations = new List<UserLocation>
+                {
+                    new UserLocation { LocationId = locationId, Location = new Location { LocationName = locationName } }
+                };
                         return user;
                     },
                     new
@@ -142,7 +148,7 @@ namespace TravelMateAPI.Services.FindLocal
                         Offset = offset,         // Giá trị để bỏ qua
                         PageSize = pageSize      // Kích thước trang
                     },
-                    splitOn: "UserId,MatchingActivitiesCount"  // Tách kết quả trả về giữa Profile và MatchingActivitiesCount
+                    splitOn: "UserId,MatchingActivitiesCount,LocationName"  // Tách kết quả trả về giữa Profile và MatchingActivitiesCount
                 );
 
                 return users.ToList();
@@ -178,16 +184,18 @@ namespace TravelMateAPI.Services.FindLocal
                 var sql = @"
             SELECT u.Id, u.FullName, u.Email, u.RegistrationTime, 
                    p.UserId AS ProfileFullName, p.Address, p.Phone, p.ImageUser, 
-                   COUNT(ua.ActivityId) AS MatchingActivitiesCount
+                   COUNT(ua.ActivityId) AS MatchingActivitiesCount,
+                    l.LocationName  -- Thêm LocationName
             FROM AspNetUsers u
             INNER JOIN AspNetUserRoles ur ON u.Id = ur.UserId
             INNER JOIN AspNetRoles r ON ur.RoleId = r.Id
             INNER JOIN UserLocations ul ON u.Id = ul.UserId
             LEFT JOIN UserActivities ua ON u.Id = ua.UserId AND ua.ActivityId IN @ActivityIds  -- LEFT JOIN với điều kiện cho ActivityIds
             LEFT JOIN Profiles p ON u.Id = p.UserId  -- Thêm JOIN bảng Profile
+            LEFT JOIN Locations l ON ul.LocationId = l.LocationId  -- JOIN với bảng Location
             WHERE r.Name = @RoleName
               AND ul.LocationId = @LocationId
-            GROUP BY u.Id, u.FullName, u.Email, u.RegistrationTime, p.UserId, p.Address, p.Phone, p.ImageUser
+            GROUP BY u.Id, u.FullName, u.Email, u.RegistrationTime, p.UserId, p.Address, p.Phone, p.ImageUser, l.LocationName
             ORDER BY MatchingActivitiesCount DESC  -- Sắp xếp theo số lượng hoạt động matching
             OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;";  // Phân trang
 

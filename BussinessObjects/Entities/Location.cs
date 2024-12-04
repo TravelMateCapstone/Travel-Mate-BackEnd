@@ -14,5 +14,10 @@ namespace BusinessObjects.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int LocationId { get; set; }
         public string LocationName { get; set; }
+
+        public string? Title { get; set; }   
+        public string? Description { get; set; }
+        public string? Image { get; set; }
+        public string? MapHtml { get; set; }
     }
 }

@@ -1,9 +1,11 @@
 ﻿using BusinessObjects.Entities;
+using BusinessObjects.Utils.Response;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Formatter;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
 using Repositories.Interface;
+using TravelMateAPI.Services.FilterLocal;
 
 namespace TravelMateAPI.Controllers
 {
@@ -12,20 +14,30 @@ namespace TravelMateAPI.Controllers
     public class ApplicationUsersController : ODataController
     {
         private readonly IApplicationUserRepository _userRepository;
+        private readonly FilterUserService _filterService;
 
-        public ApplicationUsersController(IApplicationUserRepository userRepository)
+        public ApplicationUsersController(IApplicationUserRepository userRepository, FilterUserService filterService)
         {
             _userRepository = userRepository;
+            _filterService = filterService;
         }
 
         // GET: odata/ApplicationUsers
         //[HttpGet("/")]
+        //[EnableQuery]
+        //public async Task<IActionResult> Get(ODataQueryOptions<ApplicationUserDTO> queryOptions)
+        //{
+        //    var users = await _userRepository.GetAllUsersAsync();
+        //    return Ok(users);
+        //}
+       
         [EnableQuery]
-        public async Task<IActionResult> Get(ODataQueryOptions<ApplicationUser> queryOptions)
+        public async Task<IActionResult> Get(ODataQueryOptions<UserWithDetailsDTO> queryOptions)
         {
-            var users = await _userRepository.GetAllUsersAsync();
+            var users = await _filterService.GetAllUsersWithDetailsAsync();
             return Ok(users);
         }
+
 
         // GET: odata/ApplicationUsers(5)
         //[HttpGet("/{key}")]
@@ -40,6 +52,8 @@ namespace TravelMateAPI.Controllers
 
             return Ok(user);
         }
+
+
 
         // POST: odata/ApplicationUsers
         //[HttpPost("/")]
