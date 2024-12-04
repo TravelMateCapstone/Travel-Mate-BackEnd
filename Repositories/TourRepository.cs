@@ -48,9 +48,9 @@ namespace Repositories
             tour.ApprovalStatus = ApprovalStatus.Pending;
             await _tourDAO.AddTour(tour);
         }
-        public async Task<bool> DoesParticipantExist(int userId)
+        public async Task<bool> DoesParticipantExist(string tourId, int userId)
         {
-            return await _tourDAO.DoesParticipantExist(userId);
+            return await _tourDAO.DoesParticipantExist(tourId, userId);
         }
 
         public async Task UpdateTour(string id, Tour updatedTour)
@@ -66,7 +66,6 @@ namespace Repositories
             existingTour.Location = updatedTour.Location ?? existingTour.Location;
             existingTour.MaxGuests = updatedTour.MaxGuests > 0 ? updatedTour.MaxGuests : existingTour.MaxGuests;
             existingTour.TourStatus = updatedTour.TourStatus ?? existingTour.TourStatus;
-            existingTour.RegisteredGuests = updatedTour.RegisteredGuests > 0 ? updatedTour.RegisteredGuests : existingTour.RegisteredGuests;
             existingTour.ApprovalStatus = updatedTour.ApprovalStatus ?? existingTour.ApprovalStatus;
             existingTour.TourImage = updatedTour.TourImage ?? existingTour.TourImage;
             existingTour.Creator = updatedTour.Creator ?? existingTour.Creator;
@@ -97,9 +96,6 @@ namespace Repositories
                 existingTour.Participants = new List<Participants>();
 
             await _tourDAO.JoinTour(tourId, newParticipant);
-
-            existingTour.RegisteredGuests = existingTour.Participants.Count();
-            await _tourDAO.UpdateTour(tourId, existingTour);
         }
 
         public async Task AcceptTour(string tourId)
@@ -107,7 +103,7 @@ namespace Repositories
             await _tourDAO.ProcessTourAdmin(tourId, ApprovalStatus.Accepted);
         }
 
-        public async Task BanTour(string tourId)
+        public async Task RejectTour(string tourId)
         {
             await _tourDAO.ProcessTourAdmin(tourId, ApprovalStatus.Rejected);
         }
@@ -115,11 +111,6 @@ namespace Repositories
         public async Task AddReview(string tourId, TourReview tourReview)
         {
             await _tourDAO.AddReview(tourId, tourReview);
-        }
-
-        public async Task UpdateAvailability(string tourId, int slots)
-        {
-            await _tourDAO.UpdateAvailability(tourId, slots);
         }
 
         public async Task CancelTour(string tourId)
@@ -145,6 +136,12 @@ namespace Repositories
                 return 0;
 
             return listPost.Average(item => item.Star);
+        }
+
+        public async Task<int?> GetUserTotalTrip(int userId)
+        {
+            var listPost = await _tourDAO.GetUserAverageStar(userId);
+            return listPost.Count();
         }
 
         public async Task<IEnumerable<Participants>> GetListParticipantsAsync(string tourId)
