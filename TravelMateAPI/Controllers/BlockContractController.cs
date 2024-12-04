@@ -47,6 +47,7 @@ namespace TravelMateAPI.Controllers
                     request.TravelerId,
                     request.LocalId,
                     request.TourId,
+                    request.Location,
                     request.Details,
                     "Created", // Trạng thái mặc định khi tạo hợp đồng
                     request.TravelerSignature,
@@ -78,7 +79,7 @@ namespace TravelMateAPI.Controllers
         {
             try
             {
-                _contractService.UpdateStatusToCompleted(travelerId, localId, tourId);
+                await _contractService.UpdateStatusToCompleted(travelerId, localId, tourId);
                 return Ok("Trạng thái hợp đồng đã được cập nhật thành 'Completed'.");
             }
             catch (Exception ex)
@@ -92,7 +93,7 @@ namespace TravelMateAPI.Controllers
         {
             try
             {
-                _contractService.UpdateStatusToCancelled(travelerId, localId, tourId);
+                await _contractService.UpdateStatusToCancelled(travelerId, localId, tourId);
                 return Ok("Trạng thái hợp đồng đã được cập nhật thành 'Cancelled'.");
             }
             catch (Exception ex)
@@ -138,6 +139,21 @@ namespace TravelMateAPI.Controllers
             {
                 var count = await _contractService.GetContractCountAsLocalAsync(userId);
                 return Ok(new { UserId = userId, ContractCount = count });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Error = ex.Message });
+            }
+        }
+
+
+        [HttpGet("location-contracts-count")]
+        public async Task<IActionResult> GetContractCountLocationAsync([FromQuery] string location)
+        {
+            try
+            {
+                var count = await _contractService.GetContractLocationCountAsync(location);
+                return Ok(new {Location = location, ContractCount = count });
             }
             catch (Exception ex)
             {

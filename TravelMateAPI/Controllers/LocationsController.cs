@@ -70,10 +70,12 @@ namespace TravelMateAPI.Controllers
     public class LocationsController : ControllerBase
     {
         private readonly ILocationRepository _locationRepository;
+        private readonly IContractService _contractService;
 
-        public LocationsController(ILocationRepository locationRepository)
+        public LocationsController(ILocationRepository locationRepository, IContractService contractService)
         {
             _locationRepository = locationRepository;
+            _contractService = contractService;
         }
 
         // GET: api/Location
@@ -89,11 +91,13 @@ namespace TravelMateAPI.Controllers
         public async Task<IActionResult> GetById(int id)
         {
             var location = await _locationRepository.GetLocationByIdAsync(id);
+            var countConnection = await _contractService.GetContractLocationCountAsync(location.LocationName);
+
             if (location == null)
             {
                 return NotFound(new { Message = $"Location with id {id} not found." });
             }
-            return Ok(location);
+            return Ok(new { CountConnection = countConnection, Location = location });
         }
 
         // POST: api/Location
