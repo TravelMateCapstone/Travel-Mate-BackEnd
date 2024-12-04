@@ -226,7 +226,7 @@ namespace TravelMate.Controllers
             if (existingTour == null)
                 return NotFound();
 
-            if (existingTour.ApprovalStatus != null)
+            if (existingTour.ApprovalStatus != ApprovalStatus.Pending)
                 return BadRequest("You have processed this tour request");
 
             //neu da co trang thai roi thi ko dc accept nua
@@ -243,7 +243,7 @@ namespace TravelMate.Controllers
                 return NotFound();
 
             //neu da co trang thai roi thi ko dc accept nua
-            if (existingTour.ApprovalStatus != null)
+            if (existingTour.ApprovalStatus != ApprovalStatus.Pending)
                 return BadRequest("You have processed this tour request");
 
             await _tourRepository.RejectTour(tourId);
