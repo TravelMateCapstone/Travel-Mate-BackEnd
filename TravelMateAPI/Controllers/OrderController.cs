@@ -20,7 +20,7 @@ namespace TravelMateAPI.Controllers
 
             var payOS = new PayOS(clientId, apiKey, checksumKey);
 
-            var domain = "http://localhost:5500/";
+            var domain = "http://127.0.0.1:5500";
 
             var paymentLinkRequest = new PaymentData(
                 orderCode: int.Parse(DateTimeOffset.Now.ToString("ffffff")),
@@ -32,9 +32,9 @@ namespace TravelMateAPI.Controllers
             );
             var response = await payOS.createPaymentLink(paymentLinkRequest);
 
-            return Ok(new { checkoutUrl = response.checkoutUrl });
+            Response.Headers.Append("Location", response.checkoutUrl);
+            return new StatusCodeResult(303);
         }
-
 
     }
 }

@@ -27,6 +27,13 @@ namespace DataAccess
                 .FirstOrDefault(t => t.Id == userId);
         }
 
+        public async Task<ApplicationUser> GetUserInfor(int userId)
+        {
+            return _sqlContext.Users
+                .Include(t => t.Profiles)
+                .FirstOrDefault(t => t.Id == userId);
+        }
+
         public async Task<IEnumerable<PastTripPost>> GetUserAverageStar(int userId)
         {
             return _sqlContext.PastTripPosts.Where(t => t.LocalId == userId).ToList();
@@ -139,7 +146,7 @@ namespace DataAccess
             // Lọc để tìm các tour có participant với Id khớp userId
             var filter = Builders<Tour>.Filter.ElemMatch(
                 t => t.Participants,
-                p => p.participantId == userId
+                p => p.ParticipantId == userId
             );
 
             // Kiểm tra xem có tài liệu nào thỏa mãn filter hay không

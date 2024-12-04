@@ -34,6 +34,14 @@ namespace TravelMate.Controllers
             return Ok(tourDto);
         }
 
+        [HttpGet("tourParticipants")]
+        public async Task<ActionResult<IEnumerable<ParticipantDto>>> GetListParticipantsAsync(string tourId)
+        {
+            var listParticipants = await _tourRepository.GetListParticipantsAsync(tourId);
+
+            return Ok(listParticipants);
+        }
+
         //get all tour of a local
         [HttpGet("local")]
         public async Task<ActionResult<IEnumerable<TourDto>>> GetAllToursOfLocal()
@@ -73,7 +81,6 @@ namespace TravelMate.Controllers
             var star = await _tourRepository.GetUserAverageStar(userId);
             return Ok(star);
         }
-
 
         //get all tour of a participant
 

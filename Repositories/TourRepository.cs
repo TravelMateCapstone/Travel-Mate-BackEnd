@@ -89,9 +89,8 @@ namespace Repositories
         {
             var newParticipant = new Participants()
             {
-                participantId = travelerId,
+                ParticipantId = travelerId,
                 RegisteredAt = GetTimeZone.GetVNTimeZoneNow(),
-                PaymentStatus = false
             };
             var existingTour = await _tourDAO.GetTourById(tourId);
             if (existingTour.Participants == null)
@@ -100,6 +99,7 @@ namespace Repositories
             await _tourDAO.JoinTour(tourId, newParticipant);
 
             existingTour.RegisteredGuests = existingTour.Participants.Count();
+            await _tourDAO.UpdateTour(tourId, existingTour);
         }
 
         public async Task AcceptTour(string tourId)
@@ -145,6 +145,19 @@ namespace Repositories
                 return 0;
 
             return listPost.Average(item => item.Star);
+        }
+
+        public async Task<IEnumerable<Participants>> GetListParticipantsAsync(string tourId)
+        {
+            var getListParticipants = await _tourDAO.GetTourById(tourId);
+            var listUser = new List<ApplicationUser>();
+            foreach (var item in getListParticipants.Participants)
+            {
+                var user = await _tourDAO.GetUserInfor(item.ParticipantId);
+                listUser.Add(user);
+            }
+
+            return _mapper.Map<IEnumerable<Participants>>(listUser);
         }
     }
 }
