@@ -56,8 +56,10 @@ namespace TravelMateAPI.Models
            .ForMember(dest => dest.Services, opt => opt.MapFrom(src => src.Services));
 
             CreateMap<TourDto, Tour>();
-            CreateMap<Tour, TourDto>();
-            CreateMap<Tour, TourBriefDto>();
+            CreateMap<Tour, TourDto>()
+                .ForMember(dest => dest.RegisteredGuests, opt => opt.MapFrom(src => src.Participants.Count));
+            CreateMap<Tour, TourBriefDto>()
+                .ForMember(dest => dest.RegisteredGuests, opt => opt.MapFrom(src => src.Participants.Count));
 
             CreateMap<ApplicationUser, Participants>()
              .ForMember(dest => dest.ParticipantId, opt => opt.MapFrom(src => src.Id))
