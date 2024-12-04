@@ -159,6 +159,9 @@ namespace TravelMate.Controllers
             if (existingTour == null)
                 return NotFound();
 
+            //kiem tra da join tour thi ko dc join nữa
+
+
             if (existingTour.Creator.Id == travelerId)
                 return BadRequest("Access Denied! You are creator of this tour");
 

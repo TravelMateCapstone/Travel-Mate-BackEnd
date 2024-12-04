@@ -18,6 +18,7 @@ using System.Text;
 using TravelMateAPI.Hubs;
 using TravelMateAPI.Middleware;
 using TravelMateAPI.Models;
+using TravelMateAPI.Services.CCCDValid;
 using TravelMateAPI.Services.Email;
 using TravelMateAPI.Services.FindLocal;
 using TravelMateAPI.Services.Hubs;
