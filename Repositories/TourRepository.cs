@@ -157,5 +157,37 @@ namespace Repositories
 
             return _mapper.Map<IEnumerable<Participants>>(listUser);
         }
+
+        public async Task UpdatePaymentStatus(long orderCode)
+        {
+            var getParticipant = await _tourDAO.GetParticipantWithOrderCode(orderCode);
+
+            foreach (var item in getParticipant.Participants)
+            {
+                if (item.OrderCode == orderCode)
+                {
+                    item.PaymentStatus = true;
+                    break;
+                }
+            }
+
+            await _tourDAO.UpdateTour(getParticipant.TourId, getParticipant);
+        }
+
+        public async Task UpdateOrderCode(string tourId, int travelerId, long orderCode)
+        {
+            var getParticipant = await _tourDAO.GetParticipant(tourId, travelerId);
+
+            foreach (var item in getParticipant.Participants)
+            {
+                if (item.ParticipantId == travelerId)
+                {
+                    item.OrderCode = orderCode;
+                    break;
+                }
+            }
+
+            await _tourDAO.UpdateTour(tourId, getParticipant);
+        }
     }
 }

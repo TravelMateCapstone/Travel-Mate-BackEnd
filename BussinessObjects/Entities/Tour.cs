@@ -129,6 +129,9 @@ namespace BusinessObjects.Entities
         [BsonElement("registeredAt")]
         public DateTime RegisteredAt { get; set; }
 
+        [BsonElement("orderCode")]
+        public long? OrderCode { get; set; }
+
         [BsonElement("paymentStatus")]
         public bool PaymentStatus { get; set; } = false;
 

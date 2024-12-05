@@ -71,7 +71,7 @@ namespace DataAccess
         public async Task<List<TourDTO>> GetAllTourBrief()
         {
             var tours = await _mongoContext
-                .Find(t => t.ApprovalStatus == ApprovalStatus.Accepted )
+                .Find(t => t.ApprovalStatus == ApprovalStatus.Accepted)
             .ToListAsync();
 
             return tours.Select(t => new TourDTO
@@ -183,6 +183,20 @@ namespace DataAccess
             return await _mongoContext.Find(filter).AnyAsync();
         }
 
+        public async Task<Tour> GetParticipant(string tourId, int userId)
+        {
+            var filter = Builders<Tour>.Filter.And(
+          Builders<Tour>.Filter.Eq(t => t.TourId, tourId),
+          Builders<Tour>.Filter.ElemMatch(t => t.Participants, p => p.ParticipantId == userId));
+            return _mongoContext.Find(filter).FirstOrDefault();
+        }
+
+        public async Task<Tour> GetParticipantWithOrderCode(long orderCode)
+        {
+            var filter = Builders<Tour>.Filter.ElemMatch(t => t.Participants, p => p.OrderCode == orderCode);
+
+            return await _mongoContext.Find(filter).FirstOrDefaultAsync();
+        }
 
     }
 }
