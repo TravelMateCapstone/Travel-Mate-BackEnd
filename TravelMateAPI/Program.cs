@@ -5,7 +5,6 @@ using BusinessObjects.Configuration;
 using BusinessObjects.Entities;
 using BusinessObjects.Utils.Request;
 using DataAccess;
-using Google.Api;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.OData;
@@ -16,12 +15,10 @@ using Repositories;
 using Repositories.Interface;
 using Repository.Interfaces;
 using System.Text;
-using System.Text.Json.Serialization;
 using TravelMateAPI.Hubs;
 using TravelMateAPI.Middleware;
 using TravelMateAPI.Models;
 using TravelMateAPI.Services.CCCDValid;
-using TravelMateAPI.Services.Contract;
 using TravelMateAPI.Services.Email;
 using TravelMateAPI.Services.FilterLocal;
 using TravelMateAPI.Services.FilterTour;
@@ -185,7 +182,7 @@ namespace TravelMateAPI
             userSet.EntityType.CollectionProperty(u => u.ActivityIds);
             userSet.EntityType.CollectionProperty(u => u.Tours);
             //userSet.EntityType.Property(u => u.SimilarityScore);
-            
+
 
             var tourSet = modelBuilder.EntitySet<TourWithUserDetailsDTO>("FilterTours");
             tourSet.EntityType.HasKey(t => t.TourId);
@@ -221,7 +218,7 @@ namespace TravelMateAPI
             builder.Services.AddScoped<CCCDDAO>();
             builder.Services.AddScoped<ICCCDRepository, CCCDRepository>();
             builder.Services.AddScoped<ICCCDService, CCCDService>();
-            builder.Services.AddScoped<IUserRoleService,UserRoleService>();
+            builder.Services.AddScoped<IUserRoleService, UserRoleService>();
             builder.Services.AddScoped<FilterUserService>();
             builder.Services.AddScoped<IContractService, ContractService>();
             builder.Services.AddScoped<FilterTourService>();
@@ -270,6 +267,7 @@ namespace TravelMateAPI
             builder.Services.AddScoped<ITravelerFormRepository, TravelerFormRepository>();
             builder.Services.AddScoped<TourDAO>();
             builder.Services.AddScoped<ITourRepository, TourRepository>();
+
 
             builder.Services.AddControllers().AddJsonOptions(options =>
             {
