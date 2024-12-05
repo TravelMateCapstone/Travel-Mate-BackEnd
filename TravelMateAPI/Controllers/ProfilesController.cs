@@ -5,6 +5,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using BusinessObjects;
 using Microsoft.EntityFrameworkCore;
+using TravelMateAPI.Services.ProfileService;
 
 namespace TravelMateAPI.Controllers
 {
@@ -131,11 +132,13 @@ namespace TravelMateAPI.Controllers
         private readonly IProfileRepository _profileRepository;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ApplicationDBContext _context;
-        public ProfileController(IProfileRepository profileRepository, UserManager<ApplicationUser> userManager, ApplicationDBContext context)
+        private readonly CheckProfileService _checkProfileService;
+        public ProfileController(IProfileRepository profileRepository, UserManager<ApplicationUser> userManager, ApplicationDBContext context,CheckProfileService checkProfileService)
         {
             _profileRepository = profileRepository;
             _userManager = userManager;
             _context = context;
+            _checkProfileService = checkProfileService;
         }
         // Phương thức để lấy UserId từ JWT token
         private int GetUserId()
@@ -420,6 +423,27 @@ namespace TravelMateAPI.Controllers
 
             await _profileRepository.DeleteProfileAsync(profileId);
             return NoContent();
+        }
+
+        [HttpGet("checkComplete/{userId}")]
+        public async Task<IActionResult> CheckComplete(int userId)
+        {
+            try
+            {
+               
+                var result = await _checkProfileService.CheckProfileCompletion(userId);
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Success = false,
+                    Message = "Error occurred while checking profile completion.",
+                    Error = ex.Message
+                });
+            }
         }
     }
 

@@ -29,6 +29,7 @@ using TravelMateAPI.Services.FindLocal;
 using TravelMateAPI.Services.Hubs;
 using TravelMateAPI.Services.Notification;
 using TravelMateAPI.Services.Notification.Event;
+using TravelMateAPI.Services.ProfileService;
 using TravelMateAPI.Services.Role;
 
 namespace TravelMateAPI
@@ -222,6 +223,7 @@ namespace TravelMateAPI
             builder.Services.AddScoped<ICCCDRepository, CCCDRepository>();
             builder.Services.AddScoped<ICCCDService, CCCDService>();
             builder.Services.AddScoped<IUserRoleService,UserRoleService>();
+            builder.Services.AddScoped<CheckProfileService>();
             builder.Services.AddScoped<FilterUserService>();
             builder.Services.AddScoped<IContractService, ContractService>();
             builder.Services.AddScoped<FilterTourService>();
