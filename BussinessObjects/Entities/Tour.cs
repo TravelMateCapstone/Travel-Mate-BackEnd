@@ -8,42 +8,45 @@ namespace BusinessObjects.Entities
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string? TourId { get; set; } // Unique identifier for the tour
+        public string? TourId { get; set; }
 
         [BsonElement("tourName")]
-        public string TourName { get; set; } // Name of the tour
+        public string TourName { get; set; }
 
         [BsonElement("price")]
-        public double? Price { get; set; } // Name of the tour
+        public double? Price { get; set; }
 
         [BsonElement("startDate")]
-        public DateTime StartDate { get; set; } // Tour start date
+        public DateTime StartDate { get; set; }
 
         [BsonElement("endDate")]
-        public DateTime EndDate { get; set; } // Tour end date
+        public DateTime EndDate { get; set; }
 
         [BsonElement("numberOfDays")]
-        public int NumberOfDays { get; set; } // Ví dụ: 2
+        public int NumberOfDays { get; set; }
         [BsonElement("numberOfNights")]
-        public int NumberOfNights { get; set; } // Ví dụ: 3
+        public int NumberOfNights { get; set; }
 
         [BsonElement("location")]
-        public string Location { get; set; } // Location of the tour
+        public string Location { get; set; }
 
         [BsonElement("maxGuests")]
-        public int MaxGuests { get; set; } // Maximum number of guests allowed
+        public int MaxGuests { get; set; }
 
         [BsonElement("tourStatus")]
         public bool? TourStatus { get; set; } = true;
 
         [BsonElement("approvalStatus")]
-        public ApprovalStatus? ApprovalStatus { get; set; } // Status: pending, approved, rejected
+        public ApprovalStatus? ApprovalStatus { get; set; }
 
         [BsonElement("tourImage")]
         public string TourImage { get; set; }
 
         [BsonElement("creator")]
-        public CreatorInfo Creator { get; set; } // Information about the tour creator
+        public CreatorInfo Creator { get; set; }
+
+        [BsonElement("isGlobalContract")]
+        public bool IsGlobalContract { get; set; }
 
         [BsonElement("participants")]
         public List<Participants>? Participants { get; set; } = new List<Participants>();
@@ -125,6 +128,9 @@ namespace BusinessObjects.Entities
 
         [BsonElement("registeredAt")]
         public DateTime RegisteredAt { get; set; }
+
+        [BsonElement("orderCode")]
+        public long? OrderCode { get; set; }
 
         [BsonElement("paymentStatus")]
         public bool PaymentStatus { get; set; } = false;

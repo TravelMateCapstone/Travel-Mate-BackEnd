@@ -8,8 +8,8 @@
         public string Address { get; set; }
         public string Phone { get; set; }
         public DateTime RegisteredAt { get; set; }
-        public bool PaymentStatus { get; set; } = false;
-        public double Discount { get; set; } = 0;
+        public bool PaymentStatus { get; set; }
+        public double Discount { get; set; }
         public decimal TotalAmount { get; set; }
     }
 }
