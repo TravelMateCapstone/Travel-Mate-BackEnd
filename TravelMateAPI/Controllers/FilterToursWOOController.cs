@@ -37,7 +37,7 @@ namespace TravelMateAPI.Controllers
 
                 var customOptions = new JsonSerializerOptions
                 {
-                    ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles,
+                    ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve,
                     DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.Never,
                     WriteIndented = true // (Tùy chọn: để dễ đọc JSON)
                 };

@@ -73,6 +73,52 @@ namespace TravelMateAPI.Controllers
             }
         }
 
+        [HttpPost("create-contract-local-pass")]
+        public async Task<IActionResult> CreateContractLocalPass([FromBody] CreateContractLocalPassRequest request)
+        {
+            try
+            {
+                // Kiểm tra chữ ký số của traveler
+                var isTravelerSignatureValid = await _cCCDService.VerifyDigitalSignatureAsync(request.TravelerId, request.TravelerSignature);
+                if (!isTravelerSignatureValid)
+                {
+                    return BadRequest(new
+                    {
+                        Success = false,
+                        Message = "Chữ ký số của traveler không hợp lệ."
+                    });
+                }
+                // Kiểm tra chữ ký số của traveler
+                
+                var newContract = _contractService.CreateContractPassLocal(
+                    request.TravelerId,
+                    request.LocalId,
+                    request.TourId,
+                    request.Location,
+                    request.Details,
+                    "Created", // Trạng thái mặc định khi tạo hợp đồng
+                    request.TravelerSignature
+                );
+
+                //return Ok(newContract);
+                return Ok(new
+                {
+                    Success = true,
+                    Message = "Tạo hợp đồng thành công.",
+                    Data = newContract
+                });
+            }
+            catch (Exception ex)
+            {
+                //return BadRequest(ex.Message);
+                return BadRequest(new
+                {
+                    Success = false,
+                    Message = ex.Message
+                });
+            }
+        }
+
 
         [HttpPost("update-status-completed")]
         public async Task<IActionResult> UpdateStatusToCompleted(int travelerId, int localId, string tourId)

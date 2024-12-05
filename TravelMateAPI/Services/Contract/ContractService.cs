@@ -7,10 +7,11 @@ using Microsoft.Extensions.Caching.Memory;
 using TravelMateAPI.Services.Notification;
 using TravelMateAPI.Services.Email;
 using Google.Api;
+using TravelMateAPI.Services.CCCDValid;
 
 //namespace TravelMateAPI.Services.Contract
 //{
-    public class ContractService : IContractService
+public class ContractService : IContractService
 {
         //private readonly List<ContractDTO> _contractsInMemory;
         private readonly ApplicationDBContext _dbContext;
@@ -18,14 +19,15 @@ using Google.Api;
         private const string ContractsCacheKey = "ContractsInMemory";
         private readonly INotificationService _notificationService;
         private readonly IMailServiceSystem _mailService;
-
-        public ContractService(ApplicationDBContext dbContext, IMemoryCache memoryCache, INotificationService notificationService, IMailServiceSystem mailService)
+        private readonly ICCCDService _ccCDService;
+        public ContractService(ApplicationDBContext dbContext, IMemoryCache memoryCache, INotificationService notificationService, IMailServiceSystem mailService, ICCCDService cCCDService)
         {
             //_contractsInMemory = new List<ContractDTO>();
             _dbContext = dbContext;
             _memoryCache = memoryCache;
             _notificationService = notificationService;
             _mailService = mailService;
+            _ccCDService = cCCDService;
         }
 
         public async Task<ContractDTO> CreateContract(int travelerId, int localId, string tourId,string Location, string details, string status, string travelerSignature, string localSignature)
@@ -62,7 +64,41 @@ using Google.Api;
             //return newContract;
         }
 
-        public ContractDTO FindContractInMemory(int travelerId, int localId, string tourId)
+    public async Task<ContractDTO> CreateContractPassLocal(int travelerId, int localId, string tourId, string Location, string details, string status, string travelerSignature)
+    {
+        var newContract = new ContractDTO
+        {
+            TravelerId = travelerId,
+            LocalId = localId,
+            TourId = tourId,
+            Location = Location,
+            Details = details,
+            Status = status,
+            TravelerSignature = HashWithSecretKey(travelerSignature),
+            LocalSignature = await _ccCDService.GetPrivateSignatureAsync(localId),
+            CreatedAt = GetTimeZone.GetVNTimeZoneNow()
+        };
+        // Lấy danh sách hợp đồng từ bộ nhớ cache
+        var contractsInMemory = _memoryCache.GetOrCreate(ContractsCacheKey, entry =>
+        {
+            entry.SlidingExpiration = TimeSpan.FromHours(1);
+            return new List<ContractDTO>();
+        });
+
+        // Thêm hợp đồng mới vào bộ nhớ
+        contractsInMemory.Add(newContract);
+
+        // Cập nhật lại cache
+        _memoryCache.Set(ContractsCacheKey, contractsInMemory);
+        var traveler = await _dbContext.Users.FindAsync(travelerId);
+        await _notificationService.CreateNotificationFullAsync(localId, $"Hợp đồng của chuyến đi ID:{tourId} của bạn đang được tạo bởi {traveler.FullName}.", travelerId, 5);
+        return newContract;
+
+        //_contractsInMemory.Add(newContract);
+        //return newContract;
+    }
+
+    public ContractDTO FindContractInMemory(int travelerId, int localId, string tourId)
         {
             //return _contractsInMemory.FirstOrDefault(c =>
             //    c.TravelerId == travelerId && c.LocalId == localId && c.TourId == tourId);

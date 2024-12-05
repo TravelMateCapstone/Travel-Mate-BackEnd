@@ -9,5 +9,6 @@ namespace TravelMateAPI.Services.CCCDValid
         Task<bool> IsPublicSignatureVerifiedAsync(int userId);
         Task<VerificationResult> VerifyAllAsync(int userId);
         Task<bool> VerifyDigitalSignatureAsync(int userId, string publicKey);
+        Task<string> GetPrivateSignatureAsync(int userId);
     }
 }

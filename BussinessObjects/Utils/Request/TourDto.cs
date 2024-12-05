@@ -9,6 +9,7 @@ namespace BusinessObjects.Utils.Request
         public CreatorInfo? Creator { get; set; }
         public string TourName { get; set; }
         public string TourDescription { get; set; }
+        public bool IsGlobalContract { get; set; }
         public double? Price { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }

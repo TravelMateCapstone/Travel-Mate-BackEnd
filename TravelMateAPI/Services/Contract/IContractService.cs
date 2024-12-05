@@ -3,6 +3,7 @@
     public interface IContractService
     {
         Task<ContractDTO> CreateContract(int travelerId, int localId, string tourId,string  Location, string details, string status, string travelerSignature, string localSignature);
+        Task<ContractDTO> CreateContractPassLocal(int travelerId, int localId, string tourId, string Location, string details, string status, string travelerSignature);
         ContractDTO FindContractInMemory(int travelerId, int localId, string tourId);
         Task UpdateStatusToCompleted(int travelerId, int localId, string tourId);
         Task UpdateStatusToCancelled(int travelerId, int localId, string tourId);

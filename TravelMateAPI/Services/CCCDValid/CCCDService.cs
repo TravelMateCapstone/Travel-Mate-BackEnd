@@ -99,5 +99,14 @@ using TravelMateAPI.Services.CCCDValid;
             // So sánh mã băm được tính với mã băm đã lưu trong bảng CCCD
             return computedHashString == cccd.PublicSignature;
         }
-    }
+
+        // Kiểm tra chữ ký số đã xác minh
+        public async Task<string> GetPrivateSignatureAsync(int userId)
+        {
+            var cccd = await GetByUserIdAsync(userId);
+            if (cccd == null) return null;
+
+            return cccd.PublicSignature ;
+        }
+}
 //}

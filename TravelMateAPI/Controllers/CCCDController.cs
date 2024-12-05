@@ -266,6 +266,12 @@ namespace TravelMateAPI.Controllers
                 return NotFound(new { Message = "Hãy cập nhật CCCD trước khi tạo chữ ký số" });
             }
 
+            // Kiểm tra nếu người dùng đã có PublicSignature
+            if (!string.IsNullOrEmpty(cccd.PublicSignature))
+            {
+                return BadRequest(new { Message = "Chữ ký của bạn đã được tạo, không thể cập nhật lại." });
+            }
+
             //// Cập nhật chỉ trường imageBack (giữ nguyên các trường khác)
             //cccd.PublicSignature = updatedCCCD.PublicSignature ?? cccd.PublicSignature;
 
