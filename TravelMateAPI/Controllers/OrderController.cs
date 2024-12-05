@@ -26,7 +26,7 @@ namespace TravelMateAPI.Controllers
             _userManager = userManager;
         }
 
-        [HttpPost]
+        [HttpGet]
         public async Task<IActionResult> Create([FromBody] PaymentDto payment)
         {
             var user = await _userManager.GetUserAsync(User);
