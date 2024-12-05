@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.OData;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OData.ModelBuilder;
 using Microsoft.OpenApi.Models;
+using Net.payOS;
 using Repositories;
 using Repositories.Interface;
 using Repository.Interfaces;
@@ -67,6 +68,11 @@ namespace TravelMateAPI
             var firebaseMeasurementId = (await client.GetSecretAsync("FirebaseMeasurementID")).Value.Value;
             var firebaseAdminSdkJsonPath = (await client.GetSecretAsync("FirebaseAdminSdkJsonPath")).Value.Value;
 
+            //get payos key
+            var payOSChecksumKey = (await client.GetSecretAsync("PayOSchecksumKey")).Value.Value;
+            var payOSClientId = (await client.GetSecretAsync("PayOSClientId")).Value.Value;
+            var payOSApiKey = (await client.GetSecretAsync("PayOSapiKey")).Value.Value;
+
             // Tạo đối tượng AppSettings
             var appSettings = new AppSettings
             {
@@ -103,7 +109,14 @@ namespace TravelMateAPI
                 }
             };
 
+            var payOS = new PayOS(
+                clientId: payOSClientId,
+                apiKey: payOSApiKey,
+                checksumKey: payOSChecksumKey
+                );
+
             builder.Services.AddSingleton(appSettings);
+            builder.Services.AddSingleton(payOS);
 
             // Cấu hình Identity
             builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
