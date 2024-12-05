@@ -109,14 +109,12 @@ namespace TravelMateAPI
                 }
             };
 
-            var payOS = new PayOS(
-                clientId: payOSClientId,
-                apiKey: payOSApiKey,
-                checksumKey: payOSChecksumKey
-                );
 
             builder.Services.AddSingleton(appSettings);
-            builder.Services.AddSingleton(payOS);
+            builder.Services.AddSingleton<PayOS>(provider =>
+            {
+                return new PayOS(payOSClientId, payOSApiKey, payOSChecksumKey);
+            });
 
             // Cấu hình Identity
             builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
