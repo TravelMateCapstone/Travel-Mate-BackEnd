@@ -74,6 +74,7 @@ namespace Repositories
             existingTour.CostDetails = updatedTour.CostDetails ?? existingTour.CostDetails;
             existingTour.AdditionalInfo = updatedTour.AdditionalInfo ?? existingTour.AdditionalInfo;
             existingTour.Reviews = updatedTour.Reviews ?? existingTour.Reviews;
+            existingTour.IsGlobalContract = updatedTour.IsGlobalContract;
             existingTour.UpdatedAt = GetTimeZone.GetVNTimeZoneNow();
 
             await _tourDAO.UpdateTour(id, existingTour);
