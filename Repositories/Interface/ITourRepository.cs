@@ -24,5 +24,9 @@ namespace Repositories.Interface
         Task CancelTour(string tourId);
         Task<ApplicationUser> GetUserInfo(int userId);
         Task<bool> DoesParticipantExist(string tourId, int userId);
+
+        Task UpdatePaymentStatus(long orderCode);
+
+        Task UpdateOrderCode(string tourId, int travelerId, long orderCode);
     }
 }

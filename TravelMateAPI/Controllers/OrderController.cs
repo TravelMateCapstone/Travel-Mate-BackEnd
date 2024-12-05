@@ -45,12 +45,42 @@ namespace TravelMateAPI.Controllers
                  //items: [new("Mì tôm hảo hảo ly", 1, 2000)],
                  items: null,
                 returnUrl: domain + "contract/ongoing",
-                cancelUrl: domain + "contract/cancel"
+                cancelUrl: domain + "contract/payment-failed"
             );
             var response = await _payOS.createPaymentLink(paymentLinkRequest);
 
+            //add order code vao participant
+            await _tourRepository.UpdateOrderCode(payment.tourId, payment.travelerId, response.orderCode);
+
             //update payment status of traveler if success
             return Redirect(response.checkoutUrl);
+        }
+
+        [HttpPost("webhook")]
+        public async Task<IActionResult> ReceivePaymentNotification([FromBody] WebhookType data)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            // Xử lý dữ liệu từ webhook
+            if (data != null)
+            {
+                if (data.success)
+                {
+                    // lấy participant có order code gửi từ data => update
+                    await _tourRepository.UpdatePaymentStatus(data.data.orderCode);
+                }
+                else
+                {
+                    // Xử lý lỗi
+                    return BadRequest("Cập nhật không thành công");
+                }
+            }
+
+            return Ok("Cập nhật trạng thái thanh toán thành công");
         }
 
     }
