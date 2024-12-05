@@ -5,7 +5,6 @@ using BusinessObjects.Configuration;
 using BusinessObjects.Entities;
 using BusinessObjects.Utils.Request;
 using DataAccess;
-using Google.Api;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.OData;
@@ -20,7 +19,6 @@ using TravelMateAPI.Hubs;
 using TravelMateAPI.Middleware;
 using TravelMateAPI.Models;
 using TravelMateAPI.Services.CCCDValid;
-using TravelMateAPI.Services.Contract;
 using TravelMateAPI.Services.Email;
 using TravelMateAPI.Services.FilterLocal;
 using TravelMateAPI.Services.FindLocal;
@@ -102,6 +100,7 @@ namespace TravelMateAPI
                     ClientSecret = googleClientSecret
                 }
             };
+
 
             builder.Services.AddSingleton(appSettings);
 
@@ -260,6 +259,8 @@ namespace TravelMateAPI
             builder.Services.AddScoped<ITravelerFormRepository, TravelerFormRepository>();
             builder.Services.AddScoped<TourDAO>();
             builder.Services.AddScoped<ITourRepository, TourRepository>();
+            builder.Services.AddHttpClient();
+
 
             builder.Services.AddControllers().AddJsonOptions(options =>
             {

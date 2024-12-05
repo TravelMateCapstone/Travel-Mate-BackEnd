@@ -32,8 +32,7 @@ namespace TravelMateAPI.Controllers
             );
             var response = await payOS.createPaymentLink(paymentLinkRequest);
 
-            Response.Headers.Append("Location", response.checkoutUrl);
-            return new StatusCodeResult(303);
+            return Redirect(response.checkoutUrl);
         }
 
     }
