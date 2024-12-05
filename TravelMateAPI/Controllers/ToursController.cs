@@ -46,8 +46,8 @@ namespace TravelMate.Controllers
         }
 
         //get all tour of a local
-        [HttpGet("local")]
-        public async Task<ActionResult<IEnumerable<TourDto>>> GetAllToursOfLocal()
+        [HttpGet("local/{userId}")]
+        public async Task<ActionResult<IEnumerable<TourDto>>> GetAllToursOfLocal(int userId)
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
@@ -55,7 +55,7 @@ namespace TravelMate.Controllers
                 throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
-            var tours = await _tourRepository.GetAllToursOfLocal(user.Id);
+            var tours = await _tourRepository.GetAllToursOfLocal(userId);
 
             var tourDto = _mapper.Map<IEnumerable<TourDto>>(tours);
 
