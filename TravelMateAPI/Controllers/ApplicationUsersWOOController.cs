@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Repositories.Interface;
 using System.Security.Claims;
+using TravelMateAPI.Services.FilterLocal;
 
 namespace TravelMateAPI.Controllers
 {
@@ -12,10 +13,12 @@ namespace TravelMateAPI.Controllers
     public class ApplicationUsersWOOController : ControllerBase
     {
         private readonly IApplicationUserRepository _userRepository;
+        private readonly FilterUserService _filterService;
 
-        public ApplicationUsersWOOController(IApplicationUserRepository userRepository)
+        public ApplicationUsersWOOController(IApplicationUserRepository userRepository, FilterUserService filterService)
         {
             _userRepository = userRepository;
+            _filterService = filterService;
         }
         // Phương thức để lấy UserId từ JWT token
         private int GetUserId()
@@ -27,6 +30,13 @@ namespace TravelMateAPI.Controllers
         public async Task<IActionResult> GetUsersWithProfilesAndRoles()
         {
             var users = await _userRepository.GetAllUsersAsync();
+            return Ok(users);
+        }
+
+        [HttpGet("/GetUsersWithDetail-andTours")]
+        public async Task<IActionResult> GetUsersWithDetailAndTour()
+        {
+            var users = await _filterService.GetAllUsersWithDetailsAsync();
             return Ok(users);
         }
         [HttpDelete("{id}")]

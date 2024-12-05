@@ -22,7 +22,7 @@ namespace TravelMateAPI.Services.FindLocal
             var normalizedQuery = RemoveDiacritics(query.Trim().ToLower());
             // Tính toán độ tương tự giữa query và từng LocationName
             var results = locations
-                .Where(l => Fuzz.Ratio(normalizedQuery, RemoveDiacritics(l.LocationName.ToLower())) > 65) // Ngưỡng tương tự 70%
+                .Where(l => Fuzz.Ratio(normalizedQuery, RemoveDiacritics(l.LocationName.ToLower())) > 70) // Ngưỡng tương tự 70%
                 .Select(l => new LocationDTO
                 {
                     LocationId = l.LocationId,

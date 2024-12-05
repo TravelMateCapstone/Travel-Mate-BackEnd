@@ -68,6 +68,29 @@ namespace DataAccess
             }).ToList();
         }
 
+        public async Task<List<TourDTO>> GetAllTourBrief()
+        {
+            var tours = await _mongoContext
+                .Find(t => t.ApprovalStatus == ApprovalStatus.Accepted )
+            .ToListAsync();
+
+            return tours.Select(t => new TourDTO
+            {
+                TourId = t.TourId,
+                LocalId = t.Creator.Id,
+                RegisteredGuests = t.Participants.Count,
+                MaxGuests = t.MaxGuests,
+                Location = t.Location,
+                StartDate = t.StartDate,
+                EndDate = t.EndDate,
+                NumberOfDays = (t.EndDate - t.StartDate).Days,
+                NumberOfNights = (t.EndDate - t.StartDate).Days - 1,
+                TourName = t.TourName,
+                Price = t.Price,
+                TourImage = t.TourImage
+            }).ToList();
+        }
+
         public IEnumerable<Tour> GetAllToursOfLocal(int userId)
         {
             return _mongoContext.Find(t => t.Creator.Id == userId).ToList();

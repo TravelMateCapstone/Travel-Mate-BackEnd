@@ -16,6 +16,7 @@ using Repositories;
 using Repositories.Interface;
 using Repository.Interfaces;
 using System.Text;
+using System.Text.Json.Serialization;
 using TravelMateAPI.Hubs;
 using TravelMateAPI.Middleware;
 using TravelMateAPI.Models;
@@ -23,10 +24,12 @@ using TravelMateAPI.Services.CCCDValid;
 using TravelMateAPI.Services.Contract;
 using TravelMateAPI.Services.Email;
 using TravelMateAPI.Services.FilterLocal;
+using TravelMateAPI.Services.FilterTour;
 using TravelMateAPI.Services.FindLocal;
 using TravelMateAPI.Services.Hubs;
 using TravelMateAPI.Services.Notification;
 using TravelMateAPI.Services.Notification.Event;
+using TravelMateAPI.Services.Role;
 
 namespace TravelMateAPI
 {
@@ -182,6 +185,11 @@ namespace TravelMateAPI
             userSet.EntityType.CollectionProperty(u => u.ActivityIds);
             userSet.EntityType.CollectionProperty(u => u.Tours);
             //userSet.EntityType.Property(u => u.SimilarityScore);
+            
+
+            var tourSet = modelBuilder.EntitySet<TourWithUserDetailsDTO>("FilterTours");
+            tourSet.EntityType.HasKey(t => t.TourId);
+            tourSet.EntityType.ComplexProperty(t => t.User);// Kích hoạt expand cho User
 
             modelBuilder.EntitySet<Profile>("Profiles");
             modelBuilder.EntitySet<Friendship>("Friends");
@@ -213,8 +221,10 @@ namespace TravelMateAPI
             builder.Services.AddScoped<CCCDDAO>();
             builder.Services.AddScoped<ICCCDRepository, CCCDRepository>();
             builder.Services.AddScoped<ICCCDService, CCCDService>();
+            builder.Services.AddScoped<IUserRoleService,UserRoleService>();
             builder.Services.AddScoped<FilterUserService>();
             builder.Services.AddScoped<IContractService, ContractService>();
+            builder.Services.AddScoped<FilterTourService>();
             builder.Services.AddScoped<LocationService>();
             builder.Services.AddScoped<IFindLocalService, FindLocalService>();
             builder.Services.AddScoped<ISearchLocationService, SearchLocationService>();
@@ -266,6 +276,7 @@ namespace TravelMateAPI
                 options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
                 //options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
                 options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.Never;
+                options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
             });
 
 
