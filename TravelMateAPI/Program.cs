@@ -108,6 +108,7 @@ namespace TravelMateAPI
                 }
             };
 
+
             builder.Services.AddSingleton(appSettings);
             builder.Services.AddSingleton<PayOS>(provider =>
             {
@@ -269,6 +270,8 @@ namespace TravelMateAPI
             builder.Services.AddScoped<ITravelerFormRepository, TravelerFormRepository>();
             builder.Services.AddScoped<TourDAO>();
             builder.Services.AddScoped<ITourRepository, TourRepository>();
+            builder.Services.AddHttpClient();
+
 
             builder.Services.AddControllers().AddJsonOptions(options =>
             {
