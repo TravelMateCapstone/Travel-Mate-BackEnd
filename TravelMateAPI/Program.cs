@@ -5,28 +5,30 @@ using BusinessObjects.Configuration;
 using BusinessObjects.Entities;
 using BusinessObjects.Utils.Request;
 using DataAccess;
-using Google.Api;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.OData;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OData.ModelBuilder;
 using Microsoft.OpenApi.Models;
+using Net.payOS;
 using Repositories;
 using Repositories.Interface;
 using Repository.Interfaces;
 using System.Text;
+using System.Text.Json.Serialization;
 using TravelMateAPI.Hubs;
 using TravelMateAPI.Middleware;
 using TravelMateAPI.Models;
 using TravelMateAPI.Services.CCCDValid;
-using TravelMateAPI.Services.Contract;
 using TravelMateAPI.Services.Email;
 using TravelMateAPI.Services.FilterLocal;
+using TravelMateAPI.Services.FilterTour;
 using TravelMateAPI.Services.FindLocal;
 using TravelMateAPI.Services.Hubs;
 using TravelMateAPI.Services.Notification;
 using TravelMateAPI.Services.Notification.Event;
+using TravelMateAPI.Services.Role;
 
 namespace TravelMateAPI
 {
@@ -67,6 +69,12 @@ namespace TravelMateAPI
             var firebaseMeasurementId = (await client.GetSecretAsync("FirebaseMeasurementID")).Value.Value;
             var firebaseAdminSdkJsonPath = (await client.GetSecretAsync("FirebaseAdminSdkJsonPath")).Value.Value;
 
+
+            //get payos key
+            var payOSChecksumKey = (await client.GetSecretAsync("PayOSchecksumKey")).Value.Value;
+            var payOSClientId = (await client.GetSecretAsync("PayOSClientId")).Value.Value;
+            var payOSApiKey = (await client.GetSecretAsync("PayOSapiKey")).Value.Value;
+
             // Tạo đối tượng AppSettings
             var appSettings = new AppSettings
             {
@@ -103,7 +111,12 @@ namespace TravelMateAPI
                 }
             };
 
+
             builder.Services.AddSingleton(appSettings);
+            builder.Services.AddSingleton<PayOS>(provider =>
+            {
+                return new PayOS(payOSClientId, payOSApiKey, payOSChecksumKey);
+            });
 
             // Cấu hình Identity
             builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
@@ -182,6 +195,11 @@ namespace TravelMateAPI
             userSet.EntityType.CollectionProperty(u => u.ActivityIds);
             userSet.EntityType.CollectionProperty(u => u.Tours);
             //userSet.EntityType.Property(u => u.SimilarityScore);
+            
+
+            var tourSet = modelBuilder.EntitySet<TourWithUserDetailsDTO>("FilterTours");
+            tourSet.EntityType.HasKey(t => t.TourId);
+            tourSet.EntityType.ComplexProperty(t => t.User);// Kích hoạt expand cho User
 
             modelBuilder.EntitySet<Profile>("Profiles");
             modelBuilder.EntitySet<Friendship>("Friends");
@@ -213,8 +231,10 @@ namespace TravelMateAPI
             builder.Services.AddScoped<CCCDDAO>();
             builder.Services.AddScoped<ICCCDRepository, CCCDRepository>();
             builder.Services.AddScoped<ICCCDService, CCCDService>();
+            builder.Services.AddScoped<IUserRoleService,UserRoleService>();
             builder.Services.AddScoped<FilterUserService>();
             builder.Services.AddScoped<IContractService, ContractService>();
+            builder.Services.AddScoped<FilterTourService>();
             builder.Services.AddScoped<LocationService>();
             builder.Services.AddScoped<IFindLocalService, FindLocalService>();
             builder.Services.AddScoped<ISearchLocationService, SearchLocationService>();
@@ -260,12 +280,15 @@ namespace TravelMateAPI
             builder.Services.AddScoped<ITravelerFormRepository, TravelerFormRepository>();
             builder.Services.AddScoped<TourDAO>();
             builder.Services.AddScoped<ITourRepository, TourRepository>();
+            builder.Services.AddHttpClient();
+
 
             builder.Services.AddControllers().AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
                 //options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
                 options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.Never;
+                options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
             });
 
 

@@ -243,5 +243,66 @@ namespace TravelMateAPI.Services.FilterLocal
             // Tính số lượng phần tử chung giữa hai danh sách
             return userActivityIds.Intersect(targetActivityIds).Count();
         }
+
+
+        public async Task<List<UserWithDetailNoToursDTO>> GetAllUsersWithDetailsByIdsAsync(List<int> userIds) //List<int> targetActivityIds, int minAge, int maxAge, string sex
+        {
+            var users = await _context.Users
+            .Include(u => u.Profiles)
+            .Include(u => u.CCCDs)
+            .Where(u => userIds.Contains(u.Id))
+            .ToListAsync();
+
+            // Lấy danh sách roles cho từng user
+            var rolesDictionary = new Dictionary<int, IList<string>>();
+            foreach (var user in users)
+            {
+                var userRoles = await _userManager.GetRolesAsync(user);
+                rolesDictionary[user.Id] = userRoles;
+            }
+
+            // Kết hợp thông tin từ các nguồn khác
+            var result = new List<UserWithDetailNoToursDTO>();
+
+            foreach (var user in users)
+            {
+                // Lấy Star và CountConnect
+                var star = await _tourRepository.GetUserAverageStar(user.Id);
+                var countConnect = await _contractService.GetContractCountAsLocalAsync(user.Id);
+
+                // Lấy ActivityIds và LocationIds
+                var userActivities = await GetUserActivityIdsAsync(user.Id);
+                var userLocations = await GetUserLocationIdsAsync(user.Id);
+
+                // Tạo DTO
+                var userDto = new UserWithDetailNoToursDTO
+                {
+                    UserId = user.Id,
+                    FullName = user.FullName,
+                    Email = user.Email,
+                    LocationIds = userLocations.ToList(),
+                    Roles = rolesDictionary[user.Id].ToList(),
+                    Star = star,
+                    CountConnect = countConnect,
+                    Profile = user.Profiles == null ? null : new ProfileDTO2
+                    {
+                        ProfileId = user.Profiles.ProfileId,
+                        Address = user.Profiles.Address,
+                        ImageUser = user.Profiles.ImageUser
+                    },
+                    CCCD = user.CCCDs == null ? null : new CCCDDTO2
+                    {
+                        Dob = user.CCCDs.dob,
+                        Sex = user.CCCDs.sex,
+                        Age = CalculateAge(user.CCCDs.dob) // Tính tuổi
+                    },
+                    ActivityIds = userActivities.ToList()
+                };
+
+                result.Add(userDto);
+            }
+
+            return result;
+        }
     }
 }

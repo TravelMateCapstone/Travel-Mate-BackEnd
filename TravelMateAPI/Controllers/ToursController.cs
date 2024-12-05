@@ -37,7 +37,7 @@ namespace TravelMate.Controllers
             return Ok(tourDto);
         }
 
-        [HttpGet("tourParticipants")]
+        [HttpGet("tourParticipants/{tourId}")]
         public async Task<ActionResult<IEnumerable<ParticipantDto>>> GetListParticipantsAsync(string tourId)
         {
             var listParticipants = await _tourRepository.GetListParticipantsAsync(tourId);
@@ -46,8 +46,8 @@ namespace TravelMate.Controllers
         }
 
         //get all tour of a local
-        [HttpGet("local")]
-        public async Task<ActionResult<IEnumerable<TourDto>>> GetAllToursOfLocal()
+        [HttpGet("local/{userId}")]
+        public async Task<ActionResult<IEnumerable<TourDto>>> GetAllToursOfLocal(int userId)
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
@@ -55,7 +55,7 @@ namespace TravelMate.Controllers
                 throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
-            var tours = await _tourRepository.GetAllToursOfLocal(user.Id);
+            var tours = await _tourRepository.GetAllToursOfLocal(userId);
 
             var tourDto = _mapper.Map<IEnumerable<TourDto>>(tours);
 
@@ -226,7 +226,7 @@ namespace TravelMate.Controllers
             if (existingTour == null)
                 return NotFound();
 
-            if (existingTour.ApprovalStatus != null)
+            if (existingTour.ApprovalStatus != ApprovalStatus.Pending)
                 return BadRequest("You have processed this tour request");
 
             //neu da co trang thai roi thi ko dc accept nua
@@ -243,7 +243,7 @@ namespace TravelMate.Controllers
                 return NotFound();
 
             //neu da co trang thai roi thi ko dc accept nua
-            if (existingTour.ApprovalStatus != null)
+            if (existingTour.ApprovalStatus != ApprovalStatus.Pending)
                 return BadRequest("You have processed this tour request");
 
             await _tourRepository.RejectTour(tourId);
