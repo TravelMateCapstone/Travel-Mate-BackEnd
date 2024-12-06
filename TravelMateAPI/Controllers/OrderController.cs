@@ -28,11 +28,6 @@ namespace TravelMateAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> Create([FromQuery] string tourName, [FromQuery] string tourId, [FromQuery] int travelerId, [FromQuery] int Amount)
         {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-            {
-                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-            }
 
             var domain = "https://travelmatefe.netlify.app/";
 
