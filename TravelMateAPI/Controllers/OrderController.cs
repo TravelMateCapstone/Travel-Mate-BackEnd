@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using BusinessObjects.Entities;
-using BusinessObjects.Utils.Request;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Net.payOS;
@@ -26,22 +25,17 @@ namespace TravelMateAPI.Controllers
             _userManager = userManager;
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Create([FromBody] PaymentDto payment)
+        [HttpGet]
+        public async Task<IActionResult> Create([FromQuery] string tourName, [FromQuery] string tourId, [FromQuery] int travelerId, [FromQuery] int Amount)
         {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-            {
-                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-            }
 
             var domain = "https://travelmatefe.netlify.app/";
 
             var paymentLinkRequest = new PaymentData(
                 orderCode: int.Parse(DateTimeOffset.Now.ToString("ffffff")),
-                amount: payment.Amount,
+                amount: Amount,
                 //ten chuyen di
-                description: payment.TourName,
+                description: tourName,
                  //items: [new("Mì tôm hảo hảo ly", 1, 2000)],
                  items: null,
                 returnUrl: domain + "contract/ongoing",
@@ -50,7 +44,7 @@ namespace TravelMateAPI.Controllers
             var response = await _payOS.createPaymentLink(paymentLinkRequest);
 
             //add order code vao participant
-            await _tourRepository.UpdateOrderCode(payment.tourId, payment.travelerId, response.orderCode);
+            await _tourRepository.UpdateOrderCode(tourId, travelerId, response.orderCode);
 
             //update payment status of traveler if success
             return Redirect(response.checkoutUrl);
