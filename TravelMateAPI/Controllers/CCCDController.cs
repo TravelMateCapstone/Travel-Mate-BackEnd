@@ -267,10 +267,10 @@ namespace TravelMateAPI.Controllers
             }
 
             // Kiểm tra nếu người dùng đã có PublicSignature
-            if (!string.IsNullOrEmpty(cccd.PublicSignature))
-            {
-                return BadRequest(new { Message = "Chữ ký của bạn đã được tạo, không thể cập nhật lại." });
-            }
+            //if (!string.IsNullOrEmpty(cccd.PublicSignature))
+            //{
+            //    return BadRequest(new { Message = "Chữ ký của bạn đã được tạo, không thể cập nhật lại." });
+            //}
 
             //// Cập nhật chỉ trường imageBack (giữ nguyên các trường khác)
             //cccd.PublicSignature = updatedCCCD.PublicSignature ?? cccd.PublicSignature;

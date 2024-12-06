@@ -8,6 +8,7 @@ using TravelMateAPI.Services.Notification;
 using TravelMateAPI.Services.Email;
 using Google.Api;
 using TravelMateAPI.Services.CCCDValid;
+using TravelMateAPI.Services.Role;
 
 //namespace TravelMateAPI.Services.Contract
 //{
@@ -20,7 +21,8 @@ public class ContractService : IContractService
         private readonly INotificationService _notificationService;
         private readonly IMailServiceSystem _mailService;
         private readonly ICCCDService _ccCDService;
-        public ContractService(ApplicationDBContext dbContext, IMemoryCache memoryCache, INotificationService notificationService, IMailServiceSystem mailService, ICCCDService cCCDService)
+        private readonly IUserRoleService _userRoleService;
+        public ContractService(ApplicationDBContext dbContext, IMemoryCache memoryCache, INotificationService notificationService, IMailServiceSystem mailService, ICCCDService cCCDService,IUserRoleService userRoleService)
         {
             //_contractsInMemory = new List<ContractDTO>();
             _dbContext = dbContext;
@@ -28,10 +30,28 @@ public class ContractService : IContractService
             _notificationService = notificationService;
             _mailService = mailService;
             _ccCDService = cCCDService;
+            _userRoleService = userRoleService;
         }
 
         public async Task<ContractDTO> CreateContract(int travelerId, int localId, string tourId,string Location, string details, string status, string travelerSignature, string localSignature)
         {
+            // Kiểm tra xem travelerId có phải là Local không
+            var travelerRole = await _userRoleService.GetUserRoleAsync(travelerId);
+            if (travelerRole == "Local")
+            {
+                throw new InvalidOperationException("Bạn không được đi du lịch trong thời gian làm người địa phương.");
+            }
+
+
+            // Kiểm tra xem hợp đồng đã tồn tại trong bảng BlockContracts chưa
+            var existingContract = await _dbContext.BlockContracts
+                .FirstOrDefaultAsync(c => c.TravelerId == travelerId && c.LocalId == localId && c.TourId == tourId);
+
+            if (existingContract != null)
+            {
+                throw new InvalidOperationException("Hợp đồng với TravelerId, LocalId và TourId này đã tồn tại.");
+            }
+
             var newContract = new ContractDTO
             {
                 TravelerId = travelerId,
@@ -64,52 +84,69 @@ public class ContractService : IContractService
             //return newContract;
         }
 
-    public async Task<ContractDTO> CreateContractPassLocal(int travelerId, int localId, string tourId, string Location, string details, string status, string travelerSignature)
-    {
-        var newContract = new ContractDTO
+        public async Task<ContractDTO> CreateContractPassLocal(int travelerId, int localId, string tourId, string Location, string details, string status, string travelerSignature)
         {
-            TravelerId = travelerId,
-            LocalId = localId,
-            TourId = tourId,
-            Location = Location,
-            Details = details,
-            Status = status,
-            TravelerSignature = HashWithSecretKey(travelerSignature),
-            LocalSignature = await _ccCDService.GetPrivateSignatureAsync(localId),
-            CreatedAt = GetTimeZone.GetVNTimeZoneNow()
-        };
-        // Lấy danh sách hợp đồng từ bộ nhớ cache
-        var contractsInMemory = _memoryCache.GetOrCreate(ContractsCacheKey, entry =>
-        {
-            entry.SlidingExpiration = TimeSpan.FromHours(1);
-            return new List<ContractDTO>();
-        });
-
-        // Thêm hợp đồng mới vào bộ nhớ
-        contractsInMemory.Add(newContract);
-
-        // Cập nhật lại cache
-        _memoryCache.Set(ContractsCacheKey, contractsInMemory);
-        var traveler = await _dbContext.Users.FindAsync(travelerId);
-        await _notificationService.CreateNotificationFullAsync(localId, $"Hợp đồng của chuyến đi ID:{tourId} của bạn đang được tạo bởi {traveler.FullName}.", travelerId, 5);
-        return newContract;
-
-        //_contractsInMemory.Add(newContract);
-        //return newContract;
-    }
-
-    public ContractDTO FindContractInMemory(int travelerId, int localId, string tourId)
-        {
-            //return _contractsInMemory.FirstOrDefault(c =>
-            //    c.TravelerId == travelerId && c.LocalId == localId && c.TourId == tourId);
-            if (_memoryCache.TryGetValue(ContractsCacheKey, out List<ContractDTO> contractsInMemory))
+            // Kiểm tra xem travelerId có phải là Local không
+            var travelerRole = await _userRoleService.GetUserRoleAsync(travelerId);
+            if (travelerRole == "Local")
             {
-                return contractsInMemory.FirstOrDefault(c =>
-                    c.TravelerId == travelerId && c.LocalId == localId && c.TourId == tourId);
+                throw new InvalidOperationException("Bạn không được đi du lịch trong thời gian làm người địa phương.");
             }
 
-            return null;
+            // Kiểm tra xem hợp đồng đã tồn tại trong bảng BlockContracts chưa
+            var existingContract = await _dbContext.BlockContracts
+                .FirstOrDefaultAsync(c => c.TravelerId == travelerId && c.LocalId == localId && c.TourId == tourId);
+
+            if (existingContract != null)
+            {
+                throw new InvalidOperationException("Hợp đồng với TravelerId, LocalId và TourId này đã tồn tại.");
+            }
+
+
+            var newContract = new ContractDTO
+            {
+                TravelerId = travelerId,
+                LocalId = localId,
+                TourId = tourId,
+                Location = Location,
+                Details = details,
+                Status = status,
+                TravelerSignature = HashWithSecretKey(travelerSignature),
+                LocalSignature = await _ccCDService.GetPrivateSignatureAsync(localId),
+                CreatedAt = GetTimeZone.GetVNTimeZoneNow()
+            };
+            // Lấy danh sách hợp đồng từ bộ nhớ cache
+            var contractsInMemory = _memoryCache.GetOrCreate(ContractsCacheKey, entry =>
+            {
+                entry.SlidingExpiration = TimeSpan.FromHours(1);
+                return new List<ContractDTO>();
+            });
+
+            // Thêm hợp đồng mới vào bộ nhớ
+            contractsInMemory.Add(newContract);
+
+            // Cập nhật lại cache
+            _memoryCache.Set(ContractsCacheKey, contractsInMemory);
+            var traveler = await _dbContext.Users.FindAsync(travelerId);
+            await _notificationService.CreateNotificationFullAsync(localId, $"Hợp đồng của chuyến đi ID:{tourId} của bạn đang được tạo bởi {traveler.FullName}.", travelerId, 5);
+            return newContract;
+
+            //_contractsInMemory.Add(newContract);
+            //return newContract;
         }
+
+        public ContractDTO FindContractInMemory(int travelerId, int localId, string tourId)
+            {
+                //return _contractsInMemory.FirstOrDefault(c =>
+                //    c.TravelerId == travelerId && c.LocalId == localId && c.TourId == tourId);
+                if (_memoryCache.TryGetValue(ContractsCacheKey, out List<ContractDTO> contractsInMemory))
+                {
+                    return contractsInMemory.FirstOrDefault(c =>
+                        c.TravelerId == travelerId && c.LocalId == localId && c.TourId == tourId);
+                }
+
+                return null;
+            }
 
         public async Task UpdateStatusToCompleted(int travelerId, int localId, string tourId)
         {
@@ -211,6 +248,9 @@ public class ContractService : IContractService
             // Lưu vào database
             _dbContext.BlockContracts.Add(newContract);
             await _dbContext.SaveChangesAsync();
+            //update role
+            await _userRoleService.UpdateRoleToLocalAsync(newContract.LocalId);
+            await _userRoleService.UpdateRoleToTravelerAsync(newContract.TravelerId);
         }
 
         private string CalculateHash(BlockContract contract)
