@@ -38,7 +38,7 @@ namespace TravelMate.Controllers
         }
 
         [HttpGet("tourParticipants/{tourId}")]
-        public async Task<ActionResult<IEnumerable<ParticipantDto>>> GetListParticipantsAsync(string tourId)
+        public async Task<ActionResult<IEnumerable<Participants>>> GetListParticipantsAsync(string tourId)
         {
             var listParticipants = await _tourRepository.GetListParticipantsAsync(tourId);
 

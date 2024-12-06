@@ -133,13 +133,13 @@ namespace BusinessObjects.Entities
         public long? OrderCode { get; set; }
 
         [BsonElement("paymentStatus")]
-        public bool PaymentStatus { get; set; } = false;
+        public bool? PaymentStatus { get; set; }
 
         [BsonElement("discount")]
-        public double Discount { get; set; } = 0;
+        public double? Discount { get; set; }
 
         [BsonElement("totalAmount")]
-        public decimal TotalAmount { get; set; } = 0;
+        public decimal? TotalAmount { get; set; }
     }
 
 

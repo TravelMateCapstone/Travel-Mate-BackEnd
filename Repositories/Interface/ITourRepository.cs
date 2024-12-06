@@ -25,7 +25,7 @@ namespace Repositories.Interface
         Task<ApplicationUser> GetUserInfo(int userId);
         Task<bool> DoesParticipantExist(string tourId, int userId);
 
-        Task UpdatePaymentStatus(long orderCode);
+        Task UpdatePaymentStatus(long orderCode, int totalAmount);
 
         Task UpdateOrderCode(string tourId, int travelerId, long orderCode);
     }
