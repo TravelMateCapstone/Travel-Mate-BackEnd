@@ -68,28 +68,28 @@ namespace DataAccess
             }).ToList();
         }
 
-        public async Task<List<TourDTO>> GetAllTourBrief()
-        {
-            var tours = await _mongoContext
-                .Find(t => t.ApprovalStatus == ApprovalStatus.Accepted)
-            .ToListAsync();
+        //public async Task<List<TourDTO>> GetAllTourBrief()
+        //{
+        //    var tours = await _mongoContext
+        //        .Find(t => t.ApprovalStatus == ApprovalStatus.Accepted)
+        //    .ToListAsync();
 
-            return tours.Select(t => new TourDTO
-            {
-                TourId = t.TourId,
-                LocalId = t.Creator.Id,
-                RegisteredGuests = t.Participants.Count,
-                MaxGuests = t.MaxGuests,
-                Location = t.Location,
-                StartDate = t.StartDate,
-                EndDate = t.EndDate,
-                NumberOfDays = (t.EndDate - t.StartDate).Days,
-                NumberOfNights = (t.EndDate - t.StartDate).Days - 1,
-                TourName = t.TourName,
-                Price = t.Price,
-                TourImage = t.TourImage
-            }).ToList();
-        }
+        //    return tours.Select(t => new TourDTO
+        //    {
+        //        TourId = t.TourId,
+        //        LocalId = t.Creator.Id,
+        //        RegisteredGuests = t.Participants.Count,
+        //        MaxGuests = t.MaxGuests,
+        //        Location = t.Location,
+        //        StartDate = t.StartDate,
+        //        EndDate = t.EndDate,
+        //        NumberOfDays = (t.EndDate - t.StartDate).Days,
+        //        NumberOfNights = (t.EndDate - t.StartDate).Days - 1,
+        //        TourName = t.TourName,
+        //        Price = t.Price,
+        //        TourImage = t.TourImage
+        //    }).ToList();
+        //}
 
         public IEnumerable<Tour> GetAllToursOfLocal(int userId)
         {
@@ -179,7 +179,7 @@ namespace DataAccess
             var filter = Builders<Tour>.Filter.And(
           Builders<Tour>.Filter.Eq(t => t.TourId, tourId),
           Builders<Tour>.Filter.ElemMatch(t => t.Participants, p => p.ParticipantId == userId)
-      );
+        );
             return await _mongoContext.Find(filter).AnyAsync();
         }
 

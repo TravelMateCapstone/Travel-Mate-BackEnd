@@ -26,7 +26,7 @@ namespace TravelMate.Controllers
         }
 
         // GET: api/tour
-        //GET all tour in db
+        [Authorize(Roles = "admin")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TourDto>>> GetAllTours()
         {
@@ -218,6 +218,7 @@ namespace TravelMate.Controllers
             return Ok("Join tour successful");
         }
 
+        [Authorize(Roles = "admin")]
         // POST: api/tour/accept/{tourId}
         [HttpPost("accept/{tourId}")]
         public async Task<ActionResult> AcceptTour(string tourId)
@@ -229,12 +230,11 @@ namespace TravelMate.Controllers
             if (existingTour.ApprovalStatus != ApprovalStatus.Pending)
                 return BadRequest("You have processed this tour request");
 
-            //neu da co trang thai roi thi ko dc accept nua
-
             await _tourRepository.AcceptTour(tourId);
             return NoContent();
         }
 
+        [Authorize(Roles = "admin")]
         [HttpPost("reject/{tourId}")]
         public async Task<ActionResult> RejectTour(string tourId)
         {
@@ -242,7 +242,6 @@ namespace TravelMate.Controllers
             if (existingTour == null)
                 return NotFound();
 
-            //neu da co trang thai roi thi ko dc accept nua
             if (existingTour.ApprovalStatus != ApprovalStatus.Pending)
                 return BadRequest("You have processed this tour request");
 
@@ -258,6 +257,7 @@ namespace TravelMate.Controllers
             {
                 return BadRequest(ModelState);
             }
+
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
