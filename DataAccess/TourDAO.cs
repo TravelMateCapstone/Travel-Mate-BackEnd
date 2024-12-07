@@ -193,9 +193,17 @@ namespace DataAccess
 
         public async Task<Tour> GetParticipantWithOrderCode(long orderCode)
         {
+
             var filter = Builders<Tour>.Filter.ElemMatch(t => t.Participants, p => p.OrderCode == orderCode);
 
             return await _mongoContext.Find(filter).FirstOrDefaultAsync();
+        }
+
+        public async Task<bool> DidParticipantPay(long orderCode)
+        {
+            var filter = Builders<Tour>.Filter.ElemMatch(t => t.Participants, p => p.OrderCode == orderCode && p.PaymentStatus == true);
+
+            return await _mongoContext.Find(filter).AnyAsync();
         }
 
     }

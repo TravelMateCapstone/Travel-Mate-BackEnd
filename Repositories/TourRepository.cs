@@ -201,5 +201,10 @@ namespace Repositories
 
             await _tourDAO.UpdateTour(tourId, getParticipant);
         }
+
+        public async Task<bool> DidParticipantPay(long orderCode)
+        {
+            return await _tourDAO.DidParticipantPay(orderCode);
+        }
     }
 }

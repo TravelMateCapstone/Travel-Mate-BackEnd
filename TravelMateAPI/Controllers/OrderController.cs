@@ -35,37 +35,25 @@ namespace TravelMateAPI.Controllers
             var paymentLinkRequest = new PaymentData(
                 orderCode: int.Parse(DateTimeOffset.Now.ToString("ffffff")),
                 amount: Amount,
-                //ten chuyen di
                 description: tourName,
-                 //items: [new("Mì tôm hảo hảo ly", 1, 2000)],
                  items: null,
                 returnUrl: domain + "contract/ongoing",
                 cancelUrl: domain + "contract/payment-failed"
             );
             var response = await _payOS.createPaymentLink(paymentLinkRequest);
 
+            //kiem tra da thanh toan roi thi ko duoc thanh toan nua
+            var DidUserPay = await _tourRepository.DidParticipantPay(response.orderCode);
+            if (DidUserPay)
+            {
+                return BadRequest("You already paid for this tour");
+            }
+
             //add order code vao participant
             await _tourRepository.UpdateOrderCode(tourId, travelerId, response.orderCode);
 
             //update payment status of traveler if success
             return Redirect(response.checkoutUrl);
-        }
-
-        [HttpPost("confirm-webhook")]
-        public async Task<IActionResult> ConfirmWebhook(ConfirmWebhook body)
-        {
-            try
-            {
-                await _payOS.confirmWebhook(body.webhook_url);
-                return Ok(new Response(0, "Ok", null));
-            }
-            catch (System.Exception exception)
-            {
-
-                Console.WriteLine(exception);
-                return Ok(new Response(-1, "fail", null));
-            }
-
         }
 
         [HttpPost("webhook")]
@@ -79,6 +67,12 @@ namespace TravelMateAPI.Controllers
                 {
                     return Ok(new Response(0, "Ok", null));
                 }
+
+                if (body.success)
+                {
+                    _tourRepository.UpdatePaymentStatus(data.orderCode, data.amount);
+                }
+
                 return Ok(new Response(0, "Ok", null));
             }
             catch (Exception e)
