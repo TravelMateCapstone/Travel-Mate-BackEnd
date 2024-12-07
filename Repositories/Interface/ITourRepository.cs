@@ -28,5 +28,7 @@ namespace Repositories.Interface
         Task UpdatePaymentStatus(long orderCode, int totalAmount);
 
         Task UpdateOrderCode(string tourId, int travelerId, long orderCode);
+
+        Task<bool> DidParticipantPay(long orderCode);
     }
 }
