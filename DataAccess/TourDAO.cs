@@ -94,18 +94,18 @@ namespace DataAccess
 
         public IEnumerable<Tour> GetAllToursOfLocal(int userId)
         {
-            return _mongoContext.Find(t => t.Creator.Id == userId).ToList();
+            return _mongoContext.Find(t => t.Creator.Id == userId).ToList().OrderByDescending(t => t.CreatedAt);
         }
 
         public async Task<IEnumerable<Tour>> GetToursByStatus(int userId, ApprovalStatus? approvalStatus)
         {
-            return _mongoContext.Find(t => t.Creator.Id == userId && t.ApprovalStatus == approvalStatus).ToList();
+            return _mongoContext.Find(t => t.Creator.Id == userId && t.ApprovalStatus == approvalStatus).ToList().OrderByDescending(t => t.CreatedAt);
         }
 
         // Get all tours
         public IEnumerable<Tour> GetAllTours()
         {
-            return _mongoContext.Find(_ => true).ToList();
+            return _mongoContext.Find(_ => true).ToList().OrderByDescending(t => t.CreatedAt);
         }
 
         // Get a tour by ID
