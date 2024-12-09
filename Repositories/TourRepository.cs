@@ -97,6 +97,22 @@ namespace Repositories
                 existingTour.Participants = new List<Participants>();
 
             await _tourDAO.JoinTour(tourId, newParticipant);
+
+            var getParticipant = await _tourDAO.GetTourById(tourId);
+
+            foreach (var item in getParticipant.Participants)
+            {
+                if (item.ParticipantId == travelerId)
+                {
+                    var user = await _tourDAO.GetUserInfor(item.ParticipantId);
+                    item.FullName = user.FullName;
+                    item.Gender = user.Profiles.Gender;
+                    item.Address = user.Profiles.City;
+                    item.Phone = user.Profiles.Phone;
+                    await _tourDAO.UpdateTour(tourId, getParticipant);
+                    break;
+                }
+            }
         }
 
         public async Task AcceptTour(string tourId)
@@ -147,18 +163,13 @@ namespace Repositories
 
         public async Task<IEnumerable<Participants>> GetListParticipantsAsync(string tourId)
         {
+            //get list participant in tour
             var getListParticipants = await _tourDAO.GetTourById(tourId);
-            var listUser = new List<ApplicationUser>();
-            foreach (var item in getListParticipants.Participants)
-            {
-                var user = await _tourDAO.GetUserInfor(item.ParticipantId);
-                listUser.Add(user);
-            }
 
-            return _mapper.Map<IEnumerable<Participants>>(listUser);
+            return getListParticipants.Participants;
         }
 
-        public async Task UpdatePaymentStatus(long orderCode)
+        public async Task UpdatePaymentStatus(long orderCode, int totalAmount)
         {
             var getParticipant = await _tourDAO.GetParticipantWithOrderCode(orderCode);
 
@@ -167,6 +178,7 @@ namespace Repositories
                 if (item.OrderCode == orderCode)
                 {
                     item.PaymentStatus = true;
+                    item.TotalAmount = totalAmount;
                     break;
                 }
             }
@@ -188,6 +200,11 @@ namespace Repositories
             }
 
             await _tourDAO.UpdateTour(tourId, getParticipant);
+        }
+
+        public async Task<bool> DidParticipantPay(long orderCode)
+        {
+            return await _tourDAO.DidParticipantPay(orderCode);
         }
     }
 }

@@ -1,11 +1,10 @@
-﻿using BusinessObjects.Entities;
-using BusinessObjects;
+﻿using BusinessObjects;
+using BusinessObjects.Entities;
+using BusinessObjects.EnumClass;
 using DataAccess;
 using Microsoft.AspNetCore.Identity;
-using Repositories.Interface;
 using MongoDB.Driver;
-using BusinessObjects.EnumClass;
-using BusinessObjects.Utils.Response;
+using Repositories.Interface;
 using TravelMateAPI.Services.FilterLocal;
 
 namespace TravelMateAPI.Services.FilterTour
@@ -54,6 +53,7 @@ namespace TravelMateAPI.Services.FilterTour
                 Location = t.Location,
                 StartDate = t.StartDate,
                 EndDate = t.EndDate,
+                TourDescription = t.TourDescription,
                 NumberOfDays = (t.EndDate - t.StartDate).Days,
                 NumberOfNights = (t.EndDate - t.StartDate).Days - 1,
                 TourName = t.TourName,
@@ -89,6 +89,7 @@ namespace TravelMateAPI.Services.FilterTour
                 Location = t.Location,
                 StartDate = t.StartDate,
                 EndDate = t.EndDate,
+                TourDescription = t.TourDescription,
                 NumberOfDays = (t.EndDate - t.StartDate).Days,
                 NumberOfNights = (t.EndDate - t.StartDate).Days - 1,
                 TourName = t.TourName,
