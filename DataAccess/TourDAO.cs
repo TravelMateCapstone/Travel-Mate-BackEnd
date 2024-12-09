@@ -60,6 +60,7 @@ namespace DataAccess
                 Location = t.Location,
                 StartDate = t.StartDate,
                 EndDate = t.EndDate,
+                TourDescription = t.TourDescription,
                 NumberOfDays = (t.EndDate - t.StartDate).Days,
                 NumberOfNights = (t.EndDate - t.StartDate).Days - 1,
                 TourName = t.TourName,
