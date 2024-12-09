@@ -7,6 +7,7 @@ namespace BusinessObjects.Utils.Request
         public string TourId { get; set; }
         public CreatorInfo? Creator { get; set; }
         public int RegisteredGuests { get; set; }
+        public string TourDescription { get; set; }
         public int MaxGuests { get; set; }
         public string Location { get; set; }
         public DateTime StartDate { get; set; }

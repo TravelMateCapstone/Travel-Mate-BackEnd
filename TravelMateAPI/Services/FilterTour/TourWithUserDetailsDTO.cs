@@ -1,5 +1,4 @@
-﻿using BusinessObjects.Utils.Response;
-using TravelMateAPI.Services.FilterLocal;
+﻿using TravelMateAPI.Services.FilterLocal;
 
 namespace TravelMateAPI.Services.FilterTour
 {
@@ -12,6 +11,7 @@ namespace TravelMateAPI.Services.FilterTour
         public int MaxGuests { get; set; } // Số lượng khách tối đa
         public string Location { get; set; } // Địa điểm tổ chức tour
         public DateTime StartDate { get; set; } // Ngày bắt đầu
+        public string TourDescription { get; set; }
         public DateTime EndDate { get; set; } // Ngày kết thúc
         public int NumberOfDays { get; set; } // Số ngày của tour
         public int NumberOfNights { get; set; } // Số đêm của tour

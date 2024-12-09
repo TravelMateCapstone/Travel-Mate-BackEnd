@@ -445,6 +445,34 @@ namespace TravelMateAPI.Controllers
                 });
             }
         }
+
+        [HttpGet("checkCompleteCurrent")]
+        public async Task<IActionResult> CheckCompleteCurrentUser()
+        {
+            // Lấy UserId từ token
+            var userId = GetUserId();
+            if (userId == -1)
+            {
+                return Unauthorized("Invalid token or user not found.");
+            }
+
+            try
+            {
+
+                var result = await _checkProfileService.CheckProfileCompletion(userId);
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Success = false,
+                    Message = "Error occurred while checking profile completion.",
+                    Error = ex.Message
+                });
+            }
+        }
     }
 
 }
