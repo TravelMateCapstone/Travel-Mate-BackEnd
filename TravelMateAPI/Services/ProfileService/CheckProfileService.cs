@@ -36,13 +36,15 @@ namespace TravelMateAPI.Services.ProfileService
                 var profile = await _context.Profiles.FirstOrDefaultAsync(p => p.UserId == userId);
                 if (profile != null)
                 {
+                    //// 2 trường description 
+
+                    //!string.IsNullOrEmpty(profile.Description) &&
+                    //!string.IsNullOrEmpty(profile.WhyUseTravelMate) &&
+                    //!string.IsNullOrEmpty(profile.MusicMoviesBooks
                     if (!string.IsNullOrEmpty(profile.Phone) &&
-                        !string.IsNullOrEmpty(profile.Address) &&
-                        !string.IsNullOrEmpty(profile.Description) &&
-                        !string.IsNullOrEmpty(profile.WhyUseTravelMate) &&
-                        !string.IsNullOrEmpty(profile.MusicMoviesBooks))
+                        !string.IsNullOrEmpty(profile.Address))
                     {
-                        totalPercentage += 10;
+                        totalPercentage += 20;
                     }
                     else
                     {
@@ -68,7 +70,7 @@ namespace TravelMateAPI.Services.ProfileService
                         !string.IsNullOrEmpty(userHome.Transportation) &&
                         !string.IsNullOrEmpty(userHome.OverallDescription))
                     {
-                        totalPercentage += 10;
+                        totalPercentage += 5;
                     }
                     else
                     {
@@ -87,7 +89,7 @@ namespace TravelMateAPI.Services.ProfileService
                     if (!string.IsNullOrEmpty(cccd.imageFront) &&
                         !string.IsNullOrEmpty(cccd.imageBack))
                     {
-                        totalPercentage += 10;
+                        totalPercentage += 20;
                     }
                     else
                     {
@@ -96,7 +98,7 @@ namespace TravelMateAPI.Services.ProfileService
 
                     if (!string.IsNullOrEmpty(cccd.PublicSignature))
                     {
-                        totalPercentage += 10;
+                        totalPercentage += 20;
                     }
                     else
                     {
@@ -123,7 +125,7 @@ namespace TravelMateAPI.Services.ProfileService
                 var userLocation = await _context.UserLocations.AnyAsync(ul => ul.UserId == userId);
                 if (userLocation)
                 {
-                    totalPercentage += 10;
+                    totalPercentage += 15;
                 }
                 else
                 {
@@ -134,7 +136,7 @@ namespace TravelMateAPI.Services.ProfileService
                 var userEducation = await _context.UserEducations.AnyAsync(ue => ue.UserId == userId);
                 if (userEducation)
                 {
-                    totalPercentage += 10;
+                    totalPercentage += 5;
                 }
                 else
                 {
@@ -145,7 +147,7 @@ namespace TravelMateAPI.Services.ProfileService
                 var spokenLanguage = await _context.SpokenLanguages.AnyAsync(sl => sl.UserId == userId);
                 if (spokenLanguage)
                 {
-                    totalPercentage += 10;
+                    totalPercentage += 5;
                 }
                 else
                 {
