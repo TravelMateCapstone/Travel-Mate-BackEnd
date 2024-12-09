@@ -1,7 +1,4 @@
-﻿using AutoMapper;
-using BusinessObjects.Entities;
-using BusinessObjects.Utils.Response;
-using Microsoft.AspNetCore.Identity;
+﻿using BusinessObjects.Utils.Response;
 using Microsoft.AspNetCore.Mvc;
 using Net.payOS;
 using Net.payOS.Types;
@@ -15,15 +12,11 @@ namespace TravelMateAPI.Controllers
     {
         private readonly PayOS _payOS;
         private readonly ITourRepository _tourRepository;
-        private readonly IMapper _mapper;
-        private readonly UserManager<ApplicationUser> _userManager;
 
-        public OrderController(PayOS payOS, UserManager<ApplicationUser> userManager, IMapper mapper, ITourRepository tourRepository)
+        public OrderController(PayOS payOS, ITourRepository tourRepository)
         {
             _payOS = payOS;
             _tourRepository = tourRepository;
-            _mapper = mapper;
-            _userManager = userManager;
         }
 
         [HttpGet]
@@ -42,15 +35,13 @@ namespace TravelMateAPI.Controllers
             );
             var response = await _payOS.createPaymentLink(paymentLinkRequest);
 
-            //kiem tra da thanh toan roi thi ko duoc thanh toan nua
+            await _tourRepository.UpdateOrderCode(tourId, travelerId, response.orderCode);
+
             var DidUserPay = await _tourRepository.DidParticipantPay(response.orderCode);
             if (DidUserPay)
             {
                 return BadRequest("You already paid for this tour");
             }
-
-            //add order code vao participant
-            await _tourRepository.UpdateOrderCode(tourId, travelerId, response.orderCode);
 
             //update payment status of traveler if success
             return Redirect(response.checkoutUrl);
