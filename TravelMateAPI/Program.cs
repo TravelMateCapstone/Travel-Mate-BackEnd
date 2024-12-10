@@ -192,7 +192,7 @@ namespace TravelMateAPI
             userSet.EntityType.ComplexProperty(u => u.CCCD);
             //userSet.EntityType.ComplexProperty(u => u.UserActivities);
             userSet.EntityType.CollectionProperty(u => u.ActivityIds);
-            userSet.EntityType.CollectionProperty(u => u.Tours);
+           // userSet.EntityType.CollectionProperty(u => u.Tours);
             //userSet.EntityType.Property(u => u.SimilarityScore);
 
 

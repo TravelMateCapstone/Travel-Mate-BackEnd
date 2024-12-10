@@ -207,5 +207,12 @@ namespace DataAccess
             return await _mongoContext.Find(filter).AnyAsync();
         }
 
+        // Get TourName by TourId
+        public async Task<string> GetTourNameById(string tourId)
+        {
+            var tour = _mongoContext.Find(t => t.TourId == tourId).FirstOrDefault();
+            return tour?.TourName; // Return TourName if the tour exists, otherwise return null
+        }
+
     }
 }

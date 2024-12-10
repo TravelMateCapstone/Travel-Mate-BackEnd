@@ -16,10 +16,10 @@ namespace TravelMateAPI.Services.FilterLocal
         public int CountConnect { get; set; }
         public CCCDDTO CCCD { get; set; }
         //public UserActivitiesDTO UserActivities { get; set; }
-        public List<int> ActivityIds { get; set; }
+        public List<string> ActivityIds { get; set; }
         //public int SimilarityScore { get; set; } // Điểm tương tự
-        public List<int> LocationIds { get; set; }
-        public List<TourDTO> Tours { get; set; } // Danh sách tour
+        public List<string> LocationIds { get; set; }
+        //public List<TourDTO> Tours { get; set; } // Danh sách tour
     }
 
     public class ProfileDTO

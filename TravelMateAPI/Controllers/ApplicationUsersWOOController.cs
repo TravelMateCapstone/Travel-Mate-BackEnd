@@ -1,5 +1,6 @@
 ﻿using BusinessObjects.Utils.Request;
 using DataAccess;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Repositories.Interface;
@@ -8,6 +9,7 @@ using TravelMateAPI.Services.FilterLocal;
 
 namespace TravelMateAPI.Controllers
 {
+    
     [Route("api/[controller]")]
     [ApiController]
     public class ApplicationUsersWOOController : ControllerBase
@@ -26,6 +28,7 @@ namespace TravelMateAPI.Controllers
             var userIdString = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
             return int.TryParse(userIdString, out var userId) ? userId : -1;
         }
+        [Authorize(Roles = "admin")]
         [HttpGet("/GetUsersWithProfilesAndRoles")]
         public async Task<IActionResult> GetUsersWithProfilesAndRoles()
         {
@@ -33,12 +36,21 @@ namespace TravelMateAPI.Controllers
             return Ok(users);
         }
 
-        [HttpGet("/GetUsersWithDetail-andTours")]
-        public async Task<IActionResult> GetUsersWithDetailAndTour()
+        [HttpGet("/GetUsersWithDetail")]
+        public async Task<IActionResult> GetUsersWithDetail()
         {
             var users = await _filterService.GetAllUsersWithDetailsAsync();
             return Ok(users);
         }
+
+        [HttpGet("/GetUsersWithDetail-byRole/{role}")]
+        public async Task<IActionResult> GetUsersWithDetailByRole(string role)
+        {
+            var users = await _filterService.GetAllUsersWithDetailsByRoleAsync(role);
+            return Ok(users);
+        }
+
+        [Authorize(Roles = "admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {
@@ -58,7 +70,7 @@ namespace TravelMateAPI.Controllers
                 Message = $"User with ID {id} has been deleted."
             });
         }
-
+        [Authorize(Roles = "admin")]
         [HttpPut("ban/{id}")]
         public async Task<IActionResult> BanUser(int id)
         {
