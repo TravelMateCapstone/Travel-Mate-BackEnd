@@ -10,5 +10,6 @@
         public string Status { get; set; }
         public ProfileDTO LocalProfile { get; set; }
         public AccountDTO Account { get; set; }
+
     }
 }
