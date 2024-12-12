@@ -120,6 +120,71 @@ namespace TravelMateAPI.Controllers
         }
 
 
+        [HttpGet("contracts-by-traveler/{travelerId}")]
+        public async Task<IActionResult> GetContractsByTravelerAsync(int travelerId)
+        {
+            try
+            {
+                var contracts = await _contractService.GetContractsByTravelerAsync(travelerId);
+
+                if (contracts == null || !contracts.Any())
+                {
+                    return NotFound(new
+                    {
+                        Success = false,
+                        Message = "Không tìm thấy hợp đồng nào của bạn trên vai trò là Khách Du Lịch."
+                    });
+                }
+
+                return Ok(new
+                {
+                    Success = true,
+                    Message = "Lấy danh sách hợp đồng thành công.",
+                    Data = contracts
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Success = false,
+                    Message = $"Đã xảy ra lỗi: {ex.Message}"
+                });
+            }
+        }
+        [HttpGet("contracts-by-local/{localId}")]
+        public async Task<IActionResult> GetContractsByLocalAsync(int localId)
+        {
+            try
+            {
+                var contracts = await _contractService.GetContractsByLocalAsync(localId);
+
+                if (contracts == null || !contracts.Any())
+                {
+                    return NotFound(new
+                    {
+                        Success = false,
+                        Message = "Không tìm thấy hợp đồng nào của bạn trên vai trò là Người địa phương."
+                    });
+                }
+
+                return Ok(new
+                {
+                    Success = true,
+                    Message = "Lấy danh sách hợp đồng thành công.",
+                    Data = contracts
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Success = false,
+                    Message = $"Đã xảy ra lỗi: {ex.Message}"
+                });
+            }
+        }
+
         [HttpPost("update-status-completed")]
         public async Task<IActionResult> UpdateStatusToCompleted(int travelerId, int localId, string tourId)
         {
@@ -204,6 +269,29 @@ namespace TravelMateAPI.Controllers
             catch (Exception ex)
             {
                 return BadRequest(new { Error = ex.Message });
+            }
+        }
+
+        [HttpGet("check-contract-status")]
+        public async Task<IActionResult> CheckContractStatusAsync(int travelerId, string tourId)
+        {
+            try
+            {
+                var status = await _contractService.CheckContractStatusAsync(travelerId, tourId);
+                return Ok(new
+                {
+                    Success = true,
+                    Message = "Trạng thái hợp đồng được lấy thành công.",
+                    Status = status
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Success = false,
+                    Message = ex.Message
+                });
             }
         }
 

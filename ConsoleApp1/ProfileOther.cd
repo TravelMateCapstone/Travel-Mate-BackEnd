@@ -1,0 +1,188 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="BusinessObjects.Entities.University">
+    <Position X="0.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="DataAccess.UniversityDAO">
+    <Position X="4.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="Repositories.UniversityRepository">
+    <Position X="12.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="TravelMateAPI.Controllers.UniversityController">
+    <Position X="16" Y="1.75" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="BusinessObjects.Entities.UserEducation">
+    <Position X="2.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="DataAccess.UserEducationDAO">
+    <Position X="6.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="Repositories.UserEducationRepository">
+    <Position X="14" Y="1.75" Width="1.5" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="TravelMateAPI.Controllers.UserEducationController">
+    <Position X="18" Y="1.75" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="BusinessObjects.Entities.Languages">
+    <Position X="0.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="BusinessObjects.Entities.SpokenLanguages">
+    <Position X="2.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="DataAccess.LanguagesDAO">
+    <Position X="4" Y="4.75" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="DataAccess.SpokenLanguagesDAO">
+    <Position X="6" Y="4.75" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="Repositories.LanguagesRepository">
+    <Position X="12" Y="4.75" Width="1.5" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Repositories.SpokenLanguagesRepository">
+    <Position X="14" Y="4.75" Width="1.5" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="TravelMateAPI.Controllers.LanguagesController">
+    <Position X="16" Y="4.75" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="TravelMateAPI.Controllers.SpokenLanguagesController">
+    <Position X="18" Y="4.75" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="BusinessObjects.Entities.Activity">
+    <Position X="0.5" Y="7.5" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="BusinessObjects.Entities.UserActivity">
+    <Position X="2.25" Y="7.5" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="BusinessObjects.Utils.Response.UserActivityDTO">
+    <Position X="4" Y="7.5" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="DataAccess.ActivitiesDAO">
+    <Position X="5.75" Y="7.5" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="DataAccess.UserActivitiesDAO">
+    <Position X="7.5" Y="7.5" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="Repositories.ActivityRepository">
+    <Position X="12.75" Y="7.5" Width="1.5" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Repositories.UserActivitiesRepository">
+    <Position X="14.5" Y="7.5" Width="1.5" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="TravelMateAPI.Controllers.ActivityController">
+    <Position X="16.25" Y="7.75" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="TravelMateAPI.Controllers.UserActivitiesController">
+    <Position X="18" Y="7.75" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="TravelMateAPI.Controllers.UserActivitiesWOOController">
+    <Position X="19.75" Y="7.75" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="BusinessObjects.Entities.Location">
+    <Position X="0.5" Y="10.25" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="BusinessObjects.Entities.UserLocation">
+    <Position X="2.25" Y="10.25" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="BusinessObjects.Utils.Response.UserLocationDTO">
+    <Position X="4.25" Y="10.25" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="DataAccess.LocationsDAO">
+    <Position X="6" Y="10.25" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="DataAccess.UserLocationsDAO">
+    <Position X="7.75" Y="10.25" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="Repositories.LocationRepository">
+    <Position X="13" Y="10.25" Width="1.5" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Repositories.UserLocationsRepository">
+    <Position X="14.75" Y="10.25" Width="1.5" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="TravelMateAPI.Controllers.LocationsController">
+    <Position X="16.5" Y="10.25" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="TravelMateAPI.Controllers.UserLocationsController">
+    <Position X="18.25" Y="10.5" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="TravelMateAPI.Controllers.UserLocationsWOOController">
+    <Position X="20" Y="10.5" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Interface Name="Repositories.Interface.IUniversityRepository">
+    <Position X="8.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="Repositories.Interface.IUserEducationRepository">
+    <Position X="10.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="Repositories.Interface.ILanguagesRepository">
+    <Position X="8" Y="4.75" Width="1.5" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="Repositories.Interface.ISpokenLanguagesRepository">
+    <Position X="10" Y="4.75" Width="1.5" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="Repositories.Interface.IActivityRepository">
+    <Position X="9.25" Y="7.5" Width="1.5" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="Repositories.Interface.IUserActivitiesRepository">
+    <Position X="11" Y="7.5" Width="1.5" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="Repositories.Interface.ILocationRepository">
+    <Position X="9.5" Y="10.25" Width="1.5" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="Repositories.Interface.IUserLocationsRepository">
+    <Position X="11.25" Y="10.25" Width="1.5" />
+    <TypeIdentifier />
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
