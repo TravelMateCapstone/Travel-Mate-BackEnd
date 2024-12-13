@@ -194,7 +194,7 @@ namespace TravelMateAPI
             userSet.EntityType.ComplexProperty(u => u.CCCD);
             //userSet.EntityType.ComplexProperty(u => u.UserActivities);
             userSet.EntityType.CollectionProperty(u => u.ActivityIds);
-           // userSet.EntityType.CollectionProperty(u => u.Tours);
+            // userSet.EntityType.CollectionProperty(u => u.Tours);
             //userSet.EntityType.Property(u => u.SimilarityScore);
 
 
@@ -281,6 +281,8 @@ namespace TravelMateAPI
             builder.Services.AddScoped<ILocalExtraDetailFormRepository, LocalExtraDetailFormRepository>();
             builder.Services.AddScoped<ITravelerFormRepository, TravelerFormRepository>();
             builder.Services.AddScoped<TourDAO>();
+            builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
+            builder.Services.AddScoped<TransactionDAO>();
 
             builder.Services.AddQuartz(q =>
             {
