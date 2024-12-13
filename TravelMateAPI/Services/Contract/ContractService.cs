@@ -502,6 +502,76 @@ public class ContractService : IContractService
 
         throw new Exception("Không tìm thấy hợp đồng.");
     }
-    
+
+
+    public async Task<List<string>> GetLocationsByTravelerIdAsync(int travelerId)
+    {
+        // Lấy danh sách Location từ cơ sở dữ liệu theo TravelerId
+        var locationsFromDb = await _dbContext.BlockContracts
+            .Where(c => c.TravelerId == travelerId)
+            .Select(c => c.Location)
+            .Distinct()
+            .ToListAsync();
+
+        //// Lấy danh sách Location từ bộ nhớ nếu trạng thái là Created
+        //var contractsInMemory = _memoryCache.GetOrCreate(ContractsCacheKey, entry =>
+        //{
+        //    entry.SlidingExpiration = TimeSpan.FromMinutes(30);
+        //    return new List<ContractDTO>();
+        //});
+
+        //var locationsFromMemory = contractsInMemory
+        //    .Where(c => c.TravelerId == travelerId && c.Status == "Created")
+        //    .Select(c => c.Location)
+        //    .Distinct()
+        //    .ToList();
+
+        //// Kết hợp dữ liệu từ bộ nhớ và cơ sở dữ liệu, loại bỏ trùng lặp
+        //var allLocations = locationsFromDb
+        //    .Union(locationsFromMemory)
+        //    .Distinct()
+        //    .ToList();
+
+        return locationsFromDb;
+    }
+
+    public async Task<List<Location>> GetTopLocationsDetailsAsync(int top)
+    {
+        //// Lấy danh sách Location từ cơ sở dữ liệu, nhóm và đếm số lượng, sau đó sắp xếp
+        //var topLocations = await _dbContext.BlockContracts
+        //    .GroupBy(c => c.Location)
+        //    .Select(g => new
+        //    {
+        //        Location = g.Key,
+        //        Count = g.Count()
+        //    })
+        //    .OrderByDescending(l => l.Count) // Sắp xếp theo số lượng giảm dần
+        //    .Take(top) // Lấy 8 địa điểm xuất hiện nhiều nhất
+        //    .Select(l => l.Location)
+        //    .ToListAsync();
+
+        //return topLocations;
+        // Lấy top 8 LocationName từ bảng BlockContracts
+        var topLocationNames = await _dbContext.BlockContracts
+            .GroupBy(c => c.Location)
+            .Select(g => new
+            {
+                LocationName = g.Key,
+                Count = g.Count()
+            })
+            .OrderByDescending(l => l.Count) // Sắp xếp theo số lượng giảm dần
+            .Take(top) // Lấy 8 Location xuất hiện nhiều nhất
+            .Select(l => l.LocationName)
+            .ToListAsync();
+
+        // Lấy danh sách Location chi tiết từ bảng Locations
+        var detailedLocations = await _dbContext.Locations
+            .Where(loc => topLocationNames.Contains(loc.LocationName))
+            .ToListAsync();
+
+        return detailedLocations;
+    }
+
+
 }
 //}

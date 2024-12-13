@@ -295,5 +295,53 @@ namespace TravelMateAPI.Controllers
             }
         }
 
+
+        [HttpGet("get-Locations-History/{travelerId}")]
+        public async Task<IActionResult> GetLocationsByTravelerIdAsync(int travelerId)
+        {
+            try
+            {
+                var locations = await _contractService.GetLocationsByTravelerIdAsync(travelerId);
+                return Ok(new
+                {
+                    Success = true,
+                    Message = "Danh sách địa điểm đã đi được lấy thành công.",
+                    Data = locations
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Success = false,
+                    Message = ex.Message
+                });
+            }
+        }
+
+        [HttpGet("get-top-location-details/{top}")]
+        public async Task<IActionResult> GetTopLocationDetailsAsync(int top)
+        {
+            try
+            {
+                var topLocations = await _contractService.GetTopLocationsDetailsAsync(top);
+                return Ok(new
+                {
+                    Success = true,
+                    Message = "Lấy danh sách chi tiết Top 8 địa điểm thành công.",
+                    Data = topLocations
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Success = false,
+                    Message = ex.Message
+                });
+            }
+        }
+
+
     }
 }
