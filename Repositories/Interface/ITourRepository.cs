@@ -18,6 +18,7 @@ namespace Repositories.Interface
         Task UpdateTour(string id, Tour tour);
         Task DeleteTour(string id);
         Task JoinTour(string tourId, int travelerId);
+        Task RemoveUnpaidParticipantsAsync(string tourId, int travelerId);
         Task AcceptTour(string tourId);
         Task RejectTour(string tourId);
         Task AddReview(string tourId, TourReview tourReview);
@@ -30,5 +31,6 @@ namespace Repositories.Interface
         Task UpdateOrderCode(string tourId, int travelerId, long orderCode);
 
         Task<bool> DidParticipantPay(long orderCode);
+        Task<Tour> GetParticipantWithOrderCode(long orderCode);
     }
 }

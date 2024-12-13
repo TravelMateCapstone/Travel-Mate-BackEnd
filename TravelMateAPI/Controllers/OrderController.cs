@@ -12,11 +12,13 @@ namespace TravelMateAPI.Controllers
     {
         private readonly PayOS _payOS;
         private readonly ITourRepository _tourRepository;
+        private readonly IContractService _contractService;
 
-        public OrderController(PayOS payOS, ITourRepository tourRepository)
+        public OrderController(PayOS payOS, ITourRepository tourRepository, IContractService contractService)
         {
             _payOS = payOS;
             _tourRepository = tourRepository;
+            _contractService = contractService;
         }
 
         [HttpGet]
@@ -48,11 +50,29 @@ namespace TravelMateAPI.Controllers
         }
 
         [HttpPost("webhook")]
-        public IActionResult payOSTransferHandler(WebhookType body)
+        public async Task<IActionResult> payOSTransferHandler(WebhookType body)
         {
             try
             {
                 WebhookData data = _payOS.verifyPaymentWebhookData(body);
+
+                var getTourInfo = await _tourRepository.GetParticipantWithOrderCode(data.orderCode);
+                if (getTourInfo == null)
+                {
+                    return NotFound(new Response(-1, "Tour information not found", null));
+                }
+                var travelerId = getTourInfo.Creator.Id;
+                var localId = 0;
+                var tourId = getTourInfo.TourId;
+
+                foreach (var item in getTourInfo.Participants)
+                {
+                    if (item.OrderCode == data.orderCode)
+                    {
+                        localId = item.ParticipantId;
+                        break;
+                    }
+                }
 
                 if (data.description == "Ma giao dich thu nghiem" || data.description == "VQRIO123")
                 {
@@ -61,7 +81,8 @@ namespace TravelMateAPI.Controllers
 
                 if (body.success)
                 {
-                    _tourRepository.UpdatePaymentStatus(data.orderCode, data.amount);
+                    await _tourRepository.UpdatePaymentStatus(data.orderCode, data.amount);
+                    await _contractService.UpdateStatusToCompleted(travelerId, localId, tourId);
                 }
 
                 return Ok(new Response(0, "Ok", null));
@@ -71,7 +92,6 @@ namespace TravelMateAPI.Controllers
                 Console.WriteLine(e.Message);
                 return Ok(new Response(-1, "fail", null));
             }
-
         }
 
     }

@@ -12,7 +12,9 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OData.ModelBuilder;
 using Microsoft.OpenApi.Models;
 using Net.payOS;
+using Quartz;
 using Repositories;
+using Repositories.Cron;
 using Repositories.Interface;
 using Repository.Interfaces;
 using System.Text;
@@ -230,7 +232,7 @@ namespace TravelMateAPI
             builder.Services.AddScoped<CCCDDAO>();
             builder.Services.AddScoped<ICCCDRepository, CCCDRepository>();
             builder.Services.AddScoped<ICCCDService, CCCDService>();
-            builder.Services.AddScoped<IUserRoleService,UserRoleService>();
+            builder.Services.AddScoped<IUserRoleService, UserRoleService>();
             builder.Services.AddScoped<CheckProfileService>();
             builder.Services.AddScoped<FilterUserService>();
             builder.Services.AddScoped<IContractService, ContractService>();
@@ -279,8 +281,24 @@ namespace TravelMateAPI
             builder.Services.AddScoped<ILocalExtraDetailFormRepository, LocalExtraDetailFormRepository>();
             builder.Services.AddScoped<ITravelerFormRepository, TravelerFormRepository>();
             builder.Services.AddScoped<TourDAO>();
-            builder.Services.AddScoped<ITourRepository, TourRepository>();
 
+            builder.Services.AddQuartz(q =>
+            {
+                q.UseJobFactory<CustomJobFactory>();
+            });
+
+            builder.Services.AddQuartzHostedService(opt =>
+            {
+                opt.WaitForJobsToComplete = true;
+            });
+            builder.Services.AddScoped<IScheduler>(provider =>
+            {
+                var schedulerFactory = provider.GetRequiredService<ISchedulerFactory>();
+                return schedulerFactory.GetScheduler().GetAwaiter().GetResult();
+            });
+
+            builder.Services.AddScoped<ITourRepository, TourRepository>();
+            builder.Services.AddScoped<Cronjob>();
 
             builder.Services.AddControllers().AddJsonOptions(options =>
             {
