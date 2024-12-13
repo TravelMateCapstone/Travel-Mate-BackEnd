@@ -147,11 +147,20 @@ namespace TravelMateAPI.Services.FilterLocal
                 // Lấy CCCD
                 var cccd = user.CCCDs;
                 var star = await _tourRepository.GetUserAverageStar(user.Id);
-                var countConnect = await _contractService.GetContractCountAsLocalAsync(user.Id); 
+                var countConnect = await _contractService.GetContractCountAsLocalAsync(user.Id);
+                //// Lấy danh sách ActivityId của người dùng
+                //var userActivities = await GetUserActivityIdsAsync(user.Id);
+                //var userLocations = await GetUserLocationIdsAsync(user.Id);
+
                 // Lấy danh sách ActivityId của người dùng
-                var userActivities = await GetUserActivityIdsAsync(user.Id);
-                var userLocations = await GetUserLocationIdsAsync(user.Id);
-                var tours = await _tourDAO.GetTourBriefByLocalId(user.Id);
+                var userActivities = await GetUserActivityNameAsync(user.Id);
+                var userLocations = await GetUserLocationNameAsync(user.Id);
+
+
+
+
+
+                //var tours = await _tourDAO.GetTourBriefByLocalId(user.Id);
                 // Tính tuổi và kiểm tra giới tính
                 //var age = CalculateAge(cccd?.dob);
                 //if (age < minAge || age > maxAge || cccd?.sex != sex)
@@ -191,7 +200,7 @@ namespace TravelMateAPI.Services.FilterLocal
                     
                      ActivityIds = userActivities.ToList(),
                     //SimilarityScore = similarityScore // Thêm điểm tương tự
-                    Tours = tours // Gắn danh sách tour vào DTO
+                    // Tours = tours // Gắn danh sách tour vào DTO
                 });
             }
 
@@ -199,6 +208,64 @@ namespace TravelMateAPI.Services.FilterLocal
             // Sắp xếp giảm dần theo SimilarityScore
             //return result.OrderByDescending(u => u.SimilarityScore).ToList();
         }
+
+
+        public async Task<List<UserWithDetailsDTO>> GetAllUsersWithDetailsByRoleAsync(string role)
+        {
+            // Lấy danh sách người dùng thuộc vai trò cụ thể
+            var usersInRole = await _userManager.GetUsersInRoleAsync(role);
+
+            var result = new List<UserWithDetailsDTO>();
+
+            foreach (var user in usersInRole)
+            {
+                // Include thông tin Profile, CCCD, và các liên kết khác
+                var detailedUser = await _context.Users
+                    .Include(u => u.Profiles)
+                    .Include(u => u.CCCDs)
+                    .FirstOrDefaultAsync(u => u.Id == user.Id);
+
+                if (detailedUser == null) continue;
+
+                // Lấy CCCD
+                var cccd = detailedUser.CCCDs;
+
+                // Lấy số sao và số lần kết nối
+                var star = await _tourRepository.GetUserAverageStar(user.Id);
+                var countConnect = await _contractService.GetContractCountAsLocalAsync(user.Id);
+
+                // Lấy tên hoạt động và địa điểm của người dùng
+                var userActivities = await GetUserActivityNameAsync(user.Id);
+                var userLocations = await GetUserLocationNameAsync(user.Id);
+
+                result.Add(new UserWithDetailsDTO
+                {
+                    UserId = detailedUser.Id,
+                    FullName = detailedUser.FullName,
+                    Email = detailedUser.Email,
+                    LocationIds = userLocations.ToList(),
+                    Roles = new List<string> { role }, // Đã biết người dùng thuộc vai trò nào
+                    Star = star,
+                    CountConnect = countConnect,
+                    Profile = detailedUser.Profiles == null ? null : new ProfileDTO
+                    {
+                        ProfileId = detailedUser.Profiles.ProfileId,
+                        Address = detailedUser.Profiles.Address,
+                        ImageUser = detailedUser.Profiles.ImageUser
+                    },
+                    CCCD = cccd == null ? null : new CCCDDTO
+                    {
+                        Dob = cccd.dob,
+                        Sex = cccd.sex,
+                        Age = CalculateAge(cccd.dob)  // Tính tuổi từ dob và gán vào DTO
+                    },
+                    ActivityIds = userActivities.ToList(),
+                });
+            }
+
+            return result;
+        }
+
 
         public async Task<List<int>> GetUserActivityIdsAsync(int userId)
         {
@@ -217,6 +284,25 @@ namespace TravelMateAPI.Services.FilterLocal
                 .ToListAsync();
 
             return locationIds;
+        }
+
+        public async Task<List<string>> GetUserActivityNameAsync(int userId)
+        {
+            var activityName = await _context.UserActivities
+                .Where(ua => ua.UserId == userId)
+                .Select(ua => ua.Activity.ActivityName)
+                .ToListAsync();
+
+            return activityName;
+        }
+        public async Task<List<string>> GetUserLocationNameAsync(int userId)
+        {
+            var locationName = await _context.UserLocations
+                .Where(ua => ua.UserId == userId)
+                .Select(ua => ua.Location.LocationName)
+                .ToListAsync();
+
+            return locationName;
         }
 
         private int CalculateAge(string dob)
@@ -270,9 +356,14 @@ namespace TravelMateAPI.Services.FilterLocal
                 var star = await _tourRepository.GetUserAverageStar(user.Id);
                 var countConnect = await _contractService.GetContractCountAsLocalAsync(user.Id);
 
-                // Lấy ActivityIds và LocationIds
-                var userActivities = await GetUserActivityIdsAsync(user.Id);
-                var userLocations = await GetUserLocationIdsAsync(user.Id);
+                //// Lấy ActivityIds và LocationIds
+                //var userActivities = await GetUserActivityIdsAsync(user.Id);
+                //var userLocations = await GetUserLocationIdsAsync(user.Id);
+
+                // Lấy danh sách ActivityId của người dùng
+                var userActivities = await GetUserActivityNameAsync(user.Id);
+                var userLocations = await GetUserLocationNameAsync(user.Id);
+
 
                 // Tạo DTO
                 var userDto = new UserWithDetailNoToursDTO

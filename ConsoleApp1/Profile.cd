@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="BusinessObjects.Entities.Profile">
+    <Position X="0.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="DataAccess.ProfileDAO">
+    <Position X="4.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="Repositories.ProfileRepository">
+    <Position X="8.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="TravelMateAPI.Services.ProfileService.CheckProfileService">
+    <Position X="12.25" Y="0.75" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="TravelMateAPI.Models.AutoMapperProfile">
+    <Position X="10.25" Y="0.75" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="TravelMateAPI.Controllers.ProfileController">
+    <Position X="14.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="BusinessObjects.Entities.CCCD">
+    <Position X="2.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="DataAccess.CCCDDAO">
+    <Position X="4.5" Y="3" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="Repositories.CCCDRepository">
+    <Position X="8.5" Y="3" Width="1.5" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CCCDService">
+    <Position X="12.25" Y="3" Width="1.5" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="TravelMateAPI.Controllers.CCCDController">
+    <Position X="16.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Interface Name="Repositories.Interface.IProfileRepository">
+    <Position X="6.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="Repositories.Interface.ICCCDRepository">
+    <Position X="6.5" Y="3" Width="1.5" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="TravelMateAPI.Services.CCCDValid.ICCCDService">
+    <Position X="10.25" Y="3" Width="1.5" />
+    <TypeIdentifier />
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

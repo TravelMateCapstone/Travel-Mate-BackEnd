@@ -9,6 +9,8 @@ using TravelMateAPI.Services.Email;
 using Google.Api;
 using TravelMateAPI.Services.CCCDValid;
 using TravelMateAPI.Services.Role;
+using DataAccess;
+using TravelMateAPI.Services.Contract;
 
 //namespace TravelMateAPI.Services.Contract
 //{
@@ -22,7 +24,9 @@ public class ContractService : IContractService
         private readonly IMailServiceSystem _mailService;
         private readonly ICCCDService _ccCDService;
         private readonly IUserRoleService _userRoleService;
-        public ContractService(ApplicationDBContext dbContext, IMemoryCache memoryCache, INotificationService notificationService, IMailServiceSystem mailService, ICCCDService cCCDService,IUserRoleService userRoleService)
+        private readonly TourDAO _tourDAO;
+
+        public ContractService(ApplicationDBContext dbContext, IMemoryCache memoryCache, INotificationService notificationService, IMailServiceSystem mailService, ICCCDService cCCDService,IUserRoleService userRoleService, TourDAO tourDAO)
         {
             //_contractsInMemory = new List<ContractDTO>();
             _dbContext = dbContext;
@@ -31,6 +35,7 @@ public class ContractService : IContractService
             _mailService = mailService;
             _ccCDService = cCCDService;
             _userRoleService = userRoleService;
+            _tourDAO = tourDAO;
         }
 
         public async Task<ContractDTO> CreateContract(int travelerId, int localId, string tourId,string Location, string details, string status, string travelerSignature, string localSignature)
@@ -77,7 +82,8 @@ public class ContractService : IContractService
             // Cập nhật lại cache
             _memoryCache.Set(ContractsCacheKey, contractsInMemory);
             var traveler = await _dbContext.Users.FindAsync(travelerId);
-            await _notificationService.CreateNotificationFullAsync(localId, $"Hợp đồng của chuyến đi ID:{tourId} của bạn đang được tạo bởi {traveler.FullName}.", travelerId, 5);
+            var tourName = await _tourDAO.GetTourNameById(tourId);
+            await _notificationService.CreateNotificationFullAsync(localId, $"Hợp đồng của chuyến đi ID:{tourName} của bạn đang được tạo bởi {traveler.FullName}.", travelerId, 5);
             return newContract;
 
             //_contractsInMemory.Add(newContract);
@@ -128,7 +134,8 @@ public class ContractService : IContractService
             // Cập nhật lại cache
             _memoryCache.Set(ContractsCacheKey, contractsInMemory);
             var traveler = await _dbContext.Users.FindAsync(travelerId);
-            await _notificationService.CreateNotificationFullAsync(localId, $"Hợp đồng của chuyến đi ID:{tourId} của bạn đang được tạo bởi {traveler.FullName}.", travelerId, 5);
+            var tourName = await _tourDAO.GetTourNameById(tourId);
+            await _notificationService.CreateNotificationFullAsync(localId, $"Hợp đồng của chuyến đi ID:{tourName} của bạn đang được tạo bởi {traveler.FullName}.", travelerId, 5);
             return newContract;
 
             //_contractsInMemory.Add(newContract);
@@ -163,8 +170,9 @@ public class ContractService : IContractService
                 Console.WriteLine("Hợp đồng đã được tạo thành công.");
                 var traveler = await _dbContext.Users.FindAsync(travelerId);
                 var local = await _dbContext.Users.FindAsync(localId);
-                await _notificationService.CreateNotificationFullAsync(localId, $"Hợp đồng của chuyến đi ID:{tourId} đã ký kết thành công cùng với Khách: {traveler.FullName}.", travelerId, 5);
-                await _notificationService.CreateNotificationFullAsync(travelerId, $"Hợp đồng của chuyến đi ID:{tourId} đã ký kết thành công cùng với Người địa phương: {local.FullName}.", localId, 5);
+                var tourName = await _tourDAO.GetTourNameById(tourId);
+                await _notificationService.CreateNotificationFullAsync(localId, $"Hợp đồng của chuyến đi ID:{tourName} đã ký kết thành công cùng với Khách: {traveler.FullName}.", travelerId, 5);
+                await _notificationService.CreateNotificationFullAsync(travelerId, $"Hợp đồng của chuyến đi ID:{tourName} đã ký kết thành công cùng với Người địa phương: {local.FullName}.", localId, 5);
 
                 MailContent content1 = new MailContent
                 {
@@ -317,5 +325,183 @@ public class ContractService : IContractService
 
             return contractCount;
         }
+
+    public async Task<List<TravelerContractDTO>> GetContractsByTravelerAsync(int travelerId)
+    {
+        // Lấy danh sách hợp đồng từ cơ sở dữ liệu dựa vào travelerId
+        var dbContracts = await _dbContext.BlockContracts
+            .Where(c => c.TravelerId == travelerId)
+            .Select(c => new TravelerContractDTO
+            {
+                LocalId = c.LocalId,
+                TourId = c.TourId,
+                Location = c.Location,
+                Details = c.Details,
+                CreatedAt = c.CreatedAt,
+                Status = c.Status,
+                LocalProfile = _dbContext.Profiles
+                    .Where(p => p.UserId == c.LocalId)
+                    .Select(p => new ProfileDTO
+                    {
+                        Phone = p.Phone,
+                        ImageUser = p.ImageUser,
+                        Description = p.Description,
+                        HostingAvailability = p.HostingAvailability
+                    })
+                    .FirstOrDefault(),
+                Account = _dbContext.Users.Where(u => u.Id ==c.LocalId).Select(u => new AccountDTO
+                {
+                    Id = u.Id,
+                    FullName = u.FullName,
+                    Email = u.Email
+                }).FirstOrDefault()
+
+            })
+            .ToListAsync();
+
+        // Lấy danh sách hợp đồng từ MemoryCache
+        var memoryContracts = _memoryCache.GetOrCreate(ContractsCacheKey, entry =>
+        {
+            entry.SlidingExpiration = TimeSpan.FromMinutes(30);
+            return new List<ContractDTO>();
+        })
+        .Where(c => c.TravelerId == travelerId && c.Status == "Created")
+        .Select(c => new TravelerContractDTO
+        {
+            LocalId = c.LocalId,
+            TourId = c.TourId,
+            Location = c.Location,
+            Details = c.Details,
+            CreatedAt = c.CreatedAt,
+            Status = c.Status,
+            LocalProfile = _dbContext.Profiles
+                .Where(p => p.UserId == c.LocalId)
+                .Select(p => new ProfileDTO
+                {
+                   
+                    Phone = p.Phone,
+                    ImageUser = p.ImageUser,
+                    Description = p.Description,
+                    HostingAvailability = p.HostingAvailability
+                })
+                .FirstOrDefault(),
+            Account = _dbContext.Users.Where(u => u.Id == c.LocalId).Select(u => new AccountDTO
+            {
+                Id = u.Id,
+                FullName = u.FullName,
+                Email = u.Email
+            }).FirstOrDefault()
+        })
+        .ToList();
+
+        // Kết hợp danh sách từ cơ sở dữ liệu và bộ nhớ
+        var allContracts = dbContracts.Concat(memoryContracts).ToList();
+
+        return allContracts;
+    }
+
+    public async Task<List<LocalContractDTO>> GetContractsByLocalAsync(int localId)
+    {
+        // Lấy danh sách hợp đồng từ cơ sở dữ liệu dựa vào travelerId
+        var dbContracts = await _dbContext.BlockContracts
+            .Where(c => c.LocalId == localId)
+            .Select(c => new LocalContractDTO
+            {
+                TravelerId = c.TravelerId,
+                TourId = c.TourId,
+                Location = c.Location,
+                Details = c.Details,
+                CreatedAt = c.CreatedAt,
+                Status = c.Status,
+                LocalProfile = _dbContext.Profiles
+                    .Where(p => p.UserId == c.TravelerId)
+                    .Select(p => new ProfileDTO
+                    {
+                        Phone = p.Phone,
+                        ImageUser = p.ImageUser,
+                        Description = p.Description,
+                        HostingAvailability = p.HostingAvailability
+                    })
+                    .FirstOrDefault(),
+                Account = _dbContext.Users.Where(u => u.Id == c.TravelerId).Select(u => new AccountDTO
+                {
+                    Id = u.Id,
+                    FullName = u.FullName,
+                    Email = u.Email
+                }).FirstOrDefault()
+
+            })
+            .ToListAsync();
+
+        // Lấy danh sách hợp đồng từ MemoryCache
+        var memoryContracts = _memoryCache.GetOrCreate(ContractsCacheKey, entry =>
+        {
+            entry.SlidingExpiration = TimeSpan.FromMinutes(30);
+            return new List<ContractDTO>();
+        })
+        .Where(c => c.LocalId == localId && c.Status == "Created")
+        .Select(c => new LocalContractDTO
+        {
+            TravelerId = c.TravelerId,
+            TourId = c.TourId,
+            Location = c.Location,
+            Details = c.Details,
+            CreatedAt = c.CreatedAt,
+            Status = c.Status,
+            LocalProfile = _dbContext.Profiles
+                .Where(p => p.UserId == c.TravelerId)
+                .Select(p => new ProfileDTO
+                {
+
+                    Phone = p.Phone,
+                    ImageUser = p.ImageUser,
+                    Description = p.Description,
+                    HostingAvailability = p.HostingAvailability
+                })
+                .FirstOrDefault(),
+            Account = _dbContext.Users.Where(u => u.Id == c.TravelerId).Select(u => new AccountDTO
+            {
+                Id = u.Id,
+                FullName = u.FullName,
+                Email = u.Email
+            }).FirstOrDefault()
+        })
+        .ToList();
+
+        // Kết hợp danh sách từ cơ sở dữ liệu và bộ nhớ
+        var allContracts = dbContracts.Concat(memoryContracts).ToList();
+
+        return allContracts;
+    }
+
+    public async Task<string> CheckContractStatusAsync(int travelerId, string tourId)
+    {
+        // Kiểm tra trong bộ nhớ cache
+        var contractsInMemory = _memoryCache.GetOrCreate(ContractsCacheKey, entry =>
+        {
+            entry.SlidingExpiration = TimeSpan.FromMinutes(30);
+            return new List<ContractDTO>();
+        });
+
+        var contractInMemory = contractsInMemory
+            .FirstOrDefault(c => c.TravelerId == travelerId && c.TourId == tourId);
+
+        if (contractInMemory != null)
+        {
+            return contractInMemory.Status;
+        }
+
+        // Kiểm tra trong cơ sở dữ liệu
+        var contractInDatabase = await _dbContext.BlockContracts
+            .FirstOrDefaultAsync(c => c.TravelerId == travelerId && c.TourId == tourId);
+
+        if (contractInDatabase != null)
+        {
+            return contractInDatabase.Status;
+        }
+
+        throw new Exception("Không tìm thấy hợp đồng.");
+    }
+    
 }
 //}
