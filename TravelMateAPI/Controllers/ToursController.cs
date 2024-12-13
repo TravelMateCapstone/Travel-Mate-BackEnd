@@ -215,6 +215,7 @@ namespace TravelMate.Controllers
                 return BadRequest("Access Denied! You are creator of this tour");
 
             await _tourRepository.JoinTour(tourId, user.Id);
+
             return Ok("Join tour successful");
         }
 

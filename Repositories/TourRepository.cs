@@ -5,6 +5,8 @@ using BusinessObjects.EnumClass;
 using BusinessObjects.Utils.Request;
 using DataAccess;
 using MongoDB.Driver;
+using Quartz;
+using Repositories.Cron;
 using Repositories.Interface;
 
 namespace Repositories
@@ -13,11 +15,13 @@ namespace Repositories
     {
         private readonly TourDAO _tourDAO;
         private readonly IMapper _mapper;
+        private readonly IScheduler _scheduler;
 
-        public TourRepository(TourDAO tourDAO, IMapper mapper)
+        public TourRepository(TourDAO tourDAO, IMapper mapper, IScheduler scheduler)
         {
             _tourDAO = tourDAO;
             _mapper = mapper;
+            _scheduler = scheduler;
         }
 
         public async Task<IEnumerable<Tour>> GetAllTours()
@@ -109,10 +113,25 @@ namespace Repositories
                     item.Gender = user.Profiles.Gender;
                     item.Address = user.Profiles.City;
                     item.Phone = user.Profiles.Phone;
+                    item.PaymentStatus = false;
                     await _tourDAO.UpdateTour(tourId, getParticipant);
                     break;
                 }
             }
+
+            IJobDetail job = JobBuilder.Create<Cronjob>()
+               .WithIdentity("job1", "group1")
+               .UsingJobData("tourId", tourId)
+               .UsingJobData("participantId", travelerId)
+               .Build();
+
+            ITrigger trigger = TriggerBuilder.Create()
+                .WithIdentity("trigger1", "group1")
+                .StartAt(DateBuilder.FutureDate(1, IntervalUnit.Minute))
+                .Build();
+
+
+            await _scheduler.ScheduleJob(job, trigger);
         }
 
         public async Task AcceptTour(string tourId)
@@ -206,5 +225,27 @@ namespace Repositories
         {
             return await _tourDAO.DidParticipantPay(orderCode);
         }
+
+        public async Task<Tour> GetParticipantWithOrderCode(long orderCode)
+        {
+            return await _tourDAO.GetParticipantWithOrderCode(orderCode);
+        }
+
+        public async Task RemoveUnpaidParticipantsAsync(string tourId, int travelerId)
+        {
+            var getTour = await _tourDAO.GetTourById(tourId);
+
+            foreach (var item in getTour.Participants)
+            {
+                if (item.ParticipantId == travelerId && item.PaymentStatus == false)
+                {
+                    getTour.Participants.Remove(item);
+                    break;
+                }
+            }
+
+            await _tourDAO.UpdateTour(tourId, getTour);
+        }
+
     }
 }
