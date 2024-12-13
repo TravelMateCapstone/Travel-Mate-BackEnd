@@ -1,4 +1,6 @@
-﻿using BusinessObjects.Utils.Response;
+﻿using BusinessObjects;
+using BusinessObjects.Entities;
+using BusinessObjects.Utils.Response;
 using Microsoft.AspNetCore.Mvc;
 using Net.payOS;
 using Net.payOS.Types;
@@ -12,11 +14,15 @@ namespace TravelMateAPI.Controllers
     {
         private readonly PayOS _payOS;
         private readonly ITourRepository _tourRepository;
+        private readonly ITransactionRepository _transactionRepository;
+        private readonly IContractService _contractService;
 
-        public OrderController(PayOS payOS, ITourRepository tourRepository)
+        public OrderController(PayOS payOS, ITourRepository tourRepository, IContractService contractService, ITransactionRepository transactionRepository)
         {
             _payOS = payOS;
             _tourRepository = tourRepository;
+            _contractService = contractService;
+            _transactionRepository = transactionRepository;
         }
 
         [HttpGet]
@@ -48,11 +54,43 @@ namespace TravelMateAPI.Controllers
         }
 
         [HttpPost("webhook")]
-        public IActionResult payOSTransferHandler(WebhookType body)
+        public async Task<IActionResult> payOSTransferHandler(WebhookType body)
         {
             try
             {
                 WebhookData data = _payOS.verifyPaymentWebhookData(body);
+
+                var getTourInfo = await _tourRepository.GetParticipantWithOrderCode(data.orderCode);
+                if (getTourInfo == null)
+                {
+                    return NotFound(new Response(-1, "Tour information not found", null));
+                }
+                var localId = getTourInfo.Creator.Id;
+                var travelerId = 0;
+                var tourId = getTourInfo.TourId;
+
+                var transaction = new TourTransaction
+                {
+                    TourId = getTourInfo.TourId,
+                    TourName = getTourInfo.TourName,
+                    localId = getTourInfo.Creator.Id,
+                    LocalName = getTourInfo.Creator.Fullname,
+                    TravelerId = null,
+                    TravelerName = null,
+                    TransactionTime = GetTimeZone.GetVNTimeZoneNow(),
+                    Price = getTourInfo.Price,
+                };
+
+                foreach (var item in getTourInfo.Participants)
+                {
+                    if (item.OrderCode == data.orderCode)
+                    {
+                        travelerId = item.ParticipantId;
+                        transaction.TravelerId = travelerId;
+                        transaction.TravelerName = item.FullName;
+                        break;
+                    }
+                }
 
                 if (data.description == "Ma giao dich thu nghiem" || data.description == "VQRIO123")
                 {
@@ -61,7 +99,9 @@ namespace TravelMateAPI.Controllers
 
                 if (body.success)
                 {
-                    _tourRepository.UpdatePaymentStatus(data.orderCode, data.amount);
+                    await _tourRepository.UpdatePaymentStatus(data.orderCode, data.amount);
+                    await _transactionRepository.AddTransactionAsync(transaction);
+                    await _contractService.UpdateStatusToCompleted(travelerId, localId, tourId);
                 }
 
                 return Ok(new Response(0, "Ok", null));
@@ -71,7 +111,6 @@ namespace TravelMateAPI.Controllers
                 Console.WriteLine(e.Message);
                 return Ok(new Response(-1, "fail", null));
             }
-
         }
 
     }
