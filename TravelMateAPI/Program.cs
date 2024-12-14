@@ -230,7 +230,7 @@ namespace TravelMateAPI
             builder.Services.AddScoped<CCCDDAO>();
             builder.Services.AddScoped<ICCCDRepository, CCCDRepository>();
             builder.Services.AddScoped<ICCCDService, CCCDService>();
-            builder.Services.AddScoped<IUserRoleService,UserRoleService>();
+            builder.Services.AddScoped<IUserRoleService, UserRoleService>();
             builder.Services.AddScoped<CheckProfileService>();
             builder.Services.AddScoped<FilterUserService>();
             builder.Services.AddScoped<IContractService, ContractService>();
@@ -275,9 +275,6 @@ namespace TravelMateAPI
             builder.Services.AddScoped<IPostCommentRepository, PostCommentRepository>();
             builder.Services.AddScoped<PastTripPostDAO>();
             builder.Services.AddScoped<IPastTripPostRepository, PastTripPostRepository>();
-            builder.Services.AddScoped<ExtraFormDetailDAO>();
-            builder.Services.AddScoped<ILocalExtraDetailFormRepository, LocalExtraDetailFormRepository>();
-            builder.Services.AddScoped<ITravelerFormRepository, TravelerFormRepository>();
             builder.Services.AddScoped<TourDAO>();
             builder.Services.AddScoped<ITourRepository, TourRepository>();
 

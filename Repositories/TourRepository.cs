@@ -4,7 +4,6 @@ using BusinessObjects.Entities;
 using BusinessObjects.EnumClass;
 using BusinessObjects.Utils.Request;
 using DataAccess;
-using MongoDB.Driver;
 using Repositories.Interface;
 
 namespace Repositories
@@ -148,17 +147,17 @@ namespace Repositories
 
         public async Task<double> GetUserAverageStar(int userId)
         {
-            var listPost = await _tourDAO.GetUserAverageStar(userId);
-            if (!listPost.Any())
-                return 0;
+            //var listPost = await _tourDAO.GetUserAverageStar(userId);
+            //if (!listPost.Any())
+            //    return 0;
 
-            return listPost.Average(item => item.Star);
+            return 4;
         }
 
         public async Task<int?> GetUserTotalTrip(int userId)
         {
-            var listPost = await _tourDAO.GetUserAverageStar(userId);
-            return listPost.Count();
+            //var listPost = await _tourDAO.GetUserAverageStar(userId);
+            return 4;
         }
 
         public async Task<IEnumerable<Participants>> GetListParticipantsAsync(string tourId)
