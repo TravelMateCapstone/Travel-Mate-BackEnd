@@ -42,8 +42,10 @@ namespace TravelMateAPI.MLModels
 
             // Đường dẫn tệp
             string basePath = Path.Combine(AppContext.BaseDirectory, "MLModels");
-            string dataPath = Path.Combine(basePath, "data.csv");
-            string modelPath = Path.Combine(basePath, "model.zip");
+            //string dataPath = Path.Combine(basePath, "data.csv");
+            //string modelPath = Path.Combine(basePath, "model.zip");
+            string dataPath = Path.Combine(AppContext.BaseDirectory, "wwwroot", "MLModels", "data.csv");
+            string modelPath = Path.Combine(AppContext.BaseDirectory, "wwwroot", "MLModels", "model.zip");
 
             // Load dữ liệu
             var data = mlContext.Data.LoadFromTextFile<ModelInput>(dataPath, hasHeader: true, separatorChar: ',');
