@@ -20,6 +20,7 @@ using Repository.Interfaces;
 using System.Text;
 using TravelMateAPI.Hubs;
 using TravelMateAPI.Middleware;
+using TravelMateAPI.MLModels;
 using TravelMateAPI.Models;
 using TravelMateAPI.Services.CCCDValid;
 using TravelMateAPI.Services.Email;
@@ -30,7 +31,9 @@ using TravelMateAPI.Services.Hubs;
 using TravelMateAPI.Services.Notification;
 using TravelMateAPI.Services.Notification.Event;
 using TravelMateAPI.Services.ProfileService;
+using TravelMateAPI.Services.ReportUser;
 using TravelMateAPI.Services.Role;
+using TravelMateAPI.Services.StorageAzure;
 
 namespace TravelMateAPI
 {
@@ -234,6 +237,7 @@ namespace TravelMateAPI
             builder.Services.AddScoped<ICCCDService, CCCDService>();
             builder.Services.AddScoped<IUserRoleService, UserRoleService>();
             builder.Services.AddScoped<CheckProfileService>();
+            builder.Services.AddScoped<ModelPredictor>();
             builder.Services.AddScoped<FilterUserService>();
             builder.Services.AddScoped<IContractService, ContractService>();
             builder.Services.AddScoped<FilterTourService>();
@@ -243,6 +247,7 @@ namespace TravelMateAPI
             builder.Services.AddScoped<SearchLocationFuzzyService>();
             builder.Services.AddScoped<IFindLocalByFeedbackService, FindLocalByFeedbackService>();
             builder.Services.AddScoped<INotificationService, NotificationService>();
+            builder.Services.AddScoped<IUserReportService,UserReportService>();
             builder.Services.AddScoped<EventDAO>();
             builder.Services.AddScoped<IEventRepository, EventRepository>();
             builder.Services.AddScoped<EventParticipantsDAO>();
@@ -300,6 +305,8 @@ namespace TravelMateAPI
             });
 
             builder.Services.AddScoped<ITourRepository, TourRepository>();
+            builder.Services.AddScoped<ICloudStorageService, CloudStorageService>();
+
             builder.Services.AddScoped<Cronjob>();
 
             builder.Services.AddControllers().AddJsonOptions(options =>

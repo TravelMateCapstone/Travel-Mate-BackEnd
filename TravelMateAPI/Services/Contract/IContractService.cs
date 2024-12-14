@@ -1,5 +1,6 @@
 ﻿//namespace TravelMateAPI.Services.Contract
 //{
+using BusinessObjects.Entities;
 using TravelMateAPI.Services.Contract;
 
 public interface IContractService
@@ -16,5 +17,7 @@ public interface IContractService
         Task<List<TravelerContractDTO>> GetContractsByTravelerAsync(int travelerId);
         Task<List<LocalContractDTO>> GetContractsByLocalAsync(int travelerId);
         Task<string> CheckContractStatusAsync(int travelerId, string tourId);
+        Task<List<string>> GetLocationsByTravelerIdAsync(int travelerId);
+        Task<List<Location>> GetTopLocationsDetailsAsync(int top);
 }
 //}

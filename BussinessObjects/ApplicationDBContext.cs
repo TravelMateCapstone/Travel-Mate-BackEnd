@@ -28,6 +28,7 @@ namespace BusinessObjects
         public DbSet<Event> Events { get; set; }
         public DbSet<EventParticipants> EventParticipants { get; set; }
         public DbSet<Notification> Notifications { get; set; }
+        public DbSet<UserReport> UserReports { get; set; }
         public DbSet<Group> Groups { get; set; }
         public DbSet<GroupParticipant> GroupParticipants { get; set; }
         public DbSet<GroupPost> GroupPosts { get; set; }
@@ -127,6 +128,7 @@ namespace BusinessObjects
                 .HasKey(ua => new { ua.UserId, ua.UniversityId });
             modelBuilder.Entity<EventParticipants>()
                 .HasKey(ua => new { ua.UserId, ua.EventId });
+
 
             // Cấu hình khóa chính và quan hệ cho bảng Friendship
             // modelBuilder.Entity<Friendship>()
