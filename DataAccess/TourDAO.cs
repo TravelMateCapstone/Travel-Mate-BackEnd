@@ -10,9 +10,7 @@ namespace DataAccess
     public class TourDAO
     {
         private readonly ApplicationDBContext _sqlContext;
-        //private readonly MongoDbContext _mongoContext;
         private readonly IMongoCollection<Tour> _mongoContext;
-
 
         public TourDAO(ApplicationDBContext context, MongoDbContext mongoContext)
         {
@@ -24,7 +22,6 @@ namespace DataAccess
         {
             return _sqlContext.Users
                 .Include(t => t.Profiles)
-                .Include(t => t.PastTripPosts.Where(p => p.LocalId == userId))
                 .FirstOrDefault(t => t.Id == userId);
         }
 
@@ -35,10 +32,9 @@ namespace DataAccess
                 .FirstOrDefault(t => t.Id == userId);
         }
 
-        public async Task<IEnumerable<PastTripPost>> GetUserAverageStar(int userId)
-        {
-            return _sqlContext.PastTripPosts.Where(t => t.LocalId == userId).ToList();
-        }
+        //public async Task<IEnumerable<PastTripPost>> GetUserAverageStar(int userId)
+        //{
+        //}
 
         public async Task<IEnumerable<Tour>> GetTourBriefByUserId(int creatorId)
         {
@@ -68,29 +64,6 @@ namespace DataAccess
                 TourImage = t.TourImage
             }).ToList();
         }
-
-        //public async Task<List<TourDTO>> GetAllTourBrief()
-        //{
-        //    var tours = await _mongoContext
-        //        .Find(t => t.ApprovalStatus == ApprovalStatus.Accepted)
-        //    .ToListAsync();
-
-        //    return tours.Select(t => new TourDTO
-        //    {
-        //        TourId = t.TourId,
-        //        LocalId = t.Creator.Id,
-        //        RegisteredGuests = t.Participants.Count,
-        //        MaxGuests = t.MaxGuests,
-        //        Location = t.Location,
-        //        StartDate = t.StartDate,
-        //        EndDate = t.EndDate,
-        //        NumberOfDays = (t.EndDate - t.StartDate).Days,
-        //        NumberOfNights = (t.EndDate - t.StartDate).Days - 1,
-        //        TourName = t.TourName,
-        //        Price = t.Price,
-        //        TourImage = t.TourImage
-        //    }).ToList();
-        //}
 
         public IEnumerable<Tour> GetAllToursOfLocal(int userId)
         {

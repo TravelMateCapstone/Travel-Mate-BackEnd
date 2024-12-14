@@ -31,29 +31,11 @@ namespace TravelMateAPI.Models
                 .ForMember(dest => dest.MemberAvatar, opt => opt.MapFrom(src => src.User.Profiles.ImageUser))
                 .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.User.Profiles.City));
 
-            CreateMap<PastTripPost, PastTripPostDTO>()
-           .ForMember(dest => dest.TravelerName, opt => opt.MapFrom(src => src.Traveler.FullName))
-           .ForMember(dest => dest.TravelerAvatar, opt => opt.MapFrom(src => src.Traveler.Profiles.ImageUser))
-           .ForMember(dest => dest.LocalName, opt => opt.MapFrom(src => src.Local.FullName))
-           .ForMember(dest => dest.LocalAvatar, opt => opt.MapFrom(src => src.Local.Profiles.ImageUser));
-
-            CreateMap<PastTripPostInputDTO, PastTripPost>();
-
-            CreateMap<TravelerPastTripPostDTO, PastTripPost>();
-
-            CreateMap<LocalPastTripPostDTO, PastTripPost>();
-
-            CreateMap<PostPhotoInputDTO, PostPhoto>();
-
             CreateMap<ApplicationUser, UserInformationDto>()
             .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.Id))
             .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.FullName))
              .ForMember(dest => dest.UserAvatarUrl, opt => opt.MapFrom(src => src.Profiles.ImageUser))
             .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Profiles.City));
-
-            CreateMap<LocalExtraDetailForm, TravelerExtraDetailForm>()
-           .ForMember(dest => dest.Questions, opt => opt.MapFrom(src => src.Questions))
-           .ForMember(dest => dest.Services, opt => opt.MapFrom(src => src.Services));
 
             CreateMap<TourDto, Tour>();
             CreateMap<Tour, TourDto>()

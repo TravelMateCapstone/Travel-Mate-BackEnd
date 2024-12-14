@@ -37,9 +37,7 @@ namespace BusinessObjects
         public DbSet<Message> Messages { get; set; }
 
         public DbSet<OnTravelling> OnTravellings { get; set; }
-        public DbSet<PastTripPost> PastTripPosts { get; set; }
         public DbSet<PostComment> PostComments { get; set; }
-        public DbSet<PostPhoto> PostPhotos { get; set; }
         public DbSet<Reaction> Reactions { get; set; }
         public DbSet<Report> Reports { get; set; }
         public DbSet<Request> Requests { get; set; }
@@ -48,8 +46,6 @@ namespace BusinessObjects
         public DbSet<UserDescription> UserDescriptions { get; set; }
         public DbSet<UserEducation> UserEducations { get; set; }
         public DbSet<UserHome> UserHomes { get; set; }
-
-
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -479,18 +475,6 @@ namespace BusinessObjects
                 .HasOne(c => c.PaidByUser)
                 .WithMany(u => u.PaidContracts)
                 .HasForeignKey(c => c.PaidById)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<PastTripPost>()
-       .HasOne(m => m.Traveler)
-       .WithMany(u => u.PastTripPosts)
-       .HasForeignKey(m => m.TravelerId)
-       .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<PastTripPost>()
-                .HasOne(m => m.Local)
-                .WithMany(u => u.PastTripPostReviews)
-                .HasForeignKey(m => m.LocalId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Report>()
