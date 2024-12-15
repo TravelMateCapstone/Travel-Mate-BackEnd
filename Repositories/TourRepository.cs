@@ -73,12 +73,10 @@ namespace Repositories
             existingTour.ApprovalStatus = updatedTour.ApprovalStatus ?? existingTour.ApprovalStatus;
             existingTour.TourImage = updatedTour.TourImage ?? existingTour.TourImage;
             existingTour.Creator = updatedTour.Creator ?? existingTour.Creator;
-            existingTour.Participants = updatedTour.Participants ?? existingTour.Participants;
             existingTour.Itinerary = updatedTour.Itinerary ?? existingTour.Itinerary;
             existingTour.CostDetails = updatedTour.CostDetails ?? existingTour.CostDetails;
             existingTour.AdditionalInfo = updatedTour.AdditionalInfo ?? existingTour.AdditionalInfo;
-            existingTour.Reviews = updatedTour.Reviews ?? existingTour.Reviews;
-            existingTour.IsGlobalContract = updatedTour.IsGlobalContract;
+            existingTour.TourDescription = updatedTour.TourDescription ?? existingTour.TourDescription;
             existingTour.UpdatedAt = GetTimeZone.GetVNTimeZoneNow();
 
             await _tourDAO.UpdateTour(id, existingTour);
@@ -127,7 +125,7 @@ namespace Repositories
 
             ITrigger trigger = TriggerBuilder.Create()
                 .WithIdentity("trigger1", "group1")
-                .StartAt(DateBuilder.FutureDate(1, IntervalUnit.Minute))
+                .StartAt(DateBuilder.FutureDate(3, IntervalUnit.Minute))
                 .Build();
 
 
