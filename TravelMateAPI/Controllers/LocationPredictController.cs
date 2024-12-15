@@ -52,19 +52,19 @@ namespace TravelMateAPI.Controllers
             _locationPredictor = locationPredictor;
         }
 
-        [HttpGet("train")]
-        public IActionResult Train()
-        {
-            try
-            {
-                ModelTrainer.TrainModel();
-                return Ok("Model training completed.");
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
-        }
+        //[HttpGet("train")]
+        //public IActionResult Train()
+        //{
+        //    try
+        //    {
+        //        ModelTrainer.TrainModel();
+        //        return Ok("Model training completed.");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, $"Internal server error: {ex.Message}");
+        //    }
+        //}
 
         //[HttpGet("predict")]
         //public IActionResult PredictLocation([FromQuery] string query)

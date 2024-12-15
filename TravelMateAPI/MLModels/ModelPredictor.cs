@@ -55,7 +55,7 @@ namespace TravelMateAPI.MLModels
         private readonly MLContext _mlContext;
         private readonly ITransformer _model;
         //private readonly string _modelPath = Path.Combine(AppContext.BaseDirectory, "./MLModels/model.zip");
-        private readonly string _modelPath = Path.Combine(AppContext.BaseDirectory, "wwwroot", "MLModels", "model.zip");
+        private readonly string _modelPath = "./MLModels/model.zip";
 
         private readonly ApplicationDBContext _dbContext;
 
