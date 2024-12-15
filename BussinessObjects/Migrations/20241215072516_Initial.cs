@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace BusinessObjects.Migrations
 {
     /// <inheritdoc />
-    public partial class UpdateMigration : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -71,6 +71,28 @@ namespace BusinessObjects.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "BlockContracts",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    TravelerId = table.Column<int>(type: "int", nullable: false),
+                    LocalId = table.Column<int>(type: "int", nullable: false),
+                    TourId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Location = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Details = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TravelerSignature = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LocalSignature = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    PreviousHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Hash = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BlockContracts", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Destinations",
                 columns: table => new
                 {
@@ -123,7 +145,11 @@ namespace BusinessObjects.Migrations
                 {
                     LocationId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    LocationName = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    LocationName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Image = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    MapHtml = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -250,6 +276,40 @@ namespace BusinessObjects.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "CCCDs",
+                columns: table => new
+                {
+                    CCCDId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    imageFront = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    id = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    dob = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    sex = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    nationality = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    home = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    address = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    doe = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    imageBack = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    features = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    issue_date = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    mrz = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    issue_loc = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PublicSignature = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CCCDs", x => x.CCCDId);
+                    table.ForeignKey(
+                        name: "FK_CCCDs_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Contracts",
                 columns: table => new
                 {
@@ -279,29 +339,6 @@ namespace BusinessObjects.Migrations
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "DetailForms",
-                columns: table => new
-                {
-                    FormId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    Version = table.Column<int>(type: "int", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    IsCurrent = table.Column<bool>(type: "bit", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_DetailForms", x => x.FormId);
-                    table.ForeignKey(
-                        name: "FK_DetailForms_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -370,26 +407,26 @@ namespace BusinessObjects.Migrations
                 {
                     MessageId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    CreatedById = table.Column<int>(type: "int", nullable: false),
-                    SendToId = table.Column<int>(type: "int", nullable: false),
+                    SenderId = table.Column<int>(type: "int", nullable: false),
+                    ReceiverId = table.Column<int>(type: "int", nullable: false),
                     Text = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    SentAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ApplicationUserId = table.Column<int>(type: "int", nullable: true),
+                    ApplicationUserId1 = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Messages", x => x.MessageId);
                     table.ForeignKey(
-                        name: "FK_Messages_AspNetUsers_CreatedById",
-                        column: x => x.CreatedById,
+                        name: "FK_Messages_AspNetUsers_ApplicationUserId",
+                        column: x => x.ApplicationUserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Messages_AspNetUsers_SendToId",
-                        column: x => x.SendToId,
+                        name: "FK_Messages_AspNetUsers_ApplicationUserId1",
+                        column: x => x.ApplicationUserId1,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -401,6 +438,8 @@ namespace BusinessObjects.Migrations
                     UserId = table.Column<int>(type: "int", nullable: false),
                     ApplicationUserId = table.Column<int>(type: "int", nullable: true),
                     Message = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SenderId = table.Column<int>(type: "int", nullable: true),
+                    TypeNotification = table.Column<int>(type: "int", nullable: true),
                     IsRead = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -415,47 +454,12 @@ namespace BusinessObjects.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "PastTripPosts",
-                columns: table => new
-                {
-                    PastTripPostId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    TravelerId = table.Column<int>(type: "int", nullable: false),
-                    IsPublic = table.Column<bool>(type: "bit", nullable: false),
-                    IsCaptionEdit = table.Column<bool>(type: "bit", nullable: false),
-                    Caption = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LocalId = table.Column<int>(type: "int", nullable: false),
-                    Review = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    IsReviewEdited = table.Column<bool>(type: "bit", nullable: false),
-                    Star = table.Column<int>(type: "int", nullable: false),
-                    Location = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PastTripPosts", x => x.PastTripPostId);
-                    table.ForeignKey(
-                        name: "FK_PastTripPosts_AspNetUsers_LocalId",
-                        column: x => x.LocalId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_PastTripPosts_AspNetUsers_TravelerId",
-                        column: x => x.TravelerId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Profiles",
                 columns: table => new
                 {
                     ProfileId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<int>(type: "int", nullable: false),
-                    FullName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -815,25 +819,6 @@ namespace BusinessObjects.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "PostPhotos",
-                columns: table => new
-                {
-                    PostPhotoId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    PhotoUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PastTripPostId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PostPhotos", x => x.PostPhotoId);
-                    table.ForeignKey(
-                        name: "FK_PostPhotos_PastTripPosts_PastTripPostId",
-                        column: x => x.PastTripPostId,
-                        principalTable: "PastTripPosts",
-                        principalColumn: "PastTripPostId");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "HomePhotos",
                 columns: table => new
                 {
@@ -939,28 +924,28 @@ namespace BusinessObjects.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FullName", "LockoutEnabled", "LockoutEnd", "MatchingActivitiesCount", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "RegistrationTime", "SecurityStamp", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { 1, 0, "4580620c-1844-44dd-afeb-4d9422f0646c", "user1@example.com", false, "User One", false, null, null, null, null, null, null, false, new DateTime(2024, 11, 9, 15, 51, 41, 296, DateTimeKind.Utc).AddTicks(726), null, false, "user1" },
-                    { 2, 0, "4c18d991-810b-4d9c-b5d9-0301a2b1fb12", "user2@example.com", false, "User Two", false, null, null, null, null, null, null, false, new DateTime(2024, 11, 9, 15, 51, 41, 296, DateTimeKind.Utc).AddTicks(736), null, false, "user2" },
-                    { 3, 0, "48dad330-c94c-402a-babd-1272ecb83989", "user3@example.com", false, "User Three", false, null, null, null, null, null, null, false, new DateTime(2024, 11, 9, 15, 51, 41, 296, DateTimeKind.Utc).AddTicks(741), null, false, "user3" },
-                    { 4, 0, "97c0af26-4724-47e9-90ac-db82fd777223", "user4@example.com", false, "User Four", false, null, null, null, null, null, null, false, new DateTime(2024, 11, 9, 15, 51, 41, 296, DateTimeKind.Utc).AddTicks(746), null, false, "user4" },
-                    { 5, 0, "663d1f19-0436-44fa-b9e4-825c53dc51dd", "user5@example.com", false, "User Five", false, null, null, null, null, null, null, false, new DateTime(2024, 11, 9, 15, 51, 41, 296, DateTimeKind.Utc).AddTicks(751), null, false, "user5" },
-                    { 6, 0, "7a1770e0-ae87-48ee-a452-9ee997cc6e7b", "userSystem1@example.com", false, "User System", false, null, null, null, null, null, null, false, new DateTime(2024, 11, 9, 15, 51, 41, 296, DateTimeKind.Utc).AddTicks(765), null, false, "userSystem1" },
-                    { 7, 0, "7e9b652e-d810-4a76-8c53-f3db84c12a75", "Admin1@example.com", false, "Admin 1", false, null, null, null, null, null, null, false, new DateTime(2024, 11, 9, 15, 51, 41, 296, DateTimeKind.Utc).AddTicks(770), null, false, "Admin1" }
+                    { 1, 0, "9534a0c2-3e0f-4458-9f2d-bd5ec741d98f", "user1@example.com", false, "User One", false, null, null, null, null, null, null, false, new DateTime(2024, 12, 15, 7, 25, 15, 572, DateTimeKind.Utc).AddTicks(8607), null, false, "user1" },
+                    { 2, 0, "94e13af5-3dba-4c6f-8f43-03696f60f43c", "user2@example.com", false, "User Two", false, null, null, null, null, null, null, false, new DateTime(2024, 12, 15, 7, 25, 15, 572, DateTimeKind.Utc).AddTicks(8629), null, false, "user2" },
+                    { 3, 0, "4f2bdb23-222a-4447-8b94-2e920e7bc827", "user3@example.com", false, "User Three", false, null, null, null, null, null, null, false, new DateTime(2024, 12, 15, 7, 25, 15, 572, DateTimeKind.Utc).AddTicks(8639), null, false, "user3" },
+                    { 4, 0, "7bbab63d-67fe-480a-b4ba-fff09c6f3f69", "user4@example.com", false, "User Four", false, null, null, null, null, null, null, false, new DateTime(2024, 12, 15, 7, 25, 15, 572, DateTimeKind.Utc).AddTicks(8649), null, false, "user4" },
+                    { 5, 0, "afd508f8-9ba5-4872-9a05-d518db4dce6e", "user5@example.com", false, "User Five", false, null, null, null, null, null, null, false, new DateTime(2024, 12, 15, 7, 25, 15, 572, DateTimeKind.Utc).AddTicks(8661), null, false, "user5" },
+                    { 6, 0, "ca5f4ca4-a96c-4dcd-8590-c67ee660722b", "userSystem1@example.com", false, "User System", false, null, null, null, null, null, null, false, new DateTime(2024, 12, 15, 7, 25, 15, 572, DateTimeKind.Utc).AddTicks(8672), null, false, "userSystem1" },
+                    { 7, 0, "c13e2058-dd2f-4127-a540-3bea2ed8a111", "Admin1@example.com", false, "Admin 1", false, null, null, null, null, null, null, false, new DateTime(2024, 12, 15, 7, 25, 15, 572, DateTimeKind.Utc).AddTicks(8683), null, false, "Admin1" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Locations",
-                columns: new[] { "LocationId", "LocationName" },
+                columns: new[] { "LocationId", "Description", "Image", "LocationName", "MapHtml", "Title" },
                 values: new object[,]
                 {
-                    { 1, "Hà Nội" },
-                    { 2, "Hồ Chí Minh" },
-                    { 3, "Đà Nẵng" },
-                    { 4, "Huế" },
-                    { 5, "Hội An" },
-                    { 6, "Nha Trang" },
-                    { 7, "Phú Quốc" },
-                    { 8, "Vịnh Hạ Long" }
+                    { 1, null, null, "Hà Nội", null, null },
+                    { 2, null, null, "Hồ Chí Minh", null, null },
+                    { 3, null, null, "Đà Nẵng", null, null },
+                    { 4, null, null, "Huế", null, null },
+                    { 5, null, null, "Hội An", null, null },
+                    { 6, null, null, "Nha Trang", null, null },
+                    { 7, null, null, "Phú Quốc", null, null },
+                    { 8, null, null, "Vịnh Hạ Long", null, null }
                 });
 
             migrationBuilder.InsertData(
@@ -979,14 +964,14 @@ namespace BusinessObjects.Migrations
 
             migrationBuilder.InsertData(
                 table: "Profiles",
-                columns: new[] { "ProfileId", "Address", "Birthdate", "City", "Description", "FirstName", "FullName", "Gender", "HostingAvailability", "ImageUser", "LastName", "MusicMoviesBooks", "Phone", "UserId", "WhatToShare", "WhyUseTravelMate" },
+                columns: new[] { "ProfileId", "Address", "Birthdate", "City", "Description", "FirstName", "Gender", "HostingAvailability", "ImageUser", "LastName", "MusicMoviesBooks", "Phone", "UserId", "WhatToShare", "WhyUseTravelMate" },
                 values: new object[,]
                 {
-                    { 1, "123 Main St, Hanoi", new DateTime(2024, 11, 9, 15, 51, 41, 296, DateTimeKind.Utc).AddTicks(948), null, null, null, "User One", "Male", null, "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png", null, null, "0123456789", 1, null, null },
-                    { 2, "456 Secondary St, Ho Chi Minh", new DateTime(2024, 11, 9, 15, 51, 41, 296, DateTimeKind.Utc).AddTicks(972), null, null, null, "User Two", "Male", null, "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png", null, null, "0987654321", 2, null, null },
-                    { 3, "789 Tertiary St, Da Nang", new DateTime(2024, 11, 9, 15, 51, 41, 296, DateTimeKind.Utc).AddTicks(975), null, null, null, "User Three", "Male", null, "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png", null, null, "0912345678", 3, null, null },
-                    { 4, "101 Eleventh St, Hue", new DateTime(2024, 11, 9, 15, 51, 41, 296, DateTimeKind.Utc).AddTicks(979), null, null, null, "User Four", "Male", null, "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png", null, null, "0998765432", 4, null, null },
-                    { 5, "202 Twelfth St, Phu Quoc", new DateTime(2024, 11, 9, 15, 51, 41, 296, DateTimeKind.Utc).AddTicks(986), null, null, null, "User Five", "Male", null, "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png", null, null, "0923456789", 5, null, null }
+                    { 1, "123 Main St, Hanoi", new DateTime(2024, 12, 15, 7, 25, 15, 572, DateTimeKind.Utc).AddTicks(9018), null, null, "User One", "Male", null, "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png", null, null, "0123456789", 1, null, null },
+                    { 2, "456 Secondary St, Ho Chi Minh", new DateTime(2024, 12, 15, 7, 25, 15, 572, DateTimeKind.Utc).AddTicks(9032), null, null, "User Two", "Male", null, "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png", null, null, "0987654321", 2, null, null },
+                    { 3, "789 Tertiary St, Da Nang", new DateTime(2024, 12, 15, 7, 25, 15, 572, DateTimeKind.Utc).AddTicks(9038), null, null, "User Three", "Male", null, "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png", null, null, "0912345678", 3, null, null },
+                    { 4, "101 Eleventh St, Hue", new DateTime(2024, 12, 15, 7, 25, 15, 572, DateTimeKind.Utc).AddTicks(9044), null, null, "User Four", "Male", null, "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png", null, null, "0998765432", 4, null, null },
+                    { 5, "202 Twelfth St, Phu Quoc", new DateTime(2024, 12, 15, 7, 25, 15, 572, DateTimeKind.Utc).AddTicks(9049), null, null, "User Five", "Male", null, "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Instagram_logo_2016.svg/2048px-Instagram_logo_2016.svg.png", null, null, "0923456789", 5, null, null }
                 });
 
             migrationBuilder.InsertData(
@@ -1060,6 +1045,12 @@ namespace BusinessObjects.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_CCCDs_UserId",
+                table: "CCCDs",
+                column: "UserId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Contracts_CreatedById",
                 table: "Contracts",
                 column: "CreatedById");
@@ -1068,12 +1059,6 @@ namespace BusinessObjects.Migrations
                 name: "IX_Contracts_PaidById",
                 table: "Contracts",
                 column: "PaidById");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_DetailForms_UserId",
-                table: "DetailForms",
-                column: "UserId",
-                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_EventParticipants_ApplicationUserId",
@@ -1141,14 +1126,14 @@ namespace BusinessObjects.Migrations
                 column: "UserHomeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Messages_CreatedById",
+                name: "IX_Messages_ApplicationUserId",
                 table: "Messages",
-                column: "CreatedById");
+                column: "ApplicationUserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Messages_SendToId",
+                name: "IX_Messages_ApplicationUserId1",
                 table: "Messages",
-                column: "SendToId");
+                column: "ApplicationUserId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Notifications_ApplicationUserId",
@@ -1161,16 +1146,6 @@ namespace BusinessObjects.Migrations
                 column: "DestinationId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PastTripPosts_LocalId",
-                table: "PastTripPosts",
-                column: "LocalId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_PastTripPosts_TravelerId",
-                table: "PastTripPosts",
-                column: "TravelerId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_PostComments_CommentedById",
                 table: "PostComments",
                 column: "CommentedById");
@@ -1179,11 +1154,6 @@ namespace BusinessObjects.Migrations
                 name: "IX_PostComments_PostId",
                 table: "PostComments",
                 column: "PostId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_PostPhotos_PastTripPostId",
-                table: "PostPhotos",
-                column: "PastTripPostId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Profiles_UserId",
@@ -1282,10 +1252,13 @@ namespace BusinessObjects.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Contracts");
+                name: "BlockContracts");
 
             migrationBuilder.DropTable(
-                name: "DetailForms");
+                name: "CCCDs");
+
+            migrationBuilder.DropTable(
+                name: "Contracts");
 
             migrationBuilder.DropTable(
                 name: "EventParticipants");
@@ -1313,9 +1286,6 @@ namespace BusinessObjects.Migrations
 
             migrationBuilder.DropTable(
                 name: "PostComments");
-
-            migrationBuilder.DropTable(
-                name: "PostPhotos");
 
             migrationBuilder.DropTable(
                 name: "Profiles");
@@ -1358,9 +1328,6 @@ namespace BusinessObjects.Migrations
 
             migrationBuilder.DropTable(
                 name: "GroupPosts");
-
-            migrationBuilder.DropTable(
-                name: "PastTripPosts");
 
             migrationBuilder.DropTable(
                 name: "Languages");

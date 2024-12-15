@@ -49,6 +49,8 @@ namespace TravelMateAPI.Models
                 .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Profiles.Address))
                 .ForMember(dest => dest.Phone, opt => opt.MapFrom(src => src.Profiles.Phone));
 
+            CreateMap<PastTripPost, PastTripPostTravelerDto>();
+            CreateMap<PastTripPostTravelerDto, PastTripPost>();
         }
 
     }

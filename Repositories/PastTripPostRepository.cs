@@ -1,5 +1,7 @@
-﻿using BusinessObjects.Entities;
+﻿using BusinessObjects;
+using BusinessObjects.Entities;
 using DataAccess;
+using Repositories.Interface;
 using Repository.Interfaces;
 
 namespace Repositories
@@ -7,45 +9,41 @@ namespace Repositories
     public class PastTripPostRepository : IPastTripPostRepository
     {
         private readonly PastTripPostDAO _pastTripPostDAO;
+        private readonly ITourRepository _tourRepository;
 
-        public PastTripPostRepository(PastTripPostDAO pastTripPostDAO)
+        public PastTripPostRepository(PastTripPostDAO pastTripPostDAO, ITourRepository tourRepository)
         {
             _pastTripPostDAO = pastTripPostDAO;
+            _tourRepository = tourRepository;
+        }
+        public async Task<IEnumerable<PastTripPost>> GetAllPostOfUserAsync(int userId)
+        {
+            return await _pastTripPostDAO.GetAllPostsAsync(userId);
+        }
+        public async Task<PastTripPost?> GetPostByIdAsync(string id)
+        {
+            return await _pastTripPostDAO.GetPostByIdAsync(id);
         }
 
-        public Task AddAsync(PastTripPost post)
+        public async Task AddAsync(PastTripPost post)
         {
-            throw new NotImplementedException();
+            var existingTour = await _tourRepository.GetTourById(post.TourId);
+            post.LocalId = existingTour.Creator.Id;
+            post.Location = existingTour.Location;
+            post.CreatedAt = GetTimeZone.GetVNTimeZoneNow();
+            post.IsCaptionEdit = false;
+
+            await _pastTripPostDAO.AddPostAsync(post);
         }
 
-        public Task DeleteAsync(int id)
+        public async Task DeleteAsync(string postId)
         {
-            throw new NotImplementedException();
+            await _pastTripPostDAO.DeletePostAsync(postId);
         }
 
-        public Task<IEnumerable<PastTripPost>> GetAllAsync()
+        public async Task UpdatePostAsync(string postId, PastTripPost post)
         {
-            throw new NotImplementedException();
-        }
-
-        public Task<IEnumerable<PastTripPost>> GetAllPostOfUserAsync(int userId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PastTripPost?> GetByIdAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task UpdateLocalPartAsync(PastTripPost post)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task UpdateTravelerPartAsync(PastTripPost post)
-        {
-            throw new NotImplementedException();
+            await _pastTripPostDAO.UpdatePostAsync(postId, post);
         }
     }
 }

@@ -4,14 +4,10 @@ namespace Repository.Interfaces
 {
     public interface IPastTripPostRepository
     {
-        Task<IEnumerable<PastTripPost>> GetAllAsync();
         Task<IEnumerable<PastTripPost>> GetAllPostOfUserAsync(int userId);
-
-        Task<PastTripPost?> GetByIdAsync(int id);
+        Task<PastTripPost?> GetPostByIdAsync(string id);
         Task AddAsync(PastTripPost post);
-        Task UpdateTravelerPartAsync(PastTripPost post);
-
-        Task UpdateLocalPartAsync(PastTripPost post);
-        Task DeleteAsync(int id);
+        Task UpdatePostAsync(string postId, PastTripPost post);
+        Task DeleteAsync(string postId);
     }
 }
