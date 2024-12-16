@@ -21,9 +21,9 @@ namespace Repositories
             return await _transactionDAO.GetAllTransactionsAsync();
         }
 
-        public async Task<IEnumerable<TourTransaction?>> GetTransactionByIdAsync(int id)
+        public async Task<IEnumerable<TourTransaction>> GetTransactionByIdAsync(int id)
         {
-            return (IEnumerable<TourTransaction?>)await _transactionDAO.GetTransactionByIdAsync(id);
+            return await _transactionDAO.GetTransactionByIdAsync(id);
         }
 
         public async Task AddTransactionAsync(TourTransaction transaction)
