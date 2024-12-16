@@ -8,12 +8,19 @@ namespace TravelMateAPI.Controllers
     [ApiController]
     public class TrainML : ControllerBase
     {
+
+        private readonly ModelTrainer _modelTrainer;
+
+        public TrainML(ModelTrainer modelTrainer)
+        {
+            _modelTrainer   = modelTrainer;
+        }
         [HttpGet("train")]
         public IActionResult Train()
         {
             try
             {
-                ModelTrainer.TrainModel();
+                _modelTrainer.TrainModel();
                 return Ok("Model training completed.");
             }
             catch (Exception ex)
