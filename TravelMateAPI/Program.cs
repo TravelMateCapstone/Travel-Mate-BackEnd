@@ -254,7 +254,7 @@ namespace TravelMateAPI
             builder.Services.AddScoped<SearchLocationFuzzyService>();
             builder.Services.AddScoped<IFindLocalByFeedbackService, FindLocalByFeedbackService>();
             builder.Services.AddScoped<INotificationService, NotificationService>();
-            builder.Services.AddScoped<IUserReportService,UserReportService>();
+            builder.Services.AddScoped<IUserReportService, UserReportService>();
             builder.Services.AddScoped<EventDAO>();
             builder.Services.AddScoped<IEventRepository, EventRepository>();
             builder.Services.AddScoped<EventParticipantsDAO>();
@@ -289,9 +289,6 @@ namespace TravelMateAPI
             builder.Services.AddScoped<IPostCommentRepository, PostCommentRepository>();
             builder.Services.AddScoped<PastTripPostDAO>();
             builder.Services.AddScoped<IPastTripPostRepository, PastTripPostRepository>();
-            builder.Services.AddScoped<ExtraFormDetailDAO>();
-            builder.Services.AddScoped<ILocalExtraDetailFormRepository, LocalExtraDetailFormRepository>();
-            builder.Services.AddScoped<ITravelerFormRepository, TravelerFormRepository>();
             builder.Services.AddScoped<TourDAO>();
             builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
             builder.Services.AddScoped<TransactionDAO>();

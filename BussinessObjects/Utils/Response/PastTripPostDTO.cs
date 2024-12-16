@@ -1,6 +1,4 @@
-﻿using BusinessObjects.Entities;
-
-namespace BusinessObjects.Utils.Response
+﻿namespace BusinessObjects.Utils.Response
 {
     public class PastTripPostDTO
     {
@@ -29,6 +27,5 @@ namespace BusinessObjects.Utils.Response
 
         public DateTime CreatedAt { get; set; }
 
-        public ICollection<PostPhoto>? PostPhotos { get; set; }
     }
 }

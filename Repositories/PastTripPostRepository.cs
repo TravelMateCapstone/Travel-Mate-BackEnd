@@ -1,5 +1,7 @@
-﻿using BusinessObjects.Entities;
+﻿using BusinessObjects;
+using BusinessObjects.Entities;
 using DataAccess;
+using Repositories.Interface;
 using Repository.Interfaces;
 
 namespace Repositories
@@ -7,45 +9,67 @@ namespace Repositories
     public class PastTripPostRepository : IPastTripPostRepository
     {
         private readonly PastTripPostDAO _pastTripPostDAO;
+        private readonly ITourRepository _tourRepository;
 
-        public PastTripPostRepository(PastTripPostDAO pastTripPostDAO)
+        public PastTripPostRepository(PastTripPostDAO pastTripPostDAO, ITourRepository tourRepository)
         {
             _pastTripPostDAO = pastTripPostDAO;
-        }
-
-        public async Task<IEnumerable<PastTripPost>> GetAllAsync()
-        {
-            return await _pastTripPostDAO.GetAllPostAsync();
+            _tourRepository = tourRepository;
         }
         public async Task<IEnumerable<PastTripPost>> GetAllPostOfUserAsync(int userId)
         {
-            return await _pastTripPostDAO.GetAllPostOfUserAsync(userId);
-        }
+            var allPost = await _pastTripPostDAO.GetAllPostsAsync(userId);
 
-        public async Task<PastTripPost?> GetByIdAsync(int id)
+            foreach (var post in allPost)
+            {
+                var travelerProfile = await _tourRepository.GetUserInfo(post.TravelerId);
+                var localProfile = await _tourRepository.GetUserInfo((int)(post.LocalId));
+
+                post.TravelerName = travelerProfile.FullName;
+                post.TravelerAvatar = travelerProfile.Profiles.ImageUser;
+                post.LocalName = localProfile.FullName;
+                post.LocalAvatar = localProfile.Profiles.ImageUser;
+                await _pastTripPostDAO.UpdatePostAsync(post.Id, post);
+            }
+
+            return allPost;
+        }
+        public async Task<PastTripPost?> GetPostByIdAsync(string id)
         {
-            return await _pastTripPostDAO.GetByIdAsync(id);
+            var existingPost = await _pastTripPostDAO.GetPostByIdAsync(id);
+
+            var travelerProfile = await _tourRepository.GetUserInfo(existingPost.TravelerId);
+            var localProfile = await _tourRepository.GetUserInfo((int)(existingPost.LocalId));
+
+            existingPost.TravelerName = travelerProfile.FullName;
+            existingPost.TravelerAvatar = travelerProfile.Profiles.ImageUser;
+            existingPost.LocalName = localProfile.FullName;
+            existingPost.LocalAvatar = localProfile.Profiles.ImageUser;
+
+            await _pastTripPostDAO.UpdatePostAsync(id, existingPost);
+
+            return await _pastTripPostDAO.GetPostByIdAsync(id);
         }
 
         public async Task AddAsync(PastTripPost post)
         {
-            // Here you could add any additional logic or validation before adding
-            await _pastTripPostDAO.AddAsync(post);
+            var existingTour = await _tourRepository.GetTourById(post.TourId);
+            post.LocalId = existingTour.Creator.Id;
+            post.Location = existingTour.Location;
+            post.CreatedAt = GetTimeZone.GetVNTimeZoneNow();
+            post.IsCaptionEdit = false;
+
+            await _pastTripPostDAO.AddPostAsync(post);
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(string postId)
         {
-            await _pastTripPostDAO.DeleteAsync(id);
+            await _pastTripPostDAO.DeletePostAsync(postId);
         }
 
-        public async Task UpdateTravelerPartAsync(PastTripPost post)
+        public async Task UpdatePostAsync(string postId, PastTripPost post)
         {
-            await _pastTripPostDAO.UpdateTravelerPartAsync(post);
-        }
-
-        public async Task UpdateLocalPartAsync(PastTripPost post)
-        {
-            await _pastTripPostDAO.UpdateLocalPartAsync(post);
+            await _pastTripPostDAO.UpdatePostAsync(postId, post);
         }
     }
 }
