@@ -250,35 +250,6 @@ namespace TravelMate.Controllers
             return NoContent();
         }
 
-        // POST: api/tour/review/{tourId}
-        [HttpPost("review/{tourId}")]
-        public async Task<ActionResult> AddReview(string tourId, [FromBody] TourReview tourReview)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-            {
-                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-            }
-
-            //user thuoc trong participant
-            var existingTour = await _tourRepository.GetTourById(tourId);
-            if (existingTour == null)
-                return NotFound();
-
-            var existingParticipant = await _tourRepository.DoesParticipantExist(tourId, user.Id);
-
-            if (!existingParticipant)
-                return BadRequest("You are not in this tour");
-
-            await _tourRepository.AddReview(tourId, tourReview);
-            return NoContent();
-        }
-
         // PUT: api/tour/cancel/{tourId}
         [HttpPut("cancel/{tourId}")]
         public async Task<ActionResult> CancelTour(string tourId)

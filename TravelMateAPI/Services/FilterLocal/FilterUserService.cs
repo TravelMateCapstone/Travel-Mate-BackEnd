@@ -1,11 +1,9 @@
-﻿using BusinessObjects.Entities;
-using BusinessObjects;
-using Microsoft.AspNetCore.Identity;
-using BusinessObjects.Utils.Response;
-using Microsoft.EntityFrameworkCore;
-using Org.BouncyCastle.Utilities.Encoders;
-using Repositories.Interface;
+﻿using BusinessObjects;
+using BusinessObjects.Entities;
 using DataAccess;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Repositories.Interface;
 
 namespace TravelMateAPI.Services.FilterLocal
 {
@@ -17,7 +15,7 @@ namespace TravelMateAPI.Services.FilterLocal
         private readonly IContractService _contractService;
         private readonly TourDAO _tourDAO;
 
-        public FilterUserService(ApplicationDBContext context, UserManager<ApplicationUser> userManager, ITourRepository tourRepository,IContractService contractService, TourDAO tourDAO)
+        public FilterUserService(ApplicationDBContext context, UserManager<ApplicationUser> userManager, ITourRepository tourRepository, IContractService contractService, TourDAO tourDAO)
         {
             _context = context;
             _userManager = userManager;
@@ -135,7 +133,7 @@ namespace TravelMateAPI.Services.FilterLocal
             var users = await _context.Users
                 .Include(u => u.Profiles)
                 .Include(u => u.CCCDs).ToListAsync(); // Include CCCD for DoB and Sex
-               
+
 
             var result = new List<UserWithDetailsDTO>();
 
@@ -197,8 +195,8 @@ namespace TravelMateAPI.Services.FilterLocal
                     //{
                     //    ActivityIds = userActivities
                     //}
-                    
-                     ActivityIds = userActivities.ToList(),
+
+                    ActivityIds = userActivities.ToList(),
                     //SimilarityScore = similarityScore // Thêm điểm tương tự
                     // Tours = tours // Gắn danh sách tour vào DTO
                 });

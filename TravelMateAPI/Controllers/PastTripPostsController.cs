@@ -46,29 +46,38 @@ namespace TravelMateAPI.Controllers
             return Ok(posts);
         }
 
-        [HttpPost()]
+        [HttpPost]
         public async Task<IActionResult> AddPost([FromBody] PastTripPostTravelerDto postDto)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            //check tour có tồn tại ko
+
             var existingTour = await _tourRepository.GetTourById(postDto.TourId);
             if (existingTour == null)
             {
-                return BadRequest("Tour does not exist!");
+                return NotFound("Tour does not exist!");
             }
-            //check co phai la traveler ko
+
             if (existingTour.Creator.Id == postDto.TravelerId)
             {
-                return BadRequest("Access Denied! You are not participant of this tour");
+                return Forbid("Access Denied! You are the creator of this tour!");
+            }
+
+            var isParticipant = existingTour.Participants
+                                            .Any(p => p.ParticipantId == postDto.TravelerId);
+            if (!isParticipant)
+            {
+                return BadRequest("You did not join this tour!");
             }
 
             var post = _mapper.Map<PastTripPost>(postDto);
             await _pastTripPostRepository.AddAsync(post);
+
             return Ok();
         }
+
 
         //CHƯA SỬA
         [HttpPut("traveler")]

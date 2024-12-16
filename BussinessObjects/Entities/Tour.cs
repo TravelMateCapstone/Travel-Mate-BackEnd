@@ -63,26 +63,11 @@ namespace BusinessObjects.Entities
         [BsonElement("tourDescription")]
         public string TourDescription { get; set; }
 
-        [BsonElement("reviews")]
-        public List<TourReview>? Reviews { get; set; } = new List<TourReview>();
-
         [BsonElement("createdAt")]
         public DateTime? CreatedAt { get; set; }
 
         [BsonElement("updatedAt")]
         public DateTime? UpdatedAt { get; set; }
-    }
-
-    public class TourReview
-    {
-        [BsonElement("ReviewerId")]
-        public string ReviewerId { get; set; }
-        [BsonElement("content")]
-        public string Content { get; set; }
-        [BsonElement("rating")]
-        public int Rating { get; set; }
-        [BsonElement("createdDate")]
-        public DateTime CreatedDate { get; set; }
     }
 
     public class CreatorInfo
@@ -140,8 +125,10 @@ namespace BusinessObjects.Entities
 
         [BsonElement("totalAmount")]
         public decimal? TotalAmount { get; set; }
-    }
 
+        [BsonElement("postId")]
+        public string? PostId { get; set; }
+    }
 
     public class Itinerary
     {

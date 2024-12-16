@@ -31,13 +31,18 @@ namespace TravelMateAPI.Controllers
 
             var domain = "https://travelmatefe.netlify.app/";
 
+            var registeredTime = await _tourRepository.GetParticipantJoinTimeAsync(tourId, travelerId);
+            var registeredTimeUnix = new DateTimeOffset(registeredTime).ToUnixTimeSeconds();
+            var expiredTime = registeredTimeUnix + 60;
+
             var paymentLinkRequest = new PaymentData(
                 orderCode: int.Parse(DateTimeOffset.Now.ToString("ffffff")),
                 amount: Amount,
                 description: tourName,
-                 items: null,
+                items: null,
                 returnUrl: domain + "contract/ongoing",
-                cancelUrl: domain + "contract/payment-failed"
+                cancelUrl: domain + "contract/payment-failed",
+                expiredAt: expiredTime
             );
             var response = await _payOS.createPaymentLink(paymentLinkRequest);
 

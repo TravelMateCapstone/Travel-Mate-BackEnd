@@ -11,11 +11,13 @@ namespace DataAccess
     {
         private readonly ApplicationDBContext _sqlContext;
         private readonly IMongoCollection<Tour> _mongoContext;
+        private readonly IMongoCollection<PastTripPost> _postMongoContext;
 
         public TourDAO(ApplicationDBContext context, MongoDbContext mongoContext)
         {
             _sqlContext = context;
             _mongoContext = mongoContext.GetCollection<Tour>("Tours");
+            _postMongoContext = mongoContext.GetCollection<PastTripPost>("PastTripPosts");
         }
 
         public async Task<ApplicationUser> GetLocalInfor(int userId)
@@ -32,9 +34,17 @@ namespace DataAccess
                 .FirstOrDefault(t => t.Id == userId);
         }
 
-        //public async Task<IEnumerable<PastTripPost>> GetUserAverageStar(int userId)
-        //{
-        //}
+        public async Task<DateTime> GetParticipantJoinTimeAsync(string tourId, int travelerId)
+        {
+            // Lấy tour theo TourId
+            var tour = await _mongoContext.Find(t => t.TourId == tourId)
+                .FirstOrDefaultAsync();
+
+            var participant = tour.Participants
+                .FirstOrDefault(p => p.ParticipantId == travelerId);
+
+            return participant.RegisteredAt;
+        }
 
         public async Task<IEnumerable<Tour>> GetTourBriefByUserId(int creatorId)
         {
@@ -128,16 +138,6 @@ namespace DataAccess
             var update = Builders<Tour>.Update.Set(t => t.ApprovalStatus, processStatus);
             await _mongoContext.UpdateOneAsync(filter, update);
         }
-
-        // Add a review to a tour
-        public async Task AddReview(string tourId, TourReview tourReview)
-        {
-            var filter = Builders<Tour>.Filter.Eq(f => f.TourId, tourId);
-
-            var update = Builders<Tour>.Update.AddToSet(t => t.Reviews, tourReview);
-            await _mongoContext.UpdateOneAsync(filter, update);
-        }
-
 
         // Cancel a tour
         public async Task CancelTour(string tourId)
