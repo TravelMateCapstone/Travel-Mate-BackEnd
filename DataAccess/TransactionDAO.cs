@@ -18,9 +18,9 @@ namespace DataAccess
             return await _mongoContext.Find(_ => true).ToListAsync();
         }
 
-        public async Task<TourTransaction?> GetTransactionByIdAsync(string id)
+        public async Task<TourTransaction?> GetTransactionByIdAsync(int userId)
         {
-            return await _mongoContext.Find(t => t.TourId == id).FirstOrDefaultAsync();
+            return await _mongoContext.Find(t => t.TravelerId == userId).FirstOrDefaultAsync();
         }
 
         public async Task AddTransactionAsync(TourTransaction transaction)

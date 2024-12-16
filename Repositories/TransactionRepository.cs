@@ -23,7 +23,7 @@ namespace Repositories
 
         public async Task<IEnumerable<TourTransaction?>> GetTransactionByIdAsync(int id)
         {
-            return await _transactionDAO.GetTransactionByIdAsync(id);
+            return (IEnumerable<TourTransaction?>)await _transactionDAO.GetTransactionByIdAsync(id);
         }
 
         public async Task AddTransactionAsync(TourTransaction transaction)

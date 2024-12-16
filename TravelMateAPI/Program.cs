@@ -247,7 +247,7 @@ namespace TravelMateAPI
             builder.Services.AddScoped<SearchLocationFuzzyService>();
             builder.Services.AddScoped<IFindLocalByFeedbackService, FindLocalByFeedbackService>();
             builder.Services.AddScoped<INotificationService, NotificationService>();
-            builder.Services.AddScoped<IUserReportService,UserReportService>();
+            builder.Services.AddScoped<IUserReportService, UserReportService>();
             builder.Services.AddScoped<EventDAO>();
             builder.Services.AddScoped<IEventRepository, EventRepository>();
             builder.Services.AddScoped<EventParticipantsDAO>();
