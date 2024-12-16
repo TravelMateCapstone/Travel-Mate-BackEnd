@@ -6,6 +6,7 @@
         public MailSettings MailSettings { get; set; }
         public FirebaseConfig FirebaseConfig { get; set; }
         public GoogleAuthSettings GoogleAuthSettings { get; set; }
+        public AzureStorage AzureStorage { get; set; }
     }
 
     public class JwtSettings
@@ -39,5 +40,10 @@
         public string AppId { get; set; }
         public string MeasurementId { get; set; }
         public string FirebaseAdminSdkJsonPath { get; set; }
+    }
+    public class AzureStorage
+    {
+        public string AzureStorageConnectionString { get; set; }
+       
     }
 }

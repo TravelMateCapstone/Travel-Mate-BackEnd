@@ -112,7 +112,12 @@ namespace TravelMateAPI
                 {
                     ClientId = googleClientId,
                     ClientSecret = googleClientSecret
+                },
+                AzureStorage = new AzureStorage
+                {
+                    AzureStorageConnectionString = (await client.GetSecretAsync("AzureStorageConnectionString")).Value.Value
                 }
+
             };
 
 
@@ -237,6 +242,8 @@ namespace TravelMateAPI
             builder.Services.AddScoped<ICCCDService, CCCDService>();
             builder.Services.AddScoped<IUserRoleService, UserRoleService>();
             builder.Services.AddScoped<CheckProfileService>();
+            builder.Services.AddScoped<BlobService>();
+            builder.Services.AddScoped<ModelTrainer>();
             builder.Services.AddScoped<ModelPredictor>();
             builder.Services.AddScoped<FilterUserService>();
             builder.Services.AddScoped<IContractService, ContractService>();
