@@ -282,9 +282,6 @@ namespace TravelMateAPI
             builder.Services.AddScoped<IPostCommentRepository, PostCommentRepository>();
             builder.Services.AddScoped<PastTripPostDAO>();
             builder.Services.AddScoped<IPastTripPostRepository, PastTripPostRepository>();
-            builder.Services.AddScoped<ExtraFormDetailDAO>();
-            builder.Services.AddScoped<ILocalExtraDetailFormRepository, LocalExtraDetailFormRepository>();
-            builder.Services.AddScoped<ITravelerFormRepository, TravelerFormRepository>();
             builder.Services.AddScoped<TourDAO>();
             builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
             builder.Services.AddScoped<TransactionDAO>();

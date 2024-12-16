@@ -1,7 +1,13 @@
-﻿namespace BusinessObjects.Entities
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+
+namespace BusinessObjects.Entities
 {
     public class TourTransaction
     {
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string? Id { get; set; }
         public string? TourId { get; set; }
         public string? TourName { get; set; }
         public int localId { get; set; }

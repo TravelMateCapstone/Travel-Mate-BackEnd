@@ -4,8 +4,8 @@ namespace Repositories.Interface
 {
     public interface ITransactionRepository
     {
-        Task<List<TourTransaction>> GetAllTransactionsAsync();
-        Task<TourTransaction?> GetTransactionByIdAsync(string id);
+        Task<IEnumerable<TourTransaction>> GetAllTransactionsAsync();
+        Task<IEnumerable<TourTransaction?>> GetTransactionByIdAsync(int id);
         Task AddTransactionAsync(TourTransaction transaction);
     }
 }
