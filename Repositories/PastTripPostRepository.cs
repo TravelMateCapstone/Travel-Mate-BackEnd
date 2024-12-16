@@ -18,10 +18,36 @@ namespace Repositories
         }
         public async Task<IEnumerable<PastTripPost>> GetAllPostOfUserAsync(int userId)
         {
-            return await _pastTripPostDAO.GetAllPostsAsync(userId);
+            var allPost = await _pastTripPostDAO.GetAllPostsAsync(userId);
+
+            foreach (var post in allPost)
+            {
+                var travelerProfile = await _tourRepository.GetUserInfo(post.TravelerId);
+                var localProfile = await _tourRepository.GetUserInfo((int)(post.LocalId));
+
+                post.TravelerName = travelerProfile.FullName;
+                post.TravelerAvatar = travelerProfile.Profiles.ImageUser;
+                post.LocalName = localProfile.FullName;
+                post.LocalAvatar = localProfile.Profiles.ImageUser;
+                await _pastTripPostDAO.UpdatePostAsync(post.Id, post);
+            }
+
+            return allPost;
         }
         public async Task<PastTripPost?> GetPostByIdAsync(string id)
         {
+            var existingPost = await _pastTripPostDAO.GetPostByIdAsync(id);
+
+            var travelerProfile = await _tourRepository.GetUserInfo(existingPost.TravelerId);
+            var localProfile = await _tourRepository.GetUserInfo((int)(existingPost.LocalId));
+
+            existingPost.TravelerName = travelerProfile.FullName;
+            existingPost.TravelerAvatar = travelerProfile.Profiles.ImageUser;
+            existingPost.LocalName = localProfile.FullName;
+            existingPost.LocalAvatar = localProfile.Profiles.ImageUser;
+
+            await _pastTripPostDAO.UpdatePostAsync(id, existingPost);
+
             return await _pastTripPostDAO.GetPostByIdAsync(id);
         }
 

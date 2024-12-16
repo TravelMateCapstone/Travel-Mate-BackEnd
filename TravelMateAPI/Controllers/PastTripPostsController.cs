@@ -25,10 +25,23 @@ namespace TravelMateAPI.Controllers
             _tourRepository = tourRepository;
         }
 
-        [HttpGet("{userId}")]
-        public async Task<IActionResult> GetAllPosts(int userId)
+        [HttpGet]
+        public async Task<IActionResult> GetAllPosts([FromQuery] int userId)
         {
             var posts = await _pastTripPostRepository.GetAllPostOfUserAsync(userId);
+
+            return Ok(posts);
+        }
+
+        [HttpGet("{postId}")]
+        public async Task<IActionResult> GetPostById(string postId)
+        {
+            var existingPost = await _pastTripPostRepository.GetPostByIdAsync(postId);
+            if (existingPost == null)
+            {
+                return BadRequest("Post does not exist!");
+            }
+            var posts = await _pastTripPostRepository.GetPostByIdAsync(postId);
 
             return Ok(posts);
         }
@@ -45,6 +58,11 @@ namespace TravelMateAPI.Controllers
             if (existingTour == null)
             {
                 return BadRequest("Tour does not exist!");
+            }
+            //check co phai la traveler ko
+            if (existingTour.Creator.Id == postDto.TravelerId)
+            {
+                return BadRequest("Access Denied! You are not participant of this tour");
             }
 
             var post = _mapper.Map<PastTripPost>(postDto);
@@ -109,7 +127,6 @@ namespace TravelMateAPI.Controllers
             await _pastTripPostRepository.UpdatePostAsync(postId, existingPost);
             return Ok();
         }
-
 
         [HttpDelete("{postId}")]
         public async Task<IActionResult> DeletePost(string postId)
