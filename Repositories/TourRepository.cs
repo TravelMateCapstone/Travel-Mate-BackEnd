@@ -112,6 +112,7 @@ namespace Repositories
                     item.Address = user.Profiles.City;
                     item.Phone = user.Profiles.Phone;
                     item.PaymentStatus = false;
+                    item.PostId = "";
                     await _tourDAO.UpdateTour(tourId, getParticipant);
                     break;
                 }
