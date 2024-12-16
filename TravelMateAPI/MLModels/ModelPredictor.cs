@@ -54,18 +54,28 @@ namespace TravelMateAPI.MLModels
 
         private readonly MLContext _mlContext;
         private readonly ITransformer _model;
-        //private readonly string _modelPath = Path.Combine(AppContext.BaseDirectory, "./MLModels/model.zip");
-        private readonly string _modelPath = Path.Combine(AppContext.BaseDirectory, "wwwroot", "MLModels", "model.zip");
-
         private readonly ApplicationDBContext _dbContext;
+        private readonly BlobService _blobService;
 
-        public ModelPredictor(ApplicationDBContext dbContext)
+        //private readonly string _modelPath = Path.Combine(AppContext.BaseDirectory, "./MLModels/model.zip");
+        //private readonly string _modelPath = "./MLModels/model.zip";
+        private readonly string _modelFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "./MLModels/model.zip");
+
+        public ModelPredictor(ApplicationDBContext dbContext, BlobService blobService)
         {
             _mlContext = new MLContext();
             _dbContext = dbContext;
+            _blobService = blobService;
 
             // Load mô hình
-            _model = _mlContext.Model.Load(_modelPath, out var modelInputSchema);
+            //_model = _mlContext.Model.Load(_modelPath, out var modelInputSchema);
+            
+
+            // Tải mô hình từ Blob Storage
+            blobService.DownloadBlobAsync("model.zip", _modelFilePath).Wait();
+            using var stream = File.OpenRead(_modelFilePath);
+            _model = _mlContext.Model.Load(stream, out _);
+
         }
 
 

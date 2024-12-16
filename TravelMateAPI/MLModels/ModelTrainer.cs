@@ -35,39 +35,108 @@ namespace TravelMateAPI.MLModels
         //    _mlContext.Model.Save(model, data.Schema, "MLModels/model.zip");
         //}
 
-        public static void TrainModel()
+
+
+
+
+
+
+
+
+        //public static void TrainModel()
+        //{
+        //    // Tạo MLContext
+        //    var mlContext = new MLContext();
+
+        //    //// Đường dẫn tệp
+        //    //string basePath = Path.Combine(AppContext.BaseDirectory, "MLModels");
+        //    ////string dataPath = Path.Combine(basePath, "data.csv");
+        //    ////string modelPath = Path.Combine(basePath, "model.zip");
+        //    //string dataPath = "./MLModels/data.csv";
+        //    //string modelPath = "./MLModels/model.zip";
+
+        //    string basePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "MLModels");
+        //    if (!Directory.Exists(basePath))
+        //    {
+        //        Directory.CreateDirectory(basePath);
+        //    }
+        //    string dataPath = Path.Combine(basePath, "data.csv");
+        //    string modelPath = Path.Combine(basePath, "model.zip");
+
+
+        //    // Load dữ liệu
+        //    var data = mlContext.Data.LoadFromTextFile<ModelInput>(dataPath, hasHeader: true, separatorChar: ',');
+
+        //    // Tạo pipeline
+        //    var pipeline = mlContext.Transforms.Text.FeaturizeText("Features", "Query")
+        //        .Append(mlContext.Transforms.Conversion.MapValueToKey("Label", "Location"))
+        //        .Append(mlContext.MulticlassClassification.Trainers.SdcaMaximumEntropy())
+        //        .Append(mlContext.Transforms.Conversion.MapKeyToValue("PredictedLabel"));
+
+        //    //// Xây dựng pipeline huấn luyện
+        //    //var pipeline = mlContext.Transforms.Text.FeaturizeText("Features", nameof(ModelInput.Query))
+        //    //    .Append(mlContext.Transforms.Conversion.MapValueToKey("Label", nameof(ModelInput.Location)))
+        //    //    .Append(mlContext.MulticlassClassification.Trainers.SdcaMaximumEntropy())
+        //    //    .Append(mlContext.Transforms.Conversion.MapKeyToValue("PredictedLabels", "PredictedLabel"));
+
+        //    // Huấn luyện mô hình
+        //    var model = pipeline.Fit(data);
+
+        //    // Lưu mô hình
+        //    mlContext.Model.Save(model, data.Schema, modelPath);
+        //    Console.WriteLine($"Model trained and saved to {modelPath}");
+        //}
+
+
+
+
+
+
+
+
+
+        private readonly string _dataFilePath;
+        private readonly string _modelFilePath;
+        private readonly BlobService _blobService;
+        private readonly MLContext _mlContext;
+
+        public ModelTrainer(BlobService blobService)
         {
-            // Tạo MLContext
-            var mlContext = new MLContext();
+            _blobService = blobService;
+            string localFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "MLModels");
 
-            // Đường dẫn tệp
-            string basePath = Path.Combine(AppContext.BaseDirectory, "MLModels");
-            //string dataPath = Path.Combine(basePath, "data.csv");
-            //string modelPath = Path.Combine(basePath, "model.zip");
-            string dataPath = Path.Combine(AppContext.BaseDirectory, "wwwroot", "MLModels", "data.csv");
-            string modelPath = Path.Combine(AppContext.BaseDirectory, "wwwroot", "MLModels", "model.zip");
+            if (!Directory.Exists(localFolder))
+            {
+                Directory.CreateDirectory(localFolder);
+            }
 
-            // Load dữ liệu
-            var data = mlContext.Data.LoadFromTextFile<ModelInput>(dataPath, hasHeader: true, separatorChar: ',');
+            _dataFilePath = Path.Combine(localFolder, "data.csv");
+            _modelFilePath = Path.Combine(localFolder, "model.zip");
 
-            // Tạo pipeline
-            var pipeline = mlContext.Transforms.Text.FeaturizeText("Features", "Query")
-                .Append(mlContext.Transforms.Conversion.MapValueToKey("Label", "Location"))
-                .Append(mlContext.MulticlassClassification.Trainers.SdcaMaximumEntropy())
-                .Append(mlContext.Transforms.Conversion.MapKeyToValue("PredictedLabel"));
+            // Tải tệp từ Blob Storage
+            _blobService.DownloadBlobAsync("data.csv", _dataFilePath).Wait();
 
-            //// Xây dựng pipeline huấn luyện
-            //var pipeline = mlContext.Transforms.Text.FeaturizeText("Features", nameof(ModelInput.Query))
-            //    .Append(mlContext.Transforms.Conversion.MapValueToKey("Label", nameof(ModelInput.Location)))
-            //    .Append(mlContext.MulticlassClassification.Trainers.SdcaMaximumEntropy())
-            //    .Append(mlContext.Transforms.Conversion.MapKeyToValue("PredictedLabels", "PredictedLabel"));
+            _mlContext = new MLContext();
+        }
 
-            // Huấn luyện mô hình
-            var model = pipeline.Fit(data);
+        public void TrainModel()
+        {
+            IDataView dataView = _mlContext.Data.LoadFromTextFile<ModelInput>(
+                path: _dataFilePath,
+                hasHeader: true,
+                separatorChar: ',');
 
-            // Lưu mô hình
-            mlContext.Model.Save(model, data.Schema, modelPath);
-            Console.WriteLine($"Model trained and saved to {modelPath}");
+            var pipeline = _mlContext.Transforms.Text.FeaturizeText("Features", nameof(ModelInput.Query))
+                .Append(_mlContext.Transforms.Conversion.MapValueToKey("Label", nameof(ModelInput.Location)))
+                .Append(_mlContext.MulticlassClassification.Trainers.SdcaMaximumEntropy())
+                .Append(_mlContext.Transforms.Conversion.MapKeyToValue("PredictedLabel"));
+
+            var model = pipeline.Fit(dataView);
+
+            _mlContext.Model.Save(model, dataView.Schema, _modelFilePath);
+
+            // Tải mô hình lên Blob Storage
+            _blobService.UploadBlobAsync("model.zip", _modelFilePath).Wait();
         }
     }
 }
