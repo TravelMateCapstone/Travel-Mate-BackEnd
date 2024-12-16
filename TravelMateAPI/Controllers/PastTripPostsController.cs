@@ -62,7 +62,7 @@ namespace TravelMateAPI.Controllers
 
             if (existingTour.Creator.Id == postDto.TravelerId)
             {
-                return Forbid("Access Denied! You are the creator of this tour!");
+                return BadRequest("Access Denied! You are the creator of this tour!");
             }
 
             //check chỉ add dc 1 lần
