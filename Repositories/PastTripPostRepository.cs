@@ -75,14 +75,14 @@ namespace Repositories
 
         public async Task<double> GetUserAverageStar(int locaId)
         {
-            var listPost = await _pastTripPostDAO.GetAllPostOfUserAsync(locaId);
+            var listPost = await _pastTripPostDAO.GetAllPostsAsync(locaId);
 
             double totalStars = 0;
             int postCount = 0;
 
             foreach (var post in listPost)
             {
-                if (post.Star.HasValue)
+                if (post.Star.HasValue && post.LocalId == locaId)
                 {
                     totalStars += post.Star.Value;
                     postCount++;
@@ -96,23 +96,6 @@ namespace Repositories
 
             return 0;
         }
-
-        public async Task<int?> GetUserTotalTrip(int locaId)
-        {
-            var listPost = await _pastTripPostDAO.GetAllPostOfUserAsync(locaId);
-
-            int postCount = 0;
-
-            foreach (var post in listPost)
-            {
-                if (post.Star.HasValue)
-                {
-                    postCount++;
-                }
-            }
-            return postCount;
-        }
-
 
         public async Task DeleteAsync(string postId)
         {

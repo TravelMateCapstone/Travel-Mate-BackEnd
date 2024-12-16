@@ -63,7 +63,7 @@ namespace TravelMate.Controllers
         }
 
         [HttpGet("toursStatus/{approvalStatus}")]
-        public async Task<ActionResult<IEnumerable<TourDto>>> GetToursByStatus(string approvalStatus)
+        public async Task<ActionResult<IEnumerable<TourBriefDto>>> GetToursByStatus(string approvalStatus)
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
@@ -78,7 +78,7 @@ namespace TravelMate.Controllers
 
             var tours = await _tourRepository.GetToursByStatus(user.Id, status);
 
-            var tourDto = _mapper.Map<IEnumerable<TourDto>>(tours);
+            var tourDto = _mapper.Map<IEnumerable<TourBriefDto>>(tours);
 
             return Ok(tourDto);
         }
@@ -104,8 +104,8 @@ namespace TravelMate.Controllers
             tour.Creator.Fullname = creatorInfo.FullName;
             tour.Creator.AvatarUrl = creatorInfo.Profiles.ImageUser;
             tour.Creator.Address = creatorInfo.Profiles.City;
-            tour.Creator.Rating = await _tourRepository.GetUserAverageStar(tour.Creator.Id);
-            tour.Creator.TotalTrips = await _tourRepository.GetUserTotalTrip(tour.Creator.Id);
+            //tour.Creator.Rating = await _tourRepository.GetUserAverageStar(tour.Creator.Id);
+            //tour.Creator.TotalTrips = await _tourRepository.GetUserTotalTrip(tour.Creator.Id);
             tour.Creator.JoinedAt = creatorInfo.RegistrationTime;
 
             await _tourRepository.UpdateTour(tour.TourId, tour);

@@ -10,6 +10,5 @@ namespace Repository.Interfaces
         Task UpdatePostAsync(string postId, PastTripPost post);
         Task DeleteAsync(string postId);
         Task<double> GetUserAverageStar(int userId);
-        Task<int?> GetUserTotalTrip(int userId);
     }
 }
