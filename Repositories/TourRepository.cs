@@ -7,7 +7,6 @@ using DataAccess;
 using Quartz;
 using Repositories.Cron;
 using Repositories.Interface;
-using Repository.Interfaces;
 
 namespace Repositories
 {
@@ -16,14 +15,12 @@ namespace Repositories
         private readonly TourDAO _tourDAO;
         private readonly IMapper _mapper;
         private readonly IScheduler _scheduler;
-        private readonly IPastTripPostRepository _pastTripPostRepository;
 
-        public TourRepository(TourDAO tourDAO, IMapper mapper, IScheduler scheduler, IPastTripPostRepository pastTripPostRepository)
+        public TourRepository(TourDAO tourDAO, IMapper mapper, IScheduler scheduler)
         {
             _tourDAO = tourDAO;
             _mapper = mapper;
             _scheduler = scheduler;
-            _pastTripPostRepository = pastTripPostRepository;
         }
 
         public async Task<IEnumerable<Tour>> GetAllTours()
@@ -158,46 +155,6 @@ namespace Repositories
         {
             var listTour = await _tourDAO.GetTourBriefByUserId(userId);
             return _mapper.Map<IEnumerable<TourBriefDto>>(listTour);
-        }
-
-        public async Task<double> GetUserAverageStar(int locaId)
-        {
-            var listPost = await _pastTripPostRepository.GetAllPostOfUserAsync(locaId);
-
-            double totalStars = 0;
-            int postCount = 0;
-
-            foreach (var post in listPost)
-            {
-                if (post.Star.HasValue)
-                {
-                    totalStars += post.Star.Value;
-                    postCount++;
-                }
-            }
-
-            if (postCount > 0)
-            {
-                return totalStars / postCount;
-            }
-
-            return 0;
-        }
-
-        public async Task<int?> GetUserTotalTrip(int locaId)
-        {
-            var listPost = await _pastTripPostRepository.GetAllPostOfUserAsync(locaId);
-
-            int postCount = 0;
-
-            foreach (var post in listPost)
-            {
-                if (post.Star.HasValue)
-                {
-                    postCount++;
-                }
-            }
-            return postCount;
         }
 
         public async Task<IEnumerable<Participants>> GetListParticipantsAsync(string tourId)

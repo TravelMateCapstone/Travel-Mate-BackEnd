@@ -9,5 +9,6 @@ namespace Repository.Interfaces
         Task AddAsync(PastTripPost post);
         Task UpdatePostAsync(string postId, PastTripPost post);
         Task DeleteAsync(string postId);
+        Task<double> GetUserAverageStar(int userId);
     }
 }

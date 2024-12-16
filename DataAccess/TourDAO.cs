@@ -1,7 +1,6 @@
 ﻿using BusinessObjects;
 using BusinessObjects.Entities;
 using BusinessObjects.EnumClass;
-using BusinessObjects.Utils.Response;
 using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
 
@@ -51,29 +50,6 @@ namespace DataAccess
             return _mongoContext.Find(t => t.ApprovalStatus == ApprovalStatus.Accepted && t.Creator.Id == creatorId).ToList();
         }
 
-        public async Task<List<TourDTO>> GetTourBriefByLocalId(int creatorId)
-        {
-            var tours = await _mongoContext
-                .Find(t => t.ApprovalStatus == ApprovalStatus.Accepted && t.Creator.Id == creatorId)
-            .ToListAsync();
-
-            return tours.Select(t => new TourDTO
-            {
-                TourId = t.TourId,
-                LocalId = t.Creator.Id,
-                RegisteredGuests = t.Participants.Count,
-                MaxGuests = t.MaxGuests,
-                Location = t.Location,
-                StartDate = t.StartDate,
-                EndDate = t.EndDate,
-                TourDescription = t.TourDescription,
-                NumberOfDays = (t.EndDate - t.StartDate).Days,
-                NumberOfNights = (t.EndDate - t.StartDate).Days - 1,
-                TourName = t.TourName,
-                Price = t.Price,
-                TourImage = t.TourImage
-            }).ToList();
-        }
 
         public IEnumerable<Tour> GetAllToursOfLocal(int userId)
         {
