@@ -21,16 +21,13 @@ namespace Repositories.Interface
         Task RemoveUnpaidParticipantsAsync(string tourId, int travelerId);
         Task AcceptTour(string tourId);
         Task RejectTour(string tourId);
-        Task AddReview(string tourId, TourReview tourReview);
         Task CancelTour(string tourId);
         Task<ApplicationUser> GetUserInfo(int userId);
         Task<bool> DoesParticipantExist(string tourId, int userId);
-
         Task UpdatePaymentStatus(long orderCode, int totalAmount);
-
         Task UpdateOrderCode(string tourId, int travelerId, long orderCode);
-
         Task<bool> DidParticipantPay(long orderCode);
         Task<Tour> GetParticipantWithOrderCode(long orderCode);
+        Task<DateTime> GetParticipantJoinTimeAsync(string tourId, int travelerId);
     }
 }

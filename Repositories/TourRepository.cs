@@ -4,10 +4,10 @@ using BusinessObjects.Entities;
 using BusinessObjects.EnumClass;
 using BusinessObjects.Utils.Request;
 using DataAccess;
-using MongoDB.Driver;
 using Quartz;
 using Repositories.Cron;
 using Repositories.Interface;
+using Repository.Interfaces;
 
 namespace Repositories
 {
@@ -16,12 +16,14 @@ namespace Repositories
         private readonly TourDAO _tourDAO;
         private readonly IMapper _mapper;
         private readonly IScheduler _scheduler;
+        private readonly IPastTripPostRepository _pastTripPostRepository;
 
-        public TourRepository(TourDAO tourDAO, IMapper mapper, IScheduler scheduler)
+        public TourRepository(TourDAO tourDAO, IMapper mapper, IScheduler scheduler, IPastTripPostRepository pastTripPostRepository)
         {
             _tourDAO = tourDAO;
             _mapper = mapper;
             _scheduler = scheduler;
+            _pastTripPostRepository = pastTripPostRepository;
         }
 
         public async Task<IEnumerable<Tour>> GetAllTours()
@@ -77,6 +79,7 @@ namespace Repositories
             existingTour.CostDetails = updatedTour.CostDetails ?? existingTour.CostDetails;
             existingTour.AdditionalInfo = updatedTour.AdditionalInfo ?? existingTour.AdditionalInfo;
             existingTour.TourDescription = updatedTour.TourDescription ?? existingTour.TourDescription;
+            existingTour.Participants = updatedTour.Participants ?? existingTour.Participants;
             existingTour.UpdatedAt = GetTimeZone.GetVNTimeZoneNow();
 
             await _tourDAO.UpdateTour(id, existingTour);
@@ -125,7 +128,7 @@ namespace Repositories
 
             ITrigger trigger = TriggerBuilder.Create()
                 .WithIdentity("trigger1", "group1")
-                .StartAt(DateBuilder.FutureDate(3, IntervalUnit.Minute))
+                .StartAt(DateBuilder.FutureDate(1, IntervalUnit.Minute))
                 .Build();
 
 
@@ -141,12 +144,6 @@ namespace Repositories
         {
             await _tourDAO.ProcessTourAdmin(tourId, ApprovalStatus.Rejected);
         }
-
-        public async Task AddReview(string tourId, TourReview tourReview)
-        {
-            await _tourDAO.AddReview(tourId, tourReview);
-        }
-
         public async Task CancelTour(string tourId)
         {
             await _tourDAO.CancelTour(tourId);
@@ -163,19 +160,44 @@ namespace Repositories
             return _mapper.Map<IEnumerable<TourBriefDto>>(listTour);
         }
 
-        public async Task<double> GetUserAverageStar(int userId)
+        public async Task<double> GetUserAverageStar(int locaId)
         {
-            //var listPost = await _tourDAO.GetUserAverageStar(userId);
-            //if (!listPost.Any())
-            //    return 0;
+            var listPost = await _pastTripPostRepository.GetAllPostOfUserAsync(locaId);
 
-            return 4;
+            double totalStars = 0;
+            int postCount = 0;
+
+            foreach (var post in listPost)
+            {
+                if (post.Star.HasValue)
+                {
+                    totalStars += post.Star.Value;
+                    postCount++;
+                }
+            }
+
+            if (postCount > 0)
+            {
+                return totalStars / postCount;
+            }
+
+            return 0;
         }
 
-        public async Task<int?> GetUserTotalTrip(int userId)
+        public async Task<int?> GetUserTotalTrip(int locaId)
         {
-            //var listPost = await _tourDAO.GetUserAverageStar(userId);
-            return 4;
+            var listPost = await _pastTripPostRepository.GetAllPostOfUserAsync(locaId);
+
+            int postCount = 0;
+
+            foreach (var post in listPost)
+            {
+                if (post.Star.HasValue)
+                {
+                    postCount++;
+                }
+            }
+            return postCount;
         }
 
         public async Task<IEnumerable<Participants>> GetListParticipantsAsync(string tourId)
@@ -245,5 +267,9 @@ namespace Repositories
             await _tourDAO.UpdateTour(tourId, getTour);
         }
 
+        public async Task<DateTime> GetParticipantJoinTimeAsync(string tourId, int travelerId)
+        {
+            return await _tourDAO.GetParticipantJoinTimeAsync(tourId, travelerId);
+        }
     }
 }

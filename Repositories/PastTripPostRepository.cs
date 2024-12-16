@@ -60,6 +60,17 @@ namespace Repositories
             post.IsCaptionEdit = false;
 
             await _pastTripPostDAO.AddPostAsync(post);
+
+            foreach (var item in existingTour.Participants)
+            {
+                if (item.ParticipantId == post.TravelerId)
+                {
+                    item.PostId = post.Id;
+                    break;
+                }
+            }
+
+            await _tourRepository.UpdateTour(existingTour.TourId, existingTour);
         }
 
         public async Task DeleteAsync(string postId)
