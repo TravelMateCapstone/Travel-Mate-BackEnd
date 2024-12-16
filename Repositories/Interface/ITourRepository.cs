@@ -11,8 +11,6 @@ namespace Repositories.Interface
         Task<IEnumerable<Tour>> GetToursByStatus(int userId, ApprovalStatus? approvalStatus);
         Task<IEnumerable<TourBriefDto>> GetTourBriefByUserId(int creatorId);
         Task<IEnumerable<Participants>> GetListParticipantsAsync(string tourId);
-        Task<double> GetUserAverageStar(int userId);
-        Task<int?> GetUserTotalTrip(int userId);
         Task<Tour> GetTourById(string id);
         Task AddTour(int userId, Tour tour);
         Task UpdateTour(string id, Tour tour);

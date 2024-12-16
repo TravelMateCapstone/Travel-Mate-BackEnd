@@ -73,6 +73,47 @@ namespace Repositories
             await _tourRepository.UpdateTour(existingTour.TourId, existingTour);
         }
 
+        public async Task<double> GetUserAverageStar(int locaId)
+        {
+            var listPost = await _pastTripPostDAO.GetAllPostOfUserAsync(locaId);
+
+            double totalStars = 0;
+            int postCount = 0;
+
+            foreach (var post in listPost)
+            {
+                if (post.Star.HasValue)
+                {
+                    totalStars += post.Star.Value;
+                    postCount++;
+                }
+            }
+
+            if (postCount > 0)
+            {
+                return totalStars / postCount;
+            }
+
+            return 0;
+        }
+
+        public async Task<int?> GetUserTotalTrip(int locaId)
+        {
+            var listPost = await _pastTripPostDAO.GetAllPostOfUserAsync(locaId);
+
+            int postCount = 0;
+
+            foreach (var post in listPost)
+            {
+                if (post.Star.HasValue)
+                {
+                    postCount++;
+                }
+            }
+            return postCount;
+        }
+
+
         public async Task DeleteAsync(string postId)
         {
             await _pastTripPostDAO.DeletePostAsync(postId);
