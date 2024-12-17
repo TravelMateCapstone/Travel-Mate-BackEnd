@@ -126,9 +126,8 @@ namespace Repositories
 
             ITrigger trigger = TriggerBuilder.Create()
                 .WithIdentity("trigger1", "group1")
-                .StartAt(DateBuilder.FutureDate(1, IntervalUnit.Minute))
+                .StartAt(DateBuilder.FutureDate(3, IntervalUnit.Minute))
                 .Build();
-
 
             await _scheduler.ScheduleJob(job, trigger);
         }
