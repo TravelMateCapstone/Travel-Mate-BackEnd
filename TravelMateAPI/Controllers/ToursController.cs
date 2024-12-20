@@ -63,7 +63,7 @@ namespace TravelMate.Controllers
         }
 
         [HttpGet("toursStatus/{approvalStatus}")]
-        public async Task<ActionResult<IEnumerable<TourDto>>> GetToursByStatus(string approvalStatus)
+        public async Task<ActionResult<IEnumerable<TourBriefDto>>> GetToursByStatus(string approvalStatus)
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
@@ -78,7 +78,7 @@ namespace TravelMate.Controllers
 
             var tours = await _tourRepository.GetToursByStatus(user.Id, status);
 
-            var tourDto = _mapper.Map<IEnumerable<TourDto>>(tours);
+            var tourDto = _mapper.Map<IEnumerable<TourBriefDto>>(tours);
 
             return Ok(tourDto);
         }
@@ -104,8 +104,8 @@ namespace TravelMate.Controllers
             tour.Creator.Fullname = creatorInfo.FullName;
             tour.Creator.AvatarUrl = creatorInfo.Profiles.ImageUser;
             tour.Creator.Address = creatorInfo.Profiles.City;
-            tour.Creator.Rating = await _tourRepository.GetUserAverageStar(tour.Creator.Id);
-            tour.Creator.TotalTrips = await _tourRepository.GetUserTotalTrip(tour.Creator.Id);
+            //tour.Creator.Rating = await _tourRepository.GetUserAverageStar(tour.Creator.Id);
+            //tour.Creator.TotalTrips = await _tourRepository.GetUserTotalTrip(tour.Creator.Id);
             tour.Creator.JoinedAt = creatorInfo.RegistrationTime;
 
             await _tourRepository.UpdateTour(tour.TourId, tour);
@@ -247,35 +247,6 @@ namespace TravelMate.Controllers
                 return BadRequest("You have processed this tour request");
 
             await _tourRepository.RejectTour(tourId);
-            return NoContent();
-        }
-
-        // POST: api/tour/review/{tourId}
-        [HttpPost("review/{tourId}")]
-        public async Task<ActionResult> AddReview(string tourId, [FromBody] TourReview tourReview)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-            {
-                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-            }
-
-            //user thuoc trong participant
-            var existingTour = await _tourRepository.GetTourById(tourId);
-            if (existingTour == null)
-                return NotFound();
-
-            var existingParticipant = await _tourRepository.DoesParticipantExist(tourId, user.Id);
-
-            if (!existingParticipant)
-                return BadRequest("You are not in this tour");
-
-            await _tourRepository.AddReview(tourId, tourReview);
             return NoContent();
         }
 

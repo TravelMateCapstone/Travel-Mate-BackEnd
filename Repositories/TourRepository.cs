@@ -4,7 +4,6 @@ using BusinessObjects.Entities;
 using BusinessObjects.EnumClass;
 using BusinessObjects.Utils.Request;
 using DataAccess;
-using MongoDB.Driver;
 using Quartz;
 using Repositories.Cron;
 using Repositories.Interface;
@@ -77,6 +76,10 @@ namespace Repositories
             existingTour.CostDetails = updatedTour.CostDetails ?? existingTour.CostDetails;
             existingTour.AdditionalInfo = updatedTour.AdditionalInfo ?? existingTour.AdditionalInfo;
             existingTour.TourDescription = updatedTour.TourDescription ?? existingTour.TourDescription;
+            if (updatedTour.Participants != null && updatedTour.Participants.Any())
+            {
+                existingTour.Participants = updatedTour.Participants;
+            }
             existingTour.UpdatedAt = GetTimeZone.GetVNTimeZoneNow();
 
             await _tourDAO.UpdateTour(id, existingTour);
@@ -112,6 +115,7 @@ namespace Repositories
                     item.Address = user.Profiles.City;
                     item.Phone = user.Profiles.Phone;
                     item.PaymentStatus = false;
+                    item.PostId = "";
                     await _tourDAO.UpdateTour(tourId, getParticipant);
                     break;
                 }
@@ -128,7 +132,6 @@ namespace Repositories
                 .StartAt(DateBuilder.FutureDate(3, IntervalUnit.Minute))
                 .Build();
 
-
             await _scheduler.ScheduleJob(job, trigger);
         }
 
@@ -141,12 +144,6 @@ namespace Repositories
         {
             await _tourDAO.ProcessTourAdmin(tourId, ApprovalStatus.Rejected);
         }
-
-        public async Task AddReview(string tourId, TourReview tourReview)
-        {
-            await _tourDAO.AddReview(tourId, tourReview);
-        }
-
         public async Task CancelTour(string tourId)
         {
             await _tourDAO.CancelTour(tourId);
@@ -161,21 +158,6 @@ namespace Repositories
         {
             var listTour = await _tourDAO.GetTourBriefByUserId(userId);
             return _mapper.Map<IEnumerable<TourBriefDto>>(listTour);
-        }
-
-        public async Task<double> GetUserAverageStar(int userId)
-        {
-            var listPost = await _tourDAO.GetUserAverageStar(userId);
-            if (!listPost.Any())
-                return 0;
-
-            return listPost.Average(item => item.Star);
-        }
-
-        public async Task<int?> GetUserTotalTrip(int userId)
-        {
-            var listPost = await _tourDAO.GetUserAverageStar(userId);
-            return listPost.Count();
         }
 
         public async Task<IEnumerable<Participants>> GetListParticipantsAsync(string tourId)
@@ -245,5 +227,9 @@ namespace Repositories
             await _tourDAO.UpdateTour(tourId, getTour);
         }
 
+        public async Task<DateTime> GetParticipantJoinTimeAsync(string tourId, int travelerId)
+        {
+            return await _tourDAO.GetParticipantJoinTimeAsync(tourId, travelerId);
+        }
     }
 }

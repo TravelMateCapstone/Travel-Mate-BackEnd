@@ -1,11 +1,9 @@
-﻿using BusinessObjects.Entities;
-using BusinessObjects;
-using Microsoft.AspNetCore.Identity;
-using BusinessObjects.Utils.Response;
-using Microsoft.EntityFrameworkCore;
-using Org.BouncyCastle.Utilities.Encoders;
-using Repositories.Interface;
+﻿using BusinessObjects;
+using BusinessObjects.Entities;
 using DataAccess;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Repository.Interfaces;
 
 namespace TravelMateAPI.Services.FilterLocal
 {
@@ -13,15 +11,15 @@ namespace TravelMateAPI.Services.FilterLocal
     {
         private readonly ApplicationDBContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly ITourRepository _tourRepository;
+        private readonly IPastTripPostRepository _postRepository;
         private readonly IContractService _contractService;
         private readonly TourDAO _tourDAO;
 
-        public FilterUserService(ApplicationDBContext context, UserManager<ApplicationUser> userManager, ITourRepository tourRepository,IContractService contractService, TourDAO tourDAO)
+        public FilterUserService(ApplicationDBContext context, UserManager<ApplicationUser> userManager, IPastTripPostRepository postRepository, IContractService contractService, TourDAO tourDAO)
         {
             _context = context;
             _userManager = userManager;
-            _tourRepository = tourRepository;
+            _postRepository = postRepository;
             _contractService = contractService;
             _tourDAO = tourDAO;
         }
@@ -135,7 +133,7 @@ namespace TravelMateAPI.Services.FilterLocal
             var users = await _context.Users
                 .Include(u => u.Profiles)
                 .Include(u => u.CCCDs).ToListAsync(); // Include CCCD for DoB and Sex
-               
+
 
             var result = new List<UserWithDetailsDTO>();
 
@@ -146,7 +144,7 @@ namespace TravelMateAPI.Services.FilterLocal
 
                 // Lấy CCCD
                 var cccd = user.CCCDs;
-                var star = await _tourRepository.GetUserAverageStar(user.Id);
+                var star = await _postRepository.GetUserAverageStar(user.Id);
                 var countConnect = await _contractService.GetContractCountAsLocalAsync(user.Id);
                 //// Lấy danh sách ActivityId của người dùng
                 //var userActivities = await GetUserActivityIdsAsync(user.Id);
@@ -197,8 +195,8 @@ namespace TravelMateAPI.Services.FilterLocal
                     //{
                     //    ActivityIds = userActivities
                     //}
-                    
-                     ActivityIds = userActivities.ToList(),
+
+                    ActivityIds = userActivities.ToList(),
                     //SimilarityScore = similarityScore // Thêm điểm tương tự
                     // Tours = tours // Gắn danh sách tour vào DTO
                 });
@@ -231,7 +229,7 @@ namespace TravelMateAPI.Services.FilterLocal
                 var cccd = detailedUser.CCCDs;
 
                 // Lấy số sao và số lần kết nối
-                var star = await _tourRepository.GetUserAverageStar(user.Id);
+                var star = await _postRepository.GetUserAverageStar(user.Id);
                 var countConnect = await _contractService.GetContractCountAsLocalAsync(user.Id);
 
                 // Lấy tên hoạt động và địa điểm của người dùng
@@ -353,7 +351,7 @@ namespace TravelMateAPI.Services.FilterLocal
             foreach (var user in users)
             {
                 // Lấy Star và CountConnect
-                var star = await _tourRepository.GetUserAverageStar(user.Id);
+                var star = await _postRepository.GetUserAverageStar(user.Id);
                 var countConnect = await _contractService.GetContractCountAsLocalAsync(user.Id);
 
                 //// Lấy ActivityIds và LocationIds

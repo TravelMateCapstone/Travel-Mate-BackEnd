@@ -16,12 +16,12 @@ namespace Repositories
             _transactionDAO = transactionDAO;
             _tourRepository = tourRepository;
         }
-        public async Task<List<TourTransaction>> GetAllTransactionsAsync()
+        public async Task<IEnumerable<TourTransaction>> GetAllTransactionsAsync()
         {
             return await _transactionDAO.GetAllTransactionsAsync();
         }
 
-        public async Task<TourTransaction?> GetTransactionByIdAsync(string id)
+        public async Task<IEnumerable<TourTransaction>> GetTransactionByIdAsync(int id)
         {
             return await _transactionDAO.GetTransactionByIdAsync(id);
         }

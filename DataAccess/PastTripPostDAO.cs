@@ -1,86 +1,44 @@
 ﻿using BusinessObjects;
 using BusinessObjects.Entities;
-using Microsoft.EntityFrameworkCore;
+using MongoDB.Driver;
 
 namespace DataAccess
 {
     public class PastTripPostDAO
     {
-        private readonly ApplicationDBContext _context;
-
-        public PastTripPostDAO(ApplicationDBContext context)
+        private readonly IMongoCollection<PastTripPost> _mongoContext;
+        public PastTripPostDAO(ApplicationDBContext context, MongoDbContext mongoContext)
         {
-            _context = context;
+            _mongoContext = mongoContext.GetCollection<PastTripPost>("PastTripPosts");
         }
 
-        public async Task<IEnumerable<PastTripPost>> GetAllPostAsync()
+        //get all post related to user
+        public async Task<List<PastTripPost>> GetAllPostsAsync(int userId)
         {
-            return await _context.PastTripPosts
-                .Include(p => p.Traveler)
-                    .ThenInclude(t => t.Profiles)
-                .Include(p => p.Local)
-                    .ThenInclude(l => l.Profiles)
-                .Include(p => p.PostPhotos)
-                .OrderByDescending(p => p.CreatedAt)
-                .ToListAsync();
+            return (await _mongoContext.Find(t => t.TravelerId == userId || t.LocalId == userId).ToListAsync()).OrderByDescending(p => p.CreatedAt).ToList();
+        }
+        public async Task<PastTripPost?> GetPostByIdAsync(string id)
+        {
+            return await _mongoContext.Find(p => p.Id == id).FirstOrDefaultAsync();
         }
 
-        public async Task<IEnumerable<PastTripPost>> GetAllPostOfUserAsync(int userId)
+        //traveler creator post
+        public async Task AddPostAsync(PastTripPost post)
         {
-            return await _context.PastTripPosts
-                .Include(p => p.Traveler)
-                    .ThenInclude(t => t.Profiles)
-                .Include(p => p.Local)
-                    .ThenInclude(l => l.Profiles)
-                .Include(p => p.PostPhotos)
-                .Where(p => p.LocalId == userId || p.TravelerId == userId)
-                .OrderByDescending(p => p.CreatedAt)
-                .ToListAsync();
+            await _mongoContext.InsertOneAsync(post);
         }
 
-        public async Task<PastTripPost?> GetByIdAsync(int id)
+        //traveler, local update comment
+        public async Task UpdatePostAsync(string id, PastTripPost post)
         {
-            return await _context.PastTripPosts
-                .Include(p => p.Traveler)
-                    .ThenInclude(t => t.Profiles)
-                .Include(p => p.Local)
-                    .ThenInclude(l => l.Profiles)
-                .Include(p => p.PostPhotos)
-                .FirstOrDefaultAsync(p => p.PastTripPostId == id);
+            await _mongoContext.ReplaceOneAsync(p => p.Id == id, post);
         }
 
-        public async Task DeleteAsync(int id)
+        //traveler delete post
+        public async Task DeletePostAsync(string id)
         {
-            var post = await _context.PastTripPosts.FindAsync(id);
-            if (post != null)
-            {
-                _context.PastTripPosts.Remove(post);
-                await _context.SaveChangesAsync();
-            }
+            await _mongoContext.DeleteOneAsync(p => p.Id == id);
         }
-
-        public async Task UpdateTravelerPartAsync(PastTripPost post)
-        {
-            _context.PastTripPosts.Update(post);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task UpdateLocalPartAsync(PastTripPost post)
-        {
-            _context.PastTripPosts.Update(post);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task AddAsync(PastTripPost post)
-        {
-            if (post == null)
-            {
-                throw new ArgumentNullException(nameof(post));
-            }
-            _context.PastTripPosts.Add(post);
-            await _context.SaveChangesAsync();
-        }
-
 
     }
 }

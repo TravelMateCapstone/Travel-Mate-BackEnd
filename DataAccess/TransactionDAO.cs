@@ -13,14 +13,14 @@ namespace DataAccess
             _mongoContext = mongoContext.GetCollection<TourTransaction>("Transaction");
         }
 
-        public async Task<List<TourTransaction>> GetAllTransactionsAsync()
+        public async Task<IEnumerable<TourTransaction>> GetAllTransactionsAsync()
         {
             return await _mongoContext.Find(_ => true).ToListAsync();
         }
 
-        public async Task<TourTransaction?> GetTransactionByIdAsync(string id)
+        public async Task<IEnumerable<TourTransaction?>> GetTransactionByIdAsync(int userId)
         {
-            return await _mongoContext.Find(t => t.TourId == id).FirstOrDefaultAsync();
+            return await _mongoContext.Find(t => t.TravelerId == userId).ToListAsync();
         }
 
         public async Task AddTransactionAsync(TourTransaction transaction)

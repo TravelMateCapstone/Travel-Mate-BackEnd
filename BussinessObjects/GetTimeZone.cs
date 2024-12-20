@@ -4,10 +4,11 @@
     {
         public static DateTime GetVNTimeZoneNow()
         {
-            DateTime thisTime = DateTime.Now;
-            TimeZoneInfo tst = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
-            DateTime tstTime = TimeZoneInfo.ConvertTime(thisTime, TimeZoneInfo.Local, tst);
-            return tstTime;
+            DateTime utcNow = DateTime.UtcNow;
+
+            TimeZoneInfo vnTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+
+            return TimeZoneInfo.ConvertTimeFromUtc(utcNow, vnTimeZone);
         }
     }
 }

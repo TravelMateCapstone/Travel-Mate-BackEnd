@@ -27,8 +27,6 @@ namespace BusinessObjects.Entities
 
         // Liên kết với các bảng khác
         public ICollection<GroupParticipant>? GroupParticipants { get; set; }
-        public ICollection<PastTripPost>? PastTripPosts { get; set; }
-        public ICollection<PastTripPost>? PastTripPostReviews { get; set; }
         public ICollection<Notification>? Notifications { get; set; }
         public ICollection<SpokenLanguages>? SpokenLanguages { get; set; }
         public ICollection<Request>? Requests { get; set; }
