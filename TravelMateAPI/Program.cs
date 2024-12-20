@@ -312,6 +312,8 @@ namespace TravelMateAPI
             builder.Services.AddScoped<TourDAO>();
             builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
             builder.Services.AddScoped<TransactionDAO>();
+            builder.Services.AddScoped<MessageDAO>();
+            builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 
             builder.Services.AddQuartz(q =>
             {
