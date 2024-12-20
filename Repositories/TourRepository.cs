@@ -183,6 +183,8 @@ namespace Repositories
             }
 
             await _tourDAO.UpdateTour(getParticipant.TourId, getParticipant);
+
+            await _scheduler.DeleteJob(new JobKey("job1", "group1"));
         }
 
         public async Task UpdateOrderCode(string tourId, int travelerId, long orderCode)

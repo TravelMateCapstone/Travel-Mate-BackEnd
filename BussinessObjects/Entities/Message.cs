@@ -7,17 +7,20 @@ namespace BusinessObjects.Entities
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public int? MessageId { get; set; }
+        public int? Id { get; set; }
 
         [BsonElement("senderId")]
         public int SenderId { get; set; }
         [BsonElement("receiverId")]
         public int ReceiverId { get; set; }
 
-        [BsonElement("text")]
-        public string Text { get; set; }
+        [BsonElement("content")]
+        public string Content { get; set; }
 
         [BsonElement("sentAt")]
         public DateTime? SentAt { get; set; }
+
+        [BsonElement("isRead")]
+        public bool? IsRead { get; set; }
     }
 }
