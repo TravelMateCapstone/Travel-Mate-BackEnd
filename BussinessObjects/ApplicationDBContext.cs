@@ -38,9 +38,7 @@ namespace BusinessObjects
         public DbSet<Message> Messages { get; set; }
 
         public DbSet<OnTravelling> OnTravellings { get; set; }
-        public DbSet<PastTripPost> PastTripPosts { get; set; }
         public DbSet<PostComment> PostComments { get; set; }
-        public DbSet<PostPhoto> PostPhotos { get; set; }
         public DbSet<Reaction> Reactions { get; set; }
         public DbSet<Report> Reports { get; set; }
         public DbSet<Request> Requests { get; set; }
@@ -49,8 +47,6 @@ namespace BusinessObjects
         public DbSet<UserDescription> UserDescriptions { get; set; }
         public DbSet<UserEducation> UserEducations { get; set; }
         public DbSet<UserHome> UserHomes { get; set; }
-
-
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -483,18 +479,6 @@ namespace BusinessObjects
                 .HasForeignKey(c => c.PaidById)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<PastTripPost>()
-       .HasOne(m => m.Traveler)
-       .WithMany(u => u.PastTripPosts)
-       .HasForeignKey(m => m.TravelerId)
-       .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<PastTripPost>()
-                .HasOne(m => m.Local)
-                .WithMany(u => u.PastTripPostReviews)
-                .HasForeignKey(m => m.LocalId)
-                .OnDelete(DeleteBehavior.Restrict);
-
             modelBuilder.Entity<Report>()
       .HasOne(m => m.ReportToUser)
       .WithMany(u => u.ReceivedReports)
@@ -545,7 +529,7 @@ namespace BusinessObjects
                .HasOne(gp => gp.User)
                .WithMany(g => g.GroupParticipants)
                .HasForeignKey(gp => gp.UserId)
-               .OnDelete(DeleteBehavior.Cascade);
+               .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<GroupPost>()
                 .HasOne(p => p.Group)

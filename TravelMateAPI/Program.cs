@@ -79,6 +79,16 @@ namespace TravelMateAPI
             var payOSClientId = (await client.GetSecretAsync("PayOSClientId")).Value.Value;
             var payOSApiKey = (await client.GetSecretAsync("PayOSapiKey")).Value.Value;
 
+
+            var viteFirebaseApiKey = (await client.GetSecretAsync("viteFirebaseApiKey")).Value.Value;
+            var viteFirebaseAuthDomain = (await client.GetSecretAsync("viteFirebaseAuthDomain")).Value.Value;
+            var viteFirebaseProjectId = (await client.GetSecretAsync("viteFirebaseProjectId")).Value.Value;
+            var viteFirebaseStorageBucket = (await client.GetSecretAsync("viteFirebaseStorageBucket")).Value.Value;
+            var viteFirebaseMessagingSenderId = (await client.GetSecretAsync("viteFirebaseMessagingSenderId")).Value.Value;
+            var viteFirebaseAppId = (await client.GetSecretAsync("viteFirebaseAppId")).Value.Value;
+            var viteFirebaseMeasurementId = (await client.GetSecretAsync("viteFirebaseMeasurementId")).Value.Value;
+            var viteBaseApiUrl = (await client.GetSecretAsync("viteBaseApiUrl")).Value.Value;
+
             // Tạo đối tượng AppSettings
             var appSettings = new AppSettings
             {
@@ -116,8 +126,18 @@ namespace TravelMateAPI
                 AzureStorage = new AzureStorage
                 {
                     AzureStorageConnectionString = (await client.GetSecretAsync("AzureStorageConnectionString")).Value.Value
+                },
+                ViteConfig = new ViteFirebaseConfig
+                {
+                    ApiKey = viteFirebaseApiKey,
+                    AuthDomain = viteFirebaseAuthDomain,
+                    ProjectId = viteFirebaseProjectId,
+                    StorageBucket = viteFirebaseStorageBucket,
+                    MessagingSenderId = viteFirebaseMessagingSenderId,
+                    AppId = viteFirebaseAppId,
+                    MeasurementId = viteFirebaseMeasurementId,
+                    BaseApiUrl = viteBaseApiUrl
                 }
-
             };
 
 
@@ -254,7 +274,7 @@ namespace TravelMateAPI
             builder.Services.AddScoped<SearchLocationFuzzyService>();
             builder.Services.AddScoped<IFindLocalByFeedbackService, FindLocalByFeedbackService>();
             builder.Services.AddScoped<INotificationService, NotificationService>();
-            builder.Services.AddScoped<IUserReportService,UserReportService>();
+            builder.Services.AddScoped<IUserReportService, UserReportService>();
             builder.Services.AddScoped<EventDAO>();
             builder.Services.AddScoped<IEventRepository, EventRepository>();
             builder.Services.AddScoped<EventParticipantsDAO>();
@@ -289,9 +309,6 @@ namespace TravelMateAPI
             builder.Services.AddScoped<IPostCommentRepository, PostCommentRepository>();
             builder.Services.AddScoped<PastTripPostDAO>();
             builder.Services.AddScoped<IPastTripPostRepository, PastTripPostRepository>();
-            builder.Services.AddScoped<ExtraFormDetailDAO>();
-            builder.Services.AddScoped<ILocalExtraDetailFormRepository, LocalExtraDetailFormRepository>();
-            builder.Services.AddScoped<ITravelerFormRepository, TravelerFormRepository>();
             builder.Services.AddScoped<TourDAO>();
             builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
             builder.Services.AddScoped<TransactionDAO>();
