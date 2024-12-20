@@ -4,7 +4,7 @@ using Repositories.Interface;
 
 namespace Repositories
 {
-    internal class MessageRepository : IMessageRepository
+    public class MessageRepository : IMessageRepository
     {
         private readonly MessageDAO _messageDAO;
 
