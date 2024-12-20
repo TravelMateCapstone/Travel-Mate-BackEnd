@@ -44,9 +44,9 @@ namespace TravelMateAPI.Services.Notification
 
             _context.Notifications.Add(notification);
             await _context.SaveChangesAsync();
-            //await _hubContext.Clients.All.SendAsync("NotificationCreated", notification);  // Gửi sự kiện NotificationCreated đến tất cả client
+            await _hubContext.Clients.All.SendAsync("NotificationCreated", notification);  // Gửi sự kiện NotificationCreated đến tất cả client
             // Gửi sự kiện NotificationCreated chỉ đến client có userId tương ứng
-            await _hubContext.Clients.User(userId.ToString()).SendAsync("NotificationCreated", notification);
+            //await _hubContext.Clients.User(userId.ToString()).SendAsync("NotificationCreated", notification);
         }
     }
 
