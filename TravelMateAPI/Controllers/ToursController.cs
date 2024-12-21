@@ -104,8 +104,6 @@ namespace TravelMate.Controllers
             tour.Creator.Fullname = creatorInfo.FullName;
             tour.Creator.AvatarUrl = creatorInfo.Profiles.ImageUser;
             tour.Creator.Address = creatorInfo.Profiles.City;
-            //tour.Creator.Rating = await _tourRepository.GetUserAverageStar(tour.Creator.Id);
-            //tour.Creator.TotalTrips = await _tourRepository.GetUserTotalTrip(tour.Creator.Id);
             tour.Creator.JoinedAt = creatorInfo.RegistrationTime;
 
             await _tourRepository.UpdateTour(tour.TourId, tour);
