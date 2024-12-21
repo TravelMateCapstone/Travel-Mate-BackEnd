@@ -57,7 +57,7 @@ namespace TravelMateAPI.Hubs
 
         private int UserId
         {
-            get { return int.Parse(Context.User?.FindFirst("UserId")?.Value); }
+            get { return int.Parse(Context.User?.FindFirst("nameidentifier")?.Value); }
             //get { return 92; }
         }
 
@@ -71,6 +71,11 @@ namespace TravelMateAPI.Hubs
         {
             try
             {
+                if (UserId == null)
+                {
+                    Clients.Caller.SendAsync("onError", "UserId không hợp lệ.");
+                    return;
+                }
                 var user = _context.Users
                     .Include(t => t.Profiles)
                     .FirstOrDefault(u => u.Id == UserId);
