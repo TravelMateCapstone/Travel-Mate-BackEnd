@@ -33,6 +33,16 @@ namespace DataAccess
                 .FirstOrDefault(t => t.Id == userId);
         }
 
+        public async Task<IEnumerable<ApplicationUser>> GetUsersInfoAsync(IEnumerable<int> userIds)
+        {
+            // Truy vấn lấy thông tin tất cả người dùng theo danh sách userId
+            return await _sqlContext.Users
+                .Where(user => userIds.Contains(user.Id))
+                .Include(user => user.Profiles)
+                .ToListAsync();
+        }
+
+
         public async Task<DateTime> GetParticipantJoinTimeAsync(string tourId, int travelerId)
         {
             // Lấy tour theo TourId
@@ -96,13 +106,10 @@ namespace DataAccess
         public async Task JoinTour(string tourId, Participants participant)
         {
 
-            // Tạo bộ lọc để tìm tour theo tourId
             var filter = Builders<Tour>.Filter.Eq(f => f.TourId, tourId);
 
-            // Tạo update để thêm travelerId vào mảng participants
             var update = Builders<Tour>.Update.Push(f => f.Participants, participant);
 
-            // Thực hiện cập nhật tour với toán tử $push để thêm travelerId vào participants
             await _mongoContext.UpdateOneAsync(filter, update);
         }
 

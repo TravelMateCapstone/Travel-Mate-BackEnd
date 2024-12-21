@@ -51,6 +51,10 @@ namespace TravelMateAPI.Models
 
             CreateMap<PastTripPost, PastTripPostTravelerDto>();
             CreateMap<PastTripPostTravelerDto, PastTripPost>();
+
+            CreateMap<ApplicationUser, UserViewModel>()
+                .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.Profiles.City))
+                .ForMember(dest => dest.Avatar, opt => opt.MapFrom(src => src.Profiles.ImageUser));
         }
 
     }

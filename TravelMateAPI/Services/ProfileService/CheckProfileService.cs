@@ -40,31 +40,31 @@ namespace TravelMateAPI.Services.ProfileService
 
                     //!string.IsNullOrEmpty(profile.Description) &&
                     //!string.IsNullOrEmpty(profile.WhyUseTravelMate) &&
-                    //!string.IsNullOrEmpty(profile.MusicMoviesBooks
-                    if (!string.IsNullOrEmpty(profile.Phone) &&
-                        !string.IsNullOrEmpty(profile.Address))
+                    //!string.IsNullOrEmpty(profile.MusicMoviesBooks&&
+                    //!string.IsNullOrEmpty(profile.Address)
+                    if (!string.IsNullOrEmpty(profile.Phone))
                     {
                         totalPercentage += 20;
                     }
                     else
                     {
-                        incompleteModels.Add("Profile");
+                        incompleteModels.Add("Số Điện Thoại");
                     }
                 }
                 else
                 {
-                    incompleteModels.Add("Profile");
+                    incompleteModels.Add("Số Điện Thoại");
                 }
 
                 // Kiểm tra UserHome
                 var userHome = await _context.UserHomes.FirstOrDefaultAsync(uh => uh.UserId == userId);
                 if (userHome != null)
                 {
+                    //!string.IsNullOrEmpty(userHome.RoomType) &&
                     if (userHome.MaxGuests > 0 &&
                         !string.IsNullOrEmpty(userHome.GuestPreferences) &&
                         !string.IsNullOrEmpty(userHome.AllowedSmoking) &&
                         !string.IsNullOrEmpty(userHome.RoomDescription) &&
-                        !string.IsNullOrEmpty(userHome.RoomType) &&
                         !string.IsNullOrEmpty(userHome.RoomMateInfo) &&
                         !string.IsNullOrEmpty(userHome.Amenities) &&
                         !string.IsNullOrEmpty(userHome.Transportation) &&
@@ -74,12 +74,12 @@ namespace TravelMateAPI.Services.ProfileService
                     }
                     else
                     {
-                        incompleteModels.Add("UserHome");
+                        incompleteModels.Add("Nhà của bạn");
                     }
                 }
                 else
                 {
-                    incompleteModels.Add("UserHome");
+                    incompleteModels.Add("Nhà của bạn");
                 }
 
                 // Kiểm tra CCCD
@@ -93,7 +93,7 @@ namespace TravelMateAPI.Services.ProfileService
                     }
                     else
                     {
-                        incompleteModels.Add("CCCD (ImageFront or ImageBack)");
+                        incompleteModels.Add("CCCD (Mặt trước & Mặt sau)");
                     }
 
                     if (!string.IsNullOrEmpty(cccd.PublicSignature))
@@ -102,12 +102,12 @@ namespace TravelMateAPI.Services.ProfileService
                     }
                     else
                     {
-                        incompleteModels.Add("CCCD (PublicSignature)");
+                        incompleteModels.Add("Chữ Ký Số");
                     }
                 }
                 else
                 {
-                    incompleteModels.Add("CCCD");
+                    incompleteModels.Add("CCCD & Chữ Ký Số");
                 }
 
                 // Kiểm tra UserActivity
@@ -118,7 +118,7 @@ namespace TravelMateAPI.Services.ProfileService
                 }
                 else
                 {
-                    incompleteModels.Add("UserActivity");
+                    incompleteModels.Add("Hoạt động yêu thích");
                 }
 
                 // Kiểm tra UserLocation
@@ -129,32 +129,40 @@ namespace TravelMateAPI.Services.ProfileService
                 }
                 else
                 {
-                    incompleteModels.Add("UserLocation");
+                    incompleteModels.Add("Địa phương đăng ký");
                 }
 
                 // Kiểm tra UserEducation
                 var userEducation = await _context.UserEducations.AnyAsync(ue => ue.UserId == userId);
                 if (userEducation)
                 {
-                    totalPercentage += 5;
+                    totalPercentage += 2;
                 }
                 else
                 {
-                    incompleteModels.Add("UserEducation");
+                    incompleteModels.Add("Học vấn");
                 }
 
                 // Kiểm tra SpokenLanguage
                 var spokenLanguage = await _context.SpokenLanguages.AnyAsync(sl => sl.UserId == userId);
                 if (spokenLanguage)
                 {
-                    totalPercentage += 5;
+                    totalPercentage += 2;
                 }
                 else
                 {
-                    incompleteModels.Add("SpokenLanguage");
+                    incompleteModels.Add("Ngôn ngữ");
                 }
 
-
+                var userContact = await _context.UserContacts.FirstOrDefaultAsync(uh => uh.UserId == userId);
+                if (userContact != null)
+                {
+                    totalPercentage += 6;
+                }
+                else
+                {
+                    incompleteModels.Add("Liên hệ khẩn cấp");
+                }
 
                 return new OkObjectResult(new
                 {
