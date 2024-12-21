@@ -33,6 +33,16 @@ namespace DataAccess
                 .FirstOrDefault(t => t.Id == userId);
         }
 
+        public async Task<IEnumerable<ApplicationUser>> GetUsersInfoAsync(IEnumerable<int> userIds)
+        {
+            // Truy vấn lấy thông tin tất cả người dùng theo danh sách userId
+            return await _sqlContext.Users
+                .Where(user => userIds.Contains(user.Id))
+                .Include(user => user.Profiles)
+                .ToListAsync();
+        }
+
+
         public async Task<DateTime> GetParticipantJoinTimeAsync(string tourId, int travelerId)
         {
             // Lấy tour theo TourId
