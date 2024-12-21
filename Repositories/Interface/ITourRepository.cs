@@ -21,6 +21,7 @@ namespace Repositories.Interface
         Task RejectTour(string tourId);
         Task CancelTour(string tourId);
         Task<ApplicationUser> GetUserInfo(int userId);
+        Task<IEnumerable<ApplicationUser>> GetUsersInfoAsync(IEnumerable<int> userIds);
         Task<bool> DoesParticipantExist(string tourId, int userId);
         Task UpdatePaymentStatus(long orderCode, int totalAmount);
         Task UpdateOrderCode(string tourId, int travelerId, long orderCode);

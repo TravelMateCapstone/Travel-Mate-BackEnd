@@ -219,5 +219,10 @@ namespace Repositories
         {
             return await _tourDAO.GetParticipantJoinTimeAsync(tourId, travelerId);
         }
+
+        public async Task<IEnumerable<ApplicationUser>> GetUsersInfoAsync(IEnumerable<int> userIds)
+        {
+            return await _tourDAO.GetUsersInfoAsync(userIds);
+        }
     }
 }

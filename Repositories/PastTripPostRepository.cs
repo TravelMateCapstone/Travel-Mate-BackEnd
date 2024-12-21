@@ -16,24 +16,59 @@ namespace Repositories
             _pastTripPostDAO = pastTripPostDAO;
             _tourRepository = tourRepository;
         }
+        //public async Task<IEnumerable<PastTripPost>> GetAllPostOfUserAsync(int userId)
+        //{
+        //    var allPost = await _pastTripPostDAO.GetAllPostsAsync(userId);
+
+        //    foreach (var post in allPost)
+        //    {
+        //        var travelerProfile = await _tourRepository.GetUserInfo(post.TravelerId);
+        //        var localProfile = await _tourRepository.GetUserInfo((int)(post.LocalId));
+
+        //        post.TravelerName = travelerProfile.FullName;
+        //        post.TravelerAvatar = travelerProfile.Profiles.ImageUser;
+        //        post.LocalName = localProfile.FullName;
+        //        post.LocalAvatar = localProfile.Profiles.ImageUser;
+        //        await _pastTripPostDAO.UpdatePostAsync(post.Id, post);
+        //    }
+
+        //    return allPost;
+        //}
+
         public async Task<IEnumerable<PastTripPost>> GetAllPostOfUserAsync(int userId)
         {
             var allPost = await _pastTripPostDAO.GetAllPostsAsync(userId);
 
+            var travelerIds = allPost.Select(post => post.TravelerId).Distinct();
+            var localIds = allPost.Where(post => post.LocalId.HasValue)
+                                  .Select(post => post.LocalId.Value)
+                                  .Distinct();
+
+            var travelerProfiles = await _tourRepository.GetUsersInfoAsync(travelerIds);
+            var localProfiles = await _tourRepository.GetUsersInfoAsync(localIds);
+
+            var travelerProfileMap = travelerProfiles.ToDictionary(profile => profile.Id, profile => profile);
+            var localProfileMap = localProfiles.ToDictionary(profile => profile.Id, profile => profile);
+
             foreach (var post in allPost)
             {
-                var travelerProfile = await _tourRepository.GetUserInfo(post.TravelerId);
-                var localProfile = await _tourRepository.GetUserInfo((int)(post.LocalId));
+                if (travelerProfileMap.TryGetValue(post.TravelerId, out var travelerProfile))
+                {
+                    post.TravelerName = travelerProfile.FullName;
+                    post.TravelerAvatar = travelerProfile.Profiles.ImageUser;
+                }
 
-                post.TravelerName = travelerProfile.FullName;
-                post.TravelerAvatar = travelerProfile.Profiles.ImageUser;
-                post.LocalName = localProfile.FullName;
-                post.LocalAvatar = localProfile.Profiles.ImageUser;
-                await _pastTripPostDAO.UpdatePostAsync(post.Id, post);
+                if (post.LocalId.HasValue && localProfileMap.TryGetValue(post.LocalId.Value, out var localProfile))
+                {
+                    post.LocalName = localProfile.FullName;
+                    post.LocalAvatar = localProfile.Profiles.ImageUser;
+                }
             }
 
             return allPost;
         }
+
+
         public async Task<PastTripPost?> GetPostByIdAsync(string id)
         {
             var existingPost = await _pastTripPostDAO.GetPostByIdAsync(id);
