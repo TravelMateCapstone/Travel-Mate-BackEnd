@@ -57,8 +57,8 @@ namespace TravelMateAPI.Hubs
 
         private int UserId
         {
-            //get { return int.Parse(Context.User?.FindFirst("UserId")?.Value); }
-            get { return 92; }
+            get { return int.Parse(Context.User?.FindFirst("UserId")?.Value); }
+            //get { return 92; }
         }
 
         public async Task LoadMessages(int senderId, int receiverId)
