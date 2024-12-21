@@ -72,7 +72,8 @@ public class ContractService : IContractService
             // Lấy danh sách hợp đồng từ bộ nhớ cache
             var contractsInMemory = _memoryCache.GetOrCreate(ContractsCacheKey, entry =>
             {
-                entry.SlidingExpiration = TimeSpan.FromHours(1);
+                //entry.SlidingExpiration = TimeSpan.FromHours(1);
+                entry.SlidingExpiration = TimeSpan.FromMinutes(30);
                 return new List<ContractDTO>();
             });
 
@@ -124,7 +125,8 @@ public class ContractService : IContractService
             // Lấy danh sách hợp đồng từ bộ nhớ cache
             var contractsInMemory = _memoryCache.GetOrCreate(ContractsCacheKey, entry =>
             {
-                entry.SlidingExpiration = TimeSpan.FromHours(1);
+                //entry.SlidingExpiration = TimeSpan.FromHours(1);
+                entry.SlidingExpiration = TimeSpan.FromMinutes(30);
                 return new List<ContractDTO>();
             });
 
