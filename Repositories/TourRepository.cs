@@ -44,11 +44,12 @@ namespace Repositories
 
         public async Task AddTour(int userId, Tour tour)
         {
-            //xu ly logic o day
             tour.Creator = new CreatorInfo();
             tour.Creator.Id = userId;
             tour.CreatedAt = GetTimeZone.GetVNTimeZoneNow();
             tour.ApprovalStatus = ApprovalStatus.Pending;
+            tour.Participants = new List<Participants>();
+
             await _tourDAO.AddTour(tour);
         }
         public async Task<bool> DoesParticipantExist(string tourId, int userId)
@@ -92,43 +93,30 @@ namespace Repositories
 
         public async Task JoinTour(string tourId, int travelerId)
         {
-            var newParticipant = new Participants()
+            var user = await _tourDAO.GetUserInfor(travelerId);
+
+            var newParticipant = new Participants
             {
                 ParticipantId = travelerId,
                 RegisteredAt = GetTimeZone.GetVNTimeZoneNow(),
+                PaymentStatus = false,
+                FullName = user.FullName,
+                Gender = user.Profiles.Gender,
+                Address = user.Profiles.City,
+                Phone = user.Profiles.Phone,
+                PostId = ""
             };
-            var existingTour = await _tourDAO.GetTourById(tourId);
-            if (existingTour.Participants == null)
-                existingTour.Participants = new List<Participants>();
 
             await _tourDAO.JoinTour(tourId, newParticipant);
 
-            var getParticipant = await _tourDAO.GetTourById(tourId);
-
-            foreach (var item in getParticipant.Participants)
-            {
-                if (item.ParticipantId == travelerId)
-                {
-                    var user = await _tourDAO.GetUserInfor(item.ParticipantId);
-                    item.FullName = user.FullName;
-                    item.Gender = user.Profiles.Gender;
-                    item.Address = user.Profiles.City;
-                    item.Phone = user.Profiles.Phone;
-                    item.PaymentStatus = false;
-                    item.PostId = "";
-                    await _tourDAO.UpdateTour(tourId, getParticipant);
-                    break;
-                }
-            }
-
             IJobDetail job = JobBuilder.Create<Cronjob>()
-               .WithIdentity("job1", "group1")
+               .WithIdentity($"{travelerId}", "group1")
                .UsingJobData("tourId", tourId)
                .UsingJobData("participantId", travelerId)
                .Build();
 
             ITrigger trigger = TriggerBuilder.Create()
-                .WithIdentity("trigger1", "group1")
+                .WithIdentity($"{tourId}_{travelerId}", "group1")
                 .StartAt(DateBuilder.FutureDate(3, IntervalUnit.Minute))
                 .Build();
 
@@ -162,7 +150,6 @@ namespace Repositories
 
         public async Task<IEnumerable<Participants>> GetListParticipantsAsync(string tourId)
         {
-            //get list participant in tour
             var getListParticipants = await _tourDAO.GetTourById(tourId);
 
             return getListParticipants.Participants;
@@ -171,6 +158,7 @@ namespace Repositories
         public async Task UpdatePaymentStatus(long orderCode, int totalAmount)
         {
             var getParticipant = await _tourDAO.GetParticipantWithOrderCode(orderCode);
+            var travelerId = 0;
 
             foreach (var item in getParticipant.Participants)
             {
@@ -178,29 +166,27 @@ namespace Repositories
                 {
                     item.PaymentStatus = true;
                     item.TotalAmount = totalAmount;
+                    travelerId = item.ParticipantId;
                     break;
                 }
             }
 
             await _tourDAO.UpdateTour(getParticipant.TourId, getParticipant);
 
-            await _scheduler.DeleteJob(new JobKey("job1", "group1"));
+            await _scheduler.DeleteJob(new JobKey($"{travelerId}", "group1"));
         }
 
         public async Task UpdateOrderCode(string tourId, int travelerId, long orderCode)
         {
             var getParticipant = await _tourDAO.GetParticipant(tourId, travelerId);
+            var participant = getParticipant.Participants
+            .FirstOrDefault(p => p.ParticipantId == travelerId);
 
-            foreach (var item in getParticipant.Participants)
+            if (participant != null)
             {
-                if (item.ParticipantId == travelerId)
-                {
-                    item.OrderCode = orderCode;
-                    break;
-                }
+                participant.OrderCode = orderCode;
+                await _tourDAO.UpdateTour(tourId, getParticipant);
             }
-
-            await _tourDAO.UpdateTour(tourId, getParticipant);
         }
 
         public async Task<bool> DidParticipantPay(long orderCode)

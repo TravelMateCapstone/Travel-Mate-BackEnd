@@ -6,5 +6,7 @@ namespace Repositories.Interface
     {
         Task AddMessageAsync(Message message);
         Task<List<Message>> GetConversationAsync(int userId1, int userId2);
+
+        Task<List<UserViewModel>> GetChatLists(int userId);
     }
 }
