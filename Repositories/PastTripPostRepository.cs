@@ -89,6 +89,7 @@ namespace Repositories
         public async Task AddAsync(PastTripPost post)
         {
             var existingTour = await _tourRepository.GetTourById(post.TourId);
+
             post.LocalId = existingTour.Creator.Id;
             post.Location = existingTour.Location;
             post.CreatedAt = GetTimeZone.GetVNTimeZoneNow();
@@ -96,41 +97,27 @@ namespace Repositories
 
             await _pastTripPostDAO.AddPostAsync(post);
 
-            foreach (var item in existingTour.Participants)
-            {
-                if (item.ParticipantId == post.TravelerId)
-                {
-                    item.PostId = post.Id;
-                    break;
-                }
-            }
+            var participant = existingTour.Participants
+                                          .FirstOrDefault(item => item.ParticipantId == post.TravelerId);
 
-            await _tourRepository.UpdateTour(existingTour.TourId, existingTour);
+            if (participant != null && participant.PostId != post.Id)
+            {
+                participant.PostId = post.Id;
+                await _tourRepository.UpdateTour(existingTour.TourId, existingTour);
+            }
         }
 
         public async Task<double> GetUserAverageStar(int locaId)
         {
             var listPost = await _pastTripPostDAO.GetAllPostsAsync(locaId);
 
-            double totalStars = 0;
-            int postCount = 0;
+            var validPosts = listPost.Where(post => post.Star.HasValue && post.LocalId == locaId);
+            var totalStars = validPosts.Sum(post => post.Star.Value);
+            var postCount = validPosts.Count();
 
-            foreach (var post in listPost)
-            {
-                if (post.Star.HasValue && post.LocalId == locaId)
-                {
-                    totalStars += post.Star.Value;
-                    postCount++;
-                }
-            }
-
-            if (postCount > 0)
-            {
-                return totalStars / postCount;
-            }
-
-            return 0;
+            return postCount > 0 ? totalStars / postCount : 0;
         }
+
 
         public async Task DeleteAsync(string postId)
         {
