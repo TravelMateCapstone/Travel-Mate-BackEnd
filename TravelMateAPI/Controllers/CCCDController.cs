@@ -413,9 +413,17 @@ namespace TravelMateAPI.Controllers
             }
         }
         // API kiểm tra mặt sau
-        [HttpGet("verify-cccd/{userId}")]
-        public async Task<IActionResult> VerifyCCCD(int userId)
+        [HttpGet("verify-cccd")]
+        public async Task<IActionResult> VerifyCCCD()
         {
+
+            // Lấy UserId từ token của người dùng hiện tại
+            var userId = GetUserId();
+            if (userId == -1)
+            {
+                return Unauthorized("Invalid token or user not found.");
+            }
+
             var isVerified = await _cccdService.IsVerifiedAsync(userId);
 
             if (!isVerified)
@@ -435,9 +443,17 @@ namespace TravelMateAPI.Controllers
         }
 
         // API kiểm tra chữ ký số
-        [HttpGet("verify-public-signature/{userId}")]
-        public async Task<IActionResult> VerifyPublicSignature(int userId)
+        [HttpGet("verify-public-signature")]
+        public async Task<IActionResult> VerifyPublicSignature()
         {
+
+            // Lấy UserId từ token của người dùng hiện tại
+            var userId = GetUserId();
+            if (userId == -1)
+            {
+                return Unauthorized("Invalid token or user not found.");
+            }
+
             var isVerified = await _cccdService.IsPublicSignatureVerifiedAsync(userId);
 
             if (!isVerified)
@@ -457,9 +473,16 @@ namespace TravelMateAPI.Controllers
         }
 
 
-        [HttpGet("verify-all/{userId}")]
-        public async Task<IActionResult> VerifyAll(int userId)
+        [HttpGet("verify-cccd-signature")]
+        public async Task<IActionResult> VerifyAll()
         {
+            // Lấy UserId từ token của người dùng hiện tại
+            var userId = GetUserId();
+            if (userId == -1)
+            {
+                return Unauthorized("Invalid token or user not found.");
+            }
+
             var result = await _cccdService.VerifyAllAsync(userId);
 
             return Ok(new
