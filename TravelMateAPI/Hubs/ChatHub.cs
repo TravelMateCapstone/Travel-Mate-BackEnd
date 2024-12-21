@@ -4,6 +4,7 @@ using BusinessObjects.Entities;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Repositories.Interface;
+using System.Security.Claims;
 
 namespace TravelMateAPI.Hubs
 {
@@ -57,8 +58,7 @@ namespace TravelMateAPI.Hubs
 
         private int UserId
         {
-            get { return int.Parse(Context.User?.FindFirst("nameidentifier")?.Value); }
-            //get { return 92; }
+            get { return int.Parse(Context.User.FindFirstValue(ClaimTypes.NameIdentifier)); }
         }
 
         public async Task LoadMessages(int senderId, int receiverId)
