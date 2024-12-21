@@ -25,5 +25,17 @@ namespace DataAccess
             .SortBy(m => m.SentAt)
             .ToListAsync();
         }
+
+        public async Task<List<int>> GetChatLists(int userId)
+        {
+            // Fetch messages matching the user ID as sender or receiver
+            var result = await _mongoContext
+                .Find(m => m.SenderId == userId || m.ReceiverId == userId)
+                .Project(m => m.SenderId == userId ? m.ReceiverId : m.SenderId)
+                .SortBy(m => m.SentAt)
+                .ToListAsync();
+            return result.Distinct().ToList();
+        }
+
     }
 }

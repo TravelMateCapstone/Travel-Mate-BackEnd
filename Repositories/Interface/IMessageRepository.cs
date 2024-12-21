@@ -4,7 +4,9 @@ namespace Repositories.Interface
 {
     public interface IMessageRepository
     {
-        Task AddMessageAsync(int senderId, int receiverId, string content);
+        Task AddMessageAsync(Message message);
         Task<List<Message>> GetConversationAsync(int userId1, int userId2);
+
+        Task<List<UserViewModel>> GetChatLists(int userId);
     }
 }

@@ -33,7 +33,7 @@ namespace TravelMateAPI.Controllers
 
             var registeredTime = await _tourRepository.GetParticipantJoinTimeAsync(tourId, travelerId);
             var registeredTimeUnix = new DateTimeOffset(registeredTime).ToUnixTimeSeconds();
-            var expiredTime = registeredTimeUnix + 60;
+            var expiredTime = registeredTimeUnix - (7 * 3600) + (60 * 3);
 
             var paymentLinkRequest = new PaymentData(
                 orderCode: int.Parse(DateTimeOffset.Now.ToString("ffffff")),
