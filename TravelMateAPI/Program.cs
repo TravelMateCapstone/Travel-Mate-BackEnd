@@ -416,7 +416,12 @@ namespace TravelMateAPI
             app.MapControllers();
             // real time
             app.MapHub<ServiceHub>("/serviceHub");
-            app.MapHub<ChatHub>("/chatHub");
+            app.UseRouting();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapHub<ChatHub>("/chatHub");
+            });
+
             app.Run();
         }
     }

@@ -13,17 +13,8 @@ namespace Repositories
             _messageDAO = messageDAO;
         }
 
-        public async Task AddMessageAsync(int senderId, int receiverId, string content)
+        public async Task AddMessageAsync(Message message)
         {
-            var message = new Message
-            {
-                SenderId = senderId,
-                ReceiverId = receiverId,
-                Content = content,
-                SentAt = DateTime.UtcNow,
-                IsRead = false
-            };
-
             await _messageDAO.AddMessageAsync(message);
         }
 
