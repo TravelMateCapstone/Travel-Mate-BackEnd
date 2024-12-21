@@ -1,19 +1,106 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using AutoMapper;
+using BusinessObjects;
+using BusinessObjects.Entities;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 using Repositories.Interface;
 
 namespace TravelMateAPI.Hubs
 {
-    public class ChatHub : Hub
+    public sealed class ChatHub : Hub
     {
         private readonly IMessageRepository _messageRepository;
-        public ChatHub(IMessageRepository messageRepository)
+        public readonly static List<UserViewModel> _Connections = new List<UserViewModel>();
+        private readonly static Dictionary<int, string> _ConnectionsMap = new Dictionary<int, string>();
+        private readonly IMapper _mapper;
+        private readonly ApplicationDBContext _context;
+
+        public ChatHub(IMessageRepository messageRepository, IMapper mapper, ApplicationDBContext context)
         {
             _messageRepository = messageRepository;
+            _mapper = mapper;
+            _context = context;
         }
-        public async Task SendMessage(string user, string content)
+
+        public async Task SendPrivate(int receiverId, string message)
         {
-            // Gửi thông báo thời gian thực đến người nhận
-            await Clients.All.SendAsync("ReceiveMessage", user, content);
+            var senderId = UserId;
+
+            if (!string.IsNullOrEmpty(message.Trim()))
+            {
+                var messageEntity = new Message
+                {
+                    SenderId = senderId,
+                    ReceiverId = receiverId,
+                    Content = message,
+                    SentAt = new DateTimeOffset(DateTime.Now, TimeSpan.FromHours(7))
+                };
+
+                await _messageRepository.AddMessageAsync(messageEntity);
+
+                if (_ConnectionsMap.TryGetValue(receiverId, out string connectionId))
+                {
+                    await Clients.Client(connectionId).SendAsync("receiveMessage", messageEntity);
+                }
+
+                await Clients.Caller.SendAsync("receiveMessage", "Sent");
+            }
         }
+
+        private int UserId
+        {
+            get { return int.Parse(Context.User?.FindFirst("UserId")?.Value); }
+            //get { return 92; }
+        }
+
+        public async Task LoadMessages(int senderId, int receiverId)
+        {
+            var messages = await _messageRepository.GetConversationAsync(senderId, receiverId);
+            await Clients.Caller.SendAsync("LoadMessages", messages);
+        }
+
+        public override async Task OnConnectedAsync()
+        {
+            try
+            {
+                var user = _context.Users
+                    .Include(t => t.Profiles)
+                    .FirstOrDefault(u => u.Id == UserId);
+
+                var userViewModel = _mapper.Map<UserViewModel>(user);
+
+                if (!_Connections.Any(u => u.Id == UserId))
+                {
+                    _Connections.Add(userViewModel);
+                    _ConnectionsMap.Add(UserId, Context.ConnectionId);
+                }
+
+                Clients.Caller.SendAsync("getProfileInfo", userViewModel);
+            }
+            catch (Exception ex)
+            {
+                Clients.Caller.SendAsync("onError", "OnConnected:" + ex.Message);
+            }
+        }
+
+        public override Task OnDisconnectedAsync(Exception exception)
+        {
+            try
+            {
+                var user = _Connections.FirstOrDefault(u => u.Id == UserId);
+                if (user != null)
+                {
+                    _Connections.Remove(user);
+                    _ConnectionsMap.Remove(UserId);
+                }
+            }
+            catch (Exception ex)
+            {
+                Clients.Caller.SendAsync("onError", "OnDisconnected: " + ex.Message);
+            }
+
+            return base.OnDisconnectedAsync(exception);
+        }
+
     }
 }
