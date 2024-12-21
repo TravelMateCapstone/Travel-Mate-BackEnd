@@ -146,6 +146,18 @@ namespace TravelMateAPI.Controllers
             };
             _context.UserHomes.Add(defaultUserHome);
 
+            // Tạo bản ghi UserContact mặc định
+            var defaultUserContact = new UserContact
+            {
+                UserId = user.Id,
+                Name = "",
+                Phone = "",
+                Email = "",
+                NoteContact =""
+
+            };
+            _context.UserContacts.Add(defaultUserContact);
+
             // Lưu thay đổi vào cơ sở dữ liệu
             await _context.SaveChangesAsync();
 
@@ -247,6 +259,20 @@ namespace TravelMateAPI.Controllers
                         OverallDescription = ""
                     };
                     _context.UserHomes.Add(defaultUserHome);
+
+
+                    // Tạo bản ghi UserContact mặc định
+                    var defaultUserContact = new UserContact
+                    {
+                        UserId = user.Id,
+                        Name = "",
+                        Phone = "",
+                        Email = "",
+                        NoteContact = ""
+
+                    };
+                    _context.UserContacts.Add(defaultUserContact);
+
 
                     // Lưu thay đổi vào cơ sở dữ liệu
                     await _context.SaveChangesAsync();
