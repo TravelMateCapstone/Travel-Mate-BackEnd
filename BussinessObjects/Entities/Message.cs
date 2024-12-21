@@ -18,6 +18,6 @@ namespace BusinessObjects.Entities
         public string Content { get; set; }
 
         [BsonElement("sentAt")]
-        public DateTimeOffset? SentAt { get; set; }
+        public DateTime? SentAt { get; set; }
     }
 }

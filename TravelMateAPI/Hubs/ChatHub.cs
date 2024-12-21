@@ -33,7 +33,7 @@ namespace TravelMateAPI.Hubs
                     SenderId = senderId,
                     ReceiverId = receiverId,
                     Content = message,
-                    SentAt = new DateTimeOffset(DateTime.Now, TimeSpan.FromHours(7))
+                    SentAt = DateTime.Now
                 };
 
                 await _messageRepository.AddMessageAsync(messageEntity);
@@ -47,10 +47,18 @@ namespace TravelMateAPI.Hubs
             }
         }
 
+        public async Task GetChatUsers()
+        {
+            var currentUserId = UserId;
+            var chatUsers = await _messageRepository.GetChatLists(currentUserId);
+
+            await Clients.Caller.SendAsync("receiveChatUsers", chatUsers);
+        }
+
         private int UserId
         {
-            get { return int.Parse(Context.User?.FindFirst("UserId")?.Value); }
-            //get { return 92; }
+            //get { return int.Parse(Context.User?.FindFirst("UserId")?.Value); }
+            get { return 92; }
         }
 
         public async Task LoadMessages(int senderId, int receiverId)
