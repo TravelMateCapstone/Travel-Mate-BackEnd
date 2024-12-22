@@ -4,6 +4,8 @@ using BusinessObjects.Entities;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Repositories.Interface;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace TravelMateAPI.Hubs
 {
@@ -57,8 +59,15 @@ namespace TravelMateAPI.Hubs
 
         private int UserId
         {
-            get { return int.Parse(Context.User?.FindFirst("UserId")?.Value); }
-            //get { return 92; }
+            get
+            {
+                var accessToken = Context.GetHttpContext().Request.Query["access_token"].ToString();
+
+                var handler = new JwtSecurityTokenHandler();
+                var jsonToken = handler.ReadToken(accessToken) as JwtSecurityToken;
+
+                return int.Parse(jsonToken?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value);
+            }
         }
 
         public async Task LoadMessages(int senderId, int receiverId)
@@ -71,6 +80,11 @@ namespace TravelMateAPI.Hubs
         {
             try
             {
+                if (UserId == null)
+                {
+                    Clients.Caller.SendAsync("onError", "UserId không hợp lệ.");
+                    return;
+                }
                 var user = _context.Users
                     .Include(t => t.Profiles)
                     .FirstOrDefault(u => u.Id == UserId);
