@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using BusinessObjects.Entities;
+﻿using BusinessObjects.Entities;
 using DataAccess;
 using Repositories.Interface;
 
@@ -8,13 +7,10 @@ namespace Repositories
     public class TransactionRepository : ITransactionRepository
     {
         private readonly TransactionDAO _transactionDAO;
-        private readonly IMapper _mapper;
-        private readonly ITourRepository _tourRepository;
 
-        public TransactionRepository(TransactionDAO transactionDAO, ITourRepository tourRepository)
+        public TransactionRepository(TransactionDAO transactionDAO)
         {
             _transactionDAO = transactionDAO;
-            _tourRepository = tourRepository;
         }
         public async Task<IEnumerable<TourTransaction>> GetAllTransactionsAsync()
         {
