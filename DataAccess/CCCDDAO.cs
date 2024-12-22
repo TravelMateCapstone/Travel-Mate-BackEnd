@@ -27,6 +27,12 @@ namespace DataAccess
         {
             return await _context.CCCDs.Include(c => c.User).FirstOrDefaultAsync(c => c.CCCDId == id);
         }
+
+        public async Task<CCCD?> GetByIdCCCDAsync(string id)
+        {
+            return await _context.CCCDs.Include(c => c.User).FirstOrDefaultAsync(c => c.id == id);
+        }
+
         // Tìm CCCD theo UserId
         public async Task<CCCD?> GetByUserIdAsync(int userId)
         {

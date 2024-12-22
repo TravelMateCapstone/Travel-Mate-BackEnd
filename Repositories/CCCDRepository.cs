@@ -27,6 +27,11 @@ namespace Repositories
         {
             return await _dao.GetByIdAsync(id);
         }
+
+        public async Task<CCCD?> GetByIdCCCDAsync(string id)
+        {
+            return await _dao.GetByIdCCCDAsync(id);
+        }
         public async Task<CCCD?> GetByUserIdAsync(int userId)
         {
             return await _dao.GetByUserIdAsync(userId);

@@ -279,7 +279,7 @@ public class ContractService : IContractService
 
         private string HashWithSecretKey(string data)
         {
-            var secretKey = "DAcaumongmoidieutotdep8386"; // Lấy khóa bí mật từ file env
+            var secretKey = "DAcaumongmoidieutotdep8386"; // Lấy khóa bí mật từ file environment  //var secretKey = _appSettings.JwtSettings.SecretKey;
             if (string.IsNullOrEmpty(secretKey))
             {
                 throw new InvalidOperationException("Secret key is missing from configuration.");
@@ -326,6 +326,12 @@ public class ContractService : IContractService
                 .CountAsync(c => c.Location == location);
 
             return contractCount;
+        }
+        public async Task<int> GetTotalContractCountAsync()
+        {
+            // Đếm tổng số hợp đồng trong bảng CCCDs
+            var totalContracts = await _dbContext.CCCDs.CountAsync();
+            return totalContracts;
         }
 
     public async Task<List<TravelerContractDTO>> GetContractsByTravelerAsync(int travelerId)

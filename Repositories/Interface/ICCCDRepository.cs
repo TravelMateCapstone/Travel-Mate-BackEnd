@@ -11,6 +11,7 @@ namespace Repositories.Interface
     {
         Task<List<CCCD>> GetAllAsync();
         Task<CCCD?> GetByIdAsync(int id);
+        Task<CCCD?> GetByIdCCCDAsync(string id);
         Task<CCCD?> GetByUserIdAsync(int userId);
         Task AddAsync(CCCD cccd);
         Task UpdateAsync(CCCD cccd);

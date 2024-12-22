@@ -14,6 +14,7 @@ public interface IContractService
         Task<bool> VerifyContractIntegrityAsync(int travelerId, int localId, string tourId);
         Task<int> GetContractCountAsLocalAsync(int userId);
         Task<int> GetContractLocationCountAsync(string location);
+        Task<int> GetTotalContractCountAsync();
         Task<List<TravelerContractDTO>> GetContractsByTravelerAsync(int travelerId);
         Task<List<LocalContractDTO>> GetContractsByLocalAsync(int travelerId);
         Task<string> CheckContractStatusAsync(int travelerId, string tourId);

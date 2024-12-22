@@ -159,6 +159,21 @@ namespace TravelMateAPI.Controllers
                 return NotFound(new { Message = "CCCD not found for the current user." });
             }
 
+
+            //// Kiểm tra nếu ID của CCCD đã tồn tại trong dữ liệu (ngoại trừ bản ghi hiện tại)
+            //if (!string.IsNullOrEmpty(updatedCCCD.id))
+            //{
+            //    var existingCCCD = await _repository.GetByIdCCCDAsync(updatedCCCD.id);
+            //    if (existingCCCD != null && existingCCCD.UserId != userId)
+            //    {
+            //        return Conflict(new
+            //        {
+            //            Success = false,
+            //            Message = "The provided CCCD ID already exists for another user."
+            //        });
+            //    }
+            //}
+
             // Cập nhật các trường cần thiết (cccd.id, cccd.name, ...)
             cccd.id = updatedCCCD.id ?? cccd.id;
             cccd.name = updatedCCCD.name ?? cccd.name;
@@ -180,6 +195,60 @@ namespace TravelMateAPI.Controllers
             });
         }
 
+
+        // PUT: api/CCCD/update-details
+        [HttpPut("update-details-front-exit")]
+        public async Task<IActionResult> UpdateCCCDDetailFrontExits([FromBody] CCCD updatedCCCD)
+        {
+            // Lấy UserId từ token của người dùng hiện tại
+            var userId = GetUserId();
+            if (userId == -1)
+            {
+                return Unauthorized("Invalid token or user not found.");
+            }
+
+            // Lấy CCCD của người dùng từ database
+            var cccd = await _repository.GetByUserIdAsync(userId);
+            if (cccd == null)
+            {
+                return NotFound(new { Message = "CCCD not found for the current user." });
+            }
+
+
+            // Kiểm tra nếu ID của CCCD đã tồn tại trong dữ liệu (ngoại trừ bản ghi hiện tại)
+            if (!string.IsNullOrEmpty(updatedCCCD.id))
+            {
+                var existingCCCD = await _repository.GetByIdCCCDAsync(updatedCCCD.id);
+                if (existingCCCD != null && existingCCCD.UserId != userId)
+                {
+                    return Conflict(new
+                    {
+                        Success = false,
+                        Message = "The provided CCCD ID already exists for another user."
+                    });
+                }
+            }
+
+            // Cập nhật các trường cần thiết (cccd.id, cccd.name, ...)
+            cccd.id = updatedCCCD.id ?? cccd.id;
+            cccd.name = updatedCCCD.name ?? cccd.name;
+            cccd.dob = updatedCCCD.dob ?? cccd.dob;
+            cccd.sex = updatedCCCD.sex ?? cccd.sex;
+            cccd.nationality = updatedCCCD.nationality ?? cccd.nationality;
+            cccd.home = updatedCCCD.home ?? cccd.home;
+            cccd.address = updatedCCCD.address ?? cccd.address;
+            cccd.doe = updatedCCCD.doe ?? cccd.doe;
+
+            // Lưu thay đổi vào database
+            await _repository.UpdateAsync(cccd);
+
+            return Ok(new
+            {
+                Success = true,
+                Message = "CCCD details updated successfully.",
+                Data = cccd
+            });
+        }
 
         // PUT: api/CCCD/update-imageBack
         [HttpPut("update-imageBack")]
