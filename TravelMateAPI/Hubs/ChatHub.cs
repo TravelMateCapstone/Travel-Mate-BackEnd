@@ -68,7 +68,6 @@ namespace TravelMateAPI.Hubs
 
                 return int.Parse(jsonToken?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value);
             }
-
         }
 
         public async Task LoadMessages(int senderId, int receiverId)
