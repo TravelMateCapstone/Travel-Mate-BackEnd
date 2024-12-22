@@ -68,6 +68,31 @@ namespace TravelMateAPI.Controllers
             return Ok(userContacts);
         }
 
+        // GET: api/UserContact/GetByUserId/{userId}
+        [HttpGet("Get-CurrentUser")]
+        public async Task<IActionResult> GetContactCurrentUser()
+        {
+            // Lấy UserId từ token
+            var userId = GetUserId();
+            if (userId == -1)
+            {
+                return Unauthorized("Invalid token or user not found.");
+            }
+
+            // Truy vấn danh sách UserContact theo UserId
+            var userContacts = await _context.UserContacts
+                .Where(uc => uc.UserId == userId)
+                .ToListAsync();
+
+            // Kiểm tra nếu không có dữ liệu
+            if (userContacts == null || !userContacts.Any())
+            {
+                return NotFound(new { Message = "No contacts found for this UserId." });
+            }
+
+            return Ok(userContacts);
+        }
+
         // POST: api/UserContact
         [HttpPost]
         public async Task<IActionResult> CreateUserContact([FromBody] UserContact userContact)
@@ -87,12 +112,11 @@ namespace TravelMateAPI.Controllers
         [HttpPost("AddContact-CurrentUser")]
         public async Task<IActionResult> AddUserContactForCurrentUser([FromBody] UserContact userContact)
         {
-            // Lấy UserId từ thông tin xác thực của người dùng hiện tại
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); // Lấy UserId từ claim
-
-            if (string.IsNullOrEmpty(userId))
+            // Lấy UserId từ token
+            var userId = GetUserId();
+            if (userId == -1)
             {
-                return Unauthorized(new { Message = "User is not authenticated." });
+                return Unauthorized("Invalid token or user not found.");
             }
 
             if (!ModelState.IsValid)
@@ -100,8 +124,17 @@ namespace TravelMateAPI.Controllers
                 return BadRequest(ModelState);
             }
 
+            // Kiểm tra nếu UserContact đã tồn tại cho UserId hiện tại
+            var existingContact = await _context.UserContacts
+                .FirstOrDefaultAsync(uc => uc.UserId == userId);
+
+            if (existingContact != null)
+            {
+                return BadRequest(new { Message = "A contact for this user already exists." });
+            }
+
             // Gán UserId cho UserContact
-            userContact.UserId = int.Parse(userId);
+            userContact.UserId = userId;
 
             // Thêm UserContact vào cơ sở dữ liệu
             _context.UserContacts.Add(userContact);

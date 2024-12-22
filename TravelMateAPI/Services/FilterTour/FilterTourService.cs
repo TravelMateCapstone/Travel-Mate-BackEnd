@@ -68,9 +68,19 @@ namespace TravelMateAPI.Services.FilterTour
 
         public async Task<List<TourWithUserDetailsDTO>> GetAllTourBriefWithUserDetailsByLocationAsync(string location)
         {
-            // Lấy toàn bộ tour với trạng thái được chấp nhận
+            //// Lấy toàn bộ tour với trạng thái được chấp nhận
+            //var tours = await _mongoContext
+            //    .Find(t => t.ApprovalStatus == ApprovalStatus.Accepted && t.Location == location)
+            //    .ToListAsync();
+
+            // Lấy thời gian hiện tại theo múi giờ Việt Nam
+            var currentDateTime = GetTimeZone.GetVNTimeZoneNow();
+
+            // Lấy toàn bộ tour với trạng thái được chấp nhận và ngày bắt đầu >= thời điểm hiện tại
             var tours = await _mongoContext
-                .Find(t => t.ApprovalStatus == ApprovalStatus.Accepted && t.Location == location)
+                .Find(t => t.ApprovalStatus == ApprovalStatus.Accepted
+                           && t.Location == location
+                           && t.StartDate >= currentDateTime)
                 .ToListAsync();
 
             // Lấy danh sách các LocalId từ các tour
