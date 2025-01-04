@@ -44,7 +44,7 @@ namespace TravelMateAPI.Services.ProfileService
                     //!string.IsNullOrEmpty(profile.Address)
                     if (!string.IsNullOrEmpty(profile.Phone))
                     {
-                        totalPercentage += 20;
+                        totalPercentage += 18;
                     }
                     else
                     {
@@ -89,7 +89,7 @@ namespace TravelMateAPI.Services.ProfileService
                     if (!string.IsNullOrEmpty(cccd.imageFront) &&
                         !string.IsNullOrEmpty(cccd.imageBack))
                     {
-                        totalPercentage += 20;
+                        totalPercentage += 18;
                     }
                     else
                     {
@@ -98,7 +98,7 @@ namespace TravelMateAPI.Services.ProfileService
 
                     if (!string.IsNullOrEmpty(cccd.PublicSignature))
                     {
-                        totalPercentage += 20;
+                        totalPercentage += 18;
                     }
                     else
                     {
@@ -154,14 +154,49 @@ namespace TravelMateAPI.Services.ProfileService
                     incompleteModels.Add("Ngôn ngữ");
                 }
 
+                // Kiểm tra UserContact
                 var userContact = await _context.UserContacts.FirstOrDefaultAsync(uh => uh.UserId == userId);
                 if (userContact != null)
                 {
-                    totalPercentage += 6;
+                    //!string.IsNullOrEmpty(userHome.RoomType) &&
+                    if (!string.IsNullOrEmpty(userContact.Name) &&
+                        !string.IsNullOrEmpty(userContact.Phone) &&
+                        !string.IsNullOrEmpty(userContact.Email) &&
+                        !string.IsNullOrEmpty(userContact.NoteContact))
+                    {
+                        totalPercentage += 6;
+                    }
+                    else
+                    {
+                        incompleteModels.Add("Liên hệ khẩn cấp");
+                    }
+                    //totalPercentage += 6;
                 }
                 else
                 {
                     incompleteModels.Add("Liên hệ khẩn cấp");
+                }
+
+                // Kiểm tra UserBank
+                var userBank = await _context.UserBanks.FirstOrDefaultAsync(uh => uh.UserId == userId);
+                if (userBank != null)
+                {
+                    //!string.IsNullOrEmpty(userHome.RoomType) &&
+                    if (!string.IsNullOrEmpty(userBank.BankName) &&
+                        !string.IsNullOrEmpty(userBank.BankNumber) &&
+                        !string.IsNullOrEmpty(userBank.OwnerName))
+                    {
+                        totalPercentage += 6;
+                    }
+                    else
+                    {
+                        incompleteModels.Add("Thông tin ngân hàng");
+                    }
+                    //totalPercentage += 6;
+                }
+                else
+                {
+                    incompleteModels.Add("Thông tin ngân hàng");
                 }
 
                 return new OkObjectResult(new

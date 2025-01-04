@@ -73,7 +73,7 @@ public class ContractService : IContractService
             var contractsInMemory = _memoryCache.GetOrCreate(ContractsCacheKey, entry =>
             {
                 //entry.SlidingExpiration = TimeSpan.FromHours(1);
-                entry.SlidingExpiration = TimeSpan.FromMinutes(30);
+                entry.SlidingExpiration = TimeSpan.FromMinutes(4);
                 return new List<ContractDTO>();
             });
 
