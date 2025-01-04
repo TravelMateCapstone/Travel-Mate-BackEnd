@@ -22,6 +22,7 @@ namespace BusinessObjects
         public DbSet<Activity> Activities { get; set; }
         public DbSet<UserLocation> UserLocations { get; set; }
         public DbSet<UserActivity> UserActivities { get; set; }
+        public DbSet<BlockchainKey> BlockchainKeys { get; set; }
         public DbSet<BlockContract> BlockContracts { get; set; }
         public DbSet<Contract> Contracts { get; set; }
         public DbSet<Destination> Destinations { get; set; }
@@ -30,6 +31,7 @@ namespace BusinessObjects
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<UserReport> UserReports { get; set; }
         public DbSet<UserContact> UserContacts { get; set; }
+        public DbSet<UserBank> UserBanks { get; set; }
         public DbSet<Group> Groups { get; set; }
         public DbSet<GroupParticipant> GroupParticipants { get; set; }
         public DbSet<GroupPost> GroupPosts { get; set; }
