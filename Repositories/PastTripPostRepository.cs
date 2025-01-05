@@ -97,14 +97,14 @@ namespace Repositories
 
             await _pastTripPostDAO.AddPostAsync(post);
 
-            var participant = existingTour.Participants
-                                          .FirstOrDefault(item => item.ParticipantId == post.TravelerId);
+            //var participant = existingTour.Participants
+            //                              .FirstOrDefault(item => item.ParticipantId == post.TravelerId);
 
-            if (participant != null && participant.PostId != post.Id)
-            {
-                participant.PostId = post.Id;
-                await _tourRepository.UpdateTour(existingTour.TourId, existingTour);
-            }
+            //if (participant != null && participant.PostId != post.Id)
+            //{
+            //    participant.PostId = post.Id;
+            //    await _tourRepository.UpdateTour(existingTour.TourId, existingTour);
+            //}
         }
 
         public async Task<double> GetUserAverageStar(int locaId)

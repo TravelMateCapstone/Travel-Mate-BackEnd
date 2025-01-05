@@ -1,14 +1,12 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
-using TravelMateAPI.Services.FilterLocal;
 using TravelMateAPI.Services.FilterTour;
 
 namespace TravelMateAPI.Controllers
 {
 
-    public class FilterToursController :  ODataController
+    public class FilterToursController : ODataController
     {
         private readonly FilterTourService _tourService;
 
@@ -23,8 +21,8 @@ namespace TravelMateAPI.Controllers
         {
             try
             {
-                var result = await _tourService.GetAllTourBriefWithUserDetailsAsync();
-                return Ok(result);
+                //var result = await _tourService.GetAllTourBriefWithUserDetailsAsync();
+                return Ok();
             }
             catch (Exception ex)
             {

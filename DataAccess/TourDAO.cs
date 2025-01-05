@@ -35,26 +35,11 @@ namespace DataAccess
 
         public async Task<IEnumerable<ApplicationUser>> GetUsersInfoAsync(IEnumerable<int> userIds)
         {
-            // Truy vấn lấy thông tin tất cả người dùng theo danh sách userId
             return await _sqlContext.Users
                 .Where(user => userIds.Contains(user.Id))
                 .Include(user => user.Profiles)
                 .ToListAsync();
         }
-
-
-        public async Task<DateTime> GetParticipantJoinTimeAsync(string tourId, int travelerId)
-        {
-            // Lấy tour theo TourId
-            var tour = await _mongoContext.Find(t => t.TourId == tourId)
-                .FirstOrDefaultAsync();
-
-            var participant = tour.Participants
-                .FirstOrDefault(p => p.ParticipantId == travelerId);
-
-            return participant.RegisteredAt;
-        }
-
         public async Task<IEnumerable<Tour>> GetTourBriefByUserId(int creatorId)
         {
             return _mongoContext.Find(t => t.ApprovalStatus == ApprovalStatus.Accepted && t.Creator.Id == creatorId).ToList();
@@ -103,16 +88,6 @@ namespace DataAccess
             _mongoContext.DeleteOne(filter);
         }
 
-        public async Task JoinTour(string tourId, Participants participant)
-        {
-
-            var filter = Builders<Tour>.Filter.Eq(f => f.TourId, tourId);
-
-            var update = Builders<Tour>.Update.Push(f => f.Participants, participant);
-
-            await _mongoContext.UpdateOneAsync(filter, update);
-        }
-
         // Admin accepts a tour
         public async Task ProcessTourAdmin(string tourId, ApprovalStatus processStatus)
         {
@@ -131,43 +106,19 @@ namespace DataAccess
             await _mongoContext.UpdateOneAsync(filter, update);
         }
 
-        public async Task<bool> DoesParticipantExist(string tourId, int userId)
-        {
-            var filter = Builders<Tour>.Filter.And(
-          Builders<Tour>.Filter.Eq(t => t.TourId, tourId),
-          Builders<Tour>.Filter.ElemMatch(t => t.Participants, p => p.ParticipantId == userId)
-        );
-            return await _mongoContext.Find(filter).AnyAsync();
-        }
-
-        public async Task<Tour> GetParticipant(string tourId, int userId)
-        {
-            var filter = Builders<Tour>.Filter.And(
-          Builders<Tour>.Filter.Eq(t => t.TourId, tourId),
-          Builders<Tour>.Filter.ElemMatch(t => t.Participants, p => p.ParticipantId == userId));
-            return _mongoContext.Find(filter).FirstOrDefault();
-        }
-
-        public async Task<Tour> GetParticipantWithOrderCode(long orderCode)
-        {
-
-            var filter = Builders<Tour>.Filter.ElemMatch(t => t.Participants, p => p.OrderCode == orderCode);
-
-            return await _mongoContext.Find(filter).FirstOrDefaultAsync();
-        }
-
-        public async Task<bool> DidParticipantPay(long orderCode)
-        {
-            var filter = Builders<Tour>.Filter.ElemMatch(t => t.Participants, p => p.OrderCode == orderCode && p.PaymentStatus == true);
-
-            return await _mongoContext.Find(filter).AnyAsync();
-        }
+        //public async Task<Tour> GetParticipant(string tourId, int userId)
+        //{
+        //    var filter = Builders<Tour>.Filter.And(
+        //  Builders<Tour>.Filter.Eq(t => t.TourId, tourId),
+        //  Builders<Tour>.Filter.ElemMatch(t => t.Participants, p => p.ParticipantId == userId));
+        //    return _mongoContext.Find(filter).FirstOrDefault();
+        //}
 
         // Get TourName by TourId
         public async Task<string> GetTourNameById(string tourId)
         {
             var tour = _mongoContext.Find(t => t.TourId == tourId).FirstOrDefault();
-            return tour?.TourName; // Return TourName if the tour exists, otherwise return null
+            return tour?.TourName;
         }
 
     }

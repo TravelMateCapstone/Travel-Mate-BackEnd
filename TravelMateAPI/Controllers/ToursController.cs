@@ -37,13 +37,13 @@ namespace TravelMate.Controllers
             return Ok(tourDto);
         }
 
-        [HttpGet("tourParticipants/{tourId}")]
-        public async Task<ActionResult<IEnumerable<Participants>>> GetListParticipantsAsync(string tourId)
-        {
-            var listParticipants = await _tourRepository.GetListParticipantsAsync(tourId);
+        //[HttpGet("tourParticipants/{tourId}")]
+        //public async Task<ActionResult<IEnumerable<Participants>>> GetListParticipantsAsync(string tourId)
+        //{
+        //    var listParticipants = await _tourRepository.GetListParticipantsAsync(tourId);
 
-            return Ok(listParticipants);
-        }
+        //    return Ok(listParticipants);
+        //}
 
         //get all tour of a local
         [HttpGet("local/{userId}")]
@@ -182,39 +182,6 @@ namespace TravelMate.Controllers
 
             await _tourRepository.DeleteTour(id);
             return NoContent();
-        }
-
-        // POST: api/tour/join/{tourId}
-        [HttpPost("join/{tourId}")]
-        public async Task<ActionResult> JoinTour(string tourId)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-            {
-                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-            }
-
-            var existingTour = await _tourRepository.GetTourById(tourId);
-            if (existingTour == null)
-                return NotFound();
-
-            if (existingTour.Participants.Count == existingTour.MaxGuests)
-                return BadRequest("No available slots in this tour");
-
-            var doesUserExistInTour = await _tourRepository.DoesParticipantExist(tourId, user.Id);
-            if (doesUserExistInTour)
-                return BadRequest("You have joined this tour");
-
-            if (existingTour.Creator.Id == user.Id)
-                return BadRequest("Access Denied! You are creator of this tour");
-
-            await _tourRepository.JoinTour(tourId, user.Id);
-
-            return Ok("Join tour successful");
         }
 
         [Authorize(Roles = "admin")]
