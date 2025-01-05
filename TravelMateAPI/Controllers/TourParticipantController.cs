@@ -27,6 +27,34 @@ namespace TravelMateAPI.Controllers
             _scheduler = scheduler;
         }
 
+        //deactive tour
+        [HttpPost("deactivateTour")]
+        public async Task<ActionResult> DeactivateTour([FromQuery] string scheduleId, [FromQuery] string tourId)
+        {
+            var existingTour = await _tourParticipantRepository.GetTourScheduleById(scheduleId, tourId);
+            if (existingTour == null)
+                return NotFound();
+
+            var tourSchedule = existingTour.Schedules.FirstOrDefault(t => t.ScheduleId == scheduleId);
+
+            //check thoi gian da dien ra, dang dien ra
+
+
+            if (tourSchedule.Participants.Count > 0)
+                return BadRequest("Access Denied! Tour has participants");
+
+
+            return Ok();
+        }
+
+        [HttpGet("tourParticipants")]
+        public async Task<ActionResult<IEnumerable<Participants>>> GetListParticipantsAsync([FromQuery] string scheduleId, [FromQuery] string tourId)
+        {
+            var listParticipants = await _tourParticipantRepository.GetListParticipantsAsync(scheduleId, tourId);
+
+            return Ok(listParticipants);
+        }
+
         [HttpPost("join")]
         public async Task<ActionResult> JoinTour([FromQuery] string scheduleId, [FromQuery] string tourId)
         {
@@ -69,6 +97,9 @@ namespace TravelMateAPI.Controllers
             if (tourSchedule.Participants.Any(t => t.ParticipantId == user.Id))
                 return BadRequest("You have already joined this tour.");
 
+            if (tourSchedule.ActiveStatus == false)
+                return BadRequest("Tour is not active");
+
             if (existingTour.Creator.Id == user.Id)
                 return BadRequest("Access Denied! You are creator of this tour");
 
@@ -76,8 +107,5 @@ namespace TravelMateAPI.Controllers
 
             return Ok("Join tour successful");
         }
-
-
-
     }
 }

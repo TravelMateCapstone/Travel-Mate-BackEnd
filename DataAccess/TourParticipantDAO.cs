@@ -28,7 +28,6 @@ namespace DataAccess
             return await _mongoContext.Find(filter).FirstOrDefaultAsync();
         }
 
-
         public async Task<ApplicationUser> GetUserInfor(int userId)
         {
             return _sqlContext.Users

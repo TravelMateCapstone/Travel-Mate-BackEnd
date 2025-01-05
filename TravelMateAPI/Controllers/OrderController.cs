@@ -71,37 +71,31 @@ namespace TravelMateAPI.Controllers
 
                 var getTourInfo = await _tourParticipantRepository.GetParticipantWithOrderCode(data.orderCode);
 
+                var tourSchedule = getTourInfo.Schedules
+                      .FirstOrDefault(schedule => schedule.Participants
+            .Any(participant => participant.OrderCode == data.orderCode));
+
+                var matchingSchedule = tourSchedule.Participants
+             .FirstOrDefault(participant => participant.OrderCode == data.orderCode);
+
                 if (getTourInfo == null)
                 {
-                    return NotFound(new Response(-1, "Tour information not found", null));
+                    return NotFound();
                 }
-
-                var localId = getTourInfo.Creator.Id;
-                var travelerId = 0;
-                var tourId = getTourInfo.TourId;
 
                 var transaction = new TourTransaction
                 {
+                    ScheduleId = tourSchedule.ScheduleId,
                     TourId = getTourInfo.TourId,
                     TourName = getTourInfo.TourName,
                     localId = getTourInfo.Creator.Id,
                     LocalName = getTourInfo.Creator.Fullname,
-                    TravelerId = null,
-                    TravelerName = null,
+                    TravelerId = matchingSchedule.ParticipantId,
+                    TravelerName = matchingSchedule.FullName,
                     TransactionTime = GetTimeZone.GetVNTimeZoneNow(),
+                    TransactionStatus = true,
                     Price = getTourInfo.Price,
                 };
-
-                var matchingSchedule = getTourInfo.Schedules
-                 .SelectMany(schedule => schedule.Participants)
-                 .FirstOrDefault(participant => participant.OrderCode == data.orderCode);
-
-                if (matchingSchedule != null)
-                {
-                    travelerId = matchingSchedule.ParticipantId;
-                    transaction.TravelerId = travelerId;
-                    transaction.TravelerName = matchingSchedule.FullName;
-                }
 
                 if (data.description == "Ma giao dich thu nghiem" || data.description == "VQRIO123")
                 {
@@ -113,9 +107,10 @@ namespace TravelMateAPI.Controllers
                     matchingSchedule.PaymentStatus = true;
                     matchingSchedule.TotalAmount = data.amount;
 
-                    await _tourParticipantRepository.UpdatePaymentStatus(getTourInfo, travelerId);
+                    await _tourParticipantRepository.UpdatePaymentStatus(getTourInfo, (int)transaction.TravelerId);
                     await _transactionRepository.AddTransactionAsync(transaction);
-                    await _contractService.UpdateStatusToCompleted(travelerId, localId, tourId);
+                    //bo sung them schedule 
+                    await _contractService.UpdateStatusToCompleted((int)transaction.TravelerId, getTourInfo.Creator.Id, getTourInfo.TourId);
                 }
 
                 return Ok(new Response(0, "Ok", null));

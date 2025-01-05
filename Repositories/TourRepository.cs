@@ -107,34 +107,6 @@ namespace Repositories
             return _mapper.Map<IEnumerable<TourBriefDto>>(listTour);
         }
 
-        //public async Task<IEnumerable<Participants>> GetListParticipantsAsync(string tourId)
-        //{
-        //    var getListParticipants = await _tourDAO.GetTourById(tourId);
-
-        //    return getListParticipants.Participants;
-        //}
-
-        //public async Task UpdatePaymentStatus(long orderCode, int totalAmount)
-        //{
-        //    var getParticipant = await _tourDAO.GetParticipantWithOrderCode(orderCode);
-        //    var travelerId = 0;
-
-        //    foreach (var item in getParticipant.Participants)
-        //    {
-        //        if (item.OrderCode == orderCode)
-        //        {
-        //            item.PaymentStatus = true;
-        //            item.TotalAmount = totalAmount;
-        //            travelerId = item.ParticipantId;
-        //            break;
-        //        }
-        //    }
-
-        //    await _tourDAO.UpdateTour(getParticipant.TourId, getParticipant);
-
-        //    await _scheduler.DeleteJob(new JobKey($"{travelerId}", "group1"));
-        //}
-
         public async Task<IEnumerable<ApplicationUser>> GetUsersInfoAsync(IEnumerable<int> userIds)
         {
             return await _tourDAO.GetUsersInfoAsync(userIds);

@@ -21,6 +21,13 @@ namespace Repositories
             _scheduler = scheduler;
         }
 
+        public async Task<IEnumerable<Participants>> GetListParticipantsAsync(string scheduleId, string tourId)
+        {
+            var getListParticipants = await _tourParticipantDAO.GetTourScheduleById(scheduleId, tourId);
+
+            return getListParticipants.Schedules.FirstOrDefault(t => t.ScheduleId == scheduleId).Participants;
+        }
+
         public async Task<Tour> GetParticipantWithOrderCode(long orderCode)
         {
             return await _tourParticipantDAO.GetTourByParticipantOrderCodeAsync(orderCode);
