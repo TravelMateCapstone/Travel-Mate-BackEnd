@@ -22,6 +22,7 @@ using TravelMateAPI.Hubs;
 using TravelMateAPI.Middleware;
 using TravelMateAPI.MLModels;
 using TravelMateAPI.Models;
+using TravelMateAPI.Services.Blockchain;
 using TravelMateAPI.Services.CCCDValid;
 using TravelMateAPI.Services.Email;
 using TravelMateAPI.Services.FilterLocal;
@@ -267,6 +268,7 @@ namespace TravelMateAPI
             builder.Services.AddScoped<ModelPredictor>();
             builder.Services.AddScoped<FilterUserService>();
             builder.Services.AddScoped<IContractService, ContractService>();
+            builder.Services.AddScoped<BlockchainService>();
             builder.Services.AddScoped<FilterTourService>();
             builder.Services.AddScoped<LocationService>();
             builder.Services.AddScoped<IFindLocalService, FindLocalService>();
