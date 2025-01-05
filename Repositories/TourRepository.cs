@@ -4,8 +4,7 @@ using BusinessObjects.Entities;
 using BusinessObjects.EnumClass;
 using BusinessObjects.Utils.Request;
 using DataAccess;
-using Quartz;
-using Repositories.Cron;
+using MongoDB.Bson;
 using Repositories.Interface;
 
 namespace Repositories
@@ -14,13 +13,11 @@ namespace Repositories
     {
         private readonly TourDAO _tourDAO;
         private readonly IMapper _mapper;
-        private readonly IScheduler _scheduler;
 
-        public TourRepository(TourDAO tourDAO, IMapper mapper, IScheduler scheduler)
+        public TourRepository(TourDAO tourDAO, IMapper mapper)
         {
             _tourDAO = tourDAO;
             _mapper = mapper;
-            _scheduler = scheduler;
         }
 
         public async Task<IEnumerable<Tour>> GetAllTours()
@@ -48,13 +45,15 @@ namespace Repositories
             tour.Creator.Id = userId;
             tour.CreatedAt = GetTimeZone.GetVNTimeZoneNow();
             tour.ApprovalStatus = ApprovalStatus.Pending;
-            tour.Participants = new List<Participants>();
+
+            foreach (var item in tour.Schedules)
+            {
+                item.ScheduleId = ObjectId.GenerateNewId().ToString();
+                item.Participants = new List<Participants>();
+                item.ActiveStatus = true;
+            };
 
             await _tourDAO.AddTour(tour);
-        }
-        public async Task<bool> DoesParticipantExist(string tourId, int userId)
-        {
-            return await _tourDAO.DoesParticipantExist(tourId, userId);
         }
 
         public async Task UpdateTour(string id, Tour updatedTour)
@@ -63,10 +62,6 @@ namespace Repositories
 
             existingTour.TourName = updatedTour.TourName ?? existingTour.TourName;
             existingTour.Price = updatedTour.Price ?? existingTour.Price;
-            existingTour.StartDate = updatedTour.StartDate != default ? updatedTour.StartDate : existingTour.StartDate;
-            existingTour.EndDate = updatedTour.EndDate != default ? updatedTour.EndDate : existingTour.EndDate;
-            existingTour.NumberOfDays = updatedTour.NumberOfDays > 0 ? updatedTour.NumberOfDays : existingTour.NumberOfDays;
-            existingTour.NumberOfNights = updatedTour.NumberOfNights > 0 ? updatedTour.NumberOfNights : existingTour.NumberOfNights;
             existingTour.Location = updatedTour.Location ?? existingTour.Location;
             existingTour.MaxGuests = updatedTour.MaxGuests > 0 ? updatedTour.MaxGuests : existingTour.MaxGuests;
             existingTour.TourStatus = updatedTour.TourStatus ?? existingTour.TourStatus;
@@ -77,10 +72,6 @@ namespace Repositories
             existingTour.CostDetails = updatedTour.CostDetails ?? existingTour.CostDetails;
             existingTour.AdditionalInfo = updatedTour.AdditionalInfo ?? existingTour.AdditionalInfo;
             existingTour.TourDescription = updatedTour.TourDescription ?? existingTour.TourDescription;
-            if (updatedTour.Participants != null && updatedTour.Participants.Any())
-            {
-                existingTour.Participants = updatedTour.Participants;
-            }
             existingTour.UpdatedAt = GetTimeZone.GetVNTimeZoneNow();
 
             await _tourDAO.UpdateTour(id, existingTour);
@@ -89,38 +80,6 @@ namespace Repositories
         public async Task DeleteTour(string id)
         {
             await _tourDAO.DeleteTour(id);
-        }
-
-        public async Task JoinTour(string tourId, int travelerId)
-        {
-            var user = await _tourDAO.GetUserInfor(travelerId);
-
-            var newParticipant = new Participants
-            {
-                ParticipantId = travelerId,
-                RegisteredAt = GetTimeZone.GetVNTimeZoneNow(),
-                PaymentStatus = false,
-                FullName = user.FullName,
-                Gender = user.Profiles.Gender,
-                Address = user.Profiles.City,
-                Phone = user.Profiles.Phone,
-                PostId = ""
-            };
-
-            await _tourDAO.JoinTour(tourId, newParticipant);
-
-            IJobDetail job = JobBuilder.Create<Cronjob>()
-               .WithIdentity($"{travelerId}", "group1")
-               .UsingJobData("tourId", tourId)
-               .UsingJobData("participantId", travelerId)
-               .Build();
-
-            ITrigger trigger = TriggerBuilder.Create()
-                .WithIdentity($"{tourId}_{travelerId}", "group1")
-                .StartAt(DateBuilder.FutureDate(3, IntervalUnit.Minute))
-                .Build();
-
-            await _scheduler.ScheduleJob(job, trigger);
         }
 
         public async Task AcceptTour(string tourId)
@@ -148,77 +107,33 @@ namespace Repositories
             return _mapper.Map<IEnumerable<TourBriefDto>>(listTour);
         }
 
-        public async Task<IEnumerable<Participants>> GetListParticipantsAsync(string tourId)
-        {
-            var getListParticipants = await _tourDAO.GetTourById(tourId);
+        //public async Task<IEnumerable<Participants>> GetListParticipantsAsync(string tourId)
+        //{
+        //    var getListParticipants = await _tourDAO.GetTourById(tourId);
 
-            return getListParticipants.Participants;
-        }
+        //    return getListParticipants.Participants;
+        //}
 
-        public async Task UpdatePaymentStatus(long orderCode, int totalAmount)
-        {
-            var getParticipant = await _tourDAO.GetParticipantWithOrderCode(orderCode);
-            var travelerId = 0;
+        //public async Task UpdatePaymentStatus(long orderCode, int totalAmount)
+        //{
+        //    var getParticipant = await _tourDAO.GetParticipantWithOrderCode(orderCode);
+        //    var travelerId = 0;
 
-            foreach (var item in getParticipant.Participants)
-            {
-                if (item.OrderCode == orderCode)
-                {
-                    item.PaymentStatus = true;
-                    item.TotalAmount = totalAmount;
-                    travelerId = item.ParticipantId;
-                    break;
-                }
-            }
+        //    foreach (var item in getParticipant.Participants)
+        //    {
+        //        if (item.OrderCode == orderCode)
+        //        {
+        //            item.PaymentStatus = true;
+        //            item.TotalAmount = totalAmount;
+        //            travelerId = item.ParticipantId;
+        //            break;
+        //        }
+        //    }
 
-            await _tourDAO.UpdateTour(getParticipant.TourId, getParticipant);
+        //    await _tourDAO.UpdateTour(getParticipant.TourId, getParticipant);
 
-            await _scheduler.DeleteJob(new JobKey($"{travelerId}", "group1"));
-        }
-
-        public async Task UpdateOrderCode(string tourId, int travelerId, long orderCode)
-        {
-            var getParticipant = await _tourDAO.GetParticipant(tourId, travelerId);
-            var participant = getParticipant.Participants
-            .FirstOrDefault(p => p.ParticipantId == travelerId);
-
-            if (participant != null)
-            {
-                participant.OrderCode = orderCode;
-                await _tourDAO.UpdateTour(tourId, getParticipant);
-            }
-        }
-
-        public async Task<bool> DidParticipantPay(long orderCode)
-        {
-            return await _tourDAO.DidParticipantPay(orderCode);
-        }
-
-        public async Task<Tour> GetParticipantWithOrderCode(long orderCode)
-        {
-            return await _tourDAO.GetParticipantWithOrderCode(orderCode);
-        }
-
-        public async Task RemoveUnpaidParticipantsAsync(string tourId, int travelerId)
-        {
-            var getTour = await _tourDAO.GetTourById(tourId);
-
-            foreach (var item in getTour.Participants)
-            {
-                if (item.ParticipantId == travelerId && item.PaymentStatus == false)
-                {
-                    getTour.Participants.Remove(item);
-                    break;
-                }
-            }
-
-            await _tourDAO.UpdateTour(tourId, getTour);
-        }
-
-        public async Task<DateTime> GetParticipantJoinTimeAsync(string tourId, int travelerId)
-        {
-            return await _tourDAO.GetParticipantJoinTimeAsync(tourId, travelerId);
-        }
+        //    await _scheduler.DeleteJob(new JobKey($"{travelerId}", "group1"));
+        //}
 
         public async Task<IEnumerable<ApplicationUser>> GetUsersInfoAsync(IEnumerable<int> userIds)
         {

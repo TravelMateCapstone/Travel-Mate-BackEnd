@@ -16,17 +16,6 @@ namespace BusinessObjects.Entities
         [BsonElement("price")]
         public double? Price { get; set; }
 
-        [BsonElement("startDate")]
-        public DateTime StartDate { get; set; }
-
-        [BsonElement("endDate")]
-        public DateTime EndDate { get; set; }
-
-        [BsonElement("numberOfDays")]
-        public int NumberOfDays { get; set; }
-        [BsonElement("numberOfNights")]
-        public int NumberOfNights { get; set; }
-
         [BsonElement("location")]
         public string Location { get; set; }
 
@@ -45,12 +34,6 @@ namespace BusinessObjects.Entities
         [BsonElement("creator")]
         public CreatorInfo Creator { get; set; }
 
-        [BsonElement("isGlobalContract")]
-        public bool IsGlobalContract { get; set; }
-
-        [BsonElement("participants")]
-        public List<Participants>? Participants { get; set; } = new List<Participants>();
-
         [BsonElement("itinerary")]
         public List<Itinerary> Itinerary { get; set; }
 
@@ -68,6 +51,28 @@ namespace BusinessObjects.Entities
 
         [BsonElement("updatedAt")]
         public DateTime? UpdatedAt { get; set; }
+
+        [BsonElement("schedules")]
+        public List<TourSchedule> Schedules { get; set; } = new();
+    }
+
+    public class TourSchedule
+    {
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string? ScheduleId { get; set; }
+
+        [BsonElement("startDate")]
+        public DateTime StartDate { get; set; }
+
+        [BsonElement("endDate")]
+        public DateTime EndDate { get; set; }
+
+        [BsonElement("participants")]
+        public List<Participants>? Participants { get; set; }
+
+        [BsonElement("activeStatus")]
+        public bool? ActiveStatus { get; set; }
     }
 
     public class CreatorInfo
@@ -120,9 +125,6 @@ namespace BusinessObjects.Entities
         [BsonElement("paymentStatus")]
         public bool? PaymentStatus { get; set; }
 
-        [BsonElement("discount")]
-        public double? Discount { get; set; }
-
         [BsonElement("totalAmount")]
         public decimal? TotalAmount { get; set; }
 
@@ -134,9 +136,6 @@ namespace BusinessObjects.Entities
     {
         [BsonElement("day")]
         public int Day { get; set; }
-
-        [BsonElement("date")]
-        public DateTime Date { get; set; }
 
         [BsonElement("activities")]
         public List<TourActivity> Activities { get; set; }
@@ -152,9 +151,6 @@ namespace BusinessObjects.Entities
 
         [BsonElement("title")]
         public string Title { get; set; }
-
-        [BsonElement("note")]
-        public string? Note { get; set; }
 
         [BsonElement("description")]
         public string? Description { get; set; }
@@ -178,6 +174,6 @@ namespace BusinessObjects.Entities
         public double Amount { get; set; }
 
         [BsonElement("notes")]
-        public string Notes { get; set; }
+        public string? Notes { get; set; }
     }
 }

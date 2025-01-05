@@ -315,6 +315,9 @@ namespace TravelMateAPI
             builder.Services.AddScoped<MessageDAO>();
             builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 
+            builder.Services.AddScoped<TourParticipantDAO>();
+            builder.Services.AddScoped<ITourParticipantRepository, TourParticipantRepository>();
+
             builder.Services.AddQuartz(q =>
             {
                 q.UseJobFactory<CustomJobFactory>();

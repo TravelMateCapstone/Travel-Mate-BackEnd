@@ -5,19 +5,20 @@ namespace Repositories.Cron
 {
     public class Cronjob : IJob
     {
-        private readonly ITourRepository _tourRepository;
+        private readonly ITourParticipantRepository _tourRepository;
 
-        public Cronjob(ITourRepository tourRepository)
+        public Cronjob(ITourParticipantRepository tourRepository)
         {
             _tourRepository = tourRepository;
         }
 
         public async Task Execute(IJobExecutionContext context)
         {
+            var scheduleId = context.MergedJobDataMap.GetString("scheduleId");
             var tourId = context.MergedJobDataMap.GetString("tourId");
             var participantId = context.MergedJobDataMap.GetInt("participantId");
 
-            await _tourRepository.RemoveUnpaidParticipantsAsync(tourId, participantId);
+            await _tourRepository.RemoveUnpaidParticipantsAsync(scheduleId, tourId, participantId);
         }
     }
 }

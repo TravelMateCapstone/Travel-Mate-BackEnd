@@ -65,19 +65,19 @@ namespace TravelMateAPI.Controllers
                 return BadRequest("Access Denied! You are the creator of this tour!");
             }
 
-            //check chỉ add dc 1 lần
-            var isParticipant = existingTour.Participants
-                                            .Any(p => p.ParticipantId == postDto.TravelerId);
-            if (!isParticipant)
-            {
-                return BadRequest("You did not join this tour!");
-            }
+            ////check chỉ add dc 1 lần
+            //var isParticipant = existingTour.Participants
+            //                                .Any(p => p.ParticipantId == postDto.TravelerId);
+            //if (!isParticipant)
+            //{
+            //    return BadRequest("You did not join this tour!");
+            //}
 
-            var isPostCreated = existingTour.Participants.Any(p => p.ParticipantId == postDto.TravelerId && p.PostId != "");
-            if (isPostCreated)
-            {
-                return BadRequest("You have already create post about this tour");
-            }
+            //var isPostCreated = existingTour.Participants.Any(p => p.ParticipantId == postDto.TravelerId && p.PostId != "");
+            //if (isPostCreated)
+            //{
+            //    return BadRequest("You have already create post about this tour");
+            //}
             var post = _mapper.Map<PastTripPost>(postDto);
             await _pastTripPostRepository.AddAsync(post);
 
@@ -153,15 +153,15 @@ namespace TravelMateAPI.Controllers
             }
 
             var getTour = await _tourRepository.GetTourById(existingPost.TourId);
-            foreach (var item in getTour.Participants)
-            {
-                if (item.PostId == postId)
-                {
-                    item.PostId = "";
-                    await _tourRepository.UpdateTour(getTour.TourId, getTour);
-                    break;
-                }
-            }
+            //foreach (var item in getTour.Participants)
+            //{
+            //    if (item.PostId == postId)
+            //    {
+            //        item.PostId = "";
+            //        await _tourRepository.UpdateTour(getTour.TourId, getTour);
+            //        break;
+            //    }
+            //}
 
             await _pastTripPostRepository.DeleteAsync(postId);
             return Ok();
