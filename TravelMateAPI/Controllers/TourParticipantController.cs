@@ -29,8 +29,10 @@ namespace TravelMateAPI.Controllers
 
         //deactive tour
         [HttpPost("deactivateTour")]
-        public async Task<ActionResult> DeactivateTour([FromQuery] string scheduleId, [FromQuery] string tourId)
+        public async Task<ActionResult> DeactivateTour([FromBody] JoinTourRequest request)
         {
+            var scheduleId = request.ScheduleId;
+            var tourId = request.TourId;
             var existingTour = await _tourParticipantRepository.GetTourScheduleById(scheduleId, tourId);
             if (existingTour == null)
                 return NotFound();
@@ -48,8 +50,10 @@ namespace TravelMateAPI.Controllers
         }
 
         [HttpGet("tourParticipants")]
-        public async Task<ActionResult<IEnumerable<Participants>>> GetListParticipantsAsync([FromQuery] string scheduleId, [FromQuery] string tourId)
+        public async Task<ActionResult<IEnumerable<Participants>>> GetListParticipantsAsync([FromBody] JoinTourRequest request)
         {
+            var scheduleId = request.ScheduleId;
+            var tourId = request.TourId;
             var listParticipants = await _tourParticipantRepository.GetListParticipantsAsync(scheduleId, tourId);
 
             return Ok(listParticipants);
