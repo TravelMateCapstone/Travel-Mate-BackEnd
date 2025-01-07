@@ -56,14 +56,15 @@ namespace TravelMateAPI.Controllers
         }
 
         [HttpPost("join")]
-        public async Task<ActionResult> JoinTour([FromBody] string scheduleId, [FromBody] string tourId)
+        public async Task<ActionResult> JoinTour([FromBody] JoinTourRequest request)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
             var user = await _userManager.GetUserAsync(User);
-
+            var scheduleId = request.ScheduleId;
+            var tourId = request.TourId;
             if (user == null)
             {
                 throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
