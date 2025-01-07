@@ -56,7 +56,7 @@ namespace TravelMateAPI.Controllers
         }
 
         [HttpPost("join")]
-        public async Task<ActionResult> JoinTour([FromQuery] string scheduleId, [FromQuery] string tourId)
+        public async Task<ActionResult> JoinTour([FromBody] string scheduleId, [FromBody] string tourId)
         {
             if (!ModelState.IsValid)
             {

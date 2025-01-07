@@ -145,6 +145,9 @@ namespace TravelMate.Controllers
             if (existingTour == null)
                 return NotFound();
 
+            if (existingTour.ApprovalStatus == ApprovalStatus.Accepted)
+                return BadRequest("Access Denied! Tour was already public!");
+
             if (user.Id != existingTour.Creator.Id)
                 return BadRequest("You are not creator of this tour!");
 

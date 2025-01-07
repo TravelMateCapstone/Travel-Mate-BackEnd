@@ -72,6 +72,17 @@ namespace Repositories
             existingTour.CostDetails = updatedTour.CostDetails ?? existingTour.CostDetails;
             existingTour.AdditionalInfo = updatedTour.AdditionalInfo ?? existingTour.AdditionalInfo;
             existingTour.TourDescription = updatedTour.TourDescription ?? existingTour.TourDescription;
+            existingTour.Schedules = updatedTour.Schedules ?? existingTour.Schedules;
+            if (updatedTour.Schedules != null)
+            {
+                foreach (var item in updatedTour.Schedules)
+                {
+                    item.ScheduleId = ObjectId.GenerateNewId().ToString();
+                    item.Participants = new List<Participants>();
+                    item.ActiveStatus = true;
+                }
+                existingTour.Schedules = updatedTour.Schedules;
+            }
             existingTour.UpdatedAt = GetTimeZone.GetVNTimeZoneNow();
 
             await _tourDAO.UpdateTour(id, existingTour);
