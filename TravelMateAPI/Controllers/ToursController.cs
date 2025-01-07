@@ -37,14 +37,6 @@ namespace TravelMate.Controllers
             return Ok(tourDto);
         }
 
-        //[HttpGet("tourParticipants/{tourId}")]
-        //public async Task<ActionResult<IEnumerable<Participants>>> GetListParticipantsAsync(string tourId)
-        //{
-        //    var listParticipants = await _tourRepository.GetListParticipantsAsync(tourId);
-
-        //    return Ok(listParticipants);
-        //}
-
         //get all tour of a local
         [HttpGet("local/{userId}")]
         public async Task<ActionResult<IEnumerable<TourDto>>> GetAllToursOfLocal(int userId)
@@ -152,6 +144,9 @@ namespace TravelMate.Controllers
             var existingTour = await _tourRepository.GetTourById(id);
             if (existingTour == null)
                 return NotFound();
+
+            if (existingTour.ApprovalStatus == ApprovalStatus.Accepted)
+                return BadRequest("Access Denied! Tour was already public!");
 
             if (user.Id != existingTour.Creator.Id)
                 return BadRequest("You are not creator of this tour!");

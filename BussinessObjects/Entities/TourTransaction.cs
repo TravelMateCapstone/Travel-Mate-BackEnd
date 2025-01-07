@@ -8,6 +8,7 @@ namespace BusinessObjects.Entities
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string? Id { get; set; }
+        public string? ScheduleId { get; set; }
         public string? TourId { get; set; }
         public string? TourName { get; set; }
         public int localId { get; set; }
@@ -16,5 +17,6 @@ namespace BusinessObjects.Entities
         public string? TravelerName { get; set; }
         public DateTime TransactionTime { get; set; }
         public double? Price { get; set; }
+        public bool TransactionStatus { get; set; }
     }
 }
