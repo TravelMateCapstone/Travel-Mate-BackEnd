@@ -55,9 +55,7 @@ namespace TravelMateAPI.Controllers
             );
             var response = await _payOS.createPaymentLink(paymentLinkRequest);
 
-            tourParticipant.OrderCode = response.orderCode;
-
-            await _tourRepository.UpdateTour(getTour.TourId, getTour);
+            await _tourRepository.UpdateOrderCode(scheduleId, tourId, travelerId, response.orderCode);
 
             return Redirect(response.checkoutUrl);
         }

@@ -18,6 +18,8 @@ namespace Repositories.Interface
         Task RejectTour(string tourId);
         Task CancelTour(string tourId);
         Task<ApplicationUser> GetUserInfo(int userId);
+
+        Task UpdateOrderCode(string scheduleId, string tourId, int travelerId, long orderCode);
         Task<IEnumerable<ApplicationUser>> GetUsersInfoAsync(IEnumerable<int> userIds);
     }
 }
