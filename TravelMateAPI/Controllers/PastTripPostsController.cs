@@ -78,6 +78,7 @@ namespace TravelMateAPI.Controllers
             //{
             //    return BadRequest("You have already create post about this tour");
             //}
+
             var post = _mapper.Map<PastTripPost>(postDto);
             await _pastTripPostRepository.AddAsync(post);
 

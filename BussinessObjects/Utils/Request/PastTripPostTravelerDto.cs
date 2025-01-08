@@ -5,6 +5,8 @@ namespace BusinessObjects.Utils.Request
     public class PastTripPostTravelerDto
     {
         public string? TourId { get; set; }
+        public string? ScheduleId { get; set; }
+
         public int TravelerId { get; set; }
         public string? Caption { get; set; }
 

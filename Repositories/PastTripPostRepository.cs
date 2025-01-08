@@ -68,7 +68,6 @@ namespace Repositories
             return allPost;
         }
 
-
         public async Task<PastTripPost?> GetPostByIdAsync(string id)
         {
             var existingPost = await _pastTripPostDAO.GetPostByIdAsync(id);

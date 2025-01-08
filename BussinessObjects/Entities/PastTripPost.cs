@@ -8,6 +8,8 @@ namespace BusinessObjects.Entities
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string? Id { get; set; }
+
+        public string ScheduleId { get; set; }
         public string TourId { get; set; }
         public int TravelerId { get; set; }
         public string? TravelerName { get; set; }
