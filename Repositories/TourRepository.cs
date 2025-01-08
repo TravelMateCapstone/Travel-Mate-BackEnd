@@ -73,6 +73,7 @@ namespace Repositories
             existingTour.AdditionalInfo = updatedTour.AdditionalInfo ?? existingTour.AdditionalInfo;
             existingTour.TourDescription = updatedTour.TourDescription ?? existingTour.TourDescription;
             existingTour.Schedules = updatedTour.Schedules ?? existingTour.Schedules;
+            existingTour.NumberOfDays = updatedTour.NumberOfDays > 0 ? updatedTour.NumberOfDays : existingTour.NumberOfDays;
             if (updatedTour.Schedules != null)
             {
                 foreach (var item in updatedTour.Schedules)

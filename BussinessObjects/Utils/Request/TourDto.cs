@@ -9,6 +9,7 @@ namespace BusinessObjects.Utils.Request
         public CreatorInfo? Creator { get; set; }
         public string TourName { get; set; }
         public string TourDescription { get; set; }
+        public int NumberOfDays { get; set; }
         public double? Price { get; set; }
         public ApprovalStatus? ApprovalStatus { get; set; }
         public string Location { get; set; }

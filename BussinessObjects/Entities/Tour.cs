@@ -16,6 +16,9 @@ namespace BusinessObjects.Entities
         [BsonElement("price")]
         public double? Price { get; set; }
 
+        [BsonElement("numberOfDays")]
+        public int NumberOfDays { get; set; }
+
         [BsonElement("location")]
         public string Location { get; set; }
 
