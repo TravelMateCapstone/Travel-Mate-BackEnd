@@ -122,5 +122,20 @@ namespace Repositories
         {
             return await _tourDAO.GetUsersInfoAsync(userIds);
         }
+
+        public async Task UpdateOrderCode(string scheduleId, string tourId, int travelerId, long orderCode)
+        {
+            var existingTour = await _tourDAO.GetTourById(tourId);
+
+            var schedule = existingTour.Schedules
+                .FirstOrDefault(t => t.ScheduleId == scheduleId);
+
+            var participant = schedule.Participants
+                .FirstOrDefault(p => p.ParticipantId == travelerId);
+
+            participant.OrderCode = orderCode;
+
+            await _tourDAO.UpdateTour(existingTour.TourId, existingTour);
+        }
     }
 }
