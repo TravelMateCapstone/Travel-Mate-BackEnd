@@ -98,10 +98,9 @@ namespace TravelMate.Controllers
             tour.Creator.Address = creatorInfo.Profiles.City;
             tour.Creator.JoinedAt = creatorInfo.RegistrationTime;
 
-            await _tourRepository.UpdateTour(tour.TourId, tour);
+            //await _tourRepository.UpdateTour(tour.TourId, tour);
 
             var tourDto = _mapper.Map<TourDto>(tour);
-            //return local info
             return Ok(tourDto);
         }
 
