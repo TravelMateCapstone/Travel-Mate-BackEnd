@@ -69,9 +69,10 @@ namespace TravelMateAPI.Services.FilterTour
         public async Task<List<TourWithUserDetailsDTO>> GetAllTourBriefWithUserDetailsByLocationAsync(string location)
         {
             // Lấy toàn bộ tour với trạng thái được chấp nhận
-            var tours = await _mongoContext
-                .Find(t => t.ApprovalStatus == ApprovalStatus.Accepted && t.Location == location)
-                .ToListAsync();
+            ////Kiểm tra nếu danh sách Schedules không null và có ít nhất một ngày khởi hành (StartDate) nhỏ hơn hoặc bằng ngày hiện tại.
+            //var tours = await _mongoContext
+            //    .Find(t => t.ApprovalStatus == ApprovalStatus.Accepted && t.Location == location)
+            //    .ToListAsync();
 
             // Lấy thời gian hiện tại theo múi giờ Việt Nam
             var currentDateTime = GetTimeZone.GetVNTimeZoneNow();
@@ -82,6 +83,14 @@ namespace TravelMateAPI.Services.FilterTour
             //               && t.Location == location
             //               && t.StartDate >= currentDateTime)
             //    .ToListAsync();
+
+
+            //Kiểm tra nếu danh sách Schedules không null và có ít nhất một ngày khởi hành (StartDate) nhỏ hơn hoặc bằng ngày hiện tại.
+            var tours = await _mongoContext
+                .Find(t => t.ApprovalStatus == ApprovalStatus.Accepted && t.Location == location &&
+                   t.Schedules != null &&
+                   t.Schedules.Any(s => s.StartDate <= currentDateTime))
+                .ToListAsync();
 
             // Lấy danh sách các LocalId từ các tour
             var localIds = tours.Select(t => t.Creator.Id).Distinct().ToList();
@@ -115,7 +124,8 @@ namespace TravelMateAPI.Services.FilterTour
                 //EndDate = t.TourSchedule.EndDate,
                 TourDescription = t.TourDescription,
                 NumberOfDays = t.NumberOfDays,
-                //NumberOfDays = (t.TourSchedule.EndDate - t.TourSchedule.StartDate).Days,
+                NumberOfNights = t.NumberOfDays - 1 ,
+                //NumberOfDays = (t.TourSchedule.EndDate - t.TourSchedule.StartDate).Days ,
                 //NumberOfNights = (t.TourSchedule.EndDate - t.TourSchedule.StartDate).Days - 1,
                 TourName = t.TourName,
                 Price = t.Price,
