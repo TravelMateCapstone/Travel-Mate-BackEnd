@@ -15,7 +15,7 @@ namespace TravelMateAPI.Services.FilterTour
         public string TourDescription { get; set; }
         //public DateTime EndDate { get; set; } // Ngày kết thúc
         public int NumberOfDays { get; set; } // Số ngày của tour
-        //public int NumberOfNights { get; set; } // Số đêm của tour
+        public int NumberOfNights { get; set; } // Số đêm của tour
         public string TourName { get; set; } // Tên tour
         public double? Price { get; set; } // Giá tour
         public string TourImage { get; set; } // Hình ảnh đại diện của tour
