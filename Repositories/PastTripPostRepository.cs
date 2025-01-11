@@ -16,6 +16,7 @@ namespace Repositories
             _pastTripPostDAO = pastTripPostDAO;
             _tourRepository = tourRepository;
         }
+
         //public async Task<IEnumerable<PastTripPost>> GetAllPostOfUserAsync(int userId)
         //{
         //    var allPost = await _pastTripPostDAO.GetAllPostsAsync(userId);
@@ -96,14 +97,17 @@ namespace Repositories
 
             await _pastTripPostDAO.AddPostAsync(post);
 
-            //var participant = existingTour.Participants
-            //                              .FirstOrDefault(item => item.ParticipantId == post.TravelerId);
+            var schedules = existingTour.Schedules
+                                          .FirstOrDefault(item => item.ScheduleId == post.ScheduleId);
 
-            //if (participant != null && participant.PostId != post.Id)
-            //{
-            //    participant.PostId = post.Id;
-            //    await _tourRepository.UpdateTour(existingTour.TourId, existingTour);
-            //}
+            var participant = schedules.Participants
+                .FirstOrDefault(item => item.ParticipantId == post.TravelerId);
+
+            if (participant != null && participant.PostId != post.Id)
+            {
+                participant.PostId = post.Id;
+                await _tourRepository.UpdateTour(existingTour.TourId, existingTour);
+            }
         }
 
         public async Task<double> GetUserAverageStar(int locaId)
@@ -117,6 +121,14 @@ namespace Repositories
             return postCount > 0 ? totalStars / postCount : 0;
         }
 
+        public async Task<int> GetUserTotalTrip(int locaId)
+        {
+            var listPost = await _pastTripPostDAO.GetAllPostsAsync(locaId);
+
+            var validPosts = listPost.Where(post => post.Star.HasValue && post.LocalId == locaId);
+
+            return validPosts.Count();
+        }
 
         public async Task DeleteAsync(string postId)
         {

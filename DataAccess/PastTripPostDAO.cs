@@ -7,7 +7,7 @@ namespace DataAccess
     public class PastTripPostDAO
     {
         private readonly IMongoCollection<PastTripPost> _mongoContext;
-        public PastTripPostDAO(ApplicationDBContext context, MongoDbContext mongoContext)
+        public PastTripPostDAO(MongoDbContext mongoContext)
         {
             _mongoContext = mongoContext.GetCollection<PastTripPost>("PastTripPosts");
         }

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Repositories.Interface;
+using Repository.Interfaces;
 
 namespace TravelMate.Controllers
 {
@@ -15,14 +16,16 @@ namespace TravelMate.Controllers
     public class TourController : ControllerBase
     {
         private readonly ITourRepository _tourRepository;
+        private readonly IPastTripPostRepository _tripRepository;
         private readonly IMapper _mapper;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public TourController(UserManager<ApplicationUser> userManager, IMapper mapper, ITourRepository tourRepository)
+        public TourController(UserManager<ApplicationUser> userManager, IMapper mapper, ITourRepository tourRepository, IPastTripPostRepository tripRepository)
         {
             _tourRepository = tourRepository;
             _mapper = mapper;
             _userManager = userManager;
+            _tripRepository = tripRepository;
         }
 
         // GET: api/tour
@@ -92,12 +95,15 @@ namespace TravelMate.Controllers
             }
 
             var creatorInfo = await _tourRepository.GetUserInfo(tour.Creator.Id);
+            var star = await _tripRepository.GetUserAverageStar(tour.Creator.Id);
+            var trip = await _tripRepository.GetUserTotalTrip(tour.Creator.Id);
 
             tour.Creator.Fullname = creatorInfo.FullName;
             tour.Creator.AvatarUrl = creatorInfo.Profiles.ImageUser;
             tour.Creator.Address = creatorInfo.Profiles.City;
             tour.Creator.JoinedAt = creatorInfo.RegistrationTime;
-
+            tour.Creator.Rating = star;
+            tour.Creator.TotalTrips = trip;
             //await _tourRepository.UpdateTour(tour.TourId, tour);
 
             var tourDto = _mapper.Map<TourDto>(tour);

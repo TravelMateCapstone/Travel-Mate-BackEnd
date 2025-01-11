@@ -28,9 +28,19 @@ namespace TravelMateAPI.Controllers
         }
 
         //deactive tour
-        [HttpPost("deactivateTour")]
-        public async Task<ActionResult> DeactivateTour([FromBody] JoinTourRequest request)
+        [HttpPost("changeTourStatus")]
+        public async Task<ActionResult> ChangeTourStatus([FromBody] JoinTourRequest request, [FromQuery] bool isActive)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
             var scheduleId = request.ScheduleId;
             var tourId = request.TourId;
             var existingTour = await _tourParticipantRepository.GetTourScheduleById(scheduleId, tourId);
@@ -40,11 +50,17 @@ namespace TravelMateAPI.Controllers
             var tourSchedule = existingTour.Schedules.FirstOrDefault(t => t.ScheduleId == scheduleId);
 
             //check thoi gian da dien ra, dang dien ra
+            var timeNow = GetTimeZone.GetVNTimeZoneNow().Date;
+            if (tourSchedule.StartDate.Date <= timeNow && timeNow <= tourSchedule.EndDate.Date)
+                return BadRequest("Access Denied! Tour is on going!");
 
+            if (tourSchedule.EndDate.Date < timeNow)
+                return BadRequest("Access Denied! Tour've already done!");
 
             if (tourSchedule.Participants.Count > 0)
                 return BadRequest("Access Denied! Tour has participants");
 
+            await _tourParticipantRepository.ProcessTourStatus(scheduleId, tourId, isActive);
 
             return Ok();
         }
@@ -52,6 +68,11 @@ namespace TravelMateAPI.Controllers
         [HttpGet("tourParticipants")]
         public async Task<ActionResult<IEnumerable<Participants>>> GetListParticipantsAsync([FromBody] JoinTourRequest request)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var scheduleId = request.ScheduleId;
             var tourId = request.TourId;
             var listParticipants = await _tourParticipantRepository.GetListParticipantsAsync(scheduleId, tourId);
@@ -67,13 +88,13 @@ namespace TravelMateAPI.Controllers
                 return BadRequest(ModelState);
             }
             var user = await _userManager.GetUserAsync(User);
-            var scheduleId = request.ScheduleId;
-            var tourId = request.TourId;
             if (user == null)
             {
                 throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
+            var scheduleId = request.ScheduleId;
+            var tourId = request.TourId;
             var existingTour = await _tourParticipantRepository.GetTourScheduleById(scheduleId, tourId);
             if (existingTour == null)
                 return NotFound();
