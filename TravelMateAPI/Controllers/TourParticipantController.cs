@@ -27,6 +27,9 @@ namespace TravelMateAPI.Controllers
             _scheduler = scheduler;
         }
 
+        //traveler cancel tour
+
+
         //deactive tour
         [HttpPost("changeTourStatus")]
         public async Task<ActionResult> ChangeTourStatus([FromBody] JoinTourRequest request, [FromQuery] bool isActive)
