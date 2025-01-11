@@ -45,7 +45,6 @@ namespace DataAccess
             return _mongoContext.Find(t => t.ApprovalStatus == ApprovalStatus.Accepted && t.Creator.Id == creatorId).ToList();
         }
 
-
         public IEnumerable<Tour> GetAllToursOfLocal(int userId)
         {
             return _mongoContext.Find(t => t.Creator.Id == userId).ToList().OrderByDescending(t => t.CreatedAt);
