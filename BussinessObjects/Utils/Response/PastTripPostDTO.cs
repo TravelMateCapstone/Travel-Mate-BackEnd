@@ -3,6 +3,7 @@
     public class PastTripPostDTO
     {
         public int PastTripPostId { get; set; }
+        public string ScheduleId { get; set; }
         public string Location { get; set; }
 
         public int TravelerId { get; set; }

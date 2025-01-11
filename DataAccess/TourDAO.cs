@@ -106,14 +106,6 @@ namespace DataAccess
             await _mongoContext.UpdateOneAsync(filter, update);
         }
 
-        //public async Task<Tour> GetParticipant(string tourId, int userId)
-        //{
-        //    var filter = Builders<Tour>.Filter.And(
-        //  Builders<Tour>.Filter.Eq(t => t.TourId, tourId),
-        //  Builders<Tour>.Filter.ElemMatch(t => t.Participants, p => p.ParticipantId == userId));
-        //    return _mongoContext.Find(filter).FirstOrDefault();
-        //}
-
         // Get TourName by TourId
         public async Task<string> GetTourNameById(string tourId)
         {

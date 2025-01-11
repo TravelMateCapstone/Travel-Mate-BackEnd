@@ -21,6 +21,21 @@ namespace Repositories
             _scheduler = scheduler;
         }
 
+        public async Task ProcessTourStatus(string scheduleId, string tourId, bool isActive)
+        {
+            var getTour = await _tourParticipantDAO.GetTourScheduleById(scheduleId, tourId);
+
+            var tourSchedule = getTour.Schedules.FirstOrDefault(t => t.ScheduleId == scheduleId);
+
+            if (isActive)
+            {
+                tourSchedule.ActiveStatus = true;
+            }
+            else tourSchedule.ActiveStatus = false;
+
+            await _tourParticipantDAO.UpdateTour(tourId, getTour);
+        }
+
         public async Task<IEnumerable<Participants>> GetListParticipantsAsync(string scheduleId, string tourId)
         {
             var getListParticipants = await _tourParticipantDAO.GetTourScheduleById(scheduleId, tourId);
