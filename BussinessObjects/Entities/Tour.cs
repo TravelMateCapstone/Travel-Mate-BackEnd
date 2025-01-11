@@ -132,7 +132,7 @@ namespace BusinessObjects.Entities
         public PaymentStatus? PaymentStatus { get; set; }
 
         [BsonElement("transactionTime")]
-        public DateTime TransactionTime { get; set; }
+        public DateTime? TransactionTime { get; set; }
 
         [BsonElement("totalAmount")]
         public decimal? TotalAmount { get; set; }
