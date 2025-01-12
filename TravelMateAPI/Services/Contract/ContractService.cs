@@ -91,7 +91,7 @@ public class ContractService : IContractService
             //return newContract;
         }
 
-        public async Task<ContractDTO> CreateContractPassLocal(int travelerId, int localId, string tourId, string Location, string details, string status, string travelerSignature)
+        public async Task<ContractDTO> CreateContractPassLocal(int travelerId, int localId, string tourId,string startDate, string Location, string details, string status, string travelerSignature)
         {
             // Kiểm tra xem travelerId có phải là Local không
             var travelerRole = await _userRoleService.GetUserRoleAsync(travelerId);
@@ -102,11 +102,11 @@ public class ContractService : IContractService
 
             // Kiểm tra xem hợp đồng đã tồn tại trong bảng BlockContracts chưa
             var existingContract = await _dbContext.BlockContracts
-                .FirstOrDefaultAsync(c => c.TravelerId == travelerId && c.LocalId == localId && c.TourId == tourId);
+                .FirstOrDefaultAsync(c => c.TravelerId == travelerId && c.LocalId == localId && c.TourId == tourId && c.StartDate == startDate);
 
             if (existingContract != null)
             {
-                throw new InvalidOperationException("Hợp đồng với TravelerId, LocalId và TourId này đã tồn tại.");
+                throw new InvalidOperationException("Hợp đồng với TravelerId, LocalId và TourId và StartDate này đã tồn tại.");
             }
 
 
@@ -144,22 +144,22 @@ public class ContractService : IContractService
             //return newContract;
         }
 
-        public ContractDTO FindContractInMemory(int travelerId, int localId, string tourId)
+        public ContractDTO FindContractInMemory(int travelerId, int localId, string tourId, string startDate)
             {
                 //return _contractsInMemory.FirstOrDefault(c =>
                 //    c.TravelerId == travelerId && c.LocalId == localId && c.TourId == tourId);
                 if (_memoryCache.TryGetValue(ContractsCacheKey, out List<ContractDTO> contractsInMemory))
                 {
                     return contractsInMemory.FirstOrDefault(c =>
-                        c.TravelerId == travelerId && c.LocalId == localId && c.TourId == tourId);
+                        c.TravelerId == travelerId && c.LocalId == localId && c.TourId == tourId && c.StartDate == startDate);
                 }
 
                 return null;
             }
 
-        public async Task UpdateStatusToCompleted(int travelerId, int localId, string tourId)
+        public async Task UpdateStatusToCompleted(int travelerId, int localId, string tourId, string startDate)
         {
-            var contract = FindContractInMemory(travelerId, localId, tourId);
+            var contract = FindContractInMemory(travelerId, localId, tourId, startDate);
             if (contract == null)
             {
                 throw new Exception("Hợp đồng không tồn tại trong bộ nhớ.");
@@ -168,7 +168,7 @@ public class ContractService : IContractService
         if (contract.Status == "Created")
             {
                 contract.Status = "Completed";
-                await SaveContractToDatabase(travelerId, localId, tourId);
+                await SaveContractToDatabase(travelerId, localId, tourId, startDate);
                 Console.WriteLine("Hợp đồng đã được tạo thành công.");
                 var traveler = await _dbContext.Users.FindAsync(travelerId);
                 var local = await _dbContext.Users.FindAsync(localId);
@@ -199,9 +199,9 @@ public class ContractService : IContractService
             }
         }
 
-        public async Task UpdateStatusToCancelled(int travelerId, int localId, string tourId)
+        public async Task UpdateStatusToCancelled(int travelerId, int localId, string tourId,string startDate)
         {
-            var contract = FindContractInMemory(travelerId, localId, tourId);
+            var contract = FindContractInMemory(travelerId, localId, tourId, startDate);
             if (contract == null)
             {
                 throw new Exception("Hợp đồng không tồn tại trong bộ nhớ.");
@@ -217,10 +217,10 @@ public class ContractService : IContractService
             }
         }
 
-        public async Task SaveContractToDatabase(int travelerId, int localId, string tourId)
+        public async Task SaveContractToDatabase(int travelerId, int localId, string tourId, string startDate)
         {
             // Tìm hợp đồng trong bộ nhớ
-            var dto = FindContractInMemory(travelerId, localId, tourId);
+            var dto = FindContractInMemory(travelerId, localId, tourId, startDate);
             if (dto == null)
             {
                 throw new Exception("Hợp đồng không tồn tại trong bộ nhớ.");
@@ -243,6 +243,7 @@ public class ContractService : IContractService
                 TravelerId = dto.TravelerId,
                 LocalId = dto.LocalId,
                 TourId = dto.TourId,
+                StartDate = dto.StartDate,
                 Location = dto.Location,
                 Details = dto.Details,
                 Status = dto.Status,
@@ -290,13 +291,13 @@ public class ContractService : IContractService
             return Convert.ToBase64String(hashedBytes);
         }
 
-        public async Task<bool> VerifyContractIntegrityAsync(int travelerId, int localId, string tourId)
+        public async Task<bool> VerifyContractIntegrityAsync(int travelerId, int localId, string tourId, string startDate)
         {
             // Tìm hợp đồng dựa trên các thông tin đầu vào
             var contract = await _dbContext.BlockContracts
                 .FirstOrDefaultAsync(c => c.TravelerId == travelerId &&
                                           c.LocalId == localId &&
-                                          c.TourId == tourId);
+                                          c.TourId == tourId && c.StartDate == startDate);
 
             if (contract == null)
             {
@@ -343,6 +344,7 @@ public class ContractService : IContractService
             {
                 LocalId = c.LocalId,
                 TourId = c.TourId,
+                StartDate = c.StartDate,
                 Location = c.Location,
                 Details = c.Details,
                 CreatedAt = c.CreatedAt,
@@ -378,6 +380,7 @@ public class ContractService : IContractService
         {
             LocalId = c.LocalId,
             TourId = c.TourId,
+            StartDate = c.StartDate,
             Location = c.Location,
             Details = c.Details,
             CreatedAt = c.CreatedAt,
@@ -417,6 +420,7 @@ public class ContractService : IContractService
             {
                 TravelerId = c.TravelerId,
                 TourId = c.TourId,
+                StartDate = c.StartDate,
                 Location = c.Location,
                 Details = c.Details,
                 CreatedAt = c.CreatedAt,
@@ -452,6 +456,7 @@ public class ContractService : IContractService
         {
             TravelerId = c.TravelerId,
             TourId = c.TourId,
+            StartDate = c.StartDate,
             Location = c.Location,
             Details = c.Details,
             CreatedAt = c.CreatedAt,
@@ -482,7 +487,7 @@ public class ContractService : IContractService
         return allContracts;
     }
 
-    public async Task<string> CheckContractStatusAsync(int travelerId, string tourId)
+    public async Task<string> CheckContractStatusAsync(int travelerId, string tourId, string startDate)
     {
         // Kiểm tra trong bộ nhớ cache
         var contractsInMemory = _memoryCache.GetOrCreate(ContractsCacheKey, entry =>
@@ -492,7 +497,7 @@ public class ContractService : IContractService
         });
 
         var contractInMemory = contractsInMemory
-            .FirstOrDefault(c => c.TravelerId == travelerId && c.TourId == tourId);
+            .FirstOrDefault(c => c.TravelerId == travelerId && c.TourId == tourId && c.StartDate == startDate);
 
         if (contractInMemory != null)
         {
@@ -501,7 +506,7 @@ public class ContractService : IContractService
 
         // Kiểm tra trong cơ sở dữ liệu
         var contractInDatabase = await _dbContext.BlockContracts
-            .FirstOrDefaultAsync(c => c.TravelerId == travelerId && c.TourId == tourId);
+            .FirstOrDefaultAsync(c => c.TravelerId == travelerId && c.TourId == tourId && c.StartDate == startDate);
 
         if (contractInDatabase != null)
         {

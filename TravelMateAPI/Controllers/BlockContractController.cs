@@ -94,6 +94,7 @@ namespace TravelMateAPI.Controllers
                     request.TravelerId,
                     request.LocalId,
                     request.TourId,
+                    request.StartDate,
                     request.Location,
                     request.Details,
                     "Created", // Trạng thái mặc định khi tạo hợp đồng
@@ -186,11 +187,11 @@ namespace TravelMateAPI.Controllers
         }
 
         [HttpPost("update-status-completed")]
-        public async Task<IActionResult> UpdateStatusToCompleted(int travelerId, int localId, string tourId)
+        public async Task<IActionResult> UpdateStatusToCompleted(int travelerId, int localId, string tourId, string startDate)
         {
             try
             {
-                await _contractService.UpdateStatusToCompleted(travelerId, localId, tourId);
+                await _contractService.UpdateStatusToCompleted(travelerId, localId, tourId, startDate);
                 return Ok("Trạng thái hợp đồng đã được cập nhật thành 'Completed'.");
             }
             catch (Exception ex)
@@ -200,11 +201,11 @@ namespace TravelMateAPI.Controllers
         }
 
         [HttpPost("update-status-cancelled")]
-        public async Task<IActionResult> UpdateStatusToCancelled(int travelerId, int localId, string tourId)
+        public async Task<IActionResult> UpdateStatusToCancelled(int travelerId, int localId, string tourId, string startDate)
         {
             try
             {
-                await _contractService.UpdateStatusToCancelled(travelerId, localId, tourId);
+                await _contractService.UpdateStatusToCancelled(travelerId, localId, tourId, startDate);
                 return Ok("Trạng thái hợp đồng đã được cập nhật thành 'Cancelled'.");
             }
             catch (Exception ex)
@@ -214,11 +215,11 @@ namespace TravelMateAPI.Controllers
         }
 
         [HttpPost("save-to-database")]
-        public async Task<IActionResult> SaveContractToDatabase(int travelerId, int localId, string tourId)
+        public async Task<IActionResult> SaveContractToDatabase(int travelerId, int localId, string tourId, string startDate)
         {
             try
             {
-                await _contractService.SaveContractToDatabase(travelerId, localId, tourId);
+                await _contractService.SaveContractToDatabase(travelerId, localId, tourId, startDate);
                 return Ok("Hợp đồng đã được lưu thành công vào database.");
             }
             catch (Exception ex)
@@ -229,11 +230,11 @@ namespace TravelMateAPI.Controllers
 
 
         [HttpGet("verify-contract")]
-        public async Task<IActionResult> VerifyContractIntegrityAsync([FromQuery] int travelerId, [FromQuery] int localId, [FromQuery] string tourId)
+        public async Task<IActionResult> VerifyContractIntegrityAsync([FromQuery] int travelerId, [FromQuery] int localId, [FromQuery] string tourId, [FromQuery] string startDate)
         {
             try
             {
-                var isValid = await _contractService.VerifyContractIntegrityAsync(travelerId, localId, tourId);
+                var isValid = await _contractService.VerifyContractIntegrityAsync(travelerId, localId, tourId, startDate);
                 return Ok(new { IsValid = isValid });
             }
             catch (Exception ex)
@@ -273,11 +274,11 @@ namespace TravelMateAPI.Controllers
         }
 
         [HttpGet("check-contract-status")]
-        public async Task<IActionResult> CheckContractStatusAsync(int travelerId, string tourId)
+        public async Task<IActionResult> CheckContractStatusAsync(int travelerId, string tourId, string startDate)
         {
             try
             {
-                var status = await _contractService.CheckContractStatusAsync(travelerId, tourId);
+                var status = await _contractService.CheckContractStatusAsync(travelerId, tourId,startDate);
                 return Ok(new
                 {
                     Success = true,
