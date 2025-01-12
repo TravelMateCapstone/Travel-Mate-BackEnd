@@ -39,7 +39,14 @@ namespace TravelMateAPI.Controllers
         [HttpGet("/GetUsersWithDetail")]
         public async Task<IActionResult> GetUsersWithDetail()
         {
-            var users = await _filterService.GetAllUsersWithDetailsAsync();
+            // Lấy UserId từ JWT token
+            var userId = GetUserId();
+            if (userId == -1)
+            {
+                return Unauthorized(new { Message = "Invalid token or user not found." });
+            }
+
+            var users = await _filterService.GetAllUsersWithDetailsAsync(userId);
             return Ok(users);
         }
 

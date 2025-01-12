@@ -1,5 +1,6 @@
 ﻿using BusinessObjects;
 using BusinessObjects.Entities;
+using BusinessObjects.EnumClass;
 using BusinessObjects.Utils.Response;
 using Microsoft.AspNetCore.Mvc;
 using Net.payOS;
@@ -36,7 +37,7 @@ namespace TravelMateAPI.Controllers
 
             var tourParticipant = tourSchedule.Participants.FirstOrDefault(t => t.ParticipantId == travelerId);
 
-            if (tourParticipant.PaymentStatus == true)
+            if (tourParticipant.PaymentStatus == PaymentStatus.Success)
                 return BadRequest("You already paid for this tour");
 
             var registeredTime = tourParticipant.RegisteredAt;
@@ -102,13 +103,14 @@ namespace TravelMateAPI.Controllers
 
                 if (body.success)
                 {
-                    matchingSchedule.PaymentStatus = true;
+                    matchingSchedule.PaymentStatus = PaymentStatus.Success;
+                    matchingSchedule.TransactionTime = GetTimeZone.GetVNTimeZoneNow();
                     matchingSchedule.TotalAmount = data.amount;
 
                     await _tourParticipantRepository.UpdatePaymentStatus(getTourInfo, (int)transaction.TravelerId);
                     await _transactionRepository.AddTransactionAsync(transaction);
                     //bo sung them schedule 
-                    await _contractService.UpdateStatusToCompleted((int)transaction.TravelerId, getTourInfo.Creator.Id, getTourInfo.TourId);
+                    //await _contractService.UpdateStatusToCompleted((int)transaction.TravelerId, getTourInfo.Creator.Id, getTourInfo.TourId);
                 }
 
                 return Ok(new Response(0, "Ok", null));
