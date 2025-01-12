@@ -115,6 +115,7 @@ public class ContractService : IContractService
                 TravelerId = travelerId,
                 LocalId = localId,
                 TourId = tourId,
+                ScheduleId = scheduleId,
                 Location = Location,
                 Details = details,
                 Status = status,
