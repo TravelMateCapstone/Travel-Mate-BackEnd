@@ -1,9 +1,9 @@
 ﻿namespace BusinessObjects.EnumClass
 {
-    public enum ApprovalStatus
+    public enum PaymentStatus
     {
         Pending = 0,
-        Accepted = 1,
-        Rejected = 2
+        Success = 1,
+        Refund = 2
     }
 }

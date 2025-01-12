@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BusinessObjects;
 using BusinessObjects.Entities;
+using BusinessObjects.EnumClass;
 using DataAccess;
 using Quartz;
 using Repositories.Cron;
@@ -19,6 +20,21 @@ namespace Repositories
             _tourParticipantDAO = tourParticipantDAO;
             _mapper = mapper;
             _scheduler = scheduler;
+        }
+
+        public async Task ProcessTourStatus(string scheduleId, string tourId, bool isActive)
+        {
+            var getTour = await _tourParticipantDAO.GetTourScheduleById(scheduleId, tourId);
+
+            var tourSchedule = getTour.Schedules.FirstOrDefault(t => t.ScheduleId == scheduleId);
+
+            if (isActive)
+            {
+                tourSchedule.ActiveStatus = true;
+            }
+            else tourSchedule.ActiveStatus = false;
+
+            await _tourParticipantDAO.UpdateTour(tourId, getTour);
         }
 
         public async Task<IEnumerable<Participants>> GetListParticipantsAsync(string scheduleId, string tourId)
@@ -51,7 +67,7 @@ namespace Repositories
             {
                 ParticipantId = travelerId,
                 RegisteredAt = GetTimeZone.GetVNTimeZoneNow(),
-                PaymentStatus = false,
+                PaymentStatus = PaymentStatus.Pending,
                 FullName = user.FullName,
                 Gender = user.Profiles.Gender,
                 Address = user.Profiles.City,
@@ -84,7 +100,7 @@ namespace Repositories
             var tourSchedule = getTour.Schedules.FirstOrDefault(t => t.ScheduleId == scheduleId);
             if (tourSchedule == null) return;
 
-            var participant = tourSchedule.Participants.FirstOrDefault(p => p.ParticipantId == travelerId && p.PaymentStatus == false);
+            var participant = tourSchedule.Participants.FirstOrDefault(p => p.ParticipantId == travelerId && p.PaymentStatus == PaymentStatus.Pending);
             if (participant == null) return;
 
             tourSchedule.Participants.Remove(participant);

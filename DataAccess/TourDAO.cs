@@ -45,7 +45,6 @@ namespace DataAccess
             return _mongoContext.Find(t => t.ApprovalStatus == ApprovalStatus.Accepted && t.Creator.Id == creatorId).ToList();
         }
 
-
         public IEnumerable<Tour> GetAllToursOfLocal(int userId)
         {
             return _mongoContext.Find(t => t.Creator.Id == userId).ToList().OrderByDescending(t => t.CreatedAt);
@@ -105,14 +104,6 @@ namespace DataAccess
             var update = Builders<Tour>.Update.Set(t => t.TourStatus, false);
             await _mongoContext.UpdateOneAsync(filter, update);
         }
-
-        //public async Task<Tour> GetParticipant(string tourId, int userId)
-        //{
-        //    var filter = Builders<Tour>.Filter.And(
-        //  Builders<Tour>.Filter.Eq(t => t.TourId, tourId),
-        //  Builders<Tour>.Filter.ElemMatch(t => t.Participants, p => p.ParticipantId == userId));
-        //    return _mongoContext.Find(filter).FirstOrDefault();
-        //}
 
         // Get TourName by TourId
         public async Task<string> GetTourNameById(string tourId)
