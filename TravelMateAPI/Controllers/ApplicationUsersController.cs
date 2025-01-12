@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.OData.Formatter;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
 using Repositories.Interface;
+using System.Security.Claims;
 using TravelMateAPI.Services.FilterLocal;
 
 namespace TravelMateAPI.Controllers
@@ -21,7 +22,12 @@ namespace TravelMateAPI.Controllers
             _userRepository = userRepository;
             _filterService = filterService;
         }
-
+        // Phương thức để lấy UserId từ JWT token
+        private int GetUserId()
+        {
+            var userIdString = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+            return int.TryParse(userIdString, out var userId) ? userId : -1;
+        }
         // GET: odata/ApplicationUsers
         //[HttpGet("/")]
         //[EnableQuery]
@@ -30,11 +36,17 @@ namespace TravelMateAPI.Controllers
         //    var users = await _userRepository.GetAllUsersAsync();
         //    return Ok(users);
         //}
-       
+
         [EnableQuery]
         public async Task<IActionResult> Get(ODataQueryOptions<UserWithDetailsDTO> queryOptions)
         {
-            var users = await _filterService.GetAllUsersWithDetailsAsync();
+            // Lấy UserId từ JWT token
+            var userId = GetUserId();
+            if (userId == -1)
+            {
+                return Unauthorized(new { Message = "Invalid token or user not found." });
+            }
+            var users = await _filterService.GetAllUsersWithDetailsAsync(userId);
             return Ok(users);
         }
 
