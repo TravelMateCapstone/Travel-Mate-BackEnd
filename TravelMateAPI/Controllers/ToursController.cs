@@ -232,6 +232,9 @@ namespace TravelMate.Controllers
             if (existingTour.Creator.Id != user.Id)
                 return BadRequest("Access Denied! You are not creator of this tour");
 
+            if (existingTour.ApprovalStatus == ApprovalStatus.Accepted)
+                return BadRequest("Access Denied! Tour is public!");
+
             await _tourRepository.CancelTour(tourId);
             return NoContent();
         }

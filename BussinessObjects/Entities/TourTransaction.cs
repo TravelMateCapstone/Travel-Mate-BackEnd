@@ -1,12 +1,7 @@
-﻿using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
-
-namespace BusinessObjects.Entities
+﻿namespace BusinessObjects.Entities
 {
     public class TourTransaction
     {
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
         public string? Id { get; set; }
         public string? ScheduleId { get; set; }
         public string? TourId { get; set; }
