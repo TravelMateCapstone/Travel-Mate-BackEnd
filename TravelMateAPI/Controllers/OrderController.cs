@@ -88,6 +88,9 @@ namespace TravelMateAPI.Controllers
                     Id = ObjectId.GenerateNewId().ToString(),
                     ScheduleId = tourSchedule.ScheduleId,
                     TourId = getTourInfo.TourId,
+                    TourName = getTourInfo.TourName,
+                    StartDate = tourSchedule.StartDate,
+                    EndDate = tourSchedule.EndDate,
                     ParticipantId = matchingSchedule.ParticipantId,
                     TransactionTime = GetTimeZone.GetVNTimeZoneNow(),
                     PaymentStatus = PaymentStatus.Success,
@@ -107,8 +110,7 @@ namespace TravelMateAPI.Controllers
 
                     await _tourParticipantRepository.UpdatePaymentStatus(getTourInfo, (int)transaction.ParticipantId);
                     await _tourParticipantRepository.AddTransactionAsync(transaction);
-                    //bo sung them schedule 
-                    //await _contractService.UpdateStatusToCompleted((int)transaction.TravelerId, getTourInfo.Creator.Id, getTourInfo.TourId);
+                    await _contractService.UpdateStatusToCompleted((int)transaction.ParticipantId, getTourInfo.Creator.Id, getTourInfo.TourId, tourSchedule.StartDate.ToString());
                 }
 
                 return Ok(new Response(0, "Ok", null));
