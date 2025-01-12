@@ -128,12 +128,18 @@ namespace TravelMateAPI.Services.FilterLocal
         //    return userDtos;
         //}
 
-        public async Task<List<UserWithDetailsDTO>> GetAllUsersWithDetailsAsync() //List<int> targetActivityIds, int minAge, int maxAge, string sex
+        public async Task<List<UserWithDetailsDTO>> GetAllUsersWithDetailsAsync(int userId) //List<int> targetActivityIds, int minAge, int maxAge, string sex
         {
-            var users = await _context.Users
-                .Include(u => u.Profiles)
-                .Include(u => u.CCCDs).ToListAsync(); // Include CCCD for DoB and Sex
 
+            //var users = await _context.Users
+            //    .Include(u => u.Profiles)
+            //    .Include(u => u.CCCDs).ToListAsync(); // Include CCCD for DoB and Sex
+            // Lấy danh sách Users trừ người dùng hiện tại
+            var users = await _context.Users
+                .Where(u => u.Id != userId) // Loại bỏ người dùng hiện tại
+                .Include(u => u.Profiles)
+                .Include(u => u.CCCDs)
+                .ToListAsync();
 
             var result = new List<UserWithDetailsDTO>();
 
