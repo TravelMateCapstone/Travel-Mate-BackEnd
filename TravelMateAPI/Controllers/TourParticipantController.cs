@@ -27,8 +27,69 @@ namespace TravelMateAPI.Controllers
             _scheduler = scheduler;
         }
 
-        //traveler cancel tour
+        //get user (traveler) transaction
+        [HttpGet("transactionList")]
+        public async Task<ActionResult> GetTransactionList()
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
 
+            var result = await _tourParticipantRepository.GetTransactionList(user.Id);
+
+            return Ok(result);
+        }
+
+        //traveler cancel tour
+        [HttpPost("cancelTour")]
+        public async Task<ActionResult> CancelTour([FromBody] JoinTourRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            var scheduleId = request.ScheduleId;
+            var tourId = request.TourId;
+            var existingTour = await _tourParticipantRepository.GetTourScheduleById(scheduleId, tourId);
+            if (existingTour == null)
+                return NotFound();
+
+            var tourSchedule = existingTour.Schedules.FirstOrDefault(t => t.ScheduleId == scheduleId);
+
+            var participant = tourSchedule.Participants.FirstOrDefault(t => t.ParticipantId == user.Id);
+
+            if (participant.PaymentStatus != BusinessObjects.EnumClass.PaymentStatus.Success)
+                return BadRequest("Access Denied! You are not in tour");
+
+            var timeNow = GetTimeZone.GetVNTimeZoneNow().Date;
+            if (tourSchedule.StartDate.Date <= timeNow && timeNow <= tourSchedule.EndDate.Date)
+                return BadRequest("Access Denied! Tour is on going!");
+
+            if (tourSchedule.EndDate.Date < timeNow)
+                return BadRequest("Access Denied! Tour've already done!");
+
+            if ((tourSchedule.StartDate - timeNow).TotalDays <= 2)
+                return BadRequest("Access Denied! You cannot cancel the tour within 2 days of its scheduled start.");
+
+            //update 
+            participant.PaymentStatus = BusinessObjects.EnumClass.PaymentStatus.ProcessRefund;
+
+            await _tourParticipantRepository.UpdateRefundStatus(existingTour, tourSchedule.ScheduleId, user.Id);
+
+            return Ok();
+        }
 
         //deactive tour
         [HttpPost("changeTourStatus")]
@@ -124,7 +185,7 @@ namespace TravelMateAPI.Controllers
                 return BadRequest("No available slots in this tour");
 
             if (tourSchedule.Participants.Any(t => t.ParticipantId == user.Id))
-                return BadRequest("You have already joined this tour.");
+                return BadRequest("You have already joined this tour .");
 
             if (tourSchedule.ActiveStatus == false)
                 return BadRequest("Tour is not active");

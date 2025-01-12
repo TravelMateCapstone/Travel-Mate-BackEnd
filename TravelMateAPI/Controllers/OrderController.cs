@@ -3,6 +3,7 @@ using BusinessObjects.Entities;
 using BusinessObjects.EnumClass;
 using BusinessObjects.Utils.Response;
 using Microsoft.AspNetCore.Mvc;
+using MongoDB.Bson;
 using Net.payOS;
 using Net.payOS.Types;
 using Repositories.Interface;
@@ -82,18 +83,18 @@ namespace TravelMateAPI.Controllers
                     return NotFound();
                 }
 
-                var transaction = new TourTransaction
+                var transaction = new TravelerTransaction
                 {
+                    Id = ObjectId.GenerateNewId().ToString(),
                     ScheduleId = tourSchedule.ScheduleId,
                     TourId = getTourInfo.TourId,
                     TourName = getTourInfo.TourName,
-                    localId = getTourInfo.Creator.Id,
-                    LocalName = getTourInfo.Creator.Fullname,
-                    TravelerId = matchingSchedule.ParticipantId,
-                    TravelerName = matchingSchedule.FullName,
+                    StartDate = tourSchedule.StartDate,
+                    EndDate = tourSchedule.EndDate,
+                    ParticipantId = matchingSchedule.ParticipantId,
                     TransactionTime = GetTimeZone.GetVNTimeZoneNow(),
-                    TransactionStatus = true,
-                    Price = getTourInfo.Price,
+                    PaymentStatus = PaymentStatus.Success,
+                    TotalAmount = getTourInfo.Price,
                 };
 
                 if (data.description == "Ma giao dich thu nghiem" || data.description == "VQRIO123")
@@ -107,10 +108,9 @@ namespace TravelMateAPI.Controllers
                     matchingSchedule.TransactionTime = GetTimeZone.GetVNTimeZoneNow();
                     matchingSchedule.TotalAmount = data.amount;
 
-                    await _tourParticipantRepository.UpdatePaymentStatus(getTourInfo, (int)transaction.TravelerId);
-                    await _transactionRepository.AddTransactionAsync(transaction);
-                    //bo sung them schedule 
-                    //await _contractService.UpdateStatusToCompleted((int)transaction.TravelerId, getTourInfo.Creator.Id, getTourInfo.TourId);
+                    await _tourParticipantRepository.UpdatePaymentStatus(getTourInfo, (int)transaction.ParticipantId);
+                    await _tourParticipantRepository.AddTransactionAsync(transaction);
+                    await _contractService.UpdateStatusToCompleted((int)transaction.ParticipantId, getTourInfo.Creator.Id, getTourInfo.TourId, tourSchedule.StartDate.ToString());
                 }
 
                 return Ok(new Response(0, "Ok", null));
