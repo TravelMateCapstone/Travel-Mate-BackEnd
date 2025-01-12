@@ -4,7 +4,7 @@
     {
         public int TravelerId { get; set; }
         public string TourId { get; set; }
-        public string StartDate { get; set; }
+        public string ScheduleId { get; set; }
         public string Location { get; set; }
         public string Details { get; set; }
         public DateTime CreatedAt { get; set; }
