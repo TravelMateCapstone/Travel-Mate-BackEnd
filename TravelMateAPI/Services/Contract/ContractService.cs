@@ -267,7 +267,7 @@ public class ContractService : IContractService
 
         private string CalculateHash(BlockContract contract)
         {
-            var rawData = $"{contract.Id}{contract.TravelerId}{contract.LocalId}{contract.TourId}" +
+            var rawData = $"{contract.Id}{contract.TravelerId}{contract.LocalId}{contract.TourId}{contract.ScheduleId}" +
                           $"{contract.Details}{contract.Status}{contract.TravelerSignature}" +
                           $"{contract.LocalSignature}{contract.CreatedAt}{contract.PreviousHash}";
 
