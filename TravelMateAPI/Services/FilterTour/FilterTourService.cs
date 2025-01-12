@@ -89,7 +89,7 @@ namespace TravelMateAPI.Services.FilterTour
             var tours = await _mongoContext
                 .Find(t => t.ApprovalStatus == ApprovalStatus.Accepted && t.Location == location &&
                    t.Schedules != null &&
-                   t.Schedules.Any(s => s.StartDate <= currentDateTime))
+                   t.Schedules.Any(s => s.StartDate >= currentDateTime))
                 .ToListAsync();
 
             // Lấy danh sách các LocalId từ các tour

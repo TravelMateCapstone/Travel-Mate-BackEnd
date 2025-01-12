@@ -4,6 +4,7 @@
     {
         Pending = 0,
         Success = 1,
-        Refund = 2
+        ProcessRefund = 2,
+        Refund = 3
     }
 }

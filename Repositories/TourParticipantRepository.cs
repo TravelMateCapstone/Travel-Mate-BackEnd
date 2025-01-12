@@ -3,6 +3,7 @@ using BusinessObjects;
 using BusinessObjects.Entities;
 using BusinessObjects.EnumClass;
 using DataAccess;
+using MongoDB.Driver;
 using Quartz;
 using Repositories.Cron;
 using Repositories.Interface;
@@ -113,6 +114,27 @@ namespace Repositories
             await _tourParticipantDAO.UpdateTour(tour.TourId, tour);
 
             await _scheduler.DeleteJob(new JobKey($"{travelerId}", "group1"));
+        }
+
+        public async Task<IEnumerable<TravelerTransaction>> GetTransactionList(int travelerId)
+        {
+            return await _tourParticipantDAO.GetTransactionList(travelerId);
+        }
+
+        public async Task AddTransactionAsync(TravelerTransaction transaction)
+        {
+            await _tourParticipantDAO.AddTransactionAsync(transaction);
+        }
+
+        public async Task UpdateRefundStatus(Tour tour, string scheduleId, int userId)
+        {
+            await _tourParticipantDAO.UpdateTour(tour.TourId, tour);
+
+            var transaction = await _tourParticipantDAO.GetTransaction(scheduleId, userId);
+
+            transaction.PaymentStatus = PaymentStatus.ProcessRefund;
+
+            await _tourParticipantDAO.UpdateTransaction(transaction.Id, transaction);
         }
     }
 }

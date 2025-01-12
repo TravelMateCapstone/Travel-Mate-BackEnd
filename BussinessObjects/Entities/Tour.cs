@@ -125,9 +125,6 @@ namespace BusinessObjects.Entities
         [BsonElement("orderCode")]
         public long? OrderCode { get; set; }
 
-        //[BsonElement("paymentStatus")]
-        //public bool? PaymentStatus { get; set; }
-
         [BsonElement("paymentStatus")]
         public PaymentStatus? PaymentStatus { get; set; }
 
