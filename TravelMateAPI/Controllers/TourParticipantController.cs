@@ -68,7 +68,7 @@ namespace TravelMateAPI.Controllers
             return Ok();
         }
 
-        [HttpGet("tourParticipants")]
+        [HttpPost("tourParticipants")]
         public async Task<ActionResult<IEnumerable<Participants>>> GetListParticipantsAsync([FromBody] JoinTourRequest request)
         {
             if (!ModelState.IsValid)
