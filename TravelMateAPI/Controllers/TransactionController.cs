@@ -25,6 +25,7 @@ namespace TravelMateAPI.Controllers
             return Ok(transactions);
         }
 
+        //them dieu kien
         [HttpPost("completePayment")]
         public async Task<ActionResult> CompletePayment([FromQuery] string transactionId)
         {
