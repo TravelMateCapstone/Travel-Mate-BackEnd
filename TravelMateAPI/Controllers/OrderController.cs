@@ -97,6 +97,25 @@ namespace TravelMateAPI.Controllers
                     TotalAmount = getTourInfo.Price,
                 };
 
+                var tourTransaction = new TourTransaction
+                {
+                    Id = transaction.Id,
+                    TourId = transaction.TourId,
+                    TourName = transaction.TourName,
+                    ScheduleId = transaction.ScheduleId,
+                    StartDate = transaction.StartDate,
+                    EndDate = transaction.EndDate,
+                    ParticipantId = transaction.ParticipantId,
+                    TransactionStatus = PaymentStatus.Pending,
+                    TransactionTime = transaction.TransactionTime,
+                    Amount = transaction.TotalAmount,
+                    LocalId = getTourInfo.Creator.Id,
+                    LocalName = getTourInfo.Creator.Fullname,
+                    TravelerId = matchingSchedule.ParticipantId,
+                    TravelerName = matchingSchedule.FullName,
+                    LastAmount = data.amount,
+                };
+
                 if (data.description == "Ma giao dich thu nghiem" || data.description == "VQRIO123")
                 {
                     return Ok(new Response(0, "Ok", null));
@@ -110,7 +129,6 @@ namespace TravelMateAPI.Controllers
 
                     await _tourParticipantRepository.UpdatePaymentStatus(getTourInfo, (int)transaction.ParticipantId);
                     await _tourParticipantRepository.AddTransactionAsync(transaction);
-                    //await _contractService.UpdateStatusToCompleted((int)transaction.ParticipantId, getTourInfo.Creator.Id, getTourInfo.TourId, tourSchedule.StartDate.ToString());
                     await _contractService.UpdateStatusToCompleted((int)transaction.ParticipantId, getTourInfo.Creator.Id, getTourInfo.TourId, tourSchedule.ScheduleId);
                 }
 

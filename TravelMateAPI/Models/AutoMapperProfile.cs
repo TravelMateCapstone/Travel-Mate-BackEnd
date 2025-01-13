@@ -54,6 +54,7 @@ namespace TravelMateAPI.Models
             CreateMap<ApplicationUser, UserViewModel>()
                 .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.Profiles.City))
                 .ForMember(dest => dest.Avatar, opt => opt.MapFrom(src => src.Profiles.ImageUser));
+
         }
 
     }

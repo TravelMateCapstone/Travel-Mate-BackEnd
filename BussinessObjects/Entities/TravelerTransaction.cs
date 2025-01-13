@@ -4,7 +4,6 @@ namespace BusinessObjects.Entities
 {
     public class TravelerTransaction
     {
-        //important
         public string Id { get; set; }
         public string TourId { get; set; }
         public string? TourName { get; set; }
