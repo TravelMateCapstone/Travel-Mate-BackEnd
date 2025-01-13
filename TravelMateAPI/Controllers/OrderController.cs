@@ -113,7 +113,7 @@ namespace TravelMateAPI.Controllers
                     LocalName = getTourInfo.Creator.Fullname,
                     TravelerId = matchingSchedule.ParticipantId,
                     TravelerName = matchingSchedule.FullName,
-                    LastAmount = data.amount,
+                    LastAmount = transaction.TotalAmount - transaction.TotalAmount * (10 / 100),
                 };
 
                 if (data.description == "Ma giao dich thu nghiem" || data.description == "VQRIO123")
