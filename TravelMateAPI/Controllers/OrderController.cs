@@ -129,6 +129,7 @@ namespace TravelMateAPI.Controllers
 
                     await _tourParticipantRepository.UpdatePaymentStatus(getTourInfo, (int)transaction.ParticipantId);
                     await _tourParticipantRepository.AddTransactionAsync(transaction);
+                    await _transactionRepository.AddTransactionAsync(tourTransaction);
                     await _contractService.UpdateStatusToCompleted((int)transaction.ParticipantId, getTourInfo.Creator.Id, getTourInfo.TourId, tourSchedule.ScheduleId);
                 }
 
