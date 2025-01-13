@@ -18,9 +18,16 @@ namespace DataAccess
             return await _mongoContext.Find(_ => true).ToListAsync();
         }
 
-        public async Task<IEnumerable<TourTransaction?>> GetTransactionByIdAsync(int userId)
+        public async Task<TourTransaction?> GetTransactionByIdAsync(string transactionId)
         {
-            return await _mongoContext.Find(t => t.TravelerId == userId).ToListAsync();
+            return _mongoContext.Find(t => t.Id == transactionId).FirstOrDefault();
+        }
+
+        public async Task<TourTransaction?> getTransactionByScheduleId(string scheduleId, int travelerId)
+        {
+            return await _mongoContext
+            .Find(t => t.ScheduleId == scheduleId && t.TravelerId == travelerId)
+            .FirstOrDefaultAsync();
         }
 
         public async Task AddTransactionAsync(TourTransaction transaction)
@@ -28,5 +35,10 @@ namespace DataAccess
             await _mongoContext.InsertOneAsync(transaction);
         }
 
+        public async Task UpdateTransaction(string transactionId, TourTransaction transaction)
+        {
+            var filter = Builders<TourTransaction>.Filter.Eq(f => f.Id, transactionId);
+            _mongoContext.ReplaceOne(filter, transaction);
+        }
     }
 }

@@ -112,7 +112,6 @@ namespace Repositories
         public async Task UpdatePaymentStatus(Tour tour, int travelerId)
         {
             await _tourParticipantDAO.UpdateTour(tour.TourId, tour);
-
             await _scheduler.DeleteJob(new JobKey($"{travelerId}", "group1"));
         }
 

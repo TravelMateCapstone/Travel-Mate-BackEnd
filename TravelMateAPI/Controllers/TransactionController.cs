@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BusinessObjects.Entities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Repositories.Interface;
 
 namespace TravelMateAPI.Controllers
@@ -8,10 +10,12 @@ namespace TravelMateAPI.Controllers
     public class TransactionController : Controller
     {
         private readonly ITransactionRepository _transactionRepository;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public TransactionController(ITransactionRepository transactionRepository)
+        public TransactionController(ITransactionRepository transactionRepository, UserManager<ApplicationUser> userManager)
         {
             _transactionRepository = transactionRepository;
+            _userManager = userManager;
         }
 
         [HttpGet]
@@ -21,11 +25,40 @@ namespace TravelMateAPI.Controllers
             return Ok(transactions);
         }
 
-        [HttpGet("traveler/{id}")]
-        public async Task<IActionResult> GetTransactionsByTravelerId(int id)
+        [HttpPost("completePayment")]
+        public async Task<ActionResult> CompletePayment([FromQuery] string transactionId)
         {
-            var transactions = await _transactionRepository.GetTransactionByIdAsync(id);
-            return Ok(transactions);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            await _transactionRepository.CompletePaymentStatus(transactionId);
+
+            return Ok();
+        }
+
+        [HttpPost("completeRefund")]
+        public async Task<ActionResult> CompleteRefund([FromQuery] string transactionId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            await _transactionRepository.CompleteRefundStatus(transactionId);
+
+            return Ok();
         }
 
     }
