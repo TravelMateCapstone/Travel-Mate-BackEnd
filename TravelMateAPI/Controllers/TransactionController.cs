@@ -73,7 +73,7 @@ namespace TravelMateAPI.Controllers
             var transaction = await _transactionRepository.GetTransactionByIdAsync(transactionId);
 
             await _transactionRepository.CompleteRefundStatus(transactionId);
-            await _tourParticipantRepository.UpdateRefundDone(transaction.TourId, transactionId, transaction.ParticipantId);
+            await _tourParticipantRepository.UpdateRefundDone(transaction.TourId, transaction.ScheduleId, transaction.ParticipantId);
 
             return Ok();
         }
