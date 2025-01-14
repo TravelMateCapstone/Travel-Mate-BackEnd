@@ -13,12 +13,14 @@ namespace TravelMateAPI.Controllers
     public class TransactionController : Controller
     {
         private readonly ITransactionRepository _transactionRepository;
+        private readonly ITourParticipantRepository _tourParticipantRepository;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public TransactionController(ITransactionRepository transactionRepository, UserManager<ApplicationUser> userManager)
+        public TransactionController(ITransactionRepository transactionRepository, UserManager<ApplicationUser> userManager, ITourParticipantRepository tourParticipantRepository)
         {
             _transactionRepository = transactionRepository;
             _userManager = userManager;
+            _tourParticipantRepository = tourParticipantRepository;
         }
 
         [HttpGet]
@@ -68,7 +70,10 @@ namespace TravelMateAPI.Controllers
                 throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
+            var transaction = await _transactionRepository.GetTransactionByIdAsync(transactionId);
+
             await _transactionRepository.CompleteRefundStatus(transactionId);
+            await _tourParticipantRepository.UpdateRefundDone(transaction.TourId, transactionId, transaction.ParticipantId);
 
             return Ok();
         }

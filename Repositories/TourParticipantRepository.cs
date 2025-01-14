@@ -135,5 +135,18 @@ namespace Repositories
 
             await _tourParticipantDAO.UpdateTransaction(transaction.Id, transaction);
         }
+
+        public async Task UpdateRefundDone(string tourId, string scheduleId, int userId)
+        {
+            var tour = await _tourParticipantDAO.GetTourScheduleById(scheduleId, tourId);
+
+            await _tourParticipantDAO.UpdateTour(tour.TourId, tour);
+
+            var transaction = await _tourParticipantDAO.GetTransaction(scheduleId, userId);
+
+            transaction.PaymentStatus = PaymentStatus.Refund;
+
+            await _tourParticipantDAO.UpdateTransaction(transaction.Id, transaction);
+        }
     }
 }
