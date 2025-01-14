@@ -1,10 +1,13 @@
-﻿using BusinessObjects.Entities;
+﻿using BusinessObjects;
+using BusinessObjects.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Repositories.Interface;
 
 namespace TravelMateAPI.Controllers
 {
+    [Authorize(Roles = "admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class TransactionController : Controller
@@ -38,6 +41,14 @@ namespace TravelMateAPI.Controllers
             {
                 throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
+
+            //kiem tra trang thai payment
+
+            var transaction = await _transactionRepository.GetTransactionByIdAsync(transactionId);
+
+            var timeNow = GetTimeZone.GetVNTimeZoneNow();
+            if (timeNow <= transaction.EndDate)
+                return BadRequest("Access Denied! Tour does not finish!");
 
             await _transactionRepository.CompletePaymentStatus(transactionId);
 
