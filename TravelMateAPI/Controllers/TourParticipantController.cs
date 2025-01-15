@@ -15,16 +15,18 @@ namespace TravelMateAPI.Controllers
     public class TourParticipantController : ControllerBase
     {
         private readonly ITourParticipantRepository _tourParticipantRepository;
+        private readonly ITransactionRepository _transactionRepository;
         private readonly IMapper _mapper;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IScheduler _scheduler;
 
-        public TourParticipantController(UserManager<ApplicationUser> userManager, IMapper mapper, ITourParticipantRepository tourParticipantRepository, IScheduler scheduler)
+        public TourParticipantController(UserManager<ApplicationUser> userManager, IMapper mapper, ITourParticipantRepository tourParticipantRepository, IScheduler scheduler, ITransactionRepository transactionRepository)
         {
             _tourParticipantRepository = tourParticipantRepository;
             _mapper = mapper;
             _userManager = userManager;
             _scheduler = scheduler;
+            _transactionRepository = transactionRepository;
         }
 
         //get user (traveler) transaction
@@ -87,6 +89,7 @@ namespace TravelMateAPI.Controllers
             participant.PaymentStatus = BusinessObjects.EnumClass.PaymentStatus.ProcessRefund;
 
             await _tourParticipantRepository.UpdateRefundStatus(existingTour, tourSchedule.ScheduleId, user.Id);
+            await _transactionRepository.UpdateRefundStatus(tourSchedule.ScheduleId, user.Id);
 
             return Ok();
         }

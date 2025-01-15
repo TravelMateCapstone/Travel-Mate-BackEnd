@@ -24,23 +24,24 @@ namespace TravelMateAPI.Controllers
             var userCount = _dbContext.Users.Count();
             var reportCount = _dbContext.Reports.Count();
 
-            var transactions2024 = revenue
-                .Where(t => t.TransactionTime.Year == 2024)
-                .ToList();
+            var transactions2025 = revenue
+    .Where(t => t.TransactionTime.HasValue && t.TransactionTime.Value.Year == 2025)
+    .ToList();
+
 
             var monthlyRevenues = Enumerable.Range(1, 12)
                 .Select(month => new
                 {
                     Month = month,
-                    Revenue = transactions2024
-                        .Where(t => t.TransactionTime.Month == month)
-                        .Sum(t => t.Price)
+                    Revenue = transactions2025
+                        .Where(t => t.TransactionTime.HasValue && t.TransactionTime.Value.Month == month)
+                        .Sum(t => t.Amount)
                 })
                 .ToList();
 
             var info = new
             {
-                Revenue = (double)revenue.Average(t => t.Price) * 0.1,
+                Revenue = (double)revenue.Average(t => t.Amount) * 0.1,
                 TotalTrips = revenue.Count(),
                 TotalUsers = userCount,
                 TotalReports = reportCount,
