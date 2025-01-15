@@ -148,5 +148,10 @@ namespace Repositories
 
             await _tourParticipantDAO.UpdateTransaction(transaction.Id, transaction);
         }
+
+        public async Task<IEnumerable<TravelerTransaction>> GetAllTransactionsAsync()
+        {
+            return await _tourParticipantDAO.GetAllTransactionsAsync();
+        }
     }
 }
