@@ -4,6 +4,7 @@ namespace Repositories.Interface
 {
     public interface ITourParticipantRepository
     {
+        Task<IEnumerable<TravelerTransaction>> GetAllTransactionsAsync();
         Task<IEnumerable<Participants>> GetListParticipantsAsync(string scheduleId, string tourId);
         Task JoinTour(string scheduleId, string tourId, int travelerId);
         Task<ApplicationUser> GetUserInfo(int userId);
