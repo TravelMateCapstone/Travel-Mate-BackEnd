@@ -136,5 +136,46 @@ namespace TravelMateAPI.Services.FilterTour
 
             return result;
         }
+
+        public async Task<List<TourWithUserDetailsDTO>> GetAllTourBriefWithUserDetailsByTourIdAsync(string tourId)
+        {
+            
+            // Lấy thời gian hiện tại theo múi giờ Việt Nam
+            var currentDateTime = GetTimeZone.GetVNTimeZoneNow();
+
+            //Kiểm tra nếu danh sách Schedules không null và có ít nhất một ngày khởi hành (StartDate) nhỏ hơn hoặc bằng ngày hiện tại.
+            var tours = await _mongoContext
+                .Find(t => t.ApprovalStatus == ApprovalStatus.Accepted && t.TourId == tourId &&
+                   t.Schedules != null &&
+                   t.Schedules.Any(s => s.StartDate >= currentDateTime))
+                .ToListAsync();
+
+            // Lấy danh sách các LocalId từ các tour
+            var localIds = tours.Select(t => t.Creator.Id).Distinct().ToList();
+
+            // Lấy thông tin UserWithDetailsDTO của các LocalId
+            var users = await _filterService.GetAllUsersWithDetailsByIdsAsync(localIds);
+
+            // Ánh xạ Tour với User
+            var result = tours.Select(t => new TourWithUserDetailsDTO
+            {
+               
+                TourId = t.TourId,
+                LocalId = t.Creator.Id,
+                MaxGuests = t.MaxGuests,
+                Location = t.Location,
+                StartDates = t.Schedules?.Select(s => s.StartDate).ToList() ?? new List<DateTime>(), // Lấy danh sách ngày khởi hành
+                TourDescription = t.TourDescription,
+                NumberOfDays = t.NumberOfDays,
+                NumberOfNights = t.NumberOfDays - 1,
+                TourName = t.TourName,
+                Price = t.Price,
+                TourImage = t.TourImage,
+                User = users.FirstOrDefault(u => u.UserId == t.Creator.Id)
+            }).ToList();
+
+
+            return result;
+        }
     }
 }
