@@ -78,7 +78,7 @@ namespace TravelMateAPI.Controllers
             }
 
             var isPostCreated = isParticipant.PostId;
-            if (String.IsNullOrEmpty(isPostCreated))
+            if (!String.IsNullOrEmpty(isPostCreated))
             {
                 return BadRequest("You have already create post about this tour");
             }
