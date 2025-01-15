@@ -136,7 +136,7 @@ namespace TravelMateAPI.Services.FilterLocal
             //    .Include(u => u.CCCDs).ToListAsync(); // Include CCCD for DoB and Sex
             // Lấy danh sách Users trừ người dùng hiện tại
             var users = await _context.Users
-                .Where(u => u.Id != userId) // Loại bỏ người dùng hiện tại
+                .Where(u => u.Id != userId && u.Id != 126) // Loại bỏ người dùng hiện tại
                 .Include(u => u.Profiles)
                 .Include(u => u.CCCDs)
                 .ToListAsync();

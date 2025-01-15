@@ -139,6 +139,31 @@ namespace TravelMateAPI.Controllers
             return Ok(notJoinedEvents);
         }
 
+        // GET: api/Events/user/not-joined
+        [HttpGet("user/not-joined-2")]
+        public async Task<IActionResult> GetNotJoined2EventsForCurrentUser()
+        {
+            var userId = GetUserId();
+            if (userId == -1)
+            {
+                return Unauthorized("Invalid token or user not found.");
+            }
+
+            // Lấy các sự kiện mà người dùng chưa tham gia
+            var notJoinedEvents = await _context.Events
+                .Where(e => !_context.EventParticipants
+                    .Any(ep => ep.EventId == e.EventId && ep.UserId == userId)).Take(2)
+                .ToListAsync();
+            //// Lấy các sự kiện mà người dùng chưa tham gia và cũng không phải là người tạo ra sự kiện
+            //var notJoinedEvents = await _context.Events
+            //    .Where(e => !_context.EventParticipants
+            //                    .Any(ep => ep.EventId == e.EventId && ep.UserId == userId)
+            //                && e.CreaterUserId != userId)
+            //    .ToListAsync();
+
+            return Ok(notJoinedEvents);
+        }
+
         // POST: api/Event/current-user
         [HttpPost("add-by-current-user")]
         public async Task<IActionResult> CreateEventForCurrentUser([FromBody] Event newEvent)
