@@ -26,18 +26,18 @@ namespace TravelMateAPI.Controllers
             var result = await _recommendationService.GetTravelerToursAndActivitiesAsync();
             return Ok(result);
         }
-        [HttpGet("recommended-tours/{travelerId}")]
-        public async Task<IActionResult> GetRecommendedTours(int travelerId)
+        [HttpGet("recommended-tours/{travelerId}-{same}")]
+        public async Task<IActionResult> GetRecommendedTours(int travelerId, int same)
         {
-            var recommendedTours = await _recommendationService.GetRecommendedToursAsync(travelerId);
+            var recommendedTours = await _recommendationService.GetRecommendedToursAsync(travelerId, same);
             return Ok(recommendedTours);
         }
 
-        [HttpGet("detailed-tours/{travelerId}")]
-        public async Task<IActionResult> GetRecommendedTourDetails(int travelerId)
+        [HttpGet("detailed-tours/{travelerId}-{same}")]
+        public async Task<IActionResult> GetRecommendedTourDetails(int travelerId, int same)
         {
             // Lấy danh sách tour được đề xuất
-            var recommendedTourIds = await _recommendationService.GetRecommendedToursAsync(travelerId);
+            var recommendedTourIds = await _recommendationService.GetRecommendedToursAsync(travelerId, same);
 
             if (recommendedTourIds == null || !recommendedTourIds.Any())
             {
@@ -49,8 +49,8 @@ namespace TravelMateAPI.Controllers
             return Ok(detailedTours);
         }
 
-        [HttpGet("current-user/{travelerId}")]
-        public async Task<IActionResult> GetRecommendedTourDetailsCurrent()
+        [HttpGet("current-user/{same}")]
+        public async Task<IActionResult> GetRecommendedTourDetailsCurrent(int same)
         {
             // Lấy UserId từ JWT token
             var userId = GetUserId();
@@ -59,7 +59,7 @@ namespace TravelMateAPI.Controllers
                 return Unauthorized(new { Message = "Invalid token or user not found." });
             }
             // Lấy danh sách tour được đề xuất
-            var recommendedTourIds = await _recommendationService.GetRecommendedToursAsync(userId);
+            var recommendedTourIds = await _recommendationService.GetRecommendedToursAsync(userId, same);
 
             if (recommendedTourIds == null || !recommendedTourIds.Any())
             {
@@ -69,6 +69,21 @@ namespace TravelMateAPI.Controllers
             // Lấy chi tiết từng tour
             var detailedTours = await _recommendationService.GetDetailedToursAsync(recommendedTourIds);
             return Ok(detailedTours);
+        }
+
+        [HttpGet("current-user2/{same}-{random}")]
+        public async Task<IActionResult> GetRecommendedTourDetailsCurrent2(int same,int random)
+        {
+            // Lấy UserId từ JWT token
+            var userId = GetUserId();
+            if (userId == -1)
+            {
+                return Unauthorized(new { Message = "Invalid token or user not found." });
+            }
+            // Lấy danh sách tour được đề xuất
+            var recommendedTourIds = await _recommendationService.GetRecommendedOrTopToursAsync(userId, same, random);
+
+            return Ok(recommendedTourIds);
         }
     }
 }

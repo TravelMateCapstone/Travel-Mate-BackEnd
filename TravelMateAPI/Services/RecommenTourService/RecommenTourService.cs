@@ -108,7 +108,7 @@ namespace TravelMateAPI.Services.RecommenTourService
         /// </summary>
         /// <param name="travelerId">ID của traveler cần được gợi ý</param>
         /// <returns>Danh sách TourId được đề xuất</returns>
-        public async Task<List<string>> GetRecommendedToursAsync(int travelerId)
+        public async Task<List<string>> GetRecommendedToursAsync(int travelerId, int same)
         {
             // 1. Lấy dữ liệu BlockContracts
             var allContracts = await _dbContext.BlockContracts
@@ -150,7 +150,7 @@ namespace TravelMateAPI.Services.RecommenTourService
 
             foreach (var (otherTravelerId, similarity) in similarityScores
                 .OrderByDescending(s => s.Value)
-                .Take(1)) // Chỉ lấy top 2 traveler tương tự nhất
+                .Take(same)) // Chỉ lấy top 2 traveler tương tự nhất
             {
                 foreach (var (tourId, count) in travelerTours[otherTravelerId])
                 {
@@ -207,6 +207,22 @@ namespace TravelMateAPI.Services.RecommenTourService
             }
 
             return detailedTours;
+        }
+
+
+        public async Task<List<TourWithUserDetailsDTO>> GetRecommendedOrTopToursAsync(int travelerId, int same, int random)
+        {
+            // Lấy danh sách TourId được đề xuất
+            var recommendedTourIds = await GetRecommendedToursAsync(travelerId, same);
+
+            if (recommendedTourIds == null || !recommendedTourIds.Any())
+            {
+                // Nếu không có gợi ý, lấy top tour
+                return await _filterTourService.GetAllTourBriefWithUserDetailsTopAsync(random);
+            }
+
+            // Lấy chi tiết từ danh sách TourId được đề xuất
+            return await GetDetailedToursAsync(recommendedTourIds);
         }
     }
 }
