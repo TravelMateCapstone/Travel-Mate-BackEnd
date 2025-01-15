@@ -20,6 +20,11 @@ namespace DataAccess
             _transactionContext = mongoContext.GetCollection<TravelerTransaction>("TravelerTransaction");
         }
 
+        public async Task<IEnumerable<TravelerTransaction>> GetAllTransactionsAsync()
+        {
+            return await _transactionContext.Find(_ => true).ToListAsync();
+        }
+
         public async Task<Tour> GetTourByParticipantOrderCodeAsync(long orderCode)
         {
             var filter = Builders<Tour>.Filter.ElemMatch(
