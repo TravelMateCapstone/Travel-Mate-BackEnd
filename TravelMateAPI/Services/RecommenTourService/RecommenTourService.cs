@@ -121,6 +121,24 @@ namespace TravelMateAPI.Services.RecommenTourService
                 })
                 .ToListAsync();
 
+            if (allContracts == null || !allContracts.Any())
+            {
+                return new List<string>(); // Trả về danh sách rỗng nếu không có dữ liệu
+            }
+            // Bước 2: Kiểm tra nếu travelerId không tồn tại trong danh sách
+            // 2. Chuyển đổi allContracts thành Dictionary
+            var travelerTourDictionary = allContracts
+                .GroupBy(c => c.TravelerId)
+                .ToDictionary(
+                    g => g.Key,
+                    g => g.Select(c => new { c.TourId, c.PurchaseCount }).ToList()
+                );
+            if (!travelerTourDictionary.ContainsKey(travelerId))
+            {
+                // Xử lý khi travelerId chưa book tour nào
+                return new List<string>(); // Trả về danh sách trống
+            }
+
             // 2. Xây dựng ma trận TravelerId x TourId
             var travelerTours = allContracts
                 .GroupBy(c => c.TravelerId)
