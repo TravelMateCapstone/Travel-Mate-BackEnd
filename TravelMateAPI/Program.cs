@@ -32,6 +32,7 @@ using TravelMateAPI.Services.Hubs;
 using TravelMateAPI.Services.Notification;
 using TravelMateAPI.Services.Notification.Event;
 using TravelMateAPI.Services.ProfileService;
+using TravelMateAPI.Services.RecommenTourService;
 using TravelMateAPI.Services.ReportUser;
 using TravelMateAPI.Services.Role;
 using TravelMateAPI.Services.StorageAzure;
@@ -270,6 +271,7 @@ namespace TravelMateAPI
             builder.Services.AddScoped<IContractService, ContractService>();
             builder.Services.AddScoped<BlockchainService>();
             builder.Services.AddScoped<FilterTourService>();
+            builder.Services.AddScoped<RecommenTourService>();
             builder.Services.AddScoped<LocationService>();
             builder.Services.AddScoped<IFindLocalService, FindLocalService>();
             builder.Services.AddScoped<ISearchLocationService, SearchLocationService>();

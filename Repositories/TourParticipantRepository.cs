@@ -112,7 +112,6 @@ namespace Repositories
         public async Task UpdatePaymentStatus(Tour tour, int travelerId)
         {
             await _tourParticipantDAO.UpdateTour(tour.TourId, tour);
-
             await _scheduler.DeleteJob(new JobKey($"{travelerId}", "group1"));
         }
 
@@ -133,6 +132,19 @@ namespace Repositories
             var transaction = await _tourParticipantDAO.GetTransaction(scheduleId, userId);
 
             transaction.PaymentStatus = PaymentStatus.ProcessRefund;
+
+            await _tourParticipantDAO.UpdateTransaction(transaction.Id, transaction);
+        }
+
+        public async Task UpdateRefundDone(string tourId, string scheduleId, int userId)
+        {
+            var tour = await _tourParticipantDAO.GetTourScheduleById(scheduleId, tourId);
+
+            await _tourParticipantDAO.UpdateTour(tour.TourId, tour);
+
+            var transaction = await _tourParticipantDAO.GetTransaction(scheduleId, userId);
+
+            transaction.PaymentStatus = PaymentStatus.Refund;
 
             await _tourParticipantDAO.UpdateTransaction(transaction.Id, transaction);
         }

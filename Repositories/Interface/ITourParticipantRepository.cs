@@ -10,6 +10,7 @@ namespace Repositories.Interface
         Task<Tour> GetTourScheduleById(string scheduleId, string tourId);
         Task RemoveUnpaidParticipantsAsync(string scheduleId, string tourId, int travelerId);
         Task UpdatePaymentStatus(Tour tour, int travelerId);
+        Task UpdateRefundDone(string tourId, string scheduleId, int userId);
 
         Task UpdateRefundStatus(Tour tour, string scheduleId, int userId);
 
