@@ -158,6 +158,18 @@ namespace TravelMateAPI.Controllers
             };
             _context.UserContacts.Add(defaultUserContact);
 
+            //Tạo thông tin mặc định cho UserBank
+
+            var defaultUserBank = new UserBank
+            {
+                UserId = user.Id,
+                BankName = "",
+                BankNumber = "",
+                OwnerName = ""
+
+            };
+            _context.UserBanks.Add(defaultUserBank);
+
             // Lưu thay đổi vào cơ sở dữ liệu
             await _context.SaveChangesAsync();
 

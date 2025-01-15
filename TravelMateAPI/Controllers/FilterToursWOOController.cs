@@ -48,6 +48,39 @@ namespace TravelMateAPI.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
+        [HttpGet("GetAllTour-WithUserDetails-Top/{top}")]
+        public async Task<IActionResult> GetAllTourBriefWithUserTopDetails(int top)
+        {
+            //try
+            //{
+            //    var result = await _tourService.GetAllTourBriefWithUserDetailsAsync();
+            //    return Ok(result);
+            //}
+            //catch (Exception ex)
+            //{
+            //    // Xử lý lỗi
+            //    return BadRequest(new { message = ex.Message });
+            //}
+
+            try
+            {
+                var result = await _tourService.GetAllTourBriefWithUserDetailsTopAsync(top);
+
+                var customOptions = new JsonSerializerOptions
+                {
+                    ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve,
+                    DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.Never,
+                    WriteIndented = true // (Tùy chọn: để dễ đọc JSON)
+                };
+
+                var json = JsonSerializer.Serialize(result, customOptions);
+                return Content(json, "application/json");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
 
         [HttpGet("GetAllTour-WithUserDetails-ByLocation")]
         public async Task<IActionResult> GetAllTourBriefWithUserDetailsByLocation(string location)
