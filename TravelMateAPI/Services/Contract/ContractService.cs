@@ -95,7 +95,7 @@ public class ContractService : IContractService
         {
             // Kiểm tra xem travelerId có phải là Local không
             var travelerRole = await _userRoleService.GetUserRoleAsync(travelerId);
-            if (travelerRole == "Local")
+            if (travelerRole == "local")
             {
                 throw new InvalidOperationException("Bạn không được đi du lịch trong thời gian làm người địa phương.");
             }
