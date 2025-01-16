@@ -54,7 +54,7 @@ namespace TravelMateAPI.Controllers
 
             // Further filter transactions with PaymentStatus = Success
             var successfulTransactions = validTransactions
-                .Where(t => t.PaymentStatus == PaymentStatus.Success)
+                .Where(t => t.PaymentStatus == PaymentStatus.Success && t.PaymentStatus == PaymentStatus.ProcessRefund)
                 .ToList();
 
             // Calculate ReceivedAmount from transactions with PaymentStatus = Success
