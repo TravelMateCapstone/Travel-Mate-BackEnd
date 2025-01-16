@@ -14,13 +14,15 @@ namespace TravelMateAPI.Controllers
     {
         private readonly ITourParticipantRepository _transactionRepository;
         private readonly ITourRepository _tourRepository;
+        private readonly ITransactionRepository _localTransactionRepository;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public UserDashboardController(UserManager<ApplicationUser> userManager, ITourParticipantRepository transactionRepository, ITourRepository tourRepository)
+        public UserDashboardController(UserManager<ApplicationUser> userManager, ITourParticipantRepository transactionRepository, ITourRepository tourRepository, ITransactionRepository localTransaction)
         {
             _transactionRepository = transactionRepository;
             _userManager = userManager;
             _tourRepository = tourRepository;
+            _localTransactionRepository = localTransaction;
         }
 
         [HttpGet]
@@ -34,6 +36,8 @@ namespace TravelMateAPI.Controllers
 
             var totalTraveler = 0;
             var allTransactions = await _transactionRepository.GetAllTransactionsAsync();
+
+            var receivedTransactions = await _localTransactionRepository.GetAllTransactionsAsync();
 
             // Filter transactions where the logged-in user is the creator of the tour
             var validTransactions = new List<TravelerTransaction>();
@@ -53,6 +57,11 @@ namespace TravelMateAPI.Controllers
                 .Where(t => t.PaymentStatus == PaymentStatus.Success)
                 .ToList();
 
+            // Calculate ReceivedAmount from transactions with PaymentStatus = Success
+            var receivedAmount = receivedTransactions
+                .Where(t => t.TransactionStatus == PaymentStatus.Success && t.LocalId == user.Id)
+                .Sum(t => t.LastAmount ?? 0);
+
             var transaction2025 = successfulTransactions
                 .Where(t => t.TransactionTime.HasValue && t.TransactionTime.Value.Year == 2025)
                 .ToList();
@@ -68,12 +77,13 @@ namespace TravelMateAPI.Controllers
                 .ToList();
 
             var totalTour = successfulTransactions
-      .Select(t => t.ScheduleId)
-      .Distinct()
-      .Count();
+                .Select(t => t.ScheduleId)
+                .Distinct()
+                .Count();
 
             var info = new
             {
+                ReceivedAmount = receivedAmount,
                 Revenue = (double)successfulTransactions.Sum(t => t.TotalAmount ?? 0) * 0.9,
                 TotalAmount = (double)successfulTransactions.Sum(t => t.TotalAmount ?? 0),
                 TotalTour = totalTour,
@@ -83,5 +93,6 @@ namespace TravelMateAPI.Controllers
 
             return Ok(info);
         }
+
     }
 }
