@@ -187,7 +187,7 @@ namespace TravelMateAPI.Services.RecommenTourService
             // 5. Trả về danh sách các tour được đề xuất, sắp xếp theo điểm gợi ý
             return recommendedTours
                 .OrderByDescending(r => r.Value)
-                .Select(r => r.Key)
+                .Select(r => r.Key).Take(4)
                 .ToList();
         }
 
