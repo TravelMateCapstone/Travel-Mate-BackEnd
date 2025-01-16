@@ -67,11 +67,16 @@ namespace TravelMateAPI.Controllers
                 })
                 .ToList();
 
+            var totalTour = successfulTransactions
+      .Select(t => t.ScheduleId)
+      .Distinct()
+      .Count();
+
             var info = new
             {
                 Revenue = (double)successfulTransactions.Sum(t => t.TotalAmount ?? 0) * 0.9,
                 TotalAmount = (double)successfulTransactions.Sum(t => t.TotalAmount ?? 0),
-                TotalTour = successfulTransactions.Count(),
+                TotalTour = totalTour,
                 TotalTraveler = totalTraveler,
                 MonthlyRevenues = monthlyRevenues
             };
