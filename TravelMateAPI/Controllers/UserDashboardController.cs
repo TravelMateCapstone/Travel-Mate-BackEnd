@@ -51,7 +51,7 @@ namespace TravelMateAPI.Controllers
                 }
             }
 
-            // Filter transactions with PaymentStatus = Success or ProcessRefund add
+            // Filter transactions with PaymentStatus = Success or ProcessRefund addf
             var successfulTransactions = validTransactions
                 .Where(t => t.PaymentStatus == PaymentStatus.Success)
                 .ToList();
