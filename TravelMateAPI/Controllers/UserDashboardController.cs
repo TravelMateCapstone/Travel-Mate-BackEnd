@@ -24,7 +24,6 @@ namespace TravelMateAPI.Controllers
             _tourRepository = tourRepository;
             _localTransactionRepository = localTransaction;
         }
-
         [HttpGet]
         public async Task<IActionResult> GetDashboardInfo()
         {
@@ -52,9 +51,13 @@ namespace TravelMateAPI.Controllers
                 }
             }
 
-            // Further filter transactions with PaymentStatus = Success
+            // Filter transactions with PaymentStatus = Success or ProcessRefund
             var successfulTransactions = validTransactions
-                .Where(t => t.PaymentStatus == PaymentStatus.Success || t.PaymentStatus == PaymentStatus.ProcessRefund)
+                .Where(t => t.PaymentStatus == PaymentStatus.Success)
+                .ToList();
+
+            var refundTransactions = validTransactions
+                .Where(t => t.PaymentStatus == PaymentStatus.ProcessRefund)
                 .ToList();
 
             // Calculate ReceivedAmount from transactions with PaymentStatus = Success
@@ -62,7 +65,10 @@ namespace TravelMateAPI.Controllers
                 .Where(t => t.TransactionStatus == PaymentStatus.Success && t.LocalId == user.Id)
                 .Sum(t => t.LastAmount ?? 0);
 
-            var transaction2025 = successfulTransactions
+            // Include both successful and refund transactions for totals and revenue
+            var combinedTransactions = successfulTransactions.Concat(refundTransactions).ToList();
+
+            var transaction2025 = combinedTransactions
                 .Where(t => t.TransactionTime.HasValue && t.TransactionTime.Value.Year == 2025)
                 .ToList();
 
@@ -76,16 +82,19 @@ namespace TravelMateAPI.Controllers
                 })
                 .ToList();
 
-            var totalTour = successfulTransactions
+            var totalTour = combinedTransactions
                 .Select(t => t.ScheduleId)
                 .Distinct()
                 .Count();
 
+            var totalAmount = (double)combinedTransactions.Sum(t => t.TotalAmount ?? 0);
+            var revenue = totalAmount * 0.9;
+
             var info = new
             {
                 ReceivedAmount = receivedAmount,
-                Revenue = (double)successfulTransactions.Sum(t => t.TotalAmount ?? 0) * 0.9,
-                TotalAmount = (double)successfulTransactions.Sum(t => t.TotalAmount ?? 0),
+                Revenue = revenue,
+                TotalAmount = totalAmount,
                 TotalTour = totalTour,
                 TotalTraveler = totalTraveler,
                 MonthlyRevenues = monthlyRevenues
