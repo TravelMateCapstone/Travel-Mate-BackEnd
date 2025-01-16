@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Repositories.Interface;
 using System.Security.Claims;
 using TravelMateAPI.Services.FilterLocal;
+using TravelMateAPI.Services.Role;
 
 namespace TravelMateAPI.Controllers
 {
@@ -16,11 +17,13 @@ namespace TravelMateAPI.Controllers
     {
         private readonly IApplicationUserRepository _userRepository;
         private readonly FilterUserService _filterService;
+        private readonly IUserRoleService _userRoleService;
 
-        public ApplicationUsersWOOController(IApplicationUserRepository userRepository, FilterUserService filterService)
+        public ApplicationUsersWOOController(IApplicationUserRepository userRepository, FilterUserService filterService, IUserRoleService userRoleService)
         {
             _userRepository = userRepository;
             _filterService = filterService;
+            _userRoleService = userRoleService;
         }
         // Phương thức để lấy UserId từ JWT token
         private int GetUserId()
@@ -142,5 +145,44 @@ namespace TravelMateAPI.Controllers
             }
         }
 
+
+        [HttpGet("role-to-local/{userId}")]
+        public async Task UpdateToLocal(int userId)
+        {
+            try
+            {
+                await _userRoleService.UpdateRoleToLocalAsync(userId);
+            }
+            catch (Exception ex)
+            {
+                return;
+            }
+        }
+
+        [HttpGet("role-to-traveler/{userId}")]
+        public async Task UpdateToTraveler(int userId)
+        {
+            try
+            {
+                await _userRoleService.UpdateRoleToTravelerAsync(userId);
+            }
+            catch (Exception ex)
+            {
+                return;
+            }
+        }
+
+        [HttpGet("role-to-user/{userId}")]
+        public async Task UpdateToUser(int userId)
+        {
+            try
+            {
+                await _userRoleService.UpdateRoleToUserAsync(userId);
+            }
+            catch (Exception ex)
+            {
+                return;
+            }
+        }
     }
 }
